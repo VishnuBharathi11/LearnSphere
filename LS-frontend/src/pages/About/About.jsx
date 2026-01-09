@@ -1,13 +1,15 @@
 import React from "react";
-import aboutimg from '../../assets/aboutimg.jpg'
+import './About.css'
+import aboutimg from '../../assets/about/aboutimg.jpg'
 function About() {
   return (
     <>
       <div className="about">
         <div className="about-content">
-          <div className="ab-cont-sub poppins-regular">About LearnSphere</div>
+          <div className="ab-cont-sub">About LearnSphere</div>
           <div className="ab-cont-mainhead">
-            Empowering Learners with Skills That Shape the Future
+            Empowering Learners with Skills 
+            That Shape the Future
           </div>
         </div>
 
