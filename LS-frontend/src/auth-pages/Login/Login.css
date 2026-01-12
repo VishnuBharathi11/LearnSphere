@@ -1,106 +1,103 @@
-.page-name {
+.log-page-name {
   font-family: "Poppins", sans-serif;
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 600;
   color: #2f62b3;
   padding: 5px;
+  margin-top: -30px;
 }
 
-.logo {
+.log-logo {
   width: 50px;
   height: 50px;
 }
 
-.form{
-    height:738px;
-    width: 1550px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #ffffff;
+.log-form {
+  height: 600px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.06),
     0 8px 20px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-.form-card{
-    display:flex;
-    align-items: center;
-    flex-direction: column;
-    justify-content: center;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 50px;
-    text-align: center;
+.log-form-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 50px;
+  text-align: center;
 }
 
-.form-welcome{
-    font-family: "Inter",sans-serif;
-    font-size: large;
-    font-weight: 700;
-    font-size: 30px;
+.log-form-welcome {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 30px;
 }
 
-.form-welcome p{
-    font-size: 20px;
-    font-weight: 100;
-    color:#666;
-    padding: 10px;
-    transform: translateY(-8px);
-
+.log-form-welcome p {
+  font-size: 16px;
+  font-weight: 400;
+  color: #666;
+  padding: 10px;
+  transform: translateY(-8px);
 }
 
-.form input{
-    width:300px;
-    height:40px;
-    border: 1px solid  #e5e7eb;
-    border-radius: 8px;
-    padding-left: 10px;
+.log-form-input-box {
+  padding: 10px;
 }
 
-.form input:focus{
-    outline: none;
+.log-form input {
+  width: 300px;
+  height: 45px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding-left: 10px;
 }
 
-.form-input-box{
-    padding: 10px;
+.log-form input:focus {
+  outline: none;
+  border-color: #e5e7eb;
 }
 
-.form-forgot{
-    color: #4f6ef7;
-    font-size: 15px;
-    padding: 15px;
+.log-btn-forgot {
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
 }
 
-.form-btn{
-    color: #ffffff;
-    border-radius: 8px;
-    width:300px;
-    height:40px;
-    background-color:#4f6ef7;
-    border: #4f6ef7;
-    font-size: 20px;
+.log-form-btn {
+  width: 300px;
+  height: 45px;
+  border-radius: 8px;
+  border: none;
+  background-color: #4f6ef7;
+  color: #ffffff;
+  font-size: 20px;
+  cursor: pointer;
 }
 
-.btn-forgot{
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    text-decoration: none;
+.log-form-forgot {
+  color: #4f6ef7;
+  font-size: 15px;
+  margin-top: 10px;
+  text-decoration: none;
 }
 
-a{
-   text-decoration: none;
+.log-form-register {
+  margin-top: 10px;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  margin-bottom: -30px;
 }
 
-.form-register{
-   margin-bottom: -20px;
-   margin-top: -10px;
-   font-family: "Poppins",sans-serif;
-   font-size: 15px;
-}
-
-.reg-text{
-    color: #4f6ef7;
+.log-reg-text {
+  color: #4f6ef7;
+  text-decoration: none;
 }

@@ -1,11 +1,9 @@
-/* ===== GLOBAL RESET ===== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* ===== FULL SCREEN BASE ===== */
 html,
 body,
 #root {
@@ -13,7 +11,6 @@ body,
   height: 100%;
 }
 
-/* ===== SCROLL CONTROL ===== */
 body {
   font-family: "Poppins", sans-serif;
   overflow-x: hidden;

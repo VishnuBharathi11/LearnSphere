@@ -1,0 +1,23 @@
+.navbar {
+  height: 72px;
+  padding: 0 32px;
+
+  display: flex;
+  align-items: center;
+
+  background: #ffffff;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-shrink: 0;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  margin-left: -20px;
+}
