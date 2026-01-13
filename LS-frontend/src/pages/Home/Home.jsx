@@ -1,7 +1,6 @@
 import React from "react";
 import "./Home.css";
 import { Link } from "react-router-dom";
-import logo from "../../assets/Logo/logo.png";
 import web from "../../assets/Popular Categories/web.png";
 import ai from "../../assets/Popular Categories/artificial-intelligence.png";
 import mobile from "../../assets/Popular Categories/app-development.png";
@@ -13,41 +12,17 @@ import f2 from "../../assets/Featured Courses/2.jpg";
 import f3 from "../../assets/Featured Courses/3.jpg";
 import f4 from "../../assets/Featured Courses/4.jpg";
 import { FaSearch } from "react-icons/fa";
+import Footer from '../../components/Footer/Footer';
+import NavBar from '../../components/NavBar/NavBar';
+import { useNavigate } from "react-router-dom";
 import About from "../About/About";
 function Home() {
+  const navigate = useNavigate();
   return (
-    <>
-      <nav className="navbar">
-        <img src={logo} className="logo" />
-        <div className="page-name">LearnSphere</div>
-
-        <div className="nav-links">
-          <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/pricing">Pricing</Link>
-          <Link to="/contact">Contact</Link>
-        </div>
-
-        <div className="nav-actions">
-          <Link to="/login" className="btn-login">
-            Login
-          </Link>
-          <Link to="/register" className="btn-register">
-            Register
-          </Link>
-        </div>
-      </nav>
-
-      <div className="main-head">
-        Unlock Your
-        <br /> Potential with
-        <br /> Online Learning
-      </div>
-
-      <div className="sub-main">
-        LearnSphere helps you master new skills with high-quality courses,
-        expert instructors, and flexible learning paths tailored for you.
-      </div>
+    <> 
+    <NavBar/>
+      <div className="main-head">Unlock Your<br/> Potential with<br/> Online Learning</div>
+      <div className="sub-main">LearnSphere helps you master new skills with high-quality courses, expert instructors, and flexible learning paths tailored for you.</div>   
 
       <div className="search">
         <input
@@ -61,7 +36,7 @@ function Home() {
       </div>
       <div className="btn-get-browse">
         <button className="btn-get">Get Started for Free</button>
-        <button className="btn-browse">Browse Course</button>
+        <button className="btn-browse" onClick={()=>navigate("/browse-courses")}>Browse Course</button>
       </div>
 
       <div className="pop-cat">
@@ -275,48 +250,8 @@ function Home() {
           </div>
         </div>
       </div>
-
-        <About/>
-
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="footer-column">
-            <div className="footer-head">LearnSphere</div>
-            <div className="footer-item">About us</div>
-            <div className="footer-item">Courses</div>
-            <div className="footer-item">Categories</div>
-            <div className="footer-item">Contact us</div>
-          </div>
-
-          <div className="footer-column">
-            <div className="footer-head">Support</div>
-            <div className="footer-item">Help center</div>
-            <div className="footer-item">FAQs</div>
-            <div className="footer-item">Terms of Service</div>
-            <div className="footer-item">Privacy Policy</div>
-          </div>
-
-          <div className="footer-column">
-            <div className="footer-head">Follow Us</div>
-            <div className="footer-item">Facebook</div>
-            <div className="footer-item">Twitter</div>
-            <div className="footer-item">LinkedIn</div>
-          </div>
-
-          <div className="footer-column">
-            <div className="footer-head">Get in Touch</div>
-            <div className="footer-item">info@learnsphere.com</div>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          © 2025 LearnSphere. All rights reserved
-        </div>
-        <div className="logo-text">
-          <div className="footer-brand-learn ">Learn</div>
-          <span className="footer-brand">Sphere</span>
-        </div>
-      </footer>
+      <About/>
+      <Footer/>
     </>
   );
 }

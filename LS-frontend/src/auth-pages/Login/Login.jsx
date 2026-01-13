@@ -1,37 +1,60 @@
-import React from 'react';
-import './Login.css';
-import { Link } from 'react-router-dom';
-import logo from '../../assets/Logo/logo.png'; 
+import React from "react";
+import "./Login.css";
+import { Link } from "react-router-dom";
+import Footer from "../../components/Footer/Footer";
+import NavBar from "../../components/NavBar/NavBar";
+
 function Login() {
   return (
-    <div className="form">
-    <div className="form-card">
-          <img src={logo} className="logo"/>
-          <div className="page-name">LearnSphere</div>
-      <div className="">
-        <div className="form-welcome">Welcome Back
-        <p className="">Login to continue learning</p>
+    <>
+    <NavBar/>
+    <div className="log-form">
+      <div className="log-form-card">
+        <div className="log-page-name">LearnSphere</div>
+
+        <div className="log-form-welcome">
+          Welcome Back
+          <p>Login to continue learning</p>
         </div>
-        
-        <form className="">
-          <div className="form-input-box">
-            <input type="text" placeholder="Username" name="name" required />
+
+        <form>
+          <div className="log-form-input-box">
+            <input
+              type="text"
+              placeholder="Username"
+              required
+            />
           </div>
-          <div className="form-input-box">
-            <input type="password" placeholder="Password" name="password" required />
+
+          <div className="log-form-input-box">
+            <input
+              type="password"
+              placeholder="Password"
+              required
+            />
           </div>
-          <div className="btn-forgot">
-            <button type="submit" className="form-btn">Login</button>
-            <Link to="/forgot-password" className="form-forgot">Forgot Password?</Link>
+
+          <div className="log-btn-forgot">
+            <button type="submit" className="log-form-btn">
+              Login
+            </button>
+
+            <Link to="/forgot-password" className="log-form-forgot">
+              Forgot Password?
+            </Link>
           </div>
         </form>
 
-        <div className="form-register">
-          Don't have an account? <Link to="/register"><span className="reg-text">Register here</span></Link>
+        <div className="log-form-register">
+          Don&apos;t have an account?{" "}
+          <Link to="/register" className="log-reg-text">
+            Register here
+          </Link>
         </div>
       </div>
     </div>
-    </div>
+    <Footer/>
+    </>
   );
 }
 
