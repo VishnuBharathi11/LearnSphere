@@ -63,6 +63,11 @@
   object-fit:cover;
   border-radius: 16px;
 }
+.ab-image img{
+  border-radius: 16px;
+  width: 420px;
+  height: 525px;
+}
 .ab-box{
   display: flex;
   flex-direction: column;
