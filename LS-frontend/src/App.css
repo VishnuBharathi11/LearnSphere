@@ -1,6 +1,21 @@
-/* ===== APP CONTAINER ===== */
+#root {
+  width: 100%;
+}
+
+.poppins-regular {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.inter {
+  font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
 .App {
-  min-height: 100vh;
+  min-height: 100%;
   width: 100%;
 
   display: flex;
@@ -16,13 +31,11 @@
 /* ===== HERO SECTION ===== */
 .hero {
   flex: 1;
-  min-height: calc(100vh - 72px); /* navbar height */
+  min-height: calc(100svh - 72px);
   width: 100%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  padding: 0 64px;
+  padding: 0 clamp(1rem, 4vw, 4rem);
   background: #f8fafc;
 }
