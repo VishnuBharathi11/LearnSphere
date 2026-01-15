@@ -16,6 +16,7 @@ import Footer from '../../components/Footer/Footer';
 import NavBar from '../../components/NavBar/NavBar';
 import { useNavigate } from "react-router-dom";
 import About from "../About/About";
+import Contact from "../Contact/Contact";
 function Home() {
   const navigate = useNavigate();
   return (
@@ -251,6 +252,7 @@ function Home() {
         </div>
       </div>
       <About/>
+      <Contact/>
       <Footer/>
     </>
   );
