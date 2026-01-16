@@ -1,6 +1,5 @@
 import React from "react";
 import "./Home.css";
-import { Link } from "react-router-dom";
 import web from "../../assets/Popular Categories/web.png";
 import ai from "../../assets/Popular Categories/artificial-intelligence.png";
 import mobile from "../../assets/Popular Categories/app-development.png";
@@ -36,7 +35,7 @@ function Home() {
         </div>
       </div>
       <div className="btn-get-browse">
-        <button className="btn-get">Get Started for Free</button>
+        <button className="btn-get" onClick={()=>navigate("/pricing")}>Get Started for Free</button>
         <button className="btn-browse" onClick={()=>navigate("/browse-courses")}>Browse Course</button>
       </div>
 

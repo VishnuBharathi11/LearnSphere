@@ -2,6 +2,7 @@ import React,{useState} from 'react'
 import NavBar from '../../components/NavBar/NavBar';
 import Footer from '../../components/Footer/Footer';
 import courses from './browsescourses'
+import "./BrowseCourses.css"
 function BrowseCourses() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("");
@@ -25,7 +26,7 @@ function BrowseCourses() {
       <div className="filter-bar">
         <input
           type="text"
-          placeholder="Search courses, skills, instructors..."
+          placeholder="Search courses, skills, instructors"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -61,13 +62,13 @@ function BrowseCourses() {
 
       <div className="course-grid">
         {filteredCourses.map(course => (
-          <div className="course-card" key={course.id}>
+          <div className="course" key={course.id}>
             <img src={course.image} alt={course.courseName} />
-            <h3>{course.courseName}</h3>
-            <p>{course.instructor}</p>
-            <p>⭐ {course.rating}</p>
-            <p>{course.category} • {course.level}</p>
-            <p className="price">₹{course.price}</p>
+            <div>{course.courseName}</div>
+            <div>{course.instructor}</div>
+            <div>⭐ {course.rating}</div>
+            <div>{course.category} • {course.level}</div>
+            <div className="price">₹{course.price}</div>
           </div>
         ))}
       </div>
