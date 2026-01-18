@@ -1,0 +1,144 @@
+.contact{
+    padding: 0 60px 0 60px;
+    margin-bottom: 30px;
+}
+.contact-header{
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    line-height: 1.5;
+}
+.ct-title{
+    font-family: "Poppins", sans-serif;
+    font-weight: 600;
+    font-size: 40px;
+    color: #111827;
+}
+.ct-title-sub{
+    font-family: "Inter" ,sans-serif;
+    font-weight: 350;
+    font-size: 20px;
+}
+.ct-title-meta{
+    font-family: "Inter" ,sans-serif;
+    font-weight: 350;
+    font-size: 14px;
+    color: #6b7280;
+    margin-top: 8px;
+}
+.contact-card{
+    display: flex;
+    /* grid-template-columns: 1fr 1fr 1fr; */
+    flex-direction: row;
+    gap: 25px;
+    justify-content: center;
+    margin-top: 20px;
+}
+.ct-card{
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 24px;
+    width: 300px;
+    height: 300;
+    font-family: "Inter" ,sans-serif;
+}
+.ct-card-icon img{
+    width: 50px;
+    height: 50px;
+}
+.ct-card-title{
+    font-family: "Poppins" ,sans-serif;
+    font-weight: 550;
+    font-size: 20px;
+}
+.ct-card-desc{
+    border-bottom: 2px solid #e5e7eb;
+    padding-bottom: 15px;
+}
+.ct-card-link{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    color: #4F46E5;
+    cursor: pointer;
+}
+.ct-card-link.primary{
+    color: rgb(8, 140, 140);
+}
+.ct-card-link.secondary{
+    color: rgb(166, 123, 59);
+}
+.ct-card-link img{
+    width: 20px;
+    height: 20px;
+}
+.ct-content-form{
+    display: flex;
+    flex-direction: row;
+    margin-top: 8px;
+    gap: 50px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    padding: 50px;
+    border-radius: 24px;
+    margin-top: 25px;
+}
+.contact-content{
+    font-family: "Inter" ,sans-serif;
+}
+.ct-cnt-label{
+    font-family: "Poppins" ,sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    font-size: 16px;
+    color: #6b7280;
+    margin-bottom: 24px;
+}
+.ct-cnt-head{
+    font-family: "Poppins" ,sans-serif;
+    font-weight: 400;
+    font-size: 28px;
+    line-height: 1.2;
+    margin-bottom: 24px;
+}
+.ct-cnt-text ,.ct-cnt-trust{
+    color: #6b7280;
+    list-style: 1;
+    margin-bottom: 24px;
+}
+.ct-cnt-avatar{
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+}
+.ct-cnt-avatar img{
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #ffffff;
+    margin-left: -12px;
+    background: #fff;
+}
+.ct-cnt-avatar:first-child{
+    margin-left: 0;
+}
+.contact-form{
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 30px;
+    width: 400px;
+}
+.ct-form-title{
+    font-size: 24px;
+    font-weight: 420;
+}
+.ct-form-field label{
+    font-size: 15px;
+    font-weight: 500;
+}
+.ct-form-field input{
+    
+}
