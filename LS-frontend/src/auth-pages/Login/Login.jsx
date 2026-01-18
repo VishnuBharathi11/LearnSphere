@@ -1,10 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Login.css";
-import { Link } from "react-router-dom";
+import { Link,useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
+import UserData from "../UsersData/UsersData"
 
 function Login() {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+      const user = UserData.find(
+      u => u.email === email && u.password === password
+    );
+    if (!user) {
+      alert("Invalid credentials");
+      return;
+    }
+    localStorage.setItem("role", user.role);
+
+    if (user.role === "learner") navigate("/learner-dashboard");
+    if (user.role === "instructor") navigate("/instructor");
+    if (user.role === "admin") navigate("/admin");
+  };
+
   return (
     <>
     <NavBar/>
@@ -22,7 +43,7 @@ function Login() {
             <input
               type="text"
               placeholder="Username"
-              required
+              required onChange={e => setEmail(e.target.value)}
             />
           </div>
 
@@ -30,12 +51,12 @@ function Login() {
             <input
               type="password"
               placeholder="Password"
-              required
+              required onChange={e => setPassword(e.target.value)}
             />
           </div>
 
           <div className="log-btn-forgot">
-            <button type="submit" className="log-form-btn">
+            <button type="submit" className="log-form-btn" onClick={handleLogin}>
               Login
             </button>
 
@@ -46,7 +67,7 @@ function Login() {
         </form>
 
         <div className="log-form-register">
-          Don&apos;t have an account?{" "}
+          Don't have an account?
           <Link to="/register" className="log-reg-text">
             Register here
           </Link>
