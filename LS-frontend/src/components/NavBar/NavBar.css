@@ -1,34 +1,21 @@
 .navbar {
   height: 72px;
-  padding: 0 32px;
-
   display: flex;
   align-items: center;
-
+  padding-right: 20px;
   background: #ffffff;
   border-bottom: 1px solid #eaeaea;
 }
-
-.brand {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  flex-shrink: 0;
-}
-
 .logo {
   width: 36px;
   height: 36px;
-  margin-left: -20px;
+  margin-bottom: 15px;
 }
-
 .page-name {
   font-family: "Poppins", sans-serif;
   font-size: 25px;
   font-weight: 600;
   color: #2f62b3;
-  white-space: nowrap;
-  margin-left: 8px;
 }
 
 .nav-links {
@@ -42,6 +29,7 @@
   text-decoration: none;
   font-family: "Inter", sans-serif;
   font-size: 18px;
+  font-size: 15px;
   font-weight: 500;
   color: #666;
 }

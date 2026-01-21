@@ -1,8 +1,11 @@
 import React from 'react'
+import SidebarStudent from '../../../components/SideBar-S/SidebarStudent'
 
 function MyProfile() {
   return (
-    <div>MyProfile</div>
+    <div>
+      <SidebarStudent/>
+    </div>
   )
 }
 

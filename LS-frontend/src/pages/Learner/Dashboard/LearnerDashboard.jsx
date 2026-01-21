@@ -1,14 +1,16 @@
 import React from 'react'
 import SidebarStudent from '../../../components/SideBar-S/SidebarStudent'
+import './LearnerDashboard.css'
 
 function LearnerDashboard() {
   return (
-     <div>
-    <div><SidebarStudent/></div>
-      <div className="classname">
-      <input type="search" />
+    <div className="learner-layout">
+      <SidebarStudent />
+      <div className="learner-content">
+        <input type="search" placeholder="Search courses..." />
+        <h1>Learner</h1>
       </div>
-      <h1>learner</h1>
+
     </div>
   )
 }
