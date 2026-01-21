@@ -26,7 +26,7 @@ function BrowseCourses() {
       <div className="filter-bar">
         <input
           type="text"
-          placeholder="Search courses, skills, instructors"
+          placeholder="Search for courses"
           value={search}
           onChange={e => setSearch(e.target.value)}
         />
@@ -60,15 +60,18 @@ function BrowseCourses() {
         </select>
       </div>
 
-      <div className="course-grid">
+      <div className="course-container">
         {filteredCourses.map(course => (
           <div className="course" key={course.id}>
-            <img src={course.image} alt={course.courseName} />
-            <div>{course.courseName}</div>
-            <div>{course.instructor}</div>
-            <div>⭐ {course.rating}</div>
-            <div>{course.category} • {course.level}</div>
-            <div className="price">₹{course.price}</div>
+            <img src={course.image} alt={course.courseName} className=""/>
+            <div className="course-name">{course.courseName}</div>
+            <div className="course-instr-name">{course.instructor}</div>
+            <div className="course-rating">⭐ {course.rating}</div>
+            <div className="course-cat-lvl-cont">
+            <div className="course-cat">{course.category}</div>
+              <div className="course-lvl">{course.level}</div>
+              </div>
+            <div className="course-price">₹{course.price}</div>
           </div>
         ))}
       </div>

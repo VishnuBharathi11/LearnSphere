@@ -1,25 +1,23 @@
 .navbar {
   height: 72px;
-  padding: 0 32px;
-
   display: flex;
   align-items: center;
-
+  padding-right: 20px;
   background: #ffffff;
   border-bottom: 1px solid #eaeaea;
 }
 .logo {
   width: 36px;
   height: 36px;
-  margin-left: -20px;
+  margin-bottom: 15px;
 }
 .page-name {
   font-family: "Poppins", sans-serif;
   font-size: 25px;
   font-weight: 600;
   color: #2f62b3;
-  white-space: nowrap;
-  margin-left: 8px;
+  margin-bottom: 15px;
+
 }
 
 .nav-links {
