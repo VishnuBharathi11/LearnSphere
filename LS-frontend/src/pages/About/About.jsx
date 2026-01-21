@@ -6,7 +6,7 @@ import { FiArrowRight } from "react-icons/fi";
 function About() {
   return (
     <>
-      <div className="about">
+      <div className="about" id="about">
         <div className="ab-title">About Us</div>
         <div className="about-content">
           <div className="ab-cont-sub">About LearnSphere</div>

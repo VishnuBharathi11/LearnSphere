@@ -4,12 +4,12 @@ import headset from "../../assets/Contact/headset.png";
 import school from "../../assets/Contact/school.png";
 import teacher from "../../assets/Contact/teacher.png";
 import email from "../../assets/Contact/message.png";
-import avatar1 from "../../assets/Contact/avatar1.png"
-import avatar2 from "../../assets/Contact/avatar2.png"
-import avatar3 from "../../assets/Contact/avatar3.png"
-import avatar4 from "../../assets/Contact/avatar4.png"
-import avatar5 from "../../assets/Contact/avatar5.png"
-import avatar6 from "../../assets/Contact/avatar6.png"
+import avatar1 from "../../assets/Contact/avatar1.png";
+import avatar2 from "../../assets/Contact/avatar2.png";
+import avatar3 from "../../assets/Contact/avatar3.png";
+import avatar4 from "../../assets/Contact/avatar4.png";
+import avatar5 from "../../assets/Contact/avatar5.png";
+import avatar6 from "../../assets/Contact/avatar6.png";
 
 function Contact() {
   const [form, setForm] = useState({
@@ -53,7 +53,7 @@ function Contact() {
 
   return (
     <>
-      <div className="contact">
+      <div className="contact" id="contact">
         <div className="contact-header">
           <div className="ct-title">Contact Us</div>
           <div className="ct-title-sub">
@@ -147,7 +147,7 @@ function Contact() {
                   <label> Name </label> <br />
                   <input
                     type="text"
-                    name="username"
+                    name="name"
                     placeholder="Enter your name"
                     value={form.name}
                     onChange={handleChange}
@@ -156,14 +156,14 @@ function Contact() {
                 </div>
                 <div className="ct-form-field">
                   <label>Email</label> <br />
-                  <input 
+                  <input
                     type="email"
                     name="email"
                     placeholder="Enter your email address"
                     value={form.email}
-                    onChange={handleChange} 
+                    onChange={handleChange}
                   />
-                  {errors.name && <p className="error">{errors.name}</p>}
+                  {errors.email && <p className="error">{errors.email}</p>}
                 </div>
                 <div className="ct-form-field">
                   <label>Role</label> <br />
@@ -173,11 +173,11 @@ function Contact() {
                     <option value="instructor">Instructor</option>
                     <option value="visitor">Visitor</option>
                   </select>
-                  {errors.name && <p className="error">{errors.name}</p>}
+                  {errors.role && <p className="error">{errors.role}</p>}
                 </div>
                 <div className="ct-form-field">
-                 <label>Subject</label> <br />
-                  <select name="subject" value={form.subject}>
+                  <label>Subject</label> <br />
+                  <select name="subject" value={form.subject} onChange={handleChange}>
                     <option value="">Select a subject</option>
                     <option value="course related issue">
                       Course related issue
@@ -190,7 +190,7 @@ function Contact() {
                     </option>
                     <option value="general enquiry">General enquiry</option>
                   </select>
-                  {errors.name && <p className="error">{errors.name}</p>}
+                  {errors.subject && <p className="error">{errors.subject}</p>}
                 </div>
                 <div className="ct-form-field">
                   <textarea
@@ -200,7 +200,7 @@ function Contact() {
                     onChange={handleChange}
                     rows={4}
                   />
-                  {errors.name && <p className="error">{errors.name}</p>}
+                  {errors.message && <p className="error">{errors.message}</p>}
                 </div>
                 <button type="submit" className="ct-form-btn">
                   Send Message
@@ -208,7 +208,6 @@ function Contact() {
               </form>
             </div>
           </div>
-
         </div>
       </div>
     </>
