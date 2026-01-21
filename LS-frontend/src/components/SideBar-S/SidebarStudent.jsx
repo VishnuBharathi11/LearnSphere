@@ -11,7 +11,7 @@ function SidebarStudent() {
         <div className="page-name">LearnSphere</div>
         </div>
         <div className="L-sidebar">
-        <Link to="/">Dashboard</Link>
+        <Link to="/learner-dashboard">Dashboard</Link>
         <Link to="/learner-my-courses">My Courses</Link>
         <Link to="/learner-progress">Progress</Link>
         <Link to="/learner-assesment">Assesment</Link>
