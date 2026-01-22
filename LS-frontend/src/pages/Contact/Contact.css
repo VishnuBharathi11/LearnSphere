@@ -139,6 +139,28 @@
     font-size: 15px;
     font-weight: 500;
 }
-.ct-form-field input{
-    
+.ct-form-field input,select,textarea{
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 14px;
+}
+.ct-form-field textarea{
+    margin-top: 10px;
+    font-family: "Inter" ,sans-serif;
+}
+.error{
+    font-family: "Inter", sans-serif;
+    font-size: 12px;
+    color: #a24218;
+}
+.ct-form-btn{
+    font-family: "Inter" ,sans-serif;
+    width: 100%;
+    padding: 9px;
+    background-color: #4F46E5;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
 }

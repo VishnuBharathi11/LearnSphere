@@ -16,8 +16,6 @@
   font-size: 25px;
   font-weight: 600;
   color: #2f62b3;
-  margin-bottom: 15px;
-
 }
 
 .nav-links {
@@ -26,16 +24,20 @@
   margin-left: auto;
 }
 
-.nav-links a {
+.nav-links a,
+.nav-links span{
   text-decoration: none;
-  font-family: "Poppins", sans-serif;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
   font-size: 15px;
   font-weight: 500;
   color: #666;
 }
 
-.nav-links a:hover {
+.nav-links a:hover,
+.nav-links span:hover {
   color: #2f62b3;
+  cursor: pointer;
 }
 
 .nav-actions {

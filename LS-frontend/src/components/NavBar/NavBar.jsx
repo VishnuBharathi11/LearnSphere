@@ -1,8 +1,13 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import logo from '../../assets/Logo/logo.png'
-import "./NavBar.css"
 function NavBar() {
+  const scrollToSection=(id)=>{
+      const section=document.getElementById(id);
+      if(section){
+        section.scrollIntoView({behavior:'smooth'});
+      }
+    }
   return (
     <>
     <nav className="navbar">
@@ -11,9 +16,9 @@ function NavBar() {
     
           <div className="nav-links">
           <Link to="/">Home</Link>
-          <Link to="/about">About</Link>
-          <Link to="/pricing">Pricing</Link>
-          <Link to="/contact">Contact</Link>
+          <span onClick={()=>scrollToSection("about")}>About</span>
+          <span onClick={()=>scrollToSection("contact")}>Contact</span>
+          <span onClick={()=>scrollToSection("pricing")}>Pricing</span>
           </div>
     
           <div className="nav-actions">
