@@ -1,5 +1,5 @@
-import React from "react";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
+import React from 'react'
+import SidebarStudent from "../../components/SideBar-S/SidebarStudent.jsx";
 import {
   LineChart,
   Line,
@@ -9,7 +9,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import "./LearnerProgress.css";
+import "./Progress.css";
 
 const status = [
   { title: "Completed Courses", value: 3 },
@@ -48,8 +48,7 @@ const courses = [
     status: "In Progress",
   },
 ];
-
-function LearnerProgress() {
+function Progress() {
   return (
     <div className="progress-layout">
       <SidebarStudent />
@@ -146,6 +145,7 @@ function LearnerProgress() {
         </div>
       </div>
     </div>
-  );
+  )
 }
-export default LearnerProgress;
+
+export default Progress

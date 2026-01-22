@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
-import "./LearnerMyCourses.css";
+import { useState } from "react";
+import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
+import "./Mycourses.css";
 
 const coursesData = [
   {
@@ -29,7 +29,7 @@ const coursesData = [
   },
 ];
 
-function LearnerMyCourses() {
+function Mycourses() {
   const [filter, setFilter] = useState("all");
 
   const filteredCourses = coursesData.filter((course) => {
@@ -37,14 +37,11 @@ function LearnerMyCourses() {
     if (filter === "completed") return course.progress === 100;
     return true;
   });
-
   return (
     <div className="learner-layout">
-
       <SidebarStudent />
 
       <div className="learner-content">
-
         <h2>My Courses</h2>
 
         <div className="course-tabs">
@@ -87,17 +84,14 @@ function LearnerMyCourses() {
                   ></div>
                 </div>
 
-                <button className="continue-btn">
-                  Continue Learning
-                </button>
+                <button className="continue-btn">Continue Learning</button>
               </div>
             ))
           )}
         </div>
-
       </div>
     </div>
   );
 }
 
-export default LearnerMyCourses;
+export default Mycourses;

@@ -1,0 +1,41 @@
+.learner-layout {
+  display: flex;
+  flex-direction:1fr ;
+  width: 100px;
+}
+.learner-content input {
+  width: 500px;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  outline: none;
+  font-size: 14px;
+}
+.welcome-cont{
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 20px;
+}
+.welcome-cont button{
+  color: #ffffff;
+  width: 140px;
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  background-color:#4A6CF7;
+  margin-top: 10px;
+}
+.chart-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  margin-bottom: 30px;
+}
+
+
+
