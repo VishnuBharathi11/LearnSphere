@@ -19,23 +19,23 @@ function Register() {
         </div>
 
         <form>
-          <div className="reg-form-input-box">
+          <div className="reg-form-input">
             <input type="text" placeholder="Username" required />
           </div>
 
-          <div className="reg-form-input-box">
+          <div className="reg-form-input">
             <input type="email" placeholder="Email" required />
           </div>
 
-          <div className="reg-form-input-box">
+          <div className="reg-form-input">
             <input type="text" placeholder="Phone Number" />
           </div>
 
-          <div className="reg-form-input-box">
+          <div className="reg-form-input">
             <input type="password" placeholder="Password" required />
           </div>
 
-          <div className="reg-form-input-box">
+          <div className="reg-form-input">
             <input type="password" placeholder="Confirm Password" required />
           </div>
 
@@ -47,7 +47,7 @@ function Register() {
         <div className="reg-form-login">
           Already have an account?
           <Link to="/login" className="reg-text">
-            Login here
+            Login
           </Link>
         </div>
       </div>

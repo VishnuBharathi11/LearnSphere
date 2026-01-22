@@ -16,8 +16,9 @@
 }
 .ct-title-sub{
     font-family: "Inter" ,sans-serif;
-    font-weight: 350;
+    /* font-weight: 350; */
     font-size: 20px;
+    /* color: #6b7280; */
 }
 .ct-title-meta{
     font-family: "Inter" ,sans-serif;

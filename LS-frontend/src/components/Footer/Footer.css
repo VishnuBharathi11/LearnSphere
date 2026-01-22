@@ -42,22 +42,20 @@
   font-size: 13px;
   color: #9ca3af;
 }
-.footer-brand {
-  font-size: 26px;
-  font-weight: 700;
-  color: #ffffff;
-  text-decoration: none;
-  font-family: "Poppins",sans-serif;
-}
-.footer-brand-learn{
-  font-size: 26px;
-  font-weight: 700;
-  color: #ffffff;
-  text-decoration: underline;
-  text-underline-offset: 5px;
-  font-family: "Playfair Display",serif;
-  transform: translateY(2px);
-}
 .logo-text{
   display: flex;
+  align-items: center;
+}
+.footer-brand.primary {
+  font-family: "Bree Serif", serif;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+.footer-brand {
+  font-size: 26px;
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1;
+  font-family: "Averia Serif Libre", serif;
 }

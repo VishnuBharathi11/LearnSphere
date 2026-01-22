@@ -39,7 +39,8 @@ function Footer() {
       <div className="footer-bottom">© 2025 LearnSphere. All rights reserved
       </div>
       <div className="logo-text">
-      <div className="footer-brand-learn ">Learn</div><span className="footer-brand">Sphere</span>
+      <div className="footer-brand primary">Learn</div>
+      <div className="footer-brand">Sphere</div>
       </div>
      </footer>
      </>
