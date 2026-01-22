@@ -1,20 +1,4 @@
-.btn-login {
-  padding: 8px 18px;
-  border: 1.5px solid #2f62b3;
-  border-radius: 8px;
-  color: #2f62b3;
-  text-decoration: none;
-  font-family: "Poppins", sans-serif;
-}
 
-.btn-register {
-  padding: 8px 18px;
-  background: #4f6ef7;
-  border-radius: 8px;
-  color: #fff;
-  text-decoration: none;
-  font-family: "Poppins", sans-serif;
-}
 .main-head {
   font-family: "Poppins", sans-serif;
   font-size: 80px;

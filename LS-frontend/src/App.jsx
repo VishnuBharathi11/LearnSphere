@@ -8,11 +8,9 @@ import Login from './auth-pages/Login/Login.jsx';
 import Register from './auth-pages/Register/Register.jsx';
 import ForgotPassword from './auth-pages/ForgotPassword/ForgotPassword.jsx'; 
 import BrowseCourses from './pages/BrowseCourses/BrowseCourses.jsx';
-import LearnerDashboard from './pages/Learner/Dashboard/LearnerDashboard.jsx';
-import LearnerAssesment from './pages/Learner/Assesment/LearnerAssesment.jsx';
-import MyProfile from './pages/Learner/LearnerProfile/MyProfile.jsx';
-import LearnerMyCourses from './pages/Learner/MyCourses/LearnerMyCourses.jsx';
-import LearnerProgress from './pages/Learner/Progress/LearnerProgress.jsx';
+import LearnerDashboard from './Learner/Dashboard/Dashboard.jsx';
+import LearnerMyCourses from './Learner/MyCourses/Mycourses.jsx';
+import LearnerProgress from './Learner/Progress/Progress.jsx'
 function App() {
   return (
     <>
@@ -28,8 +26,6 @@ function App() {
           <Route path="/learner-dashboard" element={ <LearnerDashboard/>} />
           <Route path="/learner-my-courses" element={ <LearnerMyCourses/>} />
           <Route path="/learner-progress" element={ <LearnerProgress/> } />
-          <Route path="/learner-assesment" element={ <LearnerAssesment/>} />
-          <Route path="/learner-my-profile" element={ <MyProfile/>} />
         </Routes>
     </>
   )
