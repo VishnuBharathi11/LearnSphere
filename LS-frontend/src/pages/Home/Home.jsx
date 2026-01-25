@@ -253,7 +253,6 @@ function Home() {
       </div>
       <About/>
       <Contact/>
-      <Pricing/>
       <Footer/>
     </>
   );
