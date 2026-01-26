@@ -1,93 +1,106 @@
 import React from "react";
 import "./Dashboard.css";
 import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
-import learnerimg from "../../assets/Learner/learner.jpg";
-
+import { IoIosNotifications } from "react-icons/io";
+import { CgProfile } from "react-icons/cg";
+import courses from "../../data/courses";
 import {
+  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
+  Tooltip
 } from "recharts";
 
-const weeklyData = [
-  { day: "S", hours: 3 },
-  { day: "M", hours: 5 },
-  { day: "T", hours: 7 },
-  { day: "W", hours: 6 },
-  { day: "T", hours: 8 },
-  { day: "F", hours: 10 },
-  { day: "S", hours: 13 },
+
+const learningProgressData = [
+  { day: "Sunday", hours: 3 },
+  { day: "Monday", hours: 5 },
+  { day: "Tuesday", hours: 7 },
+  { day: "Wednesday", hours: 6 },
+  { day: "Thursday", hours: 8 },
+  { day: "Friday", hours: 10 },
+  { day: "Saturday", hours: 13 },
 ];
+
+
 function Dashboard() {
   return (
     <div className="dashboard-layout">
       <SidebarStudent />
 
-      <div className="dashboard-content">
-        <input
-          type="text"
-          className="search-box"
-          placeholder="Search courses"
-        />
+      <div className="classname">
+        <input type="search" placeholder="search for courses..."/>
+        <IoIosNotifications />
+        <CgProfile />
+      </div>
 
-        <div className="dashboard-grid">
-          <div className="left-section">
-            <div className="welcome-card">
-              <div>
-                <h2>Welcome Back, Tony!</h2>
-                <p>Keep Learning!</p>
-                <button>Continue Learning</button>
-              </div>
-              <img src={learnerimg} alt="Learner" />
-            </div>
+      <div className="classname">
+        <div>Welcome back , Vishnu!</div>
+        <div>Keep Learning!</div>
+        <button>Continue Learning</button>
+      </div>
 
-            <div className="stats-row">
-              <div className="stat-box">
-                <h3>5</h3>
-                <span>Enrolled Courses</span>
-              </div>
-              <div className="stat-box">
-                <h3>18</h3>
-                <span>Lessons Completed</span>
-              </div>
-              <div className="stat-box">
-                <h3>2</h3>
-                <span>Certificates</span>
-              </div>
-              <div className="stat-box">
-                <h3>52</h3>
-                <span>Hours Studied</span>
-              </div>
-            </div>
+      <div className="classname">
 
-          <div className="right-section">
-            <div className="chart-card">
-              <p>Learning Progress</p>
+        <div className="classname">
+          <div className="">5</div>
+          <div className="classname">Enrolled Courses</div>
+        </div>
 
-              <ResponsiveContainer width="100%" height={180}>
-                <LineChart data={weeklyData}
-                margin={{ top: 10, right: 20, left: -35, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="day" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line
-                    type="monotone"
-                    dataKey="hours"
-                    stroke="#4A6CF7"
-                    strokeWidth={3}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-            </div>
-            </div>
-            </div>
-            </div>
+        <div className="classname">
+          <div className="">25</div>
+          <div className="classname">Lessons Completed</div>
+        </div>
+
+        <div className="classname">
+          <div className="">6</div>
+          <div className="classname">Certificates</div>
+        </div>
+
+        <div className="classname">
+          <div className="">45</div>
+          <div className="classname">Hours Studied</div>
+        </div>
+
+      </div>
+
+      <div className="classname">
+
+        <ResponsiveContainer width="300px" height={180}>
+        <LineChart
+          data={learningProgressData}
+          margin={{ top: 0, right: 20, left: -10, bottom: 0 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="day" />
+          <YAxis />
+          <Tooltip />
+          <Line
+            type="monotone"
+            dataKey="hours"
+            stroke="#4A6CF7"
+            strokeWidth={3}
+            dot={{ r: 4 }}
+            activeDot={{ r: 6 }}
+          />
+        </LineChart>
+      </ResponsiveContainer>
+
+      </div>
+
+      <div className="classname"> Continue Learning</div>
+
+      <div className="classname">
+
+        {/* {
+          courses.map((course,index)=>(
+
+          ))
+        } */}
+      </div>
+
     </div>
   );
 }

@@ -1,0 +1,10 @@
+.mycourses-layout{
+ 
+}
+.mycourse-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+.mycourse-card{
+    bo
+}

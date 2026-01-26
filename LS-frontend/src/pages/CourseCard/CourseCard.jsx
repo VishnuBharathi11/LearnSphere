@@ -3,6 +3,7 @@ import "./CourseCard.css";
 import { useNavigate } from "react-router-dom";
 function CourseCard({ course }) {
   const navigate = useNavigate();
+  
   return (
     <div className="course-card">
         <div className="course-image">
