@@ -1,33 +1,41 @@
 .filter-bar{
   display: flex;
+  width: 1460px;
+  margin-left: 30px;
+  margin-top: 20px;
+  padding: 15px;
   gap: 20px;
-  padding-left: 20px;
-  padding-top: 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background-color: #ffffff;
 }
 .filter-bar input {
-  width:350px;
-  border: 1px solid #e5e7eb;
+  width:500px;
+  border: 1px solid #a3a5a9;
   border-radius: 12px;
   padding: 10px;
   outline: none;
 }
 
 .filter-bar select {
-  width:200px;
-  border: 1px solid #e5e7eb;
+  width:150px;
+  border: 1px solid #a3a5a9;
   border-radius: 12px;
   padding: 10px;
+  margin-left: 50px;
   outline: none;
 }
-
-
 .course-container{
   display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  padding: 20px;
-  gap: 20px;
+   grid-template-columns: repeat(auto-fill, 300px);
+  gap: 40px;
+  padding-left: 100px;
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 .course{
+  width: 300px;
+  height: 300px;
   border: 1px solid #e5e7eb;
   border-radius: 12px;
   box-shadow:
@@ -36,7 +44,7 @@
   transform: translateY(-4px);
 }
 .course img{
-  width: 277px;
+  width: 298px;
   height: 150px;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
@@ -53,15 +61,18 @@
   font-size: 12px;
   padding-left: 5px;
 }
-.course-rating{
+.course-rating-price{
+  display: flex;
   color: #6B7280;
   padding-left: 5px;
   font-size: 12px;
+  gap: 210px;
+
 }
 .course-cat-lvl-cont{
   display: flex;
   gap: 20px;
-  padding-left: 15px;
+  padding-left: 30px;
   padding-top: 10px;
 }
 .course-cat{
@@ -86,6 +97,4 @@
   color: #ca4747;
   font-size: 15px;
   font-weight: 500;
-  padding: 5px;
-  text-align: center;
 }

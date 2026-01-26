@@ -1,6 +1,9 @@
-import React from 'react'
-import './Dashboard.css'
-import SidebarStudent from '../../components/SideBar-S/SidebarStudent';
+import React from "react";
+import "./Dashboard.css";
+import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
+import learnerimg from "../../assets/Learner/learner.jpg";
+import courseImg from "../../assets/Popular Categories/web.png";
+
 import {
   LineChart,
   Line,
@@ -11,110 +14,83 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// const status = [
-//   { title: "Completed Courses", value: 3 },
-//   { title: "Enrolled Courses", value: 5 },
-//   { title: "Hours Studied", value: 52 },
-//   { title: "Certificates", value: 2 },
-// ];
 const weeklyData = [
-  { day: "Mon", hours: 5 },
-  { day: "Tue", hours: 8 },
-  { day: "Wed", hours: 11 },
-  { day: "Thu", hours: 5 },
-  { day: "Fri", hours: 9 },
-  { day: "Sat", hours: 14 },
-  { day: "Sun", hours: 7 },
-];
-
-const courses = [
-  {
-    title: "Advance Java Script",
-    instructor: "Sarah Chen",
-    progress: 15,
-    status: "In Progress",
-  },
-  {
-    title: "Data Science Fundamentals",
-    instructor: "Dr. Lee",
-    progress: 100,
-    status: "Completed",
-  },
-  {
-    title: "Cybersecurity",
-    instructor: "John Smith",
-    progress: 38,
-    status: "In Progress",
-  },
+  { day: "S", hours: 3 },
+  { day: "M", hours: 5 },
+  { day: "T", hours: 7 },
+  { day: "W", hours: 6 },
+  { day: "T", hours: 8 },
+  { day: "F", hours: 10 },
+  { day: "S", hours: 13 },
 ];
 function Dashboard() {
   return (
-    <div className="learner-layout">
-      <SidebarStudent/>
-   <div className="learner-content">
-     <input type="search" placeholder="Search courses..." />
-     <div className="welcome-cont">
-     <div className="classname">Welcome Back,Vishnu!</div>
-     <div className="classname">Keep Learning!</div>
-     <button className="">Continue Learning</button>
-     </div>
-     <div className="chart-card">
-       <div>Weekly Learning Activity</div>
-       <ResponsiveContainer width="100%" height={250}>
-         <LineChart data={weeklyData}>
-           <CartesianGrid strokeDasharray="3 3" />
-           <XAxis dataKey="day" />
-           <YAxis />
-           <Tooltip />
-           <Line
-             type="monotone"
-             dataKey="hours"
-             stroke="#4f6ef7"
-             strokeWidth={3}
-           />
-         </LineChart>
-       </ResponsiveContainer>
-     </div>
-     <div className="classname">
-       <div className="classname">Continue Learning</div>
-       <div className="classname">
-          <div>
-             {courses.map((course, index) => (
-               <div className="course-progress-card" key={index}>
-                 <div className="course-row">
-                   <div>
-                     <h5>{course.title}</h5>
-                     <span>{course.instructor}</span>
-                   </div>
- 
-                   <span
-                     className={
-                       course.status === "Completed"
-                         ? "badge completed"
-                         : "badge progress"
-                     }
-                   >
-                     {course.status}
-                   </span>
-                 </div>
- 
-                 <div className="progress-bar">
-                   <div
-                     className="progress-fill"
-                     style={{ width: `${course.progress}%` }}
-                   ></div>
-                 </div>
- 
-                 <small>Progress: {course.progress}%</small>
-               </div>
-             ))}
-           </div>
-       </div>
-     </div>
- 
-   </div>
- </div>
-  )
+    <div className="dashboard-layout">
+      <SidebarStudent />
+
+      <div className="dashboard-content">
+        <input
+          type="text"
+          className="search-box"
+          placeholder="Search courses"
+        />
+
+        <div className="dashboard-grid">
+          <div className="left-section">
+            <div className="welcome-card">
+              <div>
+                <h2>Welcome Back, Tony!</h2>
+                <p>Keep Learning!</p>
+                <button>Continue Learning</button>
+              </div>
+              <img src={learnerimg} alt="Learner" />
+            </div>
+
+            <div className="stats-row">
+              <div className="stat-box">
+                <h3>5</h3>
+                <span>Enrolled Courses</span>
+              </div>
+              <div className="stat-box">
+                <h3>18</h3>
+                <span>Lessons Completed</span>
+              </div>
+              <div className="stat-box">
+                <h3>2</h3>
+                <span>Certificates</span>
+              </div>
+              <div className="stat-box">
+                <h3>52</h3>
+                <span>Hours Studied</span>
+              </div>
+            </div>
+
+          <div className="right-section">
+            <div className="chart-card">
+              <p>Learning Progress</p>
+
+              <ResponsiveContainer width="100%" height={180}>
+                <LineChart data={weeklyData}
+                margin={{ top: 10, right: 20, left: -35, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="day" />
+                  <YAxis />
+                  <Tooltip />
+                  <Line
+                    type="monotone"
+                    dataKey="hours"
+                    stroke="#4A6CF7"
+                    strokeWidth={3}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            </div>
+            </div>
+            </div>
+            </div>
+    </div>
+  );
 }
 
-export default Dashboard
+export default Dashboard;

@@ -66,12 +66,14 @@ function BrowseCourses() {
             <img src={course.image} alt={course.courseName} className=""/>
             <div className="course-name">{course.courseName}</div>
             <div className="course-instr-name">{course.instructor}</div>
+            <div className="course-rating-price">
             <div className="course-rating">⭐ {course.rating}</div>
+            <div className="course-price">₹{course.price}</div>
+            </div>
             <div className="course-cat-lvl-cont">
             <div className="course-cat">{course.category}</div>
               <div className="course-lvl">{course.level}</div>
               </div>
-            <div className="course-price">₹{course.price}</div>
           </div>
         ))}
       </div>

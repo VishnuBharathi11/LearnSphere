@@ -1,4 +1,4 @@
-const IMAGE_URL = "https://shorturl.at/WrMZa";
+const IMAGE_URL = "https://imgs.search.brave.com/YTm922W8Y-ysy2I_0nBPQFFXH_OzOmc5XHawvy7F17U/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMTUw/MDI4NTkyNy9waG90/by95b3VuZy13b21h/bi1hLXVuaXZlcnNp/dHktc3R1ZGVudC1z/dHVkeWluZy1vbmxp/bmUuanBnP3M9NjEy/eDYxMiZ3PTAmaz0y/MCZjPXl2RkRuWU1O/RUo2V0VEWXJBYU9P/TFh2LUpodHY2VmlC/UlhTekpoTDlTX2s9";
 
 const courses = [
   { id: 1, courseName: "Modern JavaScript from the Beginning", instructor: "Sarah Smith", category: "Web Development", level: "Beginner", rating: 4.8, price: 599, lessons: 24, image: IMAGE_URL },

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import logo from '../../assets/Logo/logo.png'
+import './NavBar.css'
 function NavBar() {
   const scrollToSection=(id)=>{
       const section=document.getElementById(id);
