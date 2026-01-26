@@ -2,7 +2,6 @@ import React from "react";
 import "./Dashboard.css";
 import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
 import learnerimg from "../../assets/Learner/learner.jpg";
-import courseImg from "../../assets/Popular Categories/web.png";
 
 import {
   LineChart,

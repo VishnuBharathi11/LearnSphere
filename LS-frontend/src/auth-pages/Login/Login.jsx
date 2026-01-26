@@ -69,7 +69,7 @@ function Login() {
         <div className="log-form-register">
           Don't have an account?
           <Link to="/register" className="log-reg-text">
-            Register here
+            Register
           </Link>
         </div>
       </div>

@@ -1,100 +1,18 @@
-.filter-bar{
-  display: flex;
-  width: 1460px;
-  margin-left: 30px;
-  margin-top: 20px;
-  padding: 15px;
-  gap: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  background-color: #ffffff;
+.browse-page{
+  padding: 10px 40px;
 }
-.filter-bar input {
-  width:500px;
-  border: 1px solid #a3a5a9;
-  border-radius: 12px;
-  padding: 10px;
-  outline: none;
-}
-
-.filter-bar select {
-  width:150px;
-  border: 1px solid #a3a5a9;
-  border-radius: 12px;
-  padding: 10px;
-  margin-left: 50px;
-  outline: none;
-}
-.course-container{
-  display: grid;
-   grid-template-columns: repeat(auto-fill, 300px);
-  gap: 40px;
-  padding-left: 100px;
-  padding-top: 40px;
-  padding-bottom: 40px;
-}
-.course{
-  width: 300px;
-  height: 300px;
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.08),
-    0 12px 28px rgba(0, 0, 0, 0.12);
-  transform: translateY(-4px);
-}
-.course img{
-  width: 298px;
-  height: 150px;
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-}
-.course-name{
-  font-family: "Poppins",sans-serif;
-  font-size: medium;
+.title{
+  font-size: 25px;
   font-weight: 600;
-  padding-left: 5px;
-  font-size: 15px;
 }
-.course-instr-name{
-  color: #6B7280;
-  font-size: 12px;
-  padding-left: 5px;
+.subtitle{
+  font-family: "Inter", sans-serif;
+  color: #666;
 }
-.course-rating-price{
-  display: flex;
-  color: #6B7280;
-  padding-left: 5px;
-  font-size: 12px;
-  gap: 210px;
-
-}
-.course-cat-lvl-cont{
-  display: flex;
+.course-grid{
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
   gap: 20px;
-  padding-left: 30px;
-  padding-top: 10px;
-}
-.course-cat{
-  padding: 3px;
-  color: #484545;
-  font-size: 10px;
-  border-radius: 12px;
-  width:110px;
-  text-align: center;
-  background-color: #A9C4FF;
-}
-.course-lvl{
-  padding: 3px;
-  color: #484545;
-  font-size: 10px;
-  border-radius: 12px;
-  width:110px;
-  text-align: center;
-  background-color: #B4BBD7;
-}
-.course-price{
-  color: #ca4747;
-  font-size: 15px;
-  font-weight: 500;
+  max-width: 1200px;
+  margin: 30px auto;
 }
