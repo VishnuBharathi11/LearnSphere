@@ -1,4 +1,3 @@
-
 const courses = [
   {
     id: 1,
@@ -8,7 +7,7 @@ const courses = [
     level: "Beginner",
     rating: 4.8,
     price: 599,
-    lessons: 24
+    lessons: 24,
   },
   {
     id: 2,
@@ -18,7 +17,7 @@ const courses = [
     level: "Advanced",
     rating: 3.8,
     price: 799,
-    lessons: 30
+    lessons: 30,
   },
   {
     id: 3,
@@ -28,7 +27,7 @@ const courses = [
     level: "Beginner",
     rating: 4.7,
     price: 499,
-    lessons: 20
+    lessons: 20,
   },
   {
     id: 4,
@@ -38,7 +37,7 @@ const courses = [
     level: "Beginner",
     rating: 4.8,
     price: 699,
-    lessons: 28
+    lessons: 28,
   },
   {
     id: 5,
@@ -48,7 +47,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 899,
-    lessons: 32
+    lessons: 32,
   },
 
   {
@@ -59,7 +58,8 @@ const courses = [
     level: "Intermediate",
     rating: 4.7,
     price: 699,
-    lessons: 18},
+    lessons: 18,
+  },
 
   {
     id: 7,
@@ -69,7 +69,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 499,
-    lessons: 15
+    lessons: 15,
   },
   {
     id: 8,
@@ -79,7 +79,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 899,
-    lessons: 22
+    lessons: 22,
   },
 
   {
@@ -90,7 +90,7 @@ const courses = [
     level: "Beginner",
     rating: 4.8,
     price: 799,
-    lessons: 26
+    lessons: 26,
   },
   {
     id: 10,
@@ -100,7 +100,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.7,
     price: 899,
-    lessons: 30
+    lessons: 30,
   },
   {
     id: 11,
@@ -110,7 +110,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 1099,
-    lessons: 35
+    lessons: 35,
   },
 
   {
@@ -121,7 +121,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.7,
     price: 838,
-    lessons: 24
+    lessons: 24,
   },
   {
     id: 13,
@@ -131,7 +131,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 799,
-    lessons: 28
+    lessons: 28,
   },
   {
     id: 14,
@@ -141,7 +141,7 @@ const courses = [
     level: "Advanced",
     rating: 4.5,
     price: 999,
-    lessons: 32
+    lessons: 32,
   },
 
   {
@@ -152,7 +152,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 699,
-    lessons: 20
+    lessons: 20,
   },
   {
     id: 16,
@@ -162,7 +162,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 1199,
-    lessons: 36
+    lessons: 36,
   },
 
   {
@@ -173,7 +173,7 @@ const courses = [
     level: "Beginner",
     rating: 4.7,
     price: 599,
-    lessons: 16
+    lessons: 16,
   },
   {
     id: 18,
@@ -183,7 +183,7 @@ const courses = [
     level: "Advanced",
     rating: 3.7,
     price: 1299,
-    lessons: 40
+    lessons: 40,
   },
 
   {
@@ -194,7 +194,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 899,
-    lessons: 22
+    lessons: 22,
   },
   {
     id: 20,
@@ -204,7 +204,7 @@ const courses = [
     level: "Advanced",
     rating: 4.7,
     price: 1199,
-    lessons: 34
+    lessons: 34,
   },
 
   {
@@ -215,7 +215,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.6,
     price: 799,
-    lessons: 27
+    lessons: 27,
   },
   {
     id: 22,
@@ -225,7 +225,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.5,
     price: 849,
-    lessons: 25
+    lessons: 25,
   },
 
   {
@@ -236,7 +236,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 499,
-    lessons: 18
+    lessons: 18,
   },
   {
     id: 24,
@@ -246,7 +246,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.6,
     price: 699,
-    lessons: 20
+    lessons: 20,
   },
   {
     id: 25,
@@ -256,7 +256,7 @@ const courses = [
     level: "Advanced",
     rating: 4.7,
     price: 999,
-    lessons: 26
+    lessons: 26,
   },
 
   {
@@ -267,7 +267,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 1099,
-    lessons: 34
+    lessons: 34,
   },
   {
     id: 27,
@@ -277,7 +277,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.5,
     price: 599,
-    lessons: 16
+    lessons: 16,
   },
   {
     id: 28,
@@ -287,7 +287,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 499,
-    lessons: 14
+    lessons: 14,
   },
 
   {
@@ -298,7 +298,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 599,
-    lessons: 18
+    lessons: 18,
   },
   {
     id: 30,
@@ -308,7 +308,7 @@ const courses = [
     level: "Advanced",
     rating: 4.7,
     price: 1099,
-    lessons: 30
+    lessons: 30,
   },
 
   {
@@ -319,7 +319,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.6,
     price: 899,
-    lessons: 28
+    lessons: 28,
   },
   {
     id: 32,
@@ -329,7 +329,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 699,
-    lessons: 20
+    lessons: 20,
   },
 
   {
@@ -340,7 +340,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 599,
-    lessons: 18
+    lessons: 18,
   },
   {
     id: 34,
@@ -350,7 +350,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 999,
-    lessons: 26
+    lessons: 26,
   },
 
   {
@@ -361,7 +361,7 @@ const courses = [
     level: "Beginner",
     rating: 4.8,
     price: 399,
-    lessons: 15
+    lessons: 15,
   },
   {
     id: 36,
@@ -371,7 +371,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.6,
     price: 699,
-    lessons: 22
+    lessons: 22,
   },
 
   {
@@ -382,7 +382,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.5,
     price: 649,
-    lessons: 20
+    lessons: 20,
   },
   {
     id: 38,
@@ -392,7 +392,7 @@ const courses = [
     level: "Advanced",
     rating: 4.7,
     price: 899,
-    lessons: 26
+    lessons: 26,
   },
 
   {
@@ -403,7 +403,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 699,
-    lessons: 20
+    lessons: 20,
   },
   {
     id: 40,
@@ -413,7 +413,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 1099,
-    lessons: 28
+    lessons: 28,
   },
 
   {
@@ -424,7 +424,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.7,
     price: 799,
-    lessons: 16
+    lessons: 16,
   },
   {
     id: 42,
@@ -434,7 +434,7 @@ const courses = [
     level: "Beginner",
     rating: 4.8,
     price: 599,
-    lessons: 14
+    lessons: 14,
   },
 
   {
@@ -445,7 +445,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.5,
     price: 699,
-    lessons: 18
+    lessons: 18,
   },
   {
     id: 44,
@@ -455,7 +455,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.6,
     price: 799,
-    lessons: 25
+    lessons: 25,
   },
 
   {
@@ -466,7 +466,7 @@ const courses = [
     level: "Advanced",
     rating: 4.5,
     price: 999,
-    lessons: 30
+    lessons: 30,
   },
   {
     id: 46,
@@ -476,7 +476,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 699,
-    lessons: 18
+    lessons: 18,
   },
   {
     id: 47,
@@ -486,7 +486,7 @@ const courses = [
     level: "Advanced",
     rating: 4.6,
     price: 1099,
-    lessons: 28
+    lessons: 28,
   },
   {
     id: 48,
@@ -496,7 +496,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.5,
     price: 899,
-    lessons: 24
+    lessons: 24,
   },
 
   {
@@ -507,7 +507,7 @@ const courses = [
     level: "Advanced",
     rating: 4.7,
     price: 1199,
-    lessons: 30
+    lessons: 30,
   },
   {
     id: 50,
@@ -517,7 +517,7 @@ const courses = [
     level: "Intermediate",
     rating: 4.8,
     price: 799,
-    lessons: 22
+    lessons: 22,
   },
   {
     id: 51,
@@ -527,7 +527,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 52,
@@ -537,7 +537,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 12
+    lessons: 12,
   },
   {
     id: 53,
@@ -547,7 +547,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 14
+    lessons: 14,
   },
   {
     id: 54,
@@ -557,7 +557,7 @@ const courses = [
     level: "Beginner",
     rating: 4.7,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 55,
@@ -567,7 +567,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 11
+    lessons: 11,
   },
   {
     id: 56,
@@ -577,7 +577,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 8
+    lessons: 8,
   },
   {
     id: 57,
@@ -587,7 +587,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 58,
@@ -597,7 +597,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 12
+    lessons: 12,
   },
   {
     id: 59,
@@ -607,7 +607,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 60,
@@ -617,7 +617,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 8
+    lessons: 8,
   },
   {
     id: 61,
@@ -627,7 +627,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 62,
@@ -637,7 +637,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 63,
@@ -647,7 +647,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 11
+    lessons: 11,
   },
   {
     id: 64,
@@ -657,7 +657,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 65,
@@ -667,7 +667,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 66,
@@ -677,7 +677,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 8
+    lessons: 8,
   },
   {
     id: 67,
@@ -687,7 +687,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 68,
@@ -697,7 +697,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 69,
@@ -707,7 +707,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 11
+    lessons: 11,
   },
   {
     id: 70,
@@ -717,7 +717,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 71,
@@ -727,7 +727,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 72,
@@ -737,7 +737,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 8
+    lessons: 8,
   },
   {
     id: 73,
@@ -747,7 +747,7 @@ const courses = [
     level: "Beginner",
     rating: 4.7,
     price: 0,
-    lessons: 12
+    lessons: 12,
   },
   {
     id: 74,
@@ -757,7 +757,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 11
+    lessons: 11,
   },
   {
     id: 75,
@@ -767,7 +767,7 @@ const courses = [
     level: "Beginner",
     rating: 4.4,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 76,
@@ -777,7 +777,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 77,
@@ -787,7 +787,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 12
+    lessons: 12,
   },
   {
     id: 78,
@@ -797,7 +797,7 @@ const courses = [
     level: "Beginner",
     rating: 4.5,
     price: 0,
-    lessons: 9
+    lessons: 9,
   },
   {
     id: 79,
@@ -807,7 +807,7 @@ const courses = [
     level: "Beginner",
     rating: 4.6,
     price: 0,
-    lessons: 10
+    lessons: 10,
   },
   {
     id: 80,
@@ -817,7 +817,7 @@ const courses = [
     level: "Beginner",
     rating: 4.7,
     price: 0,
-    lessons: 8
+    lessons: 8,
   },
 ];
 
