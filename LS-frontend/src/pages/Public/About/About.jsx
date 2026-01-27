@@ -1,6 +1,6 @@
 import React from "react";
 import "./About.css";
-import aboutimg from "../../assets/about/learnImg.png";
+import aboutimg from "../../../assets/about/learnImg.png";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { FiArrowRight } from "react-icons/fi";
 function About() {

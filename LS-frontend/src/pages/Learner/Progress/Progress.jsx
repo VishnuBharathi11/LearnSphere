@@ -1,5 +1,5 @@
 import React from 'react'
-import SidebarStudent from "../../components/SideBar-S/SidebarStudent.jsx";
+import SidebarStudent from '../../../components/SideBar-S/SidebarStudent'
 import {
   LineChart,
   Line,

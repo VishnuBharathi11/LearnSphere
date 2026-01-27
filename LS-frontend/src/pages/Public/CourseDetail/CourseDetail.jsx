@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
-import NavBar from "../../components/NavBar/NavBar.jsx"
-import courses from "../../data/courses";
+import NavBar from "../../../components/NavBar/NavBar.jsx"
+import courses from "../../../data/courses.js";
 import "./CourseDetail.css";
 
 function CourseDetail() {
@@ -35,6 +35,14 @@ function CourseDetail() {
       alert("Added to cart");
     })
   }
+  const enrolledCourses = (() => {
+  try {
+    return JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+  } catch {
+    return [];
+  }
+})();
+  const isEnrolled=enrolledCourses.includes(course.id);
   const curriculum = [
     {
       section: "Introduction to JavaScript",
@@ -133,8 +141,15 @@ function CourseDetail() {
           <div className="price-card">
             <div className="preview-box">Course Preview</div>
             <h2>{isFree ? "Free" : `₹${course.price}`}</h2>
-            <button className="primary-btn" onClick={handlePrimaryAction}>
-              {isFree ? "Enroll for Free" : "Buy Now"}
+            <button className="primary-btn" onClick={()=>{
+              if(isEnrolled){
+                navigate(`/learn/${course.id}`);
+              }
+              else{
+                handlePrimaryAction();
+              }
+            }}>
+              {isEnrolled?"Start Learning":isFree ? "Enroll for Free" : "Buy Now"}
             </button>
             {!isFree && <button className="secondary-btn" onClick={handleAddToCart}>Add to Cart</button>}
             <p className="guarantee">30-Day Money-Back Guarantee</p>

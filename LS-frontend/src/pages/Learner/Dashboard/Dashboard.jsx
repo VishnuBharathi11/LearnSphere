@@ -1,6 +1,6 @@
 import React from 'react'
 import './Dashboard.css'
-import SidebarStudent from '../../components/SideBar-S/SidebarStudent';
+import SidebarStudent from '../../../components/SideBar-S/SidebarStudent';
 import {
   LineChart,
   Line,

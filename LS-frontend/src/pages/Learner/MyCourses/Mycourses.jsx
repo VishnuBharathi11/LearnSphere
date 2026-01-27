@@ -1,5 +1,5 @@
 import { useState } from "react";
-import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
+import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
 import "./Mycourses.css";
 
 const coursesData = [

@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import "./Contact.css";
-import headset from "../../assets/Contact/headset.png";
-import school from "../../assets/Contact/school.png";
-import teacher from "../../assets/Contact/teacher.png";
-import email from "../../assets/Contact/message.png";
-import avatar1 from "../../assets/Contact/avatar1.png";
-import avatar2 from "../../assets/Contact/avatar2.png";
-import avatar3 from "../../assets/Contact/avatar3.png";
-import avatar4 from "../../assets/Contact/avatar4.png";
-import avatar5 from "../../assets/Contact/avatar5.png";
-import avatar6 from "../../assets/Contact/avatar6.png";
+import headset from "../../../assets/Contact/headset.png";
+import school from "../../../assets/Contact/school.png";
+import teacher from "../../../assets/Contact/teacher.png";
+import email from "../../../assets/Contact/message.png";
+import avatar1 from "../../../assets/Contact/avatar1.png";
+import avatar2 from "../../../assets/Contact/avatar2.png";
+import avatar3 from "../../../assets/Contact/avatar3.png";
+import avatar4 from "../../../assets/Contact/avatar4.png";
+import avatar5 from "../../../assets/Contact/avatar5.png";
+import avatar6 from "../../../assets/Contact/avatar6.png";
 
 function Contact() {
   const [form, setForm] = useState({
