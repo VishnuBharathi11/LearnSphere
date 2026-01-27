@@ -44,7 +44,7 @@ function CourseCard({ course }) {
       <div className="price">From ₹{course.price}</div>
       <button
         className="view-btn"
-        onClick={() => navigate`(/course/${course.id})`}
+        onClick={() => navigate(`/course/${course.id}`)}
       >
         View Course
       </button>

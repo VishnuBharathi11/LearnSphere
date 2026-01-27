@@ -16,7 +16,6 @@ import NavBar from '../../components/NavBar/NavBar';
 import { useNavigate } from "react-router-dom";
 import About from "../About/About";
 import Contact from "../Contact/Contact";
-import Pricing from "../Pricing/Pricing";
 function Home() {
   const navigate = useNavigate();
   return (
