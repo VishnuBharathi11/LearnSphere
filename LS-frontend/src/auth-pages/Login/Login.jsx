@@ -1,6 +1,6 @@
 import React, { useState } from "react";
+import { Link,useNavigate,useLocation } from "react-router-dom";
 import "./Login.css";
-import { Link,useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
 import UserData from "../UsersData/UsersData"
@@ -9,7 +9,9 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const navigate= useNavigate();
+  const location=useLocation();
+  const redirectTo=location.state?.from;
 
   const handleLogin = () => {
       const user = UserData.find(
@@ -19,11 +21,17 @@ function Login() {
       alert("Invalid credentials");
       return;
     }
+    localStorage.setItem("isLoggedIn","true")
     localStorage.setItem("role", user.role);
 
-    if (user.role === "learner") navigate("/learner-dashboard");
-    if (user.role === "instructor") navigate("/instructor");
-    if (user.role === "admin") navigate("/admin");
+    if(redirectTo){
+      navigate(redirectTo,{replace:true});
+      return;
+    }
+
+    if (user.role === "learner") navigate("/learner-dashboard",{replace:true});
+    if (user.role === "instructor") navigate("/instructor",{replace:true});
+    if (user.role === "admin") navigate("/admin",{replace:true});
   };
 
   return (
@@ -56,7 +64,7 @@ function Login() {
           </div>
 
           <div className="log-btn-forgot">
-            <button type="submit" className="log-form-btn" onClick={handleLogin}>
+            <button type="button" className="log-form-btn" onClick={handleLogin}>
               Login
             </button>
 

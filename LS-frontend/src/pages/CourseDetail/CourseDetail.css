@@ -23,13 +23,32 @@
     margin-top: 20px;
 }
 
+.course-detail-grid {
+    display: flex;
+    gap: 50px;
+    margin: 30px;
+}
+
+.course-main {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
 .card {
     border: 1px solid #e5e7eb;
     background-color: #ffffff;
-    margin: 30px;
-    width: 600px;
+    width: 100%;
     border-radius: 12px;
     padding: 24px;
+}
+
+.card ul {
+    list-style: none;
+    line-height: 2.5;
+    font-size: 14px;
+    color: #6b7280;
+    margin: 16px;
 }
 
 .card h3 {
@@ -88,21 +107,221 @@
     justify-content: space-between;
     align-items: center;
 }
-.accordion summary::webkit-details-marker{
+
+/* .accordion summary::webkit-details-marker{
     display: none;
+} */
+.accordion summary::after {
+    content: "";
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #111827;
+    border-bottom: 2px solid #111827;
+    border-color: #6b7280;
+    transform: rotate(-137deg);
+    transition: transform 0.25 ease;
+    margin-left: auto;
 }
-.accordion summary::after{
-    content: "⌄";
-    font-size: 18px;
-    color: #6b7280;
-    transition: transform 0.2s ease;
-}
+
 .accordion[open] summary::after {
-  transform: rotate(180deg);
+    transform: rotate(45deg);
 }
-.accordion ul{
+
+.accordion ul {
     list-style: none;
     padding: 0;
     margin: 0;
     background: #ffffff;
+}
+
+.accordion li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    border-top: 1px solid #e5e7eb;
+    font-size: 14px;
+    color: #111827;
+}
+
+.accordion li:has(.preview)::before {
+    content: "▶";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid #2563eb;
+    color: #2563eb;
+    font-size: 10px;
+    flex-shrink: 0;
+}
+
+.accordion li:not(:has(.preview))::before {
+    content: "🔒";
+    font-size: 16px;
+    color: #9ca3af;
+    flex-shrink: 0;
+}
+
+.lesson-meta {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.accordion li span:first-child {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview {
+    color: #2563eb;
+    font-weight: 500;
+}
+
+.accordion li:hover {
+    background: #f3f4f6;
+}
+
+.card h4 {
+    font-size: 20px;
+    font-weight: 500;
+    line-height: 2;
+}
+
+.card p {
+    color: #6b7280;
+    line-height: 1.6;
+    width: 400px;
+}
+
+.course-sidebar {
+    position: static;
+    top: 24px;
+    width: 400px;
+}
+
+.price-card {
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 28px;
+}
+
+.preview-box {
+    background: #f3f4f6;
+    border-radius: 12px;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 15px;
+    color: #374151;
+    margin-bottom: 20px;
+    position: relative;
+}
+.preview-box::after{
+    content: "▶";
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #374151;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+.price-card h2{
+    font-size: 32px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 14px;
+}
+.primary-btn{
+    width:100%;
+    padding: 14px;
+    border-radius: 10px;
+    border: none;
+    background: #3b82f6;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 12px;
+}
+.primary-btn:hover {
+  background: #2563eb;
+}
+.secondary-btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 10px;
+  background: transparent;
+  border: 2px solid #3b82f6;
+  color: #3b82f6;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 16px;
+}
+.guarantee {
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 20px;
+}
+.includes-title h4{
+    font-weight: 600;
+    font-size: 16px;
+    padding: 14px 0;
+    border-top: 1px solid #9ca3af;
+}
+.includes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.includes li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  font-size: 14px;
+  color: #374151;
+  margin-bottom: 12px;
+}
+.includes li::before {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #64748b;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+.includes li.video::before{
+    content: "🕘";
+    
+}
+.includes li.resource::before {
+  content: "📘";
+}
+.includes li.certificate::before {
+  content: "🎓";
+}
+.includes li.access::before {
+  content: "✔";
+  border-radius: 50%;
+}
+.includes li.devices::before {
+  content: "💻";
 }

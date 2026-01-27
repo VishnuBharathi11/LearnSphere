@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
+import NavBar from "../../components/NavBar/NavBar.jsx"
 import courses from "../../data/courses";
 import "./CourseDetail.css";
 
@@ -6,19 +7,34 @@ function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const course = courses.find((c) => c.id === Number(id));
-  // const isLoggedIn=true;
-  // const[activeTab,setActiveTab]=useState("overview");
+  const isLoggedIn=localStorage.getItem("isLoggedIn")==="true";
   if (!course) {
     return <p style={{ padding: "40px" }}>Course not found</p>;
   }
+  const requireAuth=(callback)=>{
+    if(!isLoggedIn){
+      navigate("/login",{
+        state:{from:`/course/${course.id}`}
+      });
+      return;
+    }
+    callback();
+  };
   const isFree = course.price === 0;
   const handlePrimaryAction = () => {
-    if (isFree) {
+    requireAuth(()=>{
+      if (isFree) {
       navigate(`/enroll/${course.id}`);
     } else {
       navigate(`/buy/${course.id}`);
     }
+    });
   };
+  const handleAddToCart=()=>{
+    requireAuth(()=>{
+      alert("Added to cart");
+    })
+  }
   const curriculum = [
     {
       section: "Introduction to JavaScript",
@@ -45,6 +61,8 @@ function CourseDetail() {
   ];
 
   return (
+    <>
+     <NavBar/>
     <div className="course-detail">
       <div className="course-hero">
         <h1 className="course-title">{course.courseName}</h1>
@@ -80,11 +98,9 @@ function CourseDetail() {
                 <ul>
                   {block.lessons.map((lesson, j) => (
                     <li key={j}>
-                      <span>{lesson.title}</span>
-                      <span>
-                        {lesson.preview && (
-                          <span className="preview">Preview</span>
-                        )}
+                      <span className="lesson-title">{lesson.title}</span>
+                      <span className="lesson-meta">
+                        {lesson.preview &&<span className="preview">Preview</span>}
                         {lesson.duration}
                       </span>
                     </li>
@@ -108,8 +124,7 @@ function CourseDetail() {
             <h4>{course.instructor}</h4>
             <p>Full Stack Developer & Educator</p>
             <p>
-              Experienced web developer with a passion for teaching and helping
-              students build real-world skills.
+              Sarah is a passionate educator with over 8 years of experience in web development. She has taught thousands of students and believes in making programming accessible to everyone.
             </p>
           </div>
         </div>
@@ -121,19 +136,24 @@ function CourseDetail() {
             <button className="primary-btn" onClick={handlePrimaryAction}>
               {isFree ? "Enroll for Free" : "Buy Now"}
             </button>
-            {!isFree && <button className="secondary-btn">Add to Cart</button>}
+            {!isFree && <button className="secondary-btn" onClick={handleAddToCart}>Add to Cart</button>}
             <p className="guarantee">30-Day Money-Back Guarantee</p>
 
-            <ul className="includes">
-              <li>12 hours on-demand video</li>
-              <li>24 downloadable resources</li>
-              <li>Certificate of completion</li>
-              <li>Lifetime access</li>
+            <div className="includes-title">
+              <h4>This course includes:</h4>
+              <ul className="includes">
+              <li className="video">12 hours on-demand video</li>
+              <li className="resource">24 downloadable resources</li>
+              <li className="certificate">Certificate of completion</li>
+              <li className="access">Lifetime access</li>
+              <li className="devices">Access on mobile and desktop</li>
             </ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
+    </>
   );
 }
 

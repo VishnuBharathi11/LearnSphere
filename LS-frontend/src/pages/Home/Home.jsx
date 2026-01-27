@@ -36,7 +36,7 @@ function Home() {
       </div>
       <div className="btn-get-browse">
         <button className="btn-get" onClick={()=>navigate("/pricing")}>Get Started for Free</button>
-        <button className="btn-browse" onClick={()=>navigate("/browse-courses")}>Browse Course</button>
+        <button className="btn-browse" onClick={()=>navigate("/courses")}>Browse Course</button>
       </div>
 
       <div className="pop-cat">
