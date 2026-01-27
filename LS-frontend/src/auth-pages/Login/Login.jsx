@@ -3,7 +3,7 @@ import "./Login.css";
 import { Link,useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
-import UserData from "../UsersData/UsersData"
+import UserData from "../../data/UsersData"
 
 function Login() {
 

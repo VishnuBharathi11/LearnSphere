@@ -15,7 +15,8 @@ function SidebarStudent() {
         <Link to="/learner-my-courses">My Courses</Link>
         <Link to="/learner-progress">Progress</Link>
         <Link to="/learner-assesment">Assesment</Link>
-        <Link to="/learner-my-profile">My Profile</Link>
+        <Link to="/learner-profile">My Profile</Link>
+       <Link to="/">Logout</Link>
         </div>
         </nav>
         </>

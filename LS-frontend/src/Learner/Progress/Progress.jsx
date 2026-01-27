@@ -1,4 +1,5 @@
 import React from 'react'
+import "./Progress.css"
 import SidebarStudent from "../../components/SideBar-S/SidebarStudent.jsx";
 import {
   LineChart,
@@ -60,7 +61,6 @@ function Progress() {
             <h2>Learning Progress</h2>
             <p>Track your learning journey and achievements</p>
           </div>
-          <img src="" alt="profile" />
         </div>
 
         <div className="stats-grid">
@@ -126,8 +126,6 @@ function Progress() {
               </div>
             ))}
           </div>
-
-          {/* ACHIEVEMENTS */}
           <div>
             <h4>Achievements</h4>
 

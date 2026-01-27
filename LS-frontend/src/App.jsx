@@ -11,6 +11,8 @@ import BrowseCourses from './pages/BrowseCourses/BrowseCourses.jsx';
 import LearnerDashboard from './Learner/Dashboard/Dashboard.jsx';
 import LearnerMyCourses from './Learner/MyCourses/Mycourses.jsx';
 import LearnerProgress from './Learner/Progress/Progress.jsx'
+import Profile from './Learner/Profile/Profile.jsx';
+import Assesment from './Learner/Assesment/Assesment.jsx';
 function App() {
   return (
     <>
@@ -26,7 +28,11 @@ function App() {
           <Route path="/learner-dashboard" element={ <LearnerDashboard/>} />
           <Route path="/learner-my-courses" element={ <LearnerMyCourses/>} />
           <Route path="/learner-progress" element={ <LearnerProgress/> } />
+          <Route path="/learner-profile" element={<Profile/>} />
+          <Route path="/learner-assesment" element={<Assesment/>} />
         </Routes>
+
+        
     </>
   )
 }
