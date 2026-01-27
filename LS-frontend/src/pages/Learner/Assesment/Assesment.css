@@ -1,0 +1,247 @@
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+/* ================= LAYOUT ================= */
+
+.assessment-layout {
+  display: flex;
+  background: #f6f8fc;
+  min-height: 100vh;
+}
+
+.assessment-content {
+  width: 100%;
+  padding: 30px 40px;
+}
+
+/* ================= PAGE HEADER ================= */
+
+.page-title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.page-subtitle {
+  font-size: 15px;
+  color: #6b7280;
+  margin-bottom: 32px;
+}
+
+/* ================= SUMMARY CARDS ================= */
+
+.assessment-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.summary-card {
+  background: #ffffff;
+  padding: 22px 24px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.summary-card span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.summary-card h3 {
+  font-size: 32px;
+  font-weight: 600;
+  margin-top: 8px;
+  color: #111827;
+}
+
+/* ================= MAIN GRID ================= */
+
+.assessment-grid {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 32px;
+}
+
+/* ================= SECTION HEAD ================= */
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 20px;
+}
+
+/* ================= ASSESSMENT CARD ================= */
+
+.assessment-card {
+  background: #ffffff;
+  padding: 24px 28px;
+  border-radius: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+}
+
+.assessment-info h4 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #111827;
+}
+
+.assessment-info p {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 10px;
+}
+
+.assessment-info span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* ================= RIGHT ACTION ================= */
+
+.assessment-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ================= STATUS BADGES ================= */
+
+.status {
+  padding: 6px 16px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pending {
+  background: #ffe6cc;
+  color: #ff8a00;
+}
+
+.completed {
+  background: #daf5dc;
+  color: #2e7d32;
+}
+
+.failed {
+  background: #f8d7da;
+  color: #d32f2f;
+}
+
+/* ================= BUTTONS ================= */
+
+.primary-btn {
+  background: #4a6cf7;
+  color: #ffffff;
+  border: none;
+  padding: 10px 26px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.primary-btn:hover {
+  background: #3b5bf0;
+}
+
+.outline-btn {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  padding: 10px 26px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ================= RULES CARD ================= */
+
+.rules-card {
+  background: #ffffff;
+  padding: 26px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  margin-bottom: 28px;
+}
+
+.rules-card ul {
+  margin-top: 12px;
+  padding-left: 18px;
+  color: #6b7280;
+}
+
+.rules-card li {
+  margin-bottom: 10px;
+}
+
+/* ================= RESULT SUMMARY ================= */
+
+.result-card {
+  background: #ffffff;
+  padding: 28px;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+.result-card h4 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.result-score {
+  font-size: 42px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.score-label {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 12px;
+}
+
+.pass-badge {
+  background: #2e7d32;
+  color: #ffffff;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+  display: inline-block;
+  margin-top: 10px;
+
+}
+
+/* correct / wrong */
+.score-box {
+  background: #eef2ff;
+  padding: 14px 18px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  margin: 18px 0;
+  font-size: 14px;
+}
+
+/* buttons */
+.result-actions {
+  display: flex;
+  gap: 18px;
+}
+
+.result-actions button {
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}

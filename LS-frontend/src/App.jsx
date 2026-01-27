@@ -13,6 +13,8 @@ import PaymentSuccess from './pages/Checkout/PaymentSuccess/PaymentSuccess.jsx';
 import LearnerDashboard from './pages/Learner/Dashboard/Dashboard.jsx'
 import LearnerMyCourses from './pages/Learner/MyCourses/Mycourses.jsx';
 import LearnerProgress from './pages/Learner/Progress/Progress.jsx'
+import Profile from './pages/Learner/Profile/Profile.jsx';
+import Assesment from './pages/Learner/Assesment/Assesment.jsx';
 function App() {
   return (
     <>
@@ -30,7 +32,9 @@ function App() {
           <Route path="/learner-dashboard" element={ <LearnerDashboard/>} />
           <Route path="/learner-my-courses" element={ <LearnerMyCourses/>} />
           <Route path="/learner-progress" element={ <LearnerProgress/> } />
-        </Routes>
+          <Route path="/learner-profile" element={<Profile/>} />
+          <Route path="/learner-assesment" element={<Assesment/>} />
+        </Routes>        
     </>
   )
 }

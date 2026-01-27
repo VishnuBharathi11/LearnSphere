@@ -1,0 +1,130 @@
+* {
+  box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+.mycourses-layout {
+  display: flex;
+  background: #f6f8fc;
+  min-height: 100vh;
+}
+
+.mycourses-content {
+  width: 100%;
+  padding: 10px 40px;
+}
+
+.page-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 25px;
+  font-weight: 600;
+}
+
+.tabs {
+  display: flex;
+  gap: 20px;
+  margin: 15px 0 25px;
+}
+
+.tabs button {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.tabs button.active {
+  background-color: #eef2ff;
+  color: #4f46e5;
+  border-color: #c7d2fe;
+}
+
+.mycourse-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin-top: 30px;
+}
+
+/* ---------- CARD ---------- */
+
+.mycourse-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+.mycourse-img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.mycourse-title {
+  padding: 20px 20px 0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.mycourse-instructor {
+  padding: 0 20px;
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+}
+
+/* ---------- PROGRESS ---------- */
+
+.mycourse-progress-text {
+  padding: 10px 20px 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4f46e5;
+}
+
+.mycourse-progress-track {
+  margin: 0 20px 16px;
+  height: 6px;
+  background: #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.mycourse-progress-fill {
+  height: 100%;
+  background: #4f46e5;
+  border-radius: 10px;
+}
+
+/* ---------- BUTTON ---------- */
+
+.mycourse-btn {
+  margin: 10px 20px 20px;
+  background-color: #4f46e5;
+  border: none;
+  padding: 10px;
+  width: calc(100% - 40px);
+  border-radius: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.mycourse-btn:hover {
+  background-color: #4338ca;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: #6b7280;
+}
