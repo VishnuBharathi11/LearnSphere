@@ -17,10 +17,17 @@ function PaymentSuccess() {
   const courseId = state?.courseId;
   const course = courses.find((c) => c.id === courseId);
   useEffect(() => {
-    const enrolled = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-    if (!enrolled.includes(course.id)) {
-      enrolled.push(course.id);
-      localStorage.setItem("enrolledCourses", JSON.stringify(enrolled));
+    const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+    const alreadyEnrolled=enrolledCourses.some(
+      (c)=>c.courseId===courseId
+    );
+    if(!alreadyEnrolled){
+      enrolledCourses.push({
+        courseId,
+        progress:0,
+        lastLessonIndex:0,
+      });
+      localStorage.setItem("enrolledCourses",JSON.stringify(enrolledCourses));
     }
   }, [course.id]);
   return (

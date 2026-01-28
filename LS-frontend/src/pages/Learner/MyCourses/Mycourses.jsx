@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import "./MyCourses.css";
-import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
-import courses from "../../data/courses";
+import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
+import courses from "../../../data/courses";
+import { useNavigate } from "react-router-dom";
 
 const CATEGORY_IMAGES = {
   "Web Development":
@@ -26,21 +27,14 @@ const CATEGORY_IMAGES = {
     "https://images.unsplash.com/photo-1519389950473-47ba0277781c"
 };
 
-const learnerCourses = [
-  { courseId: 1, progress: 0 },
-  { courseId: 2, progress: 15 },
-  { courseId: 3, progress: 65 },
-  { courseId: 4, progress: 98 },
-  { courseId: 5, progress: 100 }
-];
-
 function MyCourses() {
+  const navigate=useNavigate();
   const [activeTab, setActiveTab] = useState("all");
-
-  const mergedCourses = learnerCourses
-    .map((item) => {
+  const enrolledCourses=JSON.parse(localStorage.getItem("enrolledCourses"))||[];
+  const mergedCourses = enrolledCourses.map((item) => {
       const course = courses.find((c) => c.id === item.courseId);
-      if (!course) return null;
+      if (!course) 
+        return null;
       return { ...course, progress: item.progress };
     })
     .filter(Boolean);
@@ -126,7 +120,7 @@ function MyCourses() {
                   ></div>
                 </div>
 
-                <button className="mycourse-btn">
+                <button className="mycourse-btn" onClick={()=>navigate(`/learn/${course.id}`)}>
                   {course.progress === 100
                     ? "Download Certificate"
                     : "Continue Learning"}
