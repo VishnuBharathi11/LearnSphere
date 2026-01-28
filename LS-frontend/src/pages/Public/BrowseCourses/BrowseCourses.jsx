@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import NavBar from "../../components/NavBar/NavBar";
-import courses from "../../data/courses";
-import CourseCard from "../CourseCard/CourseCard";
+import NavBar from "../../../components/NavBar/NavBar";
+import courses from "../../../data/courses";
+import CourseCard from "../../../components/CourseCard/CourseCard";
 import "./BrowseCourses.css";
 function BrowseCourses() {
   const [category, setCategory] = useState("");

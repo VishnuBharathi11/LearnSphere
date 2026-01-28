@@ -1,6 +1,11 @@
+<<<<<<< HEAD:LS-frontend/src/Learner/Progress/Progress.jsx
 import React from "react";
 import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
 import progressImage from "../../assets/Featured Courses/3.jpg";
+=======
+import React from 'react'
+import SidebarStudent from '../../../components/SideBar-S/SidebarStudent'
+>>>>>>> 1f4191c66478d0f95ad49401669fa664f65cd152:LS-frontend/src/pages/Learner/Progress/Progress.jsx
 import {
   LineChart,
   Line,
@@ -140,6 +145,8 @@ function Progress() {
               </div>
             ))}
           </div>
+
+          {/* ACHIEVEMENTS */}
           <div>
             <h4 className="section-title">Achievements</h4>
 

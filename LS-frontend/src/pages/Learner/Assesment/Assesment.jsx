@@ -1,5 +1,5 @@
 import React from "react";
-import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
+import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
 import "./Assesment.css";
 
 function Assesment() {

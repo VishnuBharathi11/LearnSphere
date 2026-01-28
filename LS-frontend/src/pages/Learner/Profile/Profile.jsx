@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
-import SidebarStudent from "../../components/SideBar-S/SidebarStudent";
+import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
 import { FaRegEdit } from "react-icons/fa";
-import profileImage from "../../assets/Learner/learner-profile.jpeg";
+import profileImage from "../../../assets/Learner/learner-profile.jpeg";
 import "./Profile.css";
 
 function Profile() {
