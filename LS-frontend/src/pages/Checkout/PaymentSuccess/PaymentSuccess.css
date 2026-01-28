@@ -41,7 +41,8 @@
   margin-top: 8px;
 }
 
-.card {
+.ps-card {
+  width: 100%;
   background: #ffffff;
   border-radius: 16px;
   padding: 24px;
@@ -49,12 +50,12 @@
   margin-bottom: 24px;
 }
 
-.course-card {
+.ps-course-card {
   display: flex;
   gap: 24px;
 }
 
-.course-card img {
+.ps-course-card img {
   width: 260px;
   border-radius: 12px;
 }
@@ -113,7 +114,7 @@
   gap: 14px;
 }
 
-.primary-btn {
+.ps-primary-btn {
   background: linear-gradient(to right, #2563eb, #7c3aed);
   color: #fff;
   border: none;
@@ -127,7 +128,7 @@
   gap: 10px;
 }
 
-.secondary-btn {
+.ps-secondary-btn {
   background: #ffffff;
   border: 2px solid #d1d5db;
   padding: 16px;

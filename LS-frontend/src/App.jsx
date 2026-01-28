@@ -11,10 +11,11 @@ import CourseDetail from './pages/Public/CourseDetail/CourseDetail.jsx';
 import PaymentPage from './pages/Checkout/PaymentPage/PaymentPage.jsx';
 import PaymentSuccess from './pages/Checkout/PaymentSuccess/PaymentSuccess.jsx';
 import LearnerDashboard from './pages/Learner/Dashboard/Dashboard.jsx'
-import LearnerMyCourses from './pages/Learner/MyCourses/Mycourses.jsx';
+// import LearnerMyCourses from './pages/Learner/MyCourses/Mycourses.jsx';
 import LearnerProgress from './pages/Learner/Progress/Progress.jsx'
 import Profile from './pages/Learner/Profile/Profile.jsx';
 import Assesment from './pages/Learner/Assesment/Assesment.jsx';
+import LearnCourse from './pages/Learner/LearnCourse/LearnCourse.jsx';
 function App() {
   return (
     <>
@@ -30,9 +31,10 @@ function App() {
           <Route path="/buy/:id" element={<PaymentPage/>}/>
           <Route path="/payment-success" element={<PaymentSuccess/>}/>
           <Route path="/learner-dashboard" element={ <LearnerDashboard/>} />
-          <Route path="/learner-my-courses" element={ <LearnerMyCourses/>} />
+          {/* <Route path="/learner-my-courses" element={ <LearnerMyCourses/>} /> */}
           <Route path="/learner-progress" element={ <LearnerProgress/> } />
           <Route path="/learner-profile" element={<Profile/>} />
+          <Route path="/learn/:id" element={<LearnCourse/>}/>
           <Route path="/learner-assesment" element={<Assesment/>} />
         </Routes>        
     </>
