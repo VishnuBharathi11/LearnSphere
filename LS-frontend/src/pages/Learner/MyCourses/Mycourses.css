@@ -11,12 +11,12 @@
 
 .mycourses-content {
   width: 100%;
-  padding: 10px 40px;
+  padding: 30px 40px;
 }
 
 .page-title {
   font-family: "Poppins", sans-serif;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 600;
 }
 
@@ -51,8 +51,6 @@
   margin-top: 30px;
 }
 
-/* ---------- CARD ---------- */
-
 .mycourse-card {
   background: #ffffff;
   border-radius: 12px;
@@ -71,7 +69,7 @@
 .mycourse-title {
   padding: 20px 20px 0;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .mycourse-instructor {
@@ -81,8 +79,6 @@
   font-weight: 500;
   color: #111827;
 }
-
-/* ---------- PROGRESS ---------- */
 
 .mycourse-progress-text {
   padding: 10px 20px 4px;
@@ -104,8 +100,6 @@
   background: #4f46e5;
   border-radius: 10px;
 }
-
-/* ---------- BUTTON ---------- */
 
 .mycourse-btn {
   margin: 10px 20px 20px;
