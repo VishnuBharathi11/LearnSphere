@@ -1,8 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./MyCourses.css";
 import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
 import courses from "../../../data/courses";
-import { useNavigate } from "react-router-dom";
 
 const CATEGORY_IMAGES = {
   "Web Development":
@@ -24,7 +24,7 @@ const CATEGORY_IMAGES = {
   "Blockchain":
     "https://images.unsplash.com/photo-1621761191319-c6fb62004040",
   "Software Engineering":
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c"
+    "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
 };
 
 function MyCourses() {
@@ -63,6 +63,7 @@ function MyCourses() {
       <div className="mycourses-content">
         <h2 className="page-title">My Courses</h2>
 
+        {/* TABS */}
         <div className="tabs">
           <button
             className={activeTab === "all" ? "active" : ""}
@@ -86,6 +87,7 @@ function MyCourses() {
           </button>
         </div>
 
+        {/* COURSE GRID */}
         <div className="mycourse-grid">
           {coursesToShow.length === 0 ? (
             <p className="empty-text">No courses found</p>

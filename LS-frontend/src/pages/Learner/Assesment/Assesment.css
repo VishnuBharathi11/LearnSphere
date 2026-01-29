@@ -3,8 +3,6 @@
   font-family: "Inter", sans-serif;
 }
 
-/* ================= LAYOUT ================= */
-
 .assessment-layout {
   display: flex;
   background: #f6f8fc;
@@ -16,10 +14,9 @@
   padding: 30px 40px;
 }
 
-/* ================= PAGE HEADER ================= */
-
 .page-title {
-  font-size: 28px;
+  font-family: "Poppins", sans-serif;
+  font-size: 26px;
   font-weight: 600;
   color: #111827;
 }
@@ -29,8 +26,6 @@
   color: #6b7280;
   margin-bottom: 32px;
 }
-
-/* ================= SUMMARY CARDS ================= */
 
 .assessment-summary {
   display: grid;
@@ -58,24 +53,18 @@
   color: #111827;
 }
 
-/* ================= MAIN GRID ================= */
-
 .assessment-grid {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
   gap: 32px;
 }
 
-/* ================= SECTION HEAD ================= */
-
-.section-title {
-  font-size: 20px;
+.ass-section-title {
+  font-size: 17px;
   font-weight: 600;
   color: #111827;
   margin-bottom: 20px;
 }
-
-/* ================= ASSESSMENT CARD ================= */
 
 .assessment-card {
   background: #ffffff;
@@ -89,7 +78,7 @@
 }
 
 .assessment-info h4 {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 600;
   margin-bottom: 6px;
   color: #111827;
@@ -106,16 +95,12 @@
   color: #6b7280;
 }
 
-/* ================= RIGHT ACTION ================= */
-
 .assessment-actions {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
 }
-
-/* ================= STATUS BADGES ================= */
 
 .status {
   padding: 6px 16px;
@@ -138,8 +123,6 @@
   background: #f8d7da;
   color: #d32f2f;
 }
-
-/* ================= BUTTONS ================= */
 
 .primary-btn {
   background: #4a6cf7;
@@ -164,8 +147,6 @@
   cursor: pointer;
 }
 
-/* ================= RULES CARD ================= */
-
 .rules-card {
   background: #ffffff;
   padding: 26px;
@@ -183,8 +164,6 @@
 .rules-card li {
   margin-bottom: 10px;
 }
-
-/* ================= RESULT SUMMARY ================= */
 
 .result-card {
   background: #ffffff;
@@ -222,7 +201,6 @@
 
 }
 
-/* correct / wrong */
 .score-box {
   background: #eef2ff;
   padding: 14px 18px;
@@ -233,7 +211,6 @@
   font-size: 14px;
 }
 
-/* buttons */
 .result-actions {
   display: flex;
   gap: 18px;

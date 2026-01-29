@@ -16,19 +16,15 @@
 
 .progress-header h2 {
   font-family: "Poppins", sans-serif;
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 600;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
 }
 
 .progress-header p {
-  font-size: 14px;
+  font-size: 15px;
   color: #6b7280;
 }
-
-/* ===================== */
-/* Stats cards */
-/* ===================== */
 
 .stats-grid {
   display: grid;
@@ -38,92 +34,95 @@
 }
 
 .stat-card {
-  background: #ffffff;
-  border-radius: 14px;
+  background: #fff;
+  border-radius: 16px;
   padding: 22px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
 .stat-card p {
-  font-size: 13px;
+  font-size: 14px;
   color: #6b7280;
-  margin-bottom: 6px;
 }
 
 .stat-card h3 {
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 600;
+  margin-top: 8px;
   color: #111827;
 }
 
-/* ===================== */
-/* Chart card */
-/* ===================== */
-
 .chart-card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: #fff;
+  border-radius: 18px;
   padding: 24px;
   margin-bottom: 35px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
-.chart-card h4 {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 15px;
+.chart-card h4{
+  margin-bottom: 20px;
 }
-
-/* ===================== */
-/* Lower section */
-/* ===================== */
 
 .lower-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 30px;
+  gap: 32px;
 }
 
-/* ===================== */
-/* Course Progress Cards */
-/* ===================== */
+.prog-section-title {
+  font-size: 17px;
+  margin-bottom: 18px;
+  font-weight: 600;
+}
 
 .course-progress-card {
   background: #ffffff;
-  border-radius: 14px;
-  padding: 20px 22px;
+  border-radius: 16px;
+  padding: 18px;
   margin-bottom: 18px;
+  display: flex;
+  gap: 18px;
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-.course-row {
+.course-img {
+  width: 160px;
+  height: 95px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.course-content {
+  flex: 1;
+}
+
+.course-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
 }
 
-.course-row h5 {
+.course-header h5 {
   font-size: 15px;
-  font-weight: 500;
-  color: #111827;
+  font-weight: 600;
   margin-bottom: 2px;
 }
 
-.course-row span {
+.course-header span {
   font-size: 13px;
   color: #6b7280;
 }
 
 .badge {
   font-size: 12px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 20px;
   font-weight: 500;
 }
 
 .badge.progress {
-  background: #ffe6d5;
+  background: #ffe7d6;
   color: #f97316;
 }
 
@@ -132,9 +131,12 @@
   color: #15803d;
 }
 
-/* ===================== */
-/* Progress bar */
-/* ===================== */
+.course-progress-text {
+  font-size: 12px;
+  color: #2563eb;
+  text-align: right;
+  margin: 6px 0;
+}
 
 .progress-bar {
   width: 100%;
@@ -142,7 +144,6 @@
   background: #e5e7eb;
   border-radius: 10px;
   overflow: hidden;
-  margin: 10px 0 6px;
 }
 
 .progress-fill {
@@ -151,18 +152,12 @@
   border-radius: 10px;
 }
 
-.course-progress-card small {
-  font-size: 12px;
-  color: #2563eb;
-}
-
 .achievement-card {
-  background: #ffffff;
-  border-radius: 14px;
+  background: #fff;
+  border-radius: 16px;
   padding: 20px;
   margin-bottom: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  font-size: 14px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
 .achievement-card p {
@@ -173,9 +168,8 @@
 
 .achievement-tip {
   background: #eef2ff;
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 18px;
   font-size: 14px;
   color: #1e40af;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
 }

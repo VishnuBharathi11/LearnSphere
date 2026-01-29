@@ -37,7 +37,6 @@ function Assesment() {
           Test your knowledge and track your performance
         </p>
 
-        {/* ===== SUMMARY ===== */}
         <div className="assessment-summary">
           <div className="summary-card">
             <span>Total Assessments</span>
@@ -60,11 +59,9 @@ function Assesment() {
           </div>
         </div>
 
-        {/* ===== MAIN GRID ===== */}
         <div className="assessment-grid">
-          {/* LEFT SIDE */}
           <div>
-            <h3 className="section-title">Available Assessments</h3>
+            <div className="ass-section-title">Available Assessments</div>
 
             {availableAssessment.map((item, index) => (
               <div className="assessment-card" key={index}>

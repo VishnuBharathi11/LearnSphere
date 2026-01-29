@@ -1,5 +1,6 @@
-import React from 'react'
-import SidebarStudent from '../../../components/SideBar-S/SidebarStudent'
+import React from "react";
+import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
+import progressImage from "../../../assets/Featured Courses/3.jpg";
 import {
   LineChart,
   Line,
@@ -11,7 +12,7 @@ import {
 } from "recharts";
 import "./Progress.css";
 
-const status = [
+const stats = [
   { title: "Completed Courses", value: 3 },
   { title: "Enrolled Courses", value: 5 },
   { title: "Hours Studied", value: 52 },
@@ -34,37 +35,38 @@ const courses = [
     instructor: "Sarah Chen",
     progress: 15,
     status: "In Progress",
+    image: progressImage,
   },
   {
     title: "Data Science Fundamentals",
     instructor: "Dr. Lee",
     progress: 100,
     status: "Completed",
+    image: progressImage,
   },
   {
     title: "Cybersecurity",
     instructor: "John Smith",
     progress: 38,
     status: "In Progress",
+    image: progressImage,
   },
 ];
+
 function Progress() {
   return (
     <div className="progress-layout">
       <SidebarStudent />
 
       <div className="progress-content">
-
         <div className="progress-header">
-          <div>
-            <h2>Learning Progress</h2>
-            <p>Track your learning journey and achievements</p>
-          </div>
+          <h2>Learning Progress</h2>
+          <p>Track your learning journey and achievements</p>
         </div>
 
         <div className="stats-grid">
-          {status.map((item, index) => (
-            <div className="stat-card" key={index}>
+          {stats.map((item, i) => (
+            <div className="stat-card" key={i}>
               <p>{item.title}</p>
               <h3>{item.value}</h3>
             </div>
@@ -73,8 +75,7 @@ function Progress() {
 
         <div className="chart-card">
           <h4>Weekly Learning Activity</h4>
-
-          <ResponsiveContainer width="100%" height={250}>
+          <ResponsiveContainer width="100%" height={260}>
             <LineChart data={weeklyData}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="day" />
@@ -83,7 +84,7 @@ function Progress() {
               <Line
                 type="monotone"
                 dataKey="hours"
-                stroke="#4f6ef7"
+                stroke="#4a6cf7"
                 strokeWidth={3}
               />
             </LineChart>
@@ -91,42 +92,52 @@ function Progress() {
         </div>
 
         <div className="lower-grid">
-
           <div>
-            <h4>Course Progress</h4>
+            <h4 className="prog-section-title">Course Progress</h4>
 
             {courses.map((course, index) => (
               <div className="course-progress-card" key={index}>
-                <div className="course-row">
-                  <div>
-                    <h5>{course.title}</h5>
-                    <span>{course.instructor}</span>
+                <img
+                  src={course.image}
+                  alt={course.title}
+                  className="course-img"
+                />
+
+                <div className="course-content">
+                  <div className="course-header">
+                    <div>
+                      <h5>{course.title}</h5>
+                      <span>{course.instructor}</span>
+                    </div>
+
+                    <span
+                      className={
+                        course.status === "Completed"
+                          ? "badge completed"
+                          : "badge progress"
+                      }
+                    >
+                      {course.status}
+                    </span>
                   </div>
 
-                  <span
-                    className={
-                      course.status === "Completed"
-                        ? "badge completed"
-                        : "badge progress"
-                    }
-                  >
-                    {course.status}
-                  </span>
-                </div>
+                  <div className="course-progress-text">
+                    Progress: {course.progress}%
+                  </div>
 
-                <div className="progress-bar">
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${course.progress}%` }}
-                  ></div>
+                  <div className="progress-bar">
+                    <div
+                      className="progress-fill"
+                      style={{ width: `${course.progress}%` }}
+                    />
+                  </div>
                 </div>
-
-                <small>Progress: {course.progress}%</small>
               </div>
             ))}
           </div>
+
           <div>
-            <h4>Achievements</h4>
+            <h4 className="prog-section-title">Achievements</h4>
 
             <div className="achievement-card">
               🏆 <strong>Web Development Master</strong>
@@ -134,15 +145,15 @@ function Progress() {
             </div>
 
             <div className="achievement-tip">
-              🔥 You're doing great! <br />
+              🔥 You're doing great!
+              <br />
               Complete 1 more course to earn a new certificate.
             </div>
           </div>
-
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default Progress
+export default Progress;

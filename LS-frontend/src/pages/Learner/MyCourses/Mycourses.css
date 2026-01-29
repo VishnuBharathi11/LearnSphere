@@ -11,12 +11,12 @@
 
 .mycourses-content {
   width: 100%;
-  padding: 10px 40px;
+  padding: 30px 40px;
 }
 
 .page-title {
   font-family: "Poppins", sans-serif;
-  font-size: 25px;
+  font-size: 26px;
   font-weight: 600;
 }
 
@@ -68,7 +68,7 @@
 .mycourse-title {
   padding: 20px 20px 0;
   font-weight: 600;
-  font-size: 15px;
+  font-size: 16px;
 }
 
 .mycourse-instructor {
