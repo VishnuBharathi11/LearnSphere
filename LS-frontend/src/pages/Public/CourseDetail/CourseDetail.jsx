@@ -1,4 +1,5 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams} from "react-router-dom";
+import {useState} from "react";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
 import courses from "../../../data/courses.js";
 import "./CourseDetail.css";
@@ -8,6 +9,31 @@ function CourseDetail() {
   const navigate = useNavigate();
   const course = courses.find((c) => c.id === Number(id));
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const curriculum = [
+    {
+      section: "Introduction to JavaScript",
+      lessons: [
+        { title: "What is JavaScript?", duration: "12 min", preview: true,youtubeId:"YrOkVD_YUro" },
+        { title: "Setting up environment", duration: "15 min" },
+        { title: "Your first JavaScript program", duration: "20 min" },
+      ],
+    },
+    {
+      section: "Control Flow & Functions",
+      lessons: [
+        { title: "If / Else statements", duration: "18 min" },
+        { title: "Loops & Iterations", duration: "22 min" },
+      ],
+    },
+    {
+      section: "DOM Manipulation",
+      lessons: [
+        { title: "DOM Basics", duration: "20 min" },
+        { title: "Events & Handlers", duration: "25 min" },
+      ],
+    },
+  ];
+  const [previewVideo,setPreviewVideo]=useState(null);
   if (!course) {
     return <p style={{ padding: "40px" }}>Course not found</p>;
   }
@@ -42,31 +68,9 @@ function CourseDetail() {
       return [];
     }
   })();
-  const isEnrolled = enrolledCourses.includes(course.id);
-  const curriculum = [
-    {
-      section: "Introduction to JavaScript",
-      lessons: [
-        { title: "What is JavaScript?", duration: "12 min", preview: true },
-        { title: "Setting up environment", duration: "15 min" },
-        { title: "Your first JavaScript program", duration: "20 min" },
-      ],
-    },
-    {
-      section: "Control Flow & Functions",
-      lessons: [
-        { title: "If / Else statements", duration: "18 min" },
-        { title: "Loops & Iterations", duration: "22 min" },
-      ],
-    },
-    {
-      section: "DOM Manipulation",
-      lessons: [
-        { title: "DOM Basics", duration: "20 min" },
-        { title: "Events & Handlers", duration: "25 min" },
-      ],
-    },
-  ];
+  const isEnrolled = enrolledCourses.some(
+    (c)=>c.courseId===course.id
+  );
 
   return (
     <>
@@ -111,7 +115,11 @@ function CourseDetail() {
                   <summary>{block.section}</summary>
                   <ul>
                     {block.lessons.map((lesson, j) => (
-                      <li key={j}>
+                      <li key={j} onClick={()=>{
+                        if(lesson.preview){
+                          setPreviewVideo(lesson.youtubeId);
+                        }
+                      }}>
                         <span className="lesson-title">{lesson.title}</span>
                         <span className="lesson-meta">
                           {lesson.preview && (
@@ -125,6 +133,15 @@ function CourseDetail() {
                 </details>
               ))}
             </div>
+
+              {previewVideo&&(
+                <div className="preview-overlay">
+                  <div className="preview-modal">
+                    <button className="close-btn" onClick={()=>setPreviewVideo(null)}>✕</button>
+                    <iframe src={`https://www.youtube.com/embed/${previewVideo}`} title="Course Preview" frameBorder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowFullScreen />
+                  </div>
+                </div>
+              )}
 
             <div className="card">
               <h3>Requirements</h3>
@@ -207,6 +224,7 @@ function CourseDetail() {
             )}
           </div>
         </div>
+
       </div>
     </>
   );

@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import courses from "../../../data/courses";
 import NavBar from "../../../components/NavBar/NavBar";
 import "./LearnCourse.css";
@@ -7,32 +7,68 @@ import "./LearnCourse.css";
 function LearnCourse() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const course = courses.find(c => c.id === Number(id));
-  const enrolledCourses =JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-  const isEnrolled = enrolledCourses.includes(Number(id));
+  const courseId = Number(id);
+  const course = courses.find((c) => c.id === courseId);
+  const enrolledCourses=JSON.parse(localStorage.getItem("enrolledCourses")) || [];;
+  const enrollment = enrolledCourses.find((c) => c.courseId === courseId);
+  const isEnrolled = enrolledCourses.some((c) => c.courseId === courseId);
   const curriculum = [
     {
       section: "Introduction to JavaScript",
       lessons: [
-        { title: "What is JavaScript?", content: "JavaScript basics explained." },
-        { title: "Setting up environment", content: "VS Code and browser setup." },
+        {
+          title: "What is JavaScript?",
+          content: "JavaScript basics explained.",
+          youtubeId: "YrOkVD_YUro",
+        },
+        {
+          title: "Setting up environment",
+          content: "VS Code and browser setup.",
+          youtubeId: "xkMfMJn5Smg",
+        },
       ],
     },
     {
       section: "Control Flow & Functions",
       lessons: [
-        { title: "If / Else", content: "Conditional logic in JS." },
-        { title: "Loops", content: "Iteration using loops." },
+        {
+          title: "If / Else",
+          content: "Conditional logic in JS.",
+          youtubeId: "oukocVSYIDQ",
+        },
+        {
+          title: "Loops",
+          content: "Iteration using loops.",
+          youtubeId: "8__9yNADp_Q",
+        },
       ],
     },
   ];
-  const [activeLesson, setActiveLesson] = useState(curriculum[0].lessons[0]);
+  const allLessons = curriculum.flatMap((s) => s.lessons);
+  const [activeLesson, setActiveLesson] = useState(() => {
+    if (enrollment?.lastLessonIndex != null) {
+      return allLessons[enrollment.lastLessonIndex];
+    }
+    return allLessons[0];
+  });
+  useEffect(() => {
+    if (!enrollment) return;
+
+    const lessonIndex = allLessons.findIndex(
+      (l) => l.title === activeLesson.title,
+    );
+    const updated = enrolledCourses.map((c) =>
+      c.courseId === courseId ? { ...c, lastLessonIndex: lessonIndex } : c,
+    );
+    localStorage.setItem("enrolledCourses", JSON.stringify(updated));
+  }, [activeLesson,courseId]);
+  useEffect(() => {
+    if (!isEnrolled) {
+      navigate(`/course/${courseId}`);
+    }
+  }, [isEnrolled, courseId, navigate]);
   if (!course) {
     return <p style={{ padding: "40px" }}>Course not found</p>;
-  }
-  if (!isEnrolled) {
-    navigate(`/course/${id}`);
-    return null;
   }
   return (
     <>
@@ -64,11 +100,19 @@ function LearnCourse() {
         <div className="learn-content">
           <h2>{activeLesson.title}</h2>
           <div className="video-box">
-            Video Player Placeholder
+            {activeLesson.youtubeId ? (
+              <iframe
+                src={`https://www.youtube.com/embed/${activeLesson.youtubeId}`}
+                title={activeLesson.title}
+                frameBorder="0"
+                allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture"
+                allowFullScreen
+              />
+            ) : (
+              <p>No video available for this lesson</p>
+            )}
           </div>
-          <p className="lesson-text">
-            {activeLesson.content}
-          </p>
+          <p className="lesson-text">{activeLesson.content}</p>
         </div>
       </div>
     </>
