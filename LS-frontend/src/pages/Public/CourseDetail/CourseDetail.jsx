@@ -68,7 +68,9 @@ function CourseDetail() {
       return [];
     }
   })();
-  const isEnrolled = enrolledCourses.includes(course.id);
+  const isEnrolled = enrolledCourses.some(
+    (c)=>c.courseId===course.id
+  );
 
   return (
     <>
@@ -136,7 +138,7 @@ function CourseDetail() {
                 <div className="preview-overlay">
                   <div className="preview-modal">
                     <button className="close-btn" onClick={()=>setPreviewVideo(null)}>✕</button>
-                    <iframe src={`https://www.youtube.com/embed/${previewVideo}`} title="Course Preview" frameborder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowFullScreen />
+                    <iframe src={`https://www.youtube.com/embed/${previewVideo}`} title="Course Preview" frameBorder="0" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowFullScreen />
                   </div>
                 </div>
               )}

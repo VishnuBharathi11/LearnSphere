@@ -50,9 +50,6 @@
   max-width: 1200px;
   margin-top: 30px;
 }
-
-/* ---------- CARD ---------- */
-
 .mycourse-card {
   background: #ffffff;
   border-radius: 12px;
@@ -82,8 +79,6 @@
   color: #111827;
 }
 
-/* ---------- PROGRESS ---------- */
-
 .mycourse-progress-text {
   padding: 10px 20px 4px;
   font-size: 13px;
@@ -104,8 +99,6 @@
   background: #4f46e5;
   border-radius: 10px;
 }
-
-/* ---------- BUTTON ---------- */
 
 .mycourse-btn {
   margin: 10px 20px 20px;

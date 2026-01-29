@@ -1,15 +1,15 @@
 .browse-page{
   padding: 10px 40px;
 }
-.title{
+.browse-page .title{
   font-size: 25px;
   font-weight: 600;
 }
-.subtitle{
+.browse-page .subtitle{
   font-family: "Inter", sans-serif;
   color: #666;
 }
-.filter-bar{
+.browse-page .filter-bar{
   display: flex;
   gap: 16px;
   align-items: center;
@@ -19,8 +19,8 @@
   border-radius: 14px;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
-.filter-bar input,
-.filter-bar select {
+.browse-page .filter-bar input,
+.browse-page .filter-bar select {
   height: 44px;
   padding: 0 14px;
   border-radius: 10px;
@@ -29,28 +29,28 @@
   background-color: #fff;
   outline: none;
 }
-.filter-bar input{
+.browse-page .filter-bar input{
   flex: 1;
 }
-.filter-bar select{
+.browse-page .filter-bar select{
   width: 190px;
   padding-right: 24px;
   appearance: none;
   cursor: pointer;
 }
-.filter-bar select{
+.browse-page .filter-bar select{
   background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
   background-repeat: no-repeat;
   background-position: right 12px center;
 }
-.course-grid{
+.browse-page .course-grid{
   display: grid;
   grid-template-columns: repeat(3,1fr);
   gap: 20px;
   max-width: 1200px;
   margin: 30px auto;
 }
-.no-results{
+.browse-page .no-results{
   font-family: "Inter" ,sans-serif;
   color: #666;
   text-align: center;

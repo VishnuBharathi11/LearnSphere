@@ -17,6 +17,7 @@ function PaymentSuccess() {
   const courseId = state?.courseId;
   const course = courses.find((c) => c.id === courseId);
   useEffect(() => {
+    if(!courseId) return;
     const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
     const alreadyEnrolled=enrolledCourses.some(
       (c)=>c.courseId===courseId
@@ -29,7 +30,7 @@ function PaymentSuccess() {
       });
       localStorage.setItem("enrolledCourses",JSON.stringify(enrolledCourses));
     }
-  }, [course.id]);
+  }, [courseId]);
   return (
     <div className="success-page">
       <div className="success-container">
@@ -79,7 +80,7 @@ function PaymentSuccess() {
         <div className="actions">
           <button
             className="ps-primary-btn"
-            onClick={() => navigate(`/course/${course.id}`)}
+            onClick={() => navigate(`/learn/${course.id}`)}
           >
             <Play size={20} />
             Start Learning

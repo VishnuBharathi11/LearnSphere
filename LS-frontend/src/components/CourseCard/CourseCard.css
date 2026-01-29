@@ -1,34 +1,34 @@
-.course-card {
+.browse-course-card {
     font-family: "Inter" ,sans-serif;
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     line-height: 1.6;
 }
-.course-image img{
+.course-card-image img{
   width: 100%;
   height: 160px;
   object-fit: cover;
   border-radius: 10px 10px 0 0;
   
 }
-.course{
+.course-card-body{
     padding: 20px;
 }
-.course-title{
+.course-card-title{
     font-weight: 600;
 }
-.instructor-module{
+.course-card-module{
     display: flex;
     margin-top: 10px;
     gap: 20px;
 }
-.instructor{
+.course-card-instructor{
     font-size: 14px;
     font-weight: 500;
     color: #111827;
 }
-.module{
+.course-card-module{
     font-size: 13px;
     font-weight: 450;
     color: #6b7280;
@@ -37,25 +37,25 @@
     font-size: larger;
     margin-top: -4px;
 }
-.course-meta{
+.course-card-tags{
     display: flex;
     gap: 30px;
     margin: 15px 0;
 }
-.category,.level{
+.course-card-category,.course-card-level{
     background-color: #EEF2FF;
     padding: 4px 8px;
     border-radius: 14px;
     font-size: 14px;
     color: #4F46E5;
 }
-.rating{
+.course-card-rating{
     font-weight: 600;
 }
-.price{
+.course-card-price{
     font-size: 18px;
 }
-.view-btn{
+.course-card-btn{
     margin: 10px 0;
     background-color: #4F46E5;
     border: none;

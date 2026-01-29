@@ -25,25 +25,25 @@ function CourseCard({ course }) {
     "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
 };
   return (
-    <div className="course-card">
-        <div className="course-image">
+    <div className="browse-course-card">
+        <div className="course-card-image">
             <img src={CATEGORY_IMAGES[course.category] || "/fallback.png"}/>
         </div>
-      <div className="course">
-        <div className="course-title">{course.courseName}</div>
-      <div className="instructor-module">
-        <div className="instructor">{course.instructor}</div>
+      <div className="course-card-body">
+        <div className="course-card-title">{course.courseName}</div>
+      <div className="course-card-module">
+        <div className="course-card-instructor">{course.instructor}</div>
         <div className="divider">•</div>
-        <div className="module">Modules: {course.lessons}</div>
+        <div className="course-card-module">Modules: {course.lessons}</div>
       </div>
-      <div className="course-meta">
-        <div className="category">{course.category}</div>
-        <div className="level">{course.level}</div>
+      <div className="course-card-tags">
+        <div className="course-card-category">{course.category}</div>
+        <div className="course-card-level">{course.level}</div>
       </div>
-      <div className="rating">⭐ {course.rating}</div>
-      <div className="price">From ₹{course.price}</div>
+      <div className="course-card-rating">⭐ {course.rating}</div>
+      <div className="course-card-price">From ₹{course.price}</div>
       <button
-        className="view-btn"
+        className="course-card-btn"
         onClick={() => navigate(`/course/${course.id}`)}
       >
         View Course
