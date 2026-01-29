@@ -86,7 +86,6 @@
 }
 
 .manage-course-card {
-    height: 400px;
     background-color: #ffffff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
@@ -184,9 +183,6 @@
     background-color: #fee2e2;
     color: #b91c1c;
 }
-
-/* Empty */
-
 .empty-box {
     text-align: center;
     padding: 40px;

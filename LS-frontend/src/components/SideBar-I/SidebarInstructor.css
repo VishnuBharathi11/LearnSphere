@@ -18,6 +18,7 @@
 .logo {
   width: 36px;
   height: 36px;
+  margin-left: 70px;
 }
 
 .page-name {
@@ -39,14 +40,16 @@
   padding: 10px 12px;
   border-radius: 6px;
   transition: background-color 0.2s ease;
+  display: flex;
+  gap: 4px;
 }
 
 .I-sidebar a:hover {
-  background-color: #f3f4f6;
+  background-color: #eef2ff;
 }
 
 .I-sidebar a.active {
-  background-color: #e5e7eb;
+  background-color: #eef2ff;
   font-weight: 500;
-  color: #111827;
+  color: #3b82f6;
 }

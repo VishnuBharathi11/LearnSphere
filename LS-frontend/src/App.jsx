@@ -24,6 +24,7 @@ import LearnCourse from './pages/Learner/LearnCourse/LearnCourse.jsx';
 import InstructorDashboard from './pages/instructor/Dashboard/Dashboard.jsx';
 import CreateCourse from './pages/instructor/CreateCourse/Createcourse.jsx';
 import ManageCourses from './pages/instructor/ManageCourse/Managecourse.jsx';
+import UploadLesson from './pages/instructor/ManageCourse/UpdateLesson/UpdateLesson.jsx';
 function App() {
   return (
     <>
@@ -51,6 +52,7 @@ function App() {
           <Route path="/instructor-dashboard" element={<InstructorDashboard/>} />
           <Route path="/instructor-create-course" element={<CreateCourse/>} />
           <Route path="/instructor-manage-courses" element={<ManageCourses/>} />
+          <Route path="/instructor-manage-courses/:courseId" element={<UploadLesson/>}/>
 
         </Routes>        
     </>

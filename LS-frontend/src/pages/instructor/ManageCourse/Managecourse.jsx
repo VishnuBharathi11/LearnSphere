@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import "./Managecourse.css";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
+import { useNavigate } from "react-router-dom";
 
 function Managecourse() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -59,6 +60,7 @@ function Managecourse() {
   const deleteCourse = (id) => {
     console.log("Delete course:", id);
   };
+  const navigate=useNavigate();
   return (
     <div className="manage-course-layout">
       <SidebarInstructor />
@@ -133,7 +135,7 @@ function Managecourse() {
                   </div>
                 </div>
                 <div className="course-actions">
-                  <button>
+                  <button onClick={()=>navigate(`/instructor/manage-courses/${course.id}`)}>
                     <Upload size={14} /> Upload Lesson
                   </button>
                   <button>
