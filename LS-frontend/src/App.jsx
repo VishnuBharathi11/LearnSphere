@@ -25,6 +25,14 @@ import InstructorDashboard from './pages/instructor/Dashboard/Dashboard.jsx';
 import CreateCourse from './pages/instructor/CreateCourse/Createcourse.jsx';
 import ManageCourses from './pages/instructor/ManageCourse/Managecourse.jsx';
 import UploadLesson from './pages/instructor/ManageCourse/UpdateLesson/UpdateLesson.jsx';
+import CreateQuiz from './pages/instructor/ManageCourse/CreateQuiz/CreateQuiz.jsx';
+import StudentProgress from './pages/instructor/ManageCourse/StudentProgress/StudentProgress.jsx';
+import CourseAnalytics from './pages/instructor/ManageCourse/CourseAnalytics/CourseAnalytics.jsx';
+import Discussion from './pages/instructor/Discussion/Discussion.jsx';
+import InstructorProfile from './pages/instructor/Profile/InstructorProfile.jsx';
+
+import AdminDashboard from './pages/admin/Dashboard/AdminDashboard.jsx';
+
 function App() {
   return (
     <>
@@ -49,10 +57,17 @@ function App() {
           <Route path="/learn/:id" element={<LearnCourse/>}/>
           <Route path="/learner-assesment" element={<Assesment/>} />
 
-          <Route path="/instructor-dashboard" element={<InstructorDashboard/>} />
-          <Route path="/instructor-create-course" element={<CreateCourse/>} />
-          <Route path="/instructor-manage-courses" element={<ManageCourses/>} />
-          <Route path="/instructor-manage-courses/:courseId" element={<UploadLesson/>}/>
+          <Route path="/instructor" element={<InstructorDashboard/>} />
+          <Route path="/create-course" element={<CreateCourse/>} />
+          <Route path="/manage-courses" element={<ManageCourses/>} />
+          <Route path="/manage-courses/:courseId" element={<UploadLesson/>}/>
+          <Route path="/create-quiz/:courseId" element={<CreateQuiz/>}/>
+          <Route path="/student-progress/:courseId" element={<StudentProgress/>}/>
+          <Route path="/course-analytics/:courseId" element={<CourseAnalytics/>}/>
+          <Route path="/discussions" element={<Discussion/>}/>
+          <Route path="/profile" element={<InstructorProfile/>}/>
+
+          <Route path="admin" element={<AdminDashboard/>}/>
 
         </Routes>        
     </>

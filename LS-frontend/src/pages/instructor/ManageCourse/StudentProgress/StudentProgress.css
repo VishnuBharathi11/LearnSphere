@@ -1,0 +1,120 @@
+.student-progress-layout{
+    display: flex;
+}
+.student-progress-page {
+  padding: 24px;
+  background: #f9fafb;
+  min-height: 100vh;
+  width: 100%;
+}
+.sp-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sp-page-header h1 {
+  font-size: 26px;
+  font-weight: 600;
+}
+
+.sp-page-header p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.export-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+.sp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sp-stat-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 16px;
+  border-radius: 12px;
+  
+}
+
+.sp-stat-card span {
+  display: block;
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.sp-stat-card strong {
+  font-size: 22px;
+}
+.sp-search-box {
+  background: white;
+  border: 1px solid #e5e7eb;
+  padding: 10px;
+  border-radius: 6px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.sp-search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+}
+.table-card {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 14px;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #f3f4f6;
+}
+
+.sp-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+}
+
+.sp-status.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.sp-status.completed {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.sp-status.inactive {
+  background: #f3f4f6;
+  color: #374151;
+}
