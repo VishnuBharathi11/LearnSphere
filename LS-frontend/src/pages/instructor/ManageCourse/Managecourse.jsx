@@ -29,7 +29,7 @@ function Managecourse() {
       revenue: 154500,
       rating: 4.8,
       status: "published",
-      thumbnail: "🎨",
+      //thumbnail: "🎨",
     },
     {
       id: 2,
@@ -40,7 +40,7 @@ function Managecourse() {
       revenue: 98500,
       rating: 4.6,
       status: "draft",
-      thumbnail: "🤖",
+      //thumbnail: "🤖",
     },
   ];
   const filteredCourses = courses.filter((course) => {
@@ -104,7 +104,7 @@ function Managecourse() {
         ) : (
           filteredCourses.map((course) => (
             <div className="manage-course-card" key={course.id}>
-              <div className="course-thumb">{course.thumbnail}</div>
+              {/* <div className="course-thumb">{course.thumbnail}</div> */}
 
               <div className="course-info">
                 <div className="course-top">
@@ -135,16 +135,16 @@ function Managecourse() {
                   </div>
                 </div>
                 <div className="course-actions">
-                  <button onClick={()=>navigate(`/instructor/manage-courses/${course.id}`)}>
+                  <button onClick={()=>navigate(`/manage-courses/${course.id}`)}>
                     <Upload size={14} /> Upload Lesson
                   </button>
-                  <button>
+                  <button onClick={()=>navigate(`/create-quiz/${course.id}`)}>
                     <FileText size={14} /> Create Quiz
                   </button>
-                  <button>
+                  <button onClick={()=>navigate(`/student-progress/${course.id}`)}>
                     <Users size={14} /> Students
                   </button>
-                  <button>
+                  <button onClick={()=>navigate(`/course-analytics/${course.id}`)}>
                     <BarChart3 size={14} /> Analytics
                   </button>
                 </div>

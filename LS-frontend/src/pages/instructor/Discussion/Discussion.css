@@ -1,0 +1,218 @@
+.discussion-layout {
+    display: flex;
+}
+
+.discussion-page {
+    background: #f5f7fb;
+    min-height: 100vh;
+    padding: 24px;
+    width: 100%;
+    font-family: "Inter",sans-serif;
+}
+
+.discussion-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 24px;
+}
+
+.discussion-header h1 {
+    margin: 0;
+}
+
+.logout-btn {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+}
+
+.discussion-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.discussion-stat-card {
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 90px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon svg {
+  color: #fff;
+  width: 22px;
+  height: 22px;
+}
+
+.blue .stat-icon {
+  background: #3b82f6;
+}
+
+.yellow .stat-icon {
+  background: #facc15;
+}
+
+.red .stat-icon {
+  background: #ef4444;
+}
+
+.green .stat-icon {
+  background: #22c55e;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.stat-content strong {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1;
+}
+
+.stat-content span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+
+.discussion-controls {
+    background: #fff;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.discussion-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #d1d5db;
+    padding: 10px;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+.discussion-search-box input {
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.discussion-filter-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.discussion-filter-buttons button {
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: none;
+    background: #e5e7eb;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.discussion-filter-buttons .active {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.discussion-filter-buttons .approved.active {
+    background: #22c55e;
+}
+
+.discussion-filter-buttons .pending.active {
+    background: #facc15;
+    color: #000;
+}
+
+.discussion-filter-buttons .flagged.active {
+    background: #ef4444;
+}
+
+.discussion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.discussion-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.discussion-info h3 {
+    margin: 0 0 6px;
+}
+
+.meta {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.message {
+    margin: 8px 0;
+}
+
+.time {
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.discussion-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.discussion-actions button {
+    border: none;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.view {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.approve {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.reject {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.flag {
+    background: #ffedd5;
+    color: #c2410c;
+}
