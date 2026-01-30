@@ -3,12 +3,6 @@
   font-family: "Inter", sans-serif;
 }
 
-.profile-page {
-  display: flex;
-  background: #f6f8fc;
-  min-height: 100vh;
-}
-
 .profile-content {
   width: 100%;
   padding: 30px 40px;

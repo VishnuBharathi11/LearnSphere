@@ -55,12 +55,9 @@ const courses = [
 
 function Progress() {
   return (
-    <div className="progress-layout">
-      <SidebarStudent />
 
-      <div className="progress-content">
+      <div>
         <div className="progress-header">
-          <h2>Learning Progress</h2>
           <p>Track your learning journey and achievements</p>
         </div>
 
@@ -152,7 +149,6 @@ function Progress() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

@@ -3,24 +3,6 @@
   font-family: "Inter", sans-serif;
 }
 
-.dashboard-layout {
-  display: flex;
-  background: #f6f8fc;
-  min-height: 100vh;
-}
-
-.dashboard-content {
-  width: 100%;
-  padding: 30px 40px;
-}
-
-.dashboard-top {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 25px;
-}
-
-
 .search-box {
   width: 360px;
   padding: 12px 16px;

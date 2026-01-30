@@ -29,7 +29,7 @@ function Login() {
       return;
     }
 
-    if (user.role === "learner") navigate("/learner-dashboard",{replace:true});
+    if (user.role === "learner") navigate("/student-layout",{replace:true});
     if (user.role === "instructor") navigate("/instructor-dashboard",{replace:true});
     if (user.role === "admin") navigate("/admin",{replace:true});
   };

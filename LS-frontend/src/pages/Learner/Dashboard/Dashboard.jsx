@@ -1,5 +1,4 @@
 import React from "react";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
 import LearnerImg from "../../../assets/learner/learner.jpg";
 import courseImg from "../../../assets/Featured Courses/1.jpg"
 import "./Dashboard.css";
@@ -33,10 +32,7 @@ const continueCourses = [
 
 function Dashboard() {
   return (
-    <div className="dashboard-layout">
-      <SidebarStudent />
-
-      <div className="dashboard-content">
+      <div>
         <input type="search" placeholder="Search for courses" className="search-box" />
         <div className="welcome-row">
           <div className="welcome-card">
@@ -122,10 +118,8 @@ function Dashboard() {
               </div>
             </div>
           </div>
-
+          </div>
         </div>
-      </div>
-    </div>
   );
 }
 

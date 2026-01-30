@@ -3,23 +3,6 @@
   font-family: "Inter", sans-serif;
 }
 
-.mycourses-layout {
-  display: flex;
-  background: #f6f8fc;
-  min-height: 100vh;
-}
-
-.mycourses-content {
-  width: 100%;
-  padding: 30px 40px;
-}
-
-.page-title {
-  font-family: "Poppins", sans-serif;
-  font-size: 26px;
-  font-weight: 600;
-}
-
 .tabs {
   display: flex;
   gap: 20px;

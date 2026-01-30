@@ -28,11 +28,7 @@ function Assesment() {
   ];
 
   return (
-    <div className="assessment-layout">
-      <SidebarStudent />
-
       <div className="assessment-content">
-        <h2 className="page-title">Assessments</h2>
         <p className="page-subtitle">
           Test your knowledge and track your performance
         </p>
@@ -134,7 +130,6 @@ function Assesment() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

@@ -25,6 +25,7 @@ import InstructorDashboard from './pages/instructor/Dashboard/Dashboard.jsx';
 import CreateCourse from './pages/instructor/CreateCourse/Createcourse.jsx';
 import ManageCourses from './pages/instructor/ManageCourse/Managecourse.jsx';
 import UploadLesson from './pages/instructor/ManageCourse/UpdateLesson/UpdateLesson.jsx';
+import StudentLayout from './pages/Learner/StudentLayout/StudentLayout.jsx';
 function App() {
   return (
     <>
@@ -42,12 +43,8 @@ function App() {
           <Route path="/buy/:id" element={<PaymentPage/>}/>
           <Route path="/payment-success" element={<PaymentSuccess/>}/>
 
-          <Route path="/learner-dashboard" element={ <LearnerDashboard/>} />
-          <Route path="/learner-my-courses" element={ <LearnerMyCourses/>} />
-          <Route path="/learner-progress" element={ <LearnerProgress/> } />
-          <Route path="/learner-profile" element={<Profile/>} />
+          <Route path="/student-layout" element={ <StudentLayout/>} />
           <Route path="/learn/:id" element={<LearnCourse/>}/>
-          <Route path="/learner-assesment" element={<Assesment/>} />
 
           <Route path="/instructor-dashboard" element={<InstructorDashboard/>} />
           <Route path="/instructor-create-course" element={<CreateCourse/>} />
