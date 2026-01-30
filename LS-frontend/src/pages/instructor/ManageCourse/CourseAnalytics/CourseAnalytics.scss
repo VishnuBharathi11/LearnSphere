@@ -1,19 +1,61 @@
-.analytics-layout{
-  display: flex;
-}
-.analytics-page {
-  padding: 24px;
-  background: #f5f7fb;
-  min-height: 100vh;
-  width: 100%;
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f5f7fb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$green: #22c55e;
+$blue: #3b82f6;
+$yellow: #facc15;
+$purple: #a855f7;
+
+$danger: #ef4444;
+$warning: #f59e0b;
+
+$border: #e5e7eb;
+
+$shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+
+/* ===============================
+   Base
+================================ */
+* {
+  box-sizing: border-box;
+  font-family: $font;
 }
 
+/* ===============================
+   Layout
+================================ */
+.analytics-layout {
+  display: flex;
+}
+
+.analytics-page {
+  width: 100%;
+  padding: 24px;
+  background: $bg;
+  min-height: 100vh;
+}
+
+/* ===============================
+   Title
+================================ */
 .analytics-title {
   font-size: 26px;
   font-weight: 600;
   margin-bottom: 20px;
+  color: $text-dark;
 }
 
+/* ===============================
+   Stats Cards
+================================ */
 .analytics-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -22,23 +64,27 @@
 }
 
 .analytics-stat-card {
-  background: #fff;
+  background: $white;
   border-radius: 14px;
   padding: 18px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  box-shadow: $shadow;
+
+  p {
+    font-size: 14px;
+    color: $text-muted;
+    margin: 10px 0 4px;
+  }
+
+  h2 {
+    font-size: 26px;
+    font-weight: 700;
+    color: $text-dark;
+  }
 }
 
-.analytics-stat-card p {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 10px 0 4px;
-}
-
-.analytics-stat-card h2 {
-  font-size: 26px;
-  font-weight: 700;
-  color: #111827;
-}
+/* ===============================
+   Stat Icon
+================================ */
 .stat-icon {
   width: 44px;
   height: 44px;
@@ -47,37 +93,58 @@
   align-items: center;
   justify-content: center;
   color: #fff;
+
+  &.green {
+    background: $green;
+  }
+
+  &.blue {
+    background: $blue;
+  }
+
+  &.yellow {
+    background: $yellow;
+    color: #111;
+  }
+
+  &.purple {
+    background: $purple;
+  }
 }
 
-.stat-icon.green { background: #22c55e; }
-.stat-icon.blue { background: #3b82f6; }
-.stat-icon.yellow { background: #facc15; color: #111; }
-.stat-icon.purple { background: #a855f7; }
-
+/* ===============================
+   Analytics Grid
+================================ */
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
+/* ===============================
+   Analytics Cards
+================================ */
 .analytics-card {
-  background: #ffffff;
+  background: $white;
   border-radius: 14px;
   padding: 20px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+  box-shadow: $shadow;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: $text-dark;
+  }
+
+  .recharts-responsive-container {
+    min-height: 260px;
+  }
 }
 
-.analytics-card h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  color: #111827;
-}
-
-.analytics-card .recharts-responsive-container {
-  min-height: 260px;
-}
-
+/* ===============================
+   Recharts Overrides
+================================ */
 .recharts-tooltip-label {
   font-size: 13px;
   font-weight: 500;
@@ -87,11 +154,16 @@
   font-size: 13px;
 }
 
-.recharts-cartesian-axis-tick text {
-  font-size: 12px;
-  fill: #6b7280;
+.recharts-cartesian-axis-tick {
+  text {
+    font-size: 12px;
+    fill: $text-muted;
+  }
 }
 
+/* ===============================
+   Completion Chart
+================================ */
 .completion-card {
   position: relative;
   text-align: center;
@@ -103,21 +175,24 @@
   left: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;
+
+  h2 {
+    font-size: 34px;
+    font-weight: 700;
+    margin: 0;
+    color: $text-dark;
+  }
+
+  p {
+    font-size: 14px;
+    margin-top: 4px;
+    color: $text-muted;
+  }
 }
 
-.completion-center h2 {
-  font-size: 34px;
-  font-weight: 700;
-  margin: 0;
-  color: #111827;
-}
-
-.completion-center p {
-  font-size: 14px;
-  margin-top: 4px;
-  color: #6b7280;
-}
-
+/* ===============================
+   Legend
+================================ */
 .legend {
   display: flex;
   justify-content: center;
@@ -125,11 +200,11 @@
   margin-top: 12px;
   font-size: 14px;
   color: #374151;
-}
 
-.legend span {
-  display: flex;
-  align-items: center;
+  span {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .dot {
@@ -138,35 +213,43 @@
   border-radius: 4px;
   margin-right: 6px;
   display: inline-block;
+
+  &.green {
+    background: $green;
+  }
+
+  &.yellow {
+    background: $warning;
+  }
+
+  &.red {
+    background: $danger;
+  }
 }
 
-.dot.green {
-  background: #22c55e;
-}
-
-.dot.yellow {
-  background: #f59e0b;
-}
-
-.dot.red {
-  background: #ef4444;
-}
-
+/* ===============================
+   Lesson Progress
+================================ */
 .lesson-row {
   display: flex;
   align-items: center;
   gap: 10px;
   margin-bottom: 12px;
-}
 
-.lesson-row span {
-  width: 90px;
+  span {
+    width: 90px;
+  }
+
+  small {
+    width: 40px;
+    text-align: right;
+  }
 }
 
 .analytics-progress {
   flex: 1;
   height: 10px;
-  background: #e5e7eb;
+  background: $border;
   border-radius: 6px;
 }
 
@@ -174,9 +257,4 @@
   height: 100%;
   background: #320bf5;
   border-radius: 6px;
-}
-
-.lesson-row small {
-  width: 40px;
-  text-align: right;
 }

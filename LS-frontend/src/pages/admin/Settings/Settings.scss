@@ -1,39 +1,70 @@
-.settings-layout{
-    display: flex;
+/* ===============================
+   VARIABLES
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f5f7fb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$border: #d1d5db;
+$light-border: #f1f5f9;
+
+$primary: #4f6ef7;
+
+/* ===============================
+   LAYOUT
+================================ */
+.settings-layout {
+  display: flex;
+  font-family: $font;
 }
 
 .settings-wrapper {
   padding: 28px 36px;
-  background: #f5f7fb;
+  background: $bg;
   min-height: 100vh;
   width: 100%;
 }
 
+/* ===============================
+   PAGE HEADER
+================================ */
 .page-title {
   font-size: 26px;
   font-weight: 700;
+  color: $text-dark;
 }
 
 .page-subtitle {
   font-size: 14px;
-  color: #6b7280;
+  color: $text-muted;
   margin-bottom: 24px;
 }
 
+/* ===============================
+   SETTINGS CARD
+================================ */
 .settings-card {
-  background: #fff;
+  background: $white;
   border-radius: 12px;
   padding: 20px 24px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: $text-dark;
+  }
 }
 
-.card-title {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 16px;
-}
-
+/* ===============================
+   FORM GRID
+================================ */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -43,66 +74,81 @@
 .form-group {
   display: flex;
   flex-direction: column;
+
+  &.full {
+    grid-column: span 3;
+  }
+
+  label {
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #374151;
+  }
+
+  input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid $border;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
 }
 
-.form-group.full {
-  grid-column: span 3;
-}
-
-.form-group label {
-  font-size: 13px;
-  margin-bottom: 6px;
-  color: #374151;
-}
-
-.form-group input {
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
+/* ===============================
+   TOGGLE ROW
+================================ */
 .toggle-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 12px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid $light-border;
   font-size: 14px;
+  color: $text-dark;
 }
 
+/* ===============================
+   TOGGLE SWITCH
+================================ */
 .toggle {
   width: 44px;
   height: 22px;
-  background: #d1d5db;
+  background: $border;
   border-radius: 20px;
   cursor: pointer;
   position: relative;
   transition: 0.2s;
+
+  &.on {
+    background: $primary;
+  }
+
+  .toggle-thumb {
+    width: 18px;
+    height: 18px;
+    background: $white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: 0.2s;
+  }
+
+  &.on .toggle-thumb {
+    left: 24px;
+  }
 }
 
-.toggle.on {
-  background: #4f6ef7;
-}
-
-.toggle-thumb {
-  width: 18px;
-  height: 18px;
-  background: #fff;
-  border-radius: 50%;
-  position: absolute;
-  top: 2px;
-  left: 2px;
-  transition: 0.2s;
-}
-
-.toggle.on .toggle-thumb {
-  left: 24px;
-}
-
+/* ===============================
+   SAVE BUTTON
+================================ */
 .save-btn {
   margin-top: 12px;
-  background: #4f6ef7;
+  background: $primary;
   color: white;
   border: none;
   padding: 12px 18px;
@@ -110,4 +156,8 @@
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
 }

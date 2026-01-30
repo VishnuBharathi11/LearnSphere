@@ -68,7 +68,7 @@ function AdminDashboard(){
     <div className="admin-dashboard">
       <h2 className="page-title">System Overview</h2>
       <p className="page-subtitle">Welcome back, Admin User!</p>
-      <div className="stats-grid">
+      <div className="status-grid">
         {stats.map((s, i) => (
           <div key={i} className="stat-card">
             <s.icon size={22} />
@@ -111,8 +111,8 @@ function AdminDashboard(){
             <BarChart data={revenueTrend}>
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip />
-              <Bar dataKey="revenue" fill="#f59e0b" />
+              <Tooltip cursor={false} />
+              <Bar dataKey="revenue" fill="#f59e0b" activeBar={false} />
             </BarChart>
           </ResponsiveContainer>
         </div>

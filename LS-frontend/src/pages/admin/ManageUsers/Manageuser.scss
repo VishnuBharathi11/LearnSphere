@@ -1,21 +1,52 @@
-.manage-users-layout{
-    display: flex;
-}
-.manage-users {
-  padding: 24px;
-  width: 100%;
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f9fafb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$primary: #2563eb;
+$border: #e5e7eb;
+
+$success: #16a34a;
+$danger: #dc2626;
+
+/* ===============================
+   Layout
+================================ */
+.manage-users-layout {
+  display: flex;
+  font-family: $font;
 }
 
+.manage-users {
+  width: 100%;
+  padding: 24px;
+  background: $bg;
+}
+
+/* ===============================
+   Page Header
+================================ */
 .page-title {
   font-size: 22px;
   font-weight: 600;
+  color: $text-dark;
 }
 
 .page-subtitle {
-  color: #6b7280;
+  font-size: 14px;
+  color: $text-muted;
   margin-bottom: 20px;
 }
 
+/* ===============================
+   Tabs
+================================ */
 .tabs {
   display: flex;
   gap: 10px;
@@ -23,19 +54,28 @@
 }
 
 .tab {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid #e5e7eb;
-  background: #fff;
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid $border;
+  background: $white;
+  font-size: 14px;
   cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    background: #f3f4f6;
+  }
+
+  &.active {
+    background: $primary;
+    color: white;
+    border-color: $primary;
+  }
 }
 
-.tab.active {
-  background: #2563eb;
-  color: white;
-  border-color: #2563eb;
-}
-
+/* ===============================
+   Filters
+================================ */
 .filters {
   display: flex;
   gap: 12px;
@@ -45,26 +85,35 @@
 .search-box {
   display: flex;
   align-items: center;
-  gap: 6px;
-  border: 1px solid #e5e7eb;
-  padding: 6px 10px;
-  border-radius: 6px;
-  flex: 1;
-}
-
-.search-box input {
-  border: none;
-  outline: none;
-  width: 100%;
-}
-
-.table-wrapper {
-  background: #fff;
-  border: 1px solid #e5e7eb;
+  gap: 8px;
+  border: 1px solid $border;
+  padding: 8px 12px;
   border-radius: 8px;
+  flex: 1;
+  background: $white;
+
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    background: transparent;
+  }
+}
+
+/* ===============================
+   Table Wrapper
+================================ */
+.table-wrapper {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 10px;
   overflow: hidden;
 }
 
+/* ===============================
+   Table
+================================ */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -74,45 +123,70 @@ thead {
   background: #f9fafb;
 }
 
-th, td {
-  padding: 12px;
+th,
+td {
+  padding: 14px;
   text-align: left;
   font-size: 14px;
+  border-bottom: 1px solid $border;
 }
 
+th {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ===============================
+   User Cell
+================================ */
 .user-cell {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
 }
 
 .avatar {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #2563eb;
-  color: #fff;
+  background: $primary;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
 }
 
+/* ===============================
+   Actions
+================================ */
 .actions {
   display: flex;
   gap: 10px;
   cursor: pointer;
 }
 
+/* ===============================
+   Status
+================================ */
 .active {
-  color: #16a34a;
+  color: $success;
+  font-weight: 500;
 }
 
 .suspended {
-  color: #dc2626;
+  color: $danger;
+  font-weight: 500;
 }
 
+/* ===============================
+   Empty State
+================================ */
 .empty {
   text-align: center;
   padding: 40px;
   color: #9ca3af;
+  font-size: 14px;
 }

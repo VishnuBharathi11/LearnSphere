@@ -39,15 +39,15 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   justify-content: space-between;
   margin-bottom: 24px;
 
-  h1 {
-    font-size: 26px;
+   h1 {
+    font-size: 22px;
     font-weight: 600;
     color: $text-dark;
+    margin-left: -20px;
   }
-
-  p {
-    font-size: 14px;
+  p{
     color: $text-muted;
+    margin-left: -20px;
   }
 }
 
@@ -69,11 +69,11 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 .status-card {
   background: $white;
   border-radius: 14px;
-  padding: 18px 20px;
+  padding: 16px;
   display: flex;
   align-items: center;
   gap: 16px;
-  min-height: 90px;
+  height: 100%;
   box-shadow: $shadow;
 
   .status-icon {

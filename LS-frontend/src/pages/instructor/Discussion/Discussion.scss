@@ -66,9 +66,13 @@ $shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
   @include flex-row(0, space-between, flex-start);
   margin-bottom: 24px;
 
-  h1 {
-    margin: 0;
+   h1 {
+    font-size: 22px;
+    font-weight: 600;
     color: $text-dark;
+  }
+  p{
+    color: $text-muted;
   }
 }
 

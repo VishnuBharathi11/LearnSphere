@@ -47,15 +47,12 @@ $secondary-text: #374151;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-
-  h1 {
-    font-size: 26px;
+ h1 {
+    font-size: 22px;
     font-weight: 600;
     color: $text-dark;
   }
-
-  p {
-    font-size: 14px;
+  p{
     color: $text-muted;
   }
 }

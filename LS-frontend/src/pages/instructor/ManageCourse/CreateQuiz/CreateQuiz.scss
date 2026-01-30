@@ -1,58 +1,117 @@
-.create-quiz-layout{
-    display: flex;
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f9fafb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$primary: #2563eb;
+$primary-hover: #1e4fd6;
+
+$success: #16a34a;
+$success-hover: #15803d;
+
+$border: #e5e7eb;
+
+$danger-bg: #fee2e2;
+$danger-text: #b91c1c;
+$danger-hover: #fecaca;
+
+/* ===============================
+   Layout
+================================ */
+.create-quiz-layout {
+  display: flex;
+  font-family: $font;
 }
+
 .quiz-page {
-  padding: 24px;
-  background-color: #f9fafb;
-  min-height: 100vh;
   width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  background-color: $bg;
+
+  h1 {
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: $text-dark;
+  }
 }
 
-.quiz-page h1 {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-
+/* ===============================
+   Course Reference
+================================ */
 .course-ref {
   font-size: 14px;
-  color: #6b7280;
+  color: $text-muted;
   margin-bottom: 20px;
 }
 
+/* ===============================
+   Quiz Card
+================================ */
 .quiz-card {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  background-color: $white;
+  border: 1px solid $border;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
+
+  h3 {
+    font-size: 18px;
+    margin-bottom: 14px;
+    color: $text-dark;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    margin-top: 12px;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+  }
+
+  textarea {
+    resize: none;
+    min-height: 80px;
+  }
+
+  button {
+    margin-top: 14px;
+    background-color: $primary;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+
+    &:hover {
+      background-color: $primary-hover;
+    }
+  }
 }
 
-.quiz-card h3 {
-  font-size: 18px;
-  margin-bottom: 14px;
-}
-
-.quiz-card label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  margin-top: 12px;
-}
-
-.quiz-card input,
-.quiz-card textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.quiz-card textarea {
-  resize: none;
-  min-height: 80px;
-}
+/* ===============================
+   Options Grid
+================================ */
 .quiz-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -65,94 +124,86 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 10px;
+
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  input[type="text"] {
+    flex: 1;
+  }
 }
 
-.option-row input[type="checkbox"] {
-  width: 18px;
-  height: 18px;
-  cursor: pointer;
-}
-
-.option-row input[type="text"] {
-  flex: 1;
-}
-
-.quiz-card button {
-  margin-top: 14px;
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 14px;
-}
-.quiz-card button:hover {
-  background-color: #1e4fd6;
-}
+/* ===============================
+   Question Preview
+================================ */
 .question-preview {
-  border: 1px solid #e5e7eb;
+  border: 1px solid $border;
   border-radius: 6px;
   padding: 12px;
   margin-bottom: 12px;
+
+  strong {
+    display: block;
+    margin-bottom: 6px;
+    color: $text-dark;
+  }
+
+  div {
+    font-size: 14px;
+    color: #374151;
+    margin-bottom: 4px;
+  }
+
+  .correct {
+    color: #15803d;
+    font-weight: 500;
+  }
+
+  button {
+    margin-top: 8px;
+    background-color: $danger-bg;
+    color: $danger-text;
+
+    &:hover {
+      background-color: $danger-hover;
+    }
+  }
 }
 
-.question-preview strong {
-  display: block;
-  margin-bottom: 6px;
-}
-
-.question-preview div {
-  font-size: 14px;
-  color: #374151;
-  margin-bottom: 4px;
-}
-
-.question-preview .correct {
-  color: #15803d;
-  font-weight: 500;
-}
-
-.question-preview button {
-  margin-top: 8px;
-  background-color: #fee2e2;
-  color: #b91c1c;
-}
-
-.question-preview button:hover {
-  background-color: #fecaca;
-}
+/* ===============================
+   Page Actions
+================================ */
 .quiz-actions {
   display: flex;
   gap: 12px;
   margin-top: 20px;
-}
 
-.quiz-actions .save {
-  background-color: #16a34a;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  .save {
+    background-color: $success;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
 
-.quiz-actions .save:hover {
-  background-color: #15803d;
-}
+    &:hover {
+      background-color: $success-hover;
+    }
+  }
 
-.quiz-actions .cancel {
-  background-color: #e5e7eb;
-  color: #374151;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  cursor: pointer;
-}
+  .cancel {
+    background-color: $border;
+    color: #374151;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
 
-.quiz-actions .cancel:hover {
-  background-color: #d1d5db;
+    &:hover {
+      background-color: #d1d5db;
+    }
+  }
 }
