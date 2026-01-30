@@ -31,7 +31,7 @@ function Login() {
 
     if (user.role === "learner") navigate("/student-layout",{replace:true});
     if (user.role === "instructor") navigate("/instructor-dashboard",{replace:true});
-    if (user.role === "admin") navigate("/admin",{replace:true});
+    if (user.role === "admin") navigate("/admin-dashboard",{replace:true});
   };
 
   return (
