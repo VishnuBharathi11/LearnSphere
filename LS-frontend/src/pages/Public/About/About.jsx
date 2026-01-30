@@ -86,7 +86,7 @@ function About() {
                 paths. Our platform helps you showcase your skills, boost your
                 resume, and move confidently toward your career goals.
               </div>
-              <div className="ab-btn primary">
+              <div className="ab-btn ab-primary">
                 <button>
                   Start Learning Today <MdOutlineKeyboardArrowRight />
                 </button>
