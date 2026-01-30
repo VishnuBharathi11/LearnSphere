@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import "./Progress.css";
+import "./Progress.scss";
 
 const stats = [
   { title: "Completed Courses", value: 3 },

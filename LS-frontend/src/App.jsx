@@ -53,7 +53,7 @@ function App() {
           <Route path="/learn/:id" element={<LearnCourse/>}/>
           <Route path="/take-test" element={<TestTaking />} />
 
-          <Route path="/instructor" element={<InstructorDashboard/>} />
+          <Route path="/instructor-dashboard" element={<InstructorDashboard/>} />
           <Route path="/create-course" element={<CreateCourse/>} />
           <Route path="/manage-courses" element={<ManageCourses/>} />
           <Route path="/manage-courses/:courseId" element={<UploadLesson/>}/>

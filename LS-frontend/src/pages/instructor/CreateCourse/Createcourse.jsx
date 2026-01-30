@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Sidebar, Upload, X } from "lucide-react";
-import "./Createcourse.css";
+import "./Createcourse.scss";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 
 function Createcourse() {

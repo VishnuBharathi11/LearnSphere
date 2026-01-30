@@ -1,5 +1,5 @@
 import React from "react";
-import "./CourseCard.css";
+import "./CourseCard.scss";
 import { useNavigate } from "react-router-dom";
 function CourseCard({ course }) {
   const navigate = useNavigate();

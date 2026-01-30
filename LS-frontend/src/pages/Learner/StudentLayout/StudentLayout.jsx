@@ -6,7 +6,7 @@ import MyCourses from "../MyCourses/Mycourses";
 import Progress from "../Progress/Progress";
 import Assessment from "../Assesment/Assesment";
 import Profile from "../Profile/Profile";
-import "./StudentLayout.css";
+import "./StudentLayout.scss";
 function  StudentLayout() {
   const [activeTab, setActiveTab] = useState("Dashboard");
 

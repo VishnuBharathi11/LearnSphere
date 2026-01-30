@@ -1,8 +1,7 @@
 import React from "react";
 import LearnerImg from "../../../assets/learner/learner.jpg";
 import courseImg from "../../../assets/Featured Courses/1.jpg"
-import "./Dashboard.css";
-import { useNavigate } from "react-router-dom";
+import "./Dashboard.scss";
 
 const continueCourses = [
   {
@@ -32,7 +31,6 @@ const continueCourses = [
 ];
 
 function Dashboard() {
-  const navigate = useNavigate();
   return (
       <div>
         <input type="search" placeholder="Search for courses" className="search-box" />

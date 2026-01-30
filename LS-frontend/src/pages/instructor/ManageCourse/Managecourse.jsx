@@ -12,7 +12,7 @@ import {
   EyeOff,
   Sidebar,
 } from "lucide-react";
-import "./Managecourse.css";
+import "./Managecourse.scss";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 import { useNavigate } from "react-router-dom";
 

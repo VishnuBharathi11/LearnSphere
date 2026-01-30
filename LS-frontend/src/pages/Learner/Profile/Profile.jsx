@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import profileImage from "../../../assets/Learner/learner-profile.jpeg";
-import "./Profile.css";
+import "./Profile.scss";
 
 function Profile() {
   const infoRef = useRef(null);

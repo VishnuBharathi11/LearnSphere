@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
-import "./Certificate.css";
+import "./Certificate.scss";
 
 import certificateImage from "../../../assets/LearnerCertificate/certificate.jpg";
 

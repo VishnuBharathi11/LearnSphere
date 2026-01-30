@@ -1,5 +1,5 @@
 import React from "react";
-import "./Home.css";
+import "./Home.scss";
 import web from "../../../assets/Popular Categories/web.png";
 import ai from "../../../assets/Popular Categories/artificial-intelligence.png";
 import mobile from "../../../assets/Popular Categories/app-development.png";

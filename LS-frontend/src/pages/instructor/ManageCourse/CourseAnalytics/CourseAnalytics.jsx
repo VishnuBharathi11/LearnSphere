@@ -1,5 +1,5 @@
 import React from "react";
-import "./CourseAnalytics.css";
+import "./CourseAnalytics.scss";
 import { DollarSign, Users, Star, MessageSquare, Frown } from "lucide-react";
 import {
   BarChart,

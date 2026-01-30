@@ -10,7 +10,7 @@ import {
   Plus,
 } from "lucide-react";
 import { useParams } from "react-router-dom";
-import "./UpdateLesson.css";
+import "./UpdateLesson.scss";
 import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 function UpdateLesson() {
     const {courseId}=useParams();

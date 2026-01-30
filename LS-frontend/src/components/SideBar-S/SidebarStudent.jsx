@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 
 import logo from "../../assets/Logo/logo.png";
-import "./SidebarStudent.css";
+import "./SidebarStudent.scss";
 
 function SidebarStudent({ activeTab, setActiveTab, children }) {
    const navigate = useNavigate();

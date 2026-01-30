@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Plus, Trash2, CheckCircle } from "lucide-react";
-import "./CreateQuiz.css";
+import "./CreateQuiz.scss";
 import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 
 function CreateQuiz() {

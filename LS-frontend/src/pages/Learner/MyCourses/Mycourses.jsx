@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./MyCourses.css";
+import "./MyCourses.scss";
 import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
 import courses from "../../../data/courses";
 

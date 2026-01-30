@@ -1,6 +1,6 @@
 import React from "react";
 import { FiSearch, FiBell } from "react-icons/fi";
-import "./TopNavBarStudent.css";
+import "./TopNavBarStudent.scss";
 function TopNavBarStudent({ activeTab }) {
   return (
     <div className="dashboard-header">

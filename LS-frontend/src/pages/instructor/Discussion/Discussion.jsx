@@ -10,7 +10,7 @@ import {
   X,
   Flag,
 } from "lucide-react";
-import "./Discussion.css";
+import "./Discussion.scss";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 
 function Discussion() {

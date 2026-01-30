@@ -2,7 +2,7 @@ import { useNavigate, useParams} from "react-router-dom";
 import {useState} from "react";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
 import courses from "../../../data/courses.js";
-import "./CourseDetail.css";
+import "./CourseDetail.scss";
 
 function CourseDetail() {
   const { id } = useParams();
