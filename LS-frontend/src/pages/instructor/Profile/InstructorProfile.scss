@@ -1,0 +1,414 @@
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f9fafb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$blue: #3b82f6;
+$green: #22c55e;
+$yellow: #facc15;
+$purple: #a855f7;
+
+$primary: #2563eb;
+$primary-hover: #1d4ed8;
+
+$border: #d1d5db;
+$shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+/* ===============================
+   Layout
+================================ */
+.instructor-profile-layout {
+  display: flex;
+  font-family: $font;
+}
+
+.instructor-profile-page {
+  width: 100%;
+  padding: 24px;
+  background: $bg;
+}
+
+/* ===============================
+   Header
+================================ */
+.instructor-profile-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+
+  h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+  p{
+    color: $text-muted;
+  }
+}
+
+/* ===============================
+   Stats Section
+================================ */
+.instructor-profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+
+}
+
+.instructor-stat-card {
+  width: 280px;
+  background: $white;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  span {
+    font-size: 13px;
+    color: $text-muted;
+    font-weight: 500;
+  }
+
+  strong {
+    font-size: 22px;
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  &.blue .instructor-stat-icon {
+    background: $blue;
+  }
+
+  &.green .instructor-stat-icon {
+    background: $green;
+  }
+
+  &.yellow .instructor-stat-icon {
+    background: $yellow;
+  }
+
+  &.purple .instructor-stat-icon {
+    background: $purple;
+  }
+}
+
+.instructor-stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+/* ===============================
+   Profile Content Layout
+================================ */
+.instructor-profile-content {
+  display: grid;
+  grid-template-columns: 1290px 1fr;
+  gap: 32px;
+}
+
+/* ===============================
+   Profile Form
+================================ */
+.instructor-profile-form {
+  background: $white;
+  padding: 24px;
+  border-radius: 14px;
+  box-shadow: $shadow;
+
+  h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: $text-dark;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: $text-dark;
+  }
+}
+
+/* ===============================
+   Profile Picture
+================================ */
+.profile-pic-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+.profile-pic {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.profile-upload-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: $primary;
+  color:#e5e7eb;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  p{
+    color: #ffffff;
+  }
+  &:hover {
+    background: $primary-hover;
+  }
+}
+
+/* ===============================
+   Form Fields
+================================ */
+.profile-form {
+  label {
+    display: block;
+    font-size: 13px;
+    color: #ffffff;
+    margin-bottom: 6px;
+    margin-top: 14px;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border-radius: 8px;
+    border: 1px solid $border;
+    font-size: 14px;
+  }
+
+  input:disabled {
+    background: $bg;
+    cursor: not-allowed;
+  }
+
+  textarea {
+    resize: none;
+    height: 100px;
+  }
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  &.single {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===============================
+   Save Button
+================================ */
+.save-btn {
+  margin-top: 24px;
+  width: 100%;
+  padding: 12px;
+  background: $primary;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+
+  &:hover {
+    background: $primary-hover;
+  }
+}
+
+/* ===============================
+   Empty Placeholder
+================================ */
+.profile-empty {
+  background: transparent;
+}
+
+/* ===============================
+   Enhanced Basic Information
+================================ */
+
+/* Card look upgrade */
+.instructor-profile-form {
+  width: 100%;
+  background: $white;
+  padding: 28px;
+  border-radius: 16px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+  border: 1px solid #eef0f3;
+
+  h2 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 22px;
+    color: $text-dark;
+  }
+
+  h3 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 28px 0 14px;
+    color: $text-dark;
+  }
+}
+
+/* ===============================
+   Profile Picture Section
+================================ */
+.profile-pic-row {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 14px;
+  margin-bottom: 26px;
+  border: 1px dashed #e5e7eb;
+}
+
+.profile-pic {
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e5e7eb, #f3f4f6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 3px solid #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+
+  svg {
+    color: #9ca3af;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.upload-btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  cursor: pointer;
+  transition: 0.2s ease;
+
+  &:hover {
+    transform: translateY(-1px);
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  }
+}
+
+/* ===============================
+   Form Inputs
+================================ */
+.form-row {
+  margin-bottom: 16px;
+}
+
+.profile-form label,
+.instructor-profile-form label {
+  font-size: 13px;
+  font-weight: 500;
+  color: $text-muted;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.profile-form input,
+.profile-form textarea,
+.instructor-profile-form input,
+.instructor-profile-form textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  background: #ffffff;
+  transition: all 0.2s ease;
+
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  }
+}
+
+.instructor-profile-form input:disabled {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.instructor-profile-form textarea {
+  min-height: 110px;
+  line-height: 1.6;
+}
+
+/* ===============================
+   Save Button Enhancement
+================================ */
+.save-btn {
+  margin-top: 28px;
+  width: 100%;
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: 0.25s ease;
+
+  &:hover {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    transform: translateY(-1px);
+  }
+}

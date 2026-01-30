@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Upload, User, Users, BookOpen, Star, DollarSign } from "lucide-react";
-import "./InstructorProfile.css";
+import "./InstructorProfile.scss";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 
 function InstructorProfile() {
@@ -87,9 +87,9 @@ function InstructorProfile() {
                   <User size={40} />
                 )}
               </div>
-              <label className="upload-btn">
-                <Upload size={16} />
-                Upload a professional photo
+              <label className="profile-upload-button">
+               
+                <p> <Upload size={16} style={{marginBottom:'-2px'}}/>Upload a professional photo</p>
                 <input
                   type="file"
                   hidden

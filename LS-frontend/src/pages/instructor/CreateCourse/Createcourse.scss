@@ -1,117 +1,179 @@
-.create-course-layout{
-    display: flex;
-    min-height: 100hv;
-}
-.create-course-page {
-  padding: 24px;
-  background-color: #f9fafb;
-    width: 100%;
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f9fafb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$border: #e5e7eb;
+$border-input: #d1d5db;
+
+$primary: #2563eb;
+$danger: #dc2626;
+$secondary-bg: #e5e7eb;
+$secondary-text: #374151;
+
+/* ===============================
+   Base
+================================ */
+* {
+  box-sizing: border-box;
+  font-family: $font;
 }
 
+/* ===============================
+   Layout
+================================ */
+.create-course-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.create-course-page {
+  width: 100%;
+  padding: 24px;
+  background-color: $bg;
+}
+
+/* ===============================
+   Header
+================================ */
 .create-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+ h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+  p{
+    color: $text-muted;
+  }
 }
 
-.create-header h1 {
-  font-size: 26px;
-  font-weight: 600;
-}
-
-.create-header p {
-  font-size: 14px;
-  color: #6b7280;
-}
-
+/* ===============================
+   Form Card
+================================ */
 .form-card {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  background-color: $white;
+  border: 1px solid $border;
   border-radius: 8px;
   padding: 24px;
   max-width: 900px;
+
+  h2 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: $text-dark;
+  }
 }
 
-.form-card h2 {
-  margin-bottom: 20px;
-  font-size: 18px;
-}
-
+/* ===============================
+   Form Groups
+================================ */
 .form-group {
   margin-bottom: 18px;
+
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: $text-dark;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid $border-input;
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
 }
 
-.form-group label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-}
-
-.form-group input,
-.form-group textarea,
-.form-group select {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
+/* ===============================
+   Grid Layouts
+================================ */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+
+  &.two {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.form-grid.two {
-  grid-template-columns: repeat(2, 1fr);
-}
-
+/* ===============================
+   Upload Section
+================================ */
 .upload-box {
-  border: 2px dashed #d1d5db;
+  border: 2px dashed $border-input;
   padding: 24px;
   text-align: center;
   border-radius: 8px;
   cursor: pointer;
+
+  label {
+    cursor: pointer;
+    font-size: 14px;
+    color: $text-muted;
+  }
 }
 
-.upload-box label {
-  cursor: pointer;
-}
-
+/* ===============================
+   Thumbnail Preview
+================================ */
 .thumbnail-preview {
   position: relative;
   display: inline-block;
+
+  img {
+    max-height: 200px;
+    border-radius: 6px;
+    border: 1px solid $border-input;
+  }
+
+  button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    border: none;
+    background-color: $danger;
+    color: $white;
+    border-radius: 50%;
+    padding: 4px;
+    cursor: pointer;
+  }
 }
 
-.thumbnail-preview img {
-  max-height: 200px;
-  border-radius: 6px;
-  border: 1px solid #d1d5db;
-}
-
-.thumbnail-preview button {
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  border: none;
-  background-color: #dc2626;
-  color: #ffffff;
-  border-radius: 50%;
-  padding: 4px;
-  cursor: pointer;
-}
-
+/* ===============================
+   Form Actions
+================================ */
 .form-actions {
   display: flex;
   gap: 12px;
   margin-top: 20px;
 }
 
+/* ===============================
+   Buttons
+================================ */
 .primary-btn {
-  background-color: #2563eb;
-  color: white;
+  background-color: $primary;
+  color: $white;
   padding: 10px 20px;
   border: none;
   border-radius: 6px;
@@ -119,8 +181,8 @@
 }
 
 .secondary-btn {
-  background-color: #e5e7eb;
-  color: #374151;
+  background-color: $secondary-bg;
+  color: $secondary-text;
   padding: 10px 20px;
   border: none;
   border-radius: 6px;
@@ -130,6 +192,6 @@
 .logout-btn {
   background: none;
   border: none;
-  color: #dc2626;
+  color: $danger;
   cursor: pointer;
 }

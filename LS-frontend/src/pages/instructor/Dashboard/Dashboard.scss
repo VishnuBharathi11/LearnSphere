@@ -1,123 +1,120 @@
-/* ================================
-   Variables
-================================ */
-$ins-font-primary: "Inter", sans-serif;
+/* ================= VARIABLES ================= */
+$font: "Inter", sans-serif;
 
-$ins-bg-page: #f9fafb;
-$ins-white: #ffffff;
+$bg: #f9fafb;
+$white: #ffffff;
 
-$ins-text-dark: #111827;
-$ins-text-muted: #6b7280;
-$ins-danger: #dc2626;
+$text-dark: #111827;
+$text-muted: #6b7280;
 
-$ins-primary: #3b82f6;
+$blue: #3b82f6;
+$yellow: #facc15;
+$green: #22c55e;
+$red: #ef4444;
 
-$ins-border: #e5e7eb;
+$border: #e5e7eb;
+$shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
-/* ================================
-   Mixins
-================================ */
-@mixin flex-row($gap: 0, $justify: flex-start, $align: center) {
-  display: flex;
-  gap: $gap;
-  justify-content: $justify;
-  align-items: $align;
-}
-
-@mixin card($padding: 16px, $radius: 8px) {
-  background-color: $ins-white;
-  border: 1px solid $ins-border;
-  border-radius: $radius;
-  padding: $padding;
-}
-
-/* ================================
-   Base
-================================ */
+/* ================= BASE ================= */
 * {
   box-sizing: border-box;
-  font-family: $ins-font-primary;
+  font-family: $font;
 }
 
-/* ================================
-   Layout
-================================ */
+/* ================= LAYOUT ================= */
 .instructor-layout {
   display: flex;
   min-height: 100vh;
-  background-color: $ins-bg-page;
+  background: $bg;
 }
 
 .instructor-dashboard {
   flex: 1;
   padding: 24px;
-  background-color: $ins-bg-page;
-  overflow-x: hidden;
 }
 
-/* ================================
-   Header
-================================ */
+/* ================= HEADER ================= */
 .dashboard-header {
-  @include flex-row(0, space-between);
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 24px;
 
-  h1 {
-    font-size: 26px;
+   h1 {
+    font-size: 22px;
     font-weight: 600;
-    color: $ins-text-dark;
+    color: $text-dark;
+    margin-left: -20px;
   }
-
-  p {
-    font-size: 14px;
-    color: $ins-text-muted;
-    margin-top: 4px;
+  p{
+    color: $text-muted;
+    margin-left: -20px;
   }
 }
 
 .logout-btn {
-  border: none;
   background: none;
-  color: $ins-danger;
-  font-size: 14px;
+  border: none;
+  color: $red;
   cursor: pointer;
 }
 
-/* ================================
-   Stats
-================================ */
+/* ================= STATUS CARDS ================= */
 .status-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .status-card {
-  @include card;
-  @include flex-row(12px);
+  background: $white;
+  border-radius: 14px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  height: 100%;
+  box-shadow: $shadow;
 
   .status-icon {
-    background-color: $ins-border;
-    padding: 10px;
-    border-radius: 6px;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      color: white;
+    }
   }
 
-  .status-title {
-    font-size: 13px;
-    color: $ins-text-muted;
-  }
+  .status-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+    strong {
+      font-size: 26px;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+    }
 
-  .stat-value {
-    font-size: 22px;
-    font-weight: 600;
-    color: $ins-text-dark;
+    span {
+      font-size: 14px;
+      color: $text-muted;
+      margin-bottom: 0px;
+    }
   }
 }
 
-/* ================================
-   Charts
-================================ */
+.status-blue .status-icon { background: $blue; }
+.status-yellow .status-icon { background: $yellow; }
+.status-green .status-icon { background: $green; }
+.status-red .status-icon { background: $red; }
+
+/* ================= CHARTS ================= */
 .chart-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -126,112 +123,110 @@ $ins-border: #e5e7eb;
 }
 
 .chart-card {
-  @include card;
-
-  .chart-header {
-    @include flex-row(8px);
-    margin-bottom: 16px;
-
-    h3 {
-      font-size: 16px;
-      font-weight: 600;
-    }
-  }
+  background: $white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: $shadow;
 }
 
-/* ================================
-   Bar Chart
-================================ */
+.chart-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+/* ================= BAR CHART ================= */
 .bar-chart {
   display: flex;
   align-items: flex-end;
-  height: 180px;
+  height: 220px;
   gap: 12px;
-
-  .bar-item {
-    flex: 1;
-    text-align: center;
-
-    .bar {
-      width: 100%;
-      background-color: $ins-primary;
-      border-radius: 4px 4px 0 0;
-    }
-
-    .bar-label {
-      font-size: 12px;
-      color: $ins-text-muted;
-      margin-top: 6px;
-      display: block;
-    }
-  }
 }
 
-/* ================================
-   Progress
-================================ */
+.bar-item {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  text-align: center;
+}
+
+.bar {
+  width: 70%;
+  background: $blue;
+  border-radius: 6px 6px 0 0;
+  transition: height 0.4s ease;
+}
+.bar-value {
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 6px;
+  display: block;
+  color: $blue !important; 
+  margin-right: 20px;
+}
+.bar-label {
+  font-size: 12px;
+  color: $text-muted;
+  margin-right: 20px;
+}
+
+/* ================= PROGRESS ================= */
 .progress-row {
   margin-bottom: 14px;
-
-  .progress-info {
-    @include flex-row(0, space-between);
-    font-size: 13px;
-    margin-bottom: 6px;
-  }
-
-  .progress-bar {
-    width: 100%;
-    height: 8px;
-    background-color: $ins-border;
-    border-radius: 6px;
-
-    .progress-fill {
-      height: 100%;
-      background-color: $ins-primary;
-      border-radius: 6px;
-    }
-  }
 }
 
-/* ================================
-   Activity
-================================ */
-.activity-card {
-  @include card;
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
 
-  h3 {
-    margin-bottom: 16px;
-    font-size: 16px;
-    font-weight: 600;
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: $border;
+  border-radius: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: $blue;
+  border-radius: 6px;
+}
+
+/* ================= ACTIVITY ================= */
+.activity-card {
+  background: $white;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: $shadow;
+
+  h3{
+    margin-bottom: 15px;
   }
 }
 
 .activity-item {
-  @include flex-row(10px);
+  display: flex;
+  gap: 10px;
   padding-bottom: 12px;
   margin-bottom: 12px;
-  border-bottom: 1px solid $ins-border;
+  border-bottom: 1px solid $border;
 
   &:last-child {
     border-bottom: none;
-    margin-bottom: 0;
   }
+  
+}
 
-  p {
-    font-size: 14px;
-    color: $ins-text-dark;
-  }
-
-  small {
-    font-size: 12px;
-    color: $ins-text-muted;
-  }
-
-  .dot {
-    width: 8px;
-    height: 8px;
-    background-color: $ins-primary;
-    border-radius: 50%;
-    margin-top: 6px;
-  }
+.dot {
+  width: 8px;
+  height: 8px;
+  background: $blue;
+  border-radius: 50%;
+  margin-top: 6px;
 }

@@ -1,22 +1,53 @@
-.handle-courses-layout{
-    display: flex;
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f9fafb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$primary: #2563eb;
+$border: #e5e7eb;
+
+$success: #16a34a;
+$danger: #dc2626;
+$warning: #f59e0b;
+
+/* ===============================
+   Layout
+================================ */
+.handle-courses-layout {
+  display: flex;
+  font-family: $font;
 }
 
 .manage-courses {
-  padding: 24px;
   width: 100%;
+  padding: 24px;
+  background: $bg;
 }
 
+/* ===============================
+   Page Header
+================================ */
 .page-title {
   font-size: 22px;
   font-weight: 600;
+  color: $text-dark;
 }
 
 .page-subtitle {
-  color: #6b7280;
+  font-size: 14px;
+  color: $text-muted;
   margin-bottom: 20px;
 }
 
+/* ===============================
+   Stats Cards
+================================ */
 .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -25,22 +56,27 @@
 }
 
 .stat-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 12px;
   padding: 16px;
+
+  p {
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  h3 {
+    font-size: 22px;
+    margin-top: 6px;
+    font-weight: 600;
+    color: $text-dark;
+  }
 }
 
-.stat-card p {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.stat-card h3 {
-  font-size: 22px;
-  margin-top: 6px;
-}
-
+/* ===============================
+   Filters
+================================ */
 .filters {
   display: flex;
   gap: 12px;
@@ -50,26 +86,35 @@
 .search-box {
   display: flex;
   align-items: center;
-  gap: 6px;
-  border: 1px solid #e5e7eb;
-  padding: 8px 10px;
-  border-radius: 6px;
+  gap: 8px;
+  border: 1px solid $border;
+  padding: 8px 12px;
+  border-radius: 8px;
   flex: 1;
+  background: $white;
+
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+    background: transparent;
+  }
 }
 
-.search-box input {
-  border: none;
-  outline: none;
-  width: 100%;
-}
-
+/* ===============================
+   Table Wrapper
+================================ */
 .table-wrapper {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 12px;
   overflow: hidden;
 }
 
+/* ===============================
+   Table
+================================ */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -79,40 +124,67 @@ thead {
   background: #f9fafb;
 }
 
-th, td {
+th,
+td {
   padding: 14px;
   font-size: 14px;
   text-align: left;
+  border-bottom: 1px solid $border;
 }
 
-.course-title span {
-  display: block;
-  font-size: 12px;
-  color: #9ca3af;
-  margin-top: 4px;
+th {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
 }
 
+/* ===============================
+   Course Title
+================================ */
+.course-title {
+  font-weight: 500;
+  color: $text-dark;
+
+  span {
+    display: block;
+    font-size: 12px;
+    color: #9ca3af;
+    margin-top: 4px;
+  }
+}
+
+/* ===============================
+   Revenue
+================================ */
 .revenue {
-  color: #16a34a;
+  color: $success;
   font-weight: 500;
 }
 
+/* ===============================
+   Rating
+================================ */
 .rating {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #f59e0b;
+  color: $warning;
+  font-weight: 500;
 }
 
 .na {
   color: #9ca3af;
 }
 
+/* ===============================
+   Status Badge
+================================ */
 .status {
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 999px;
   font-size: 12px;
   font-weight: 500;
+  display: inline-block;
 }
 
 .status.published {
@@ -125,6 +197,9 @@ th, td {
   color: #991b1b;
 }
 
+/* ===============================
+   Actions
+================================ */
 .actions {
   display: flex;
   gap: 10px;

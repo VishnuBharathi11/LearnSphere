@@ -1,12 +1,45 @@
-.upload-lesson-layout{
-    display: flex;
+/* ===============================
+   Variables
+================================ */
+$font: "Inter", sans-serif;
+
+$bg: #f9fafb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+
+$primary: #2563eb;
+
+$border: #e5e7eb;
+
+$danger: #dc2626;
+$danger-bg: #fee2e2;
+
+$video-bg: #dbeafe;
+$video-text: #1e40af;
+
+$pdf-bg: #fee2e2;
+$pdf-text: #991b1b;
+
+/* ===============================
+   Layout
+================================ */
+.upload-lesson-layout {
+  display: flex;
+  font-family: $font;
 }
+
 .upload-lessons-page {
-  padding: 24px;
-  background-color: #f9fafb;
-  min-height: 100vh;
   width: 100%;
+  min-height: 100vh;
+  padding: 24px;
+  background-color: $bg;
 }
+
+/* ===============================
+   Header
+================================ */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -14,91 +47,120 @@
   margin-bottom: 24px;
 }
 
+/* Course ID */
 .course-id {
   margin-top: 6px;
+
+  input {
+    width: 80px;
+    margin-left: 6px;
+    padding: 4px 6px;
+  }
 }
 
-.course-id input {
-  width: 80px;
-  margin-left: 6px;
-  padding: 4px 6px;
-}
+/* ===============================
+   Lesson Card
+================================ */
 .lesson-card {
-  background-color: #ffffff;
-  border: 1px solid #e5e7eb;
+  background-color: $white;
+  border: 1px solid $border;
   border-radius: 8px;
   padding: 20px;
   max-width: 900px;
 }
 
+/* ===============================
+   Lesson Row
+================================ */
 .lesson-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  border-bottom: 1px solid #e5e7eb;
   padding: 14px 0;
+  border-bottom: 1px solid $border;
+
+  &:last-child {
+    border-bottom: none;
+  }
 }
 
-.lesson-row:last-child {
-  border-bottom: none;
-}
-
+/* Lesson Number */
 .lesson-index {
   width: 36px;
   height: 36px;
-  background-color: #2563eb;
+  background-color: $primary;
   color: white;
   border-radius: 6px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-weight: 600;
 }
-.lesson-info h3 {
-  font-size: 15px;
-  margin-bottom: 4px;
-  font-weight: 500;
+
+/* Lesson Info */
+.lesson-info {
+  h3 {
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: $text-dark;
+  }
 }
 
+/* Meta */
 .lesson-meta {
   display: flex;
   gap: 10px;
   font-size: 13px;
-  color: #6b7280;
+  color: $text-muted;
 }
 
+/* ===============================
+   Tags
+================================ */
 .tag {
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 12px;
+
+  &.video {
+    background-color: $video-bg;
+    color: $video-text;
+  }
+
+  &.pdf {
+    background-color: $pdf-bg;
+    color: $pdf-text;
+  }
 }
 
-.tag.video {
-  background-color: #dbeafe;
-  color: #1e40af;
+/* ===============================
+   Lesson Actions
+================================ */
+.lesson-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+
+  button {
+    border: none;
+    background-color: #f3f4f6;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  &.delete {
+    background: $danger-bg;
+    color: $danger;
+  }
 }
 
-.tag.pdf {
-  background-color: #fee2e2;
-  color: #991b1b;
-}
-.lesson-actions{
-    display: flex;
-     gap: 8px;
-     margin-left: auto;
-}
-.lesson-actions button {
-  border: none;
-  background-color: #f3f4f6;
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
- 
-}
-.lesson-actions.delete{
-    background: #fee2e2;
-    color: #dc2626;
-}
+/* ===============================
+   Add Lesson
+================================ */
 .add-lesson-btn {
   width: 100%;
   margin-top: 16px;
@@ -109,22 +171,29 @@
   border-radius: 6px;
 }
 
+/* ===============================
+   Modal
+================================ */
 .modal-overlay {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.5);
+
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .modal-box {
-  background-color: white;
+  background-color: $white;
   padding: 20px;
   border-radius: 8px;
   width: 400px;
 }
 
+/* ===============================
+   Form
+================================ */
 .form-group {
   margin-bottom: 14px;
 }
@@ -134,24 +203,29 @@
   gap: 10px;
 }
 
+/* ===============================
+   Buttons
+================================ */
 .primary-btn {
-  background-color: #2563eb;
+  background-color: $primary;
   color: white;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .secondary-btn {
-  background-color: #e5e7eb;
+  background-color: $border;
   border: none;
   padding: 8px 14px;
   border-radius: 6px;
+  cursor: pointer;
 }
 
 .logout-btn {
   background: none;
   border: none;
-  color: #dc2626;
+  color: $danger;
   cursor: pointer;
 }

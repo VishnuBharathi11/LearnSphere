@@ -1,32 +1,91 @@
+/* ================================
+   Variables
+================================ */
+$font-primary: "Inter", sans-serif;
+
+$bg-page: #f5f7fb;
+$white: #ffffff;
+
+$text-dark: #111827;
+$text-muted: #6b7280;
+$text-light: #9ca3af;
+
+$blue: #3b82f6;
+$yellow: #facc15;
+$red: #ef4444;
+$green: #22c55e;
+
+$border-gray: #d1d5db;
+
+$shadow-sm: 0 4px 10px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+/* ================================
+   Mixins
+================================ */
+@mixin flex-row($gap: 0, $justify: flex-start, $align: center) {
+  display: flex;
+  gap: $gap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin card($radius: 12px, $padding: 16px, $shadow: $shadow-md) {
+  background: $white;
+  border-radius: $radius;
+  padding: $padding;
+  box-shadow: $shadow;
+}
+
+/* ================================
+   Base
+================================ */
+* {
+  box-sizing: border-box;
+  font-family: $font-primary;
+}
+
+/* ================================
+   Layout
+================================ */
 .discussion-layout {
-    display: flex;
+  display: flex;
 }
 
 .discussion-page {
-    background: #f5f7fb;
-    min-height: 100vh;
-    padding: 24px;
-    width: 100%;
-    font-family: "Inter",sans-serif;
+  background: $bg-page;
+  min-height: 100vh;
+  padding: 24px;
+  width: 100%;
 }
 
+/* ================================
+   Header
+================================ */
 .discussion-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 24px;
-}
+  @include flex-row(0, space-between, flex-start);
+  margin-bottom: 24px;
 
-.discussion-header h1 {
-    margin: 0;
+   h1 {
+    font-size: 22px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+  p{
+    color: $text-muted;
+  }
 }
 
 .logout-btn {
-    background: none;
-    border: none;
-    color: #ef4444;
-    cursor: pointer;
+  background: none;
+  border: none;
+  color: $red;
+  cursor: pointer;
 }
 
+/* ================================
+   Stats Cards
+================================ */
 .discussion-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -35,184 +94,169 @@
 }
 
 .discussion-stat-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 18px 20px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
+  @include card(14px, 18px 20px);
+  @include flex-row(16px);
   min-height: 90px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
-}
 
-.stat-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-icon svg {
-  color: #fff;
-  width: 22px;
-  height: 22px;
-}
-
-.blue .stat-icon {
-  background: #3b82f6;
-}
-
-.yellow .stat-icon {
-  background: #facc15;
-}
-
-.red .stat-icon {
-  background: #ef4444;
-}
-
-.green .stat-icon {
-  background: #22c55e;
-}
-
-.stat-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.stat-content strong {
-  font-size: 26px;
-  font-weight: 700;
-  color: #111827;
-  line-height: 1;
-}
-
-.stat-content span {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-
-.discussion-controls {
-    background: #fff;
-    padding: 16px;
+  .stat-icon {
+    width: 44px;
+    height: 44px;
     border-radius: 12px;
-    margin-bottom: 20px;
+    @include flex-row(0, center, center);
+
+    svg {
+      color: #fff;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    strong {
+      font-size: 26px;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+    }
+
+    span {
+      font-size: 14px;
+      color: $text-muted;
+    }
+  }
+}
+
+/* Status colors */
+.blue   { .stat-icon { background: $blue; } }
+.yellow { .stat-icon { background: $yellow; } }
+.red    { .stat-icon { background: $red; } }
+.green  { .stat-icon { background: $green; } }
+
+/* ================================
+   Controls
+================================ */
+.discussion-controls {
+  @include card(12px, 16px);
+  margin-bottom: 20px;
 }
 
 .discussion-search-box {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    border: 1px solid #d1d5db;
-    padding: 10px;
-    border-radius: 10px;
-    margin-bottom: 12px;
-}
+  @include flex-row(8px);
+  border: 1px solid $border-gray;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 12px;
 
-.discussion-search-box input {
+  input {
     border: none;
     outline: none;
     width: 100%;
+  }
 }
 
 .discussion-filter-buttons {
-    display: flex;
-    gap: 10px;
-}
+  display: flex;
+  gap: 10px;
 
-.discussion-filter-buttons button {
+  button {
     padding: 8px 16px;
     border-radius: 10px;
     border: none;
     background: #e5e7eb;
     cursor: pointer;
     font-weight: 500;
-}
+  }
 
-.discussion-filter-buttons .active {
-    background: #3b82f6;
+  .active {
+    background: $blue;
     color: #fff;
-}
+  }
 
-.discussion-filter-buttons .approved.active {
-    background: #22c55e;
-}
+  .approved.active {
+    background: $green;
+  }
 
-.discussion-filter-buttons .pending.active {
-    background: #facc15;
+  .pending.active {
+    background: $yellow;
     color: #000;
+  }
+
+  .flagged.active {
+    background: $red;
+  }
 }
 
-.discussion-filter-buttons .flagged.active {
-    background: #ef4444;
-}
-
+/* ================================
+   Discussion List
+================================ */
 .discussion-list {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .discussion-card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    justify-content: space-between;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  @include card(12px, 16px, $shadow-sm);
+  @include flex-row(0, space-between, flex-start);
 }
 
-.discussion-info h3 {
+.discussion-info {
+  h3 {
     margin: 0 0 6px;
-}
+  }
 
-.meta {
+  .meta {
     font-size: 14px;
-    color: #6b7280;
-}
+    color: $text-muted;
+  }
 
-.message {
+  .message {
     margin: 8px 0;
-}
+  }
 
-.time {
+  .time {
     font-size: 13px;
-    color: #9ca3af;
+    color: $text-light;
+  }
 }
 
+/* ================================
+   Actions
+================================ */
 .discussion-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 
-.discussion-actions button {
+  button {
     border: none;
     border-radius: 8px;
     padding: 8px 12px;
     cursor: pointer;
     font-size: 14px;
-}
+  }
 
-.view {
+  .view {
     background: #eff6ff;
     color: #2563eb;
-}
+  }
 
-.approve {
+  .approve {
     background: #dcfce7;
     color: #15803d;
-}
+  }
 
-.reject {
+  .reject {
     background: #fee2e2;
     color: #b91c1c;
-}
+  }
 
-.flag {
+  .flag {
     background: #ffedd5;
     color: #c2410c;
+  }
 }
