@@ -1,15 +1,14 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useMemo } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import profileImage from "../../../assets/Learner/learner-profile.jpeg";
+import { courses } from "../../../data/courses";
 import "./Profile.scss";
 
 function Profile() {
   const infoRef = useRef(null);
   const summaryRef = useRef(null);
   const fileInputRef = useRef(null);
-
   const [isEditing, setIsEditing] = useState(false);
-
   const [profile, setProfile] = useState({
     name: "Peter Parker",
     email: "peter@gmail.com",
@@ -17,13 +16,63 @@ function Profile() {
     bio: "Frontend developer passionate about learning.",
     image: "",
   });
-
   const [formData, setFormData] = useState(profile);
+  const {
+    enrolledCount,
+    completedCount,
+    certificatesCount,
+    learningHours,
+    achievements,
+  } = useMemo(() => {
+    const enrolled =
+      JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+    const testResults =
+      JSON.parse(localStorage.getItem("testResults")) || [];
 
+    const enrolledCount = enrolled.length;
+
+    const completedCourses = enrolled.filter(ec => {
+      const course = courses.find(c => c.id === ec.courseId);
+      if (!course) return false;
+
+      const completed = ec.completedLessons || 0;
+      return completed === course.lessons;
+    });
+
+    const completedCount = completedCourses.length;
+
+    const certificatesCount = testResults.filter(
+      r => r.passed
+    ).length;
+    const learningHours = Math.floor(
+      completedCourses.reduce((sum, ec) => {
+        const course = courses.find(c => c.id === ec.courseId);
+        return sum + (course?.lessons || 0) * 0.5;
+      }, 0)
+    );
+
+    const achievements = completedCourses.map(ec => {
+      const course = courses.find(c => c.id === ec.courseId);
+      return {
+        title: course.courseName,
+        date: new Date().toLocaleDateString("en-US", {
+          month: "short",
+          day: "2-digit",
+          year: "numeric",
+        }),
+      };
+    });
+    return {
+      enrolledCount,
+      completedCount,
+      certificatesCount,
+      learningHours,
+      achievements,
+    };
+  }, []);
   const handleEdit = () => {
     setFormData(profile);
     setIsEditing(true);
-
     requestAnimationFrame(() => {
       infoRef.current?.scrollIntoView({ behavior: "smooth" });
     });
@@ -32,7 +81,6 @@ function Profile() {
   const handleSave = () => {
     setProfile(formData);
     setIsEditing(false);
-
     requestAnimationFrame(() => {
       summaryRef.current?.scrollIntoView({ behavior: "smooth" });
     });
@@ -49,139 +97,141 @@ function Profile() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
     const imageURL = URL.createObjectURL(file);
     setProfile((prev) => ({ ...prev, image: imageURL }));
   };
-
   return (
-      <div >
-        <p className="profile-subtitle">
-          Manage your personal information and preferences
-        </p>
-
-        <div className="profile-summary" ref={summaryRef}>
-          <div className="summary-top">
-            <div className="summary-left">
-              <div className="profile-image-wrapper" onClick={handleImageClick}>
-                <img src={profile.image || profileImage} alt="profile"/>
-                <div className="edit-icon">
-                  <FaRegEdit />
-                </div>
-
-                <input
-                  type="file"
-                  accept="image/*"
-                  hidden
-                  ref={fileInputRef}
-                  onChange={handleImageChange}
-                />
+    <div>
+      <p className="profile-subtitle">
+        Manage your personal information and preferences
+      </p>
+      <div className="profile-summary" ref={summaryRef}>
+        <div className="summary-top">
+          <div className="summary-left">
+            <div
+              className="profile-image-wrapper"
+              onClick={handleImageClick}
+            >
+              <img
+                src={profile.image || profileImage}
+                alt="profile"
+              />
+              <div className="edit-icon">
+                <FaRegEdit />
               </div>
 
-              <div>
-                <h3>{profile.name}</h3>
-                <p>{profile.email}</p>
-                <span className="role-badge">Learner</span>
-              </div>
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                ref={fileInputRef}
+                onChange={handleImageChange}
+              />
             </div>
 
-            <button className="edit-profile-btn" onClick={handleEdit}>
-              Edit Profile
-            </button>
+            <div>
+              <h3>{profile.name}</h3>
+              <p>{profile.email}</p>
+              <span className="role-badge">Learner</span>
+            </div>
           </div>
 
-          <div className="summary-divider"></div>
-
-          <div className="summary-stats">
-            <div>
-              <span>Enrolled Courses</span>
-              <strong>8</strong>
-            </div>
-            <div>
-              <span>Completed Courses</span>
-              <strong>3</strong>
-            </div>
-            <div>
-              <span>Certificates</span>
-              <strong>2</strong>
-            </div>
-            <div>
-              <span>Learning Hours</span>
-              <strong>72</strong>
-            </div>
-          </div>
+          <button
+            className="edit-profile-btn"
+            onClick={handleEdit}
+          >
+            Edit Profile
+          </button>
         </div>
 
-        <div className="profile-bottom">
-          <div className="personal-info" ref={infoRef}>
-            <h3>Personal Information</h3>
-
-            <label>Full Name</label>
-            <input
-              name="name"
-              value={formData.name}
-              disabled={!isEditing}
-              onChange={handleChange}
-            />
-
-            <label>Email</label>
-            <input
-              name="email"
-              value={formData.email}
-              disabled={!isEditing}
-              onChange={handleChange}
-            />
-
-            <label>Phone Number</label>
-            <input
-              name="phone"
-              value={formData.phone}
-              disabled={!isEditing}
-              onChange={handleChange}
-            />
-
-            <label>Bio</label>
-            <textarea
-              rows="4"
-              name="bio"
-              value={formData.bio}
-              disabled={!isEditing}
-              onChange={handleChange}
-            />
-
-            {isEditing && (
-              <button className="save-btn" onClick={handleSave}>
-                Save Changes
-              </button>
-            )}
+        <div className="summary-divider"></div>
+        <div className="summary-stats">
+          <div>
+            <span>Enrolled Courses</span>
+            <strong>{enrolledCount}</strong>
           </div>
-
-          <div className="achievements">
-            <h3>Achievements</h3>
-
-            <div className="achievement-card">
-              🏆
-              <div>
-                <strong>Web Development Master</strong>
-                <p>Completed Nov 26, 2024</p>
-              </div>
-            </div>
-
-            <div className="achievement-card">
-              🏆
-              <div>
-                <strong>React Native: Build Mobile Apps</strong>
-                <p>Completed Nov 26, 2024</p>
-              </div>
-            </div>
-
-            <div className="achievement-tip">
-              🔥 You’re doing great!
-              <p>Milestone reached—onward to the next goal!</p>
-            </div>
+          <div>
+            <span>Completed Courses</span>
+            <strong>{completedCount}</strong>
+          </div>
+          <div>
+            <span>Certificates</span>
+            <strong>{certificatesCount}</strong>
+          </div>
+          <div>
+            <span>Learning Hours</span>
+            <strong>{learningHours}</strong>
           </div>
         </div>
       </div>
+
+      <div className="profile-bottom">
+        <div className="personal-info" ref={infoRef}>
+          <h3>Personal Information</h3>
+
+          <label>Full Name</label>
+          <input
+            name="name"
+            value={formData.name}
+            disabled={!isEditing}
+            onChange={handleChange}
+          />
+
+          <label>Email</label>
+          <input
+            name="email"
+            value={formData.email}
+            disabled={!isEditing}
+            onChange={handleChange}
+          />
+
+          <label>Phone Number</label>
+          <input
+            name="phone"
+            value={formData.phone}
+            disabled={!isEditing}
+            onChange={handleChange}
+          />
+
+          <label>Bio</label>
+          <textarea
+            rows="4"
+            name="bio"
+            value={formData.bio}
+            disabled={!isEditing}
+            onChange={handleChange}
+          />
+
+          {isEditing && (
+            <button className="save-btn" onClick={handleSave}>
+              Save Changes
+            </button>
+          )}
+        </div>
+        <div className="achievements">
+          <h3>Achievements</h3>
+
+          {achievements.length === 0 ? (
+            <p>No achievements yet</p>
+          ) : (
+            achievements.map((a, i) => (
+              <div className="achievement-card" key={i}>
+                🏆
+                <div>
+                  <strong>{a.title}</strong>
+                  <p>Completed {a.date}</p>
+                </div>
+              </div>
+            ))
+          )}
+
+          <div className="achievement-tip">
+            🔥 You’re doing great!
+            <p>Milestone reached—onward to the next goal!</p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

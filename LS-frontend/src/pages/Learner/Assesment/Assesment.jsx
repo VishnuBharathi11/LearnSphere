@@ -1,137 +1,215 @@
-import React from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { courses } from "../../../data/courses";
 import "./Assesment.scss";
 
-function Assesment() {
+function Assessment() {
   const navigate = useNavigate();
-  const availableAssessment = [
-    {
-      name: "Java Script Fundamentals Quiz",
-      category: "Modern JavaScript Development",
-      questions: 20,
-      duration: "30 mins",
-      status: "Pending",
-    },
-    {
-      name: "Java Script Fundamentals Quiz",
-      category: "Modern JavaScript Development",
-      questions: 20,
-      duration: "30 mins",
-      status: "Completed",
-    },
-    {
-      name: "Java Script Fundamentals Quiz",
-      category: "Modern JavaScript Development",
-      questions: 20,
-      duration: "30 mins",
-      status: "Failed",
-    },
-  ];
+  const [selectedResultCourse, setSelectedResultCourse] = useState(null);
+
+  const {
+    assessmentCourses,
+    totalAssessments,
+    completed,
+    pending,
+    avgScore,
+    testResults,
+  } = useMemo(() => {
+    const enrolledCourses =
+      JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+
+    const testResults =
+      JSON.parse(localStorage.getItem("testResults")) || [];
+
+    const assessmentCourses = enrolledCourses
+      .map((ec) => {
+        const course = courses.find((c) => c.id === ec.courseId);
+        if (!course) return null;
+
+        const result = testResults.find(
+          (r) => r.courseId === course.id
+        );
+
+        return {
+          id: course.id,
+          courseName: course.courseName,
+          result,
+          status: result ? "Completed" : "Pending",
+        };
+      })
+      .filter(Boolean);
+
+    const totalAssessments = assessmentCourses.length;
+
+    const completed = assessmentCourses.filter(
+      (c) => c.status === "Completed"
+    ).length;
+
+    const pending = assessmentCourses.filter(
+      (c) => c.status === "Pending"
+    ).length;
+
+    const avgScore =
+      testResults.length === 0
+        ? 0
+        : Math.floor(
+            testResults.reduce(
+              (sum, r) => sum + (r.score / r.total) * 100,
+              0
+            ) / testResults.length
+          );
+
+    return {
+      assessmentCourses,
+      totalAssessments,
+      completed,
+      pending,
+      avgScore,
+      testResults,
+    };
+  }, []);
+
+  const selectedResultData = useMemo(() => {
+    if (!selectedResultCourse) return null;
+
+    const result = testResults.find(
+      (r) => r.courseId === selectedResultCourse
+    );
+    const course = courses.find(
+      (c) => c.id === selectedResultCourse
+    );
+
+    if (!result || !course) return null;
+
+    const percentage = Math.floor(
+      (result.score / result.total) * 100
+    );
+
+    return {
+      courseName: course.courseName,
+      score: result.score,
+      total: result.total,
+      percentage,
+      passed: result.passed,
+    };
+  }, [selectedResultCourse, testResults]);
 
   return (
-      <div className="assessment-content">
-        <p className="page-subtitle">
-          Test your knowledge and track your performance
-        </p>
+    <div className="assessment-container">
+      <h2>Assessments</h2>
+      <p className="assessment-subtitle">
+        Test your knowledge and track your performance
+      </p>
 
-        <div className="assessment-summary">
-          <div className="summary-card">
-            <span>Total Assessments</span>
-            <h3>3</h3>
-          </div>
-
-          <div className="summary-card">
-            <span>Completed</span>
-            <h3>5</h3>
-          </div>
-
-          <div className="summary-card">
-            <span>Pending</span>
-            <h3>52</h3>
-          </div>
-
-          <div className="summary-card">
-            <span>Average Score</span>
-            <h3>83%</h3>
-          </div>
+      <div className="assessment-stats">
+        <div className="stat-card">
+          <h3>{totalAssessments}</h3>
+          <p>Total Assessments</p>
         </div>
-
-        <div className="assessment-grid">
-          <div>
-            <div className="ass-section-title">Available Assessments</div>
-
-            {availableAssessment.map((item, index) => (
-              <div className="assessment-card "  key={index}>
-                <div className="assessment-info">
-                  <h4>{item.name}</h4>
-                  <p>{item.category}</p>
-                  <span>
-                    ⏱ {item.duration} | {item.questions} questions
-                  </span>
-                </div>
-
-                <div className="assessment-actions">
-                  <span
-                    className={`status ${
-                      item.status === "Pending"
-                        ? "pending"
-                        : item.status === "Completed"
-                        ? "completed"
-                        : "failed"
-                    }`}
-                  >
-                    {item.status}
-                  </span>
-
-                  {item.status === "Pending" && (
-                    <button className="primary-btn" onClick={() => navigate("/take-test")}>Start Test</button>
-                  )}
-
-                  {item.status === "Completed" && (
-                    <button className="outline-btn" onClick={() => navigate("")}>View Result</button>
-                  )}
-
-                  {item.status === "Failed" && (
-                    <button className="outline-btn" onClick={() => navigate("/take-test")}>Retake Test</button>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* RIGHT SIDE */}
-          <div className="right-panel">
-            <div className="rules-card">
-              <h4>Assessment Rules</h4>
-              <ul>
-                <li>Time limited</li>
-                <li>No tab switching</li>
-                <li>Passing score: 60%</li>
-              </ul>
-            </div>
-
-            <div className="result-card">
-              <h4>Result Summary</h4>
-
-              <h1>83%</h1>
-              <p>Score</p>
-
-              <span className="pass-badge">Passed</span>
-
-              <div className="score-box">
-                <span>Correct: 17/20</span>
-                <span>Wrong: 3/20</span>
-              </div>
-
-              <div className="result-actions">
-                <button className="outline-btn">Review Answers</button>
-                <button className="primary-btn" onClick={() => navigate("/take-test")}>Retake Quiz</button>
-              </div>
-            </div>
-          </div>
+        <div className="stat-card">
+          <h3>{completed}</h3>
+          <p>Completed</p>
+        </div>
+        <div className="stat-card">
+          <h3>{pending}</h3>
+          <p>Pending</p>
+        </div>
+        <div className="stat-card">
+          <h3>{avgScore}%</h3>
+          <p>Average Score</p>
         </div>
       </div>
+
+      <div className="assessment-layout">
+        <div className="assessment-left">
+          <h3>Available Assessments</h3>
+
+          {assessmentCourses.map((course) => (
+            <div key={course.id} className="assessment-card">
+              <div className="assessment-card-left">
+                <h4>{course.courseName}</h4>
+                <p>Modern JavaScript Development</p>
+                <span className={`badge ${course.status.toLowerCase()}`}>
+                  {course.status}
+                </span>
+                <div className="assessment-meta">
+                  ⏱ 30 mins | 20 questions
+                </div>
+              </div>
+
+              <div className="assessment-card-right">
+                {course.status === "Pending" && (
+                  <button
+                    className="primary-btn"
+                    onClick={() =>
+                      navigate(`/student-layout/test/${course.id}`)
+                    }
+                  >
+                    Start Test
+                  </button>
+                )}
+
+                {course.status === "Completed" && (
+                  <button
+                    className="secondary-btn"
+                    onClick={() =>
+                      setSelectedResultCourse(course.id)
+                    }
+                  >
+                    View Result
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="assessment-right">
+          <div className="assessment-rules">
+            <h4>Assessment Rules</h4>
+            <ul>
+              <li>Time limited</li>
+              <li>No tab switching</li>
+              <li>Passing score: 60%</li>
+            </ul>
+          </div>
+
+          {selectedResultData && (
+            <div className="result-summary">
+              <h4>Result Summary</h4>
+              <p className="result-course">
+                {selectedResultData.courseName}
+              </p>
+
+              <h2>{selectedResultData.percentage}%</h2>
+              <p>Score</p>
+
+              <span
+                className={`result-status ${
+                  selectedResultData.passed ? "passed" : "failed"
+                }`}
+              >
+                {selectedResultData.passed ? "Passed" : "Failed"}
+              </span>
+
+              <div className="result-breakdown">
+                <span>
+                  Correct: {selectedResultData.score}/
+                  {selectedResultData.total}
+                </span>
+                <span>
+                  Wrong:{" "}
+                  {selectedResultData.total -
+                    selectedResultData.score}
+                  /{selectedResultData.total}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default Assesment;
+export default Assessment;
