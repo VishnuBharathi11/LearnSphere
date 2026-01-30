@@ -1,33 +1,71 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Upload, User, Users, BookOpen, Star, DollarSign } from "lucide-react";
 import "./InstructorProfile.scss";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
-
+const STORAGE_KEY = "instructorProfile";
 function InstructorProfile() {
-  const [profileData, setProfileData] = useState({
-    fullName: "Dr. John Smith",
-    email: "john.smith@learnsphere.com",
-    phone: "+1 (555) 123-4567",
-    bio: "Passionate educator with 10+ years of experience in web development and computer science.",
-    expertise: "Web Development, React, JavaScript, Node.js",
-    education: "Ph.D. in Computer Science, Stanford University",
-    experience: "10+ years in Software Development and Education",
-    website: "https://johnsmith.com",
-    linkedin: "https://linkedin.com/in/johnsmith",
-    twitter: "https://twitter.com/johnsmith",
+  const [profileData, setProfileData] = useState(() => {
+    return (
+      JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+        fullName: "Dr. John Smith",
+        email: "john.smith@learnsphere.com",
+        phone: "+1 (555) 123-4567",
+        bio: "Passionate educator with 10+ years of experience in web development and computer science.",
+        expertise: "Web Development, React, JavaScript, Node.js",
+        education: "Ph.D. in Computer Science, Stanford University",
+        experience: "10+ years in Software Development and Education",
+        website: "",
+        linkedin: "",
+        twitter: "",
+        image: null,
+      }
+    );
   });
-  const [profilePicture, setProfilePicture] = useState(null);
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profileData));
+  }, [profileData]);
+  const stats = useMemo(() => {
+    const courses = JSON.parse(localStorage.getItem("courses")) || [];
+    const enrollments =
+      JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+    const ratings = JSON.parse(localStorage.getItem("courseRatings")) || [];
+    const totalStudents = new Set(enrollments.map((e) => e.studentId)).size;
+    const coursesPublished = courses.length;
+    const avgRating =
+      ratings.length === 0
+        ? "0.0"
+        : (ratings.reduce((s, r) => s + r.rating, 0) / ratings.length).toFixed(
+            1,
+          );
+    const totalRevenue = enrollments.reduce((sum, e) => {
+      const course = courses.find((c) => c.id === e.courseId);
+      return sum + (course?.price || 0);
+    }, 0);
+    return {
+      totalStudents,
+      coursesPublished,
+      avgRating,
+      totalRevenue,
+    };
+  }, []);
   const handleChange = (e) => {
-    setProfileData({ ...profileData, [e.target.name]: e.target.value });
+    setProfileData({
+      ...profileData,
+      [e.target.name]: e.target.value,
+    });
   };
   const handleProfilePictureChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onloadend = () => setProfilePicture(reader.result);
+    reader.onloadend = () => {
+      setProfileData((prev) => ({
+        ...prev,
+        image: reader.result,
+      }));
+    };
     reader.readAsDataURL(file);
   };
-
   return (
     <div className="instructor-profile-layout">
       <SidebarInstructor />
@@ -45,7 +83,7 @@ function InstructorProfile() {
             </div>
             <div className="instrcutor-stat-content">
               <span>Total Students</span>
-              <strong>1276</strong>
+              <strong>{stats.totalStudents}</strong>
             </div>
           </div>
           <div className="instructor-stat-card green">
@@ -54,7 +92,7 @@ function InstructorProfile() {
             </div>
             <div className="instrcutor-stat-content">
               <span>Courses Published</span>
-              <strong>12</strong>
+              <strong>{stats.coursesPublished}</strong>
             </div>
           </div>
           <div className="instructor-stat-card yellow">
@@ -63,7 +101,7 @@ function InstructorProfile() {
             </div>
             <div className="instrcutor-stat-content">
               <span>Avg. Rating</span>
-              <strong>4.8</strong>
+              <strong>{stats.avgRating}</strong>
             </div>
           </div>
           <div className="instructor-stat-card purple">
@@ -72,7 +110,7 @@ function InstructorProfile() {
             </div>
             <div className="instrcutor-stat-content">
               <span>Total Revenue</span>
-              <strong>₹1,24,500</strong>
+              <strong>₹{stats.totalRevenue.toLocaleString()}</strong>
             </div>
           </div>
         </div>
@@ -81,15 +119,17 @@ function InstructorProfile() {
             <h2>Basic Information</h2>
             <div className="profile-pic-row">
               <div className="profile-pic">
-                {profilePicture ? (
-                  <img src={profilePicture} alt="profile" />
+                {profileData.image ? (
+                  <img src={profileData.image} alt="profile" />
                 ) : (
                   <User size={40} />
                 )}
               </div>
               <label className="profile-upload-button">
-               
-                <p> <Upload size={16} style={{marginBottom:'-2px'}}/>Upload a professional photo</p>
+                <p>
+                  <Upload size={16} style={{ marginBottom: "-2px" }} />
+                  Upload a professional photo
+                </p>
                 <input
                   type="file"
                   hidden
@@ -196,5 +236,4 @@ function InstructorProfile() {
     </div>
   );
 }
-
 export default InstructorProfile;

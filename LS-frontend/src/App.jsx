@@ -24,7 +24,7 @@ import Profile from "./pages/Learner/Profile/Profile.jsx";
 import Assesment from "./pages/Learner/Assesment/Assesment.jsx";
 import TestTaking from "./pages/Learner/TestTaking/TestTaking.jsx";
 import LearnCourse from "./pages/Learner/LearnCourse/LearnCourse.jsx";
-import Certificate from "./pages/Learner/Certificate/Certificate.jsx"
+import Certificate from "./pages/Learner/Certificate/Certificate.jsx";
 
 import InstructorDashboard from "./pages/instructor/Dashboard/Dashboard.jsx";
 import CreateCourse from "./pages/instructor/CreateCourse/Createcourse.jsx";
@@ -70,23 +70,26 @@ function App() {
           <Route path="my-courses" element={<LearnerMyCourses />} />
           <Route path="progress" element={<LearnerProgress />} />
           <Route path="assessment" element={<Assesment />} />
-          <Route path="test/:id" element={<TestTaking />} />
+          <Route path="test/:" element={<TestTaking />} />
           <Route path="profile" element={<Profile />} />
           <Route path="learn/:id" element={<LearnCourse />} />
           <Route path="certificate/:id" element={<Certificate />} />
         </Route>
-
-        <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
+        <Route path="/dashboard" element={<InstructorDashboard />} />
         <Route path="/create-course" element={<CreateCourse />} />
-        <Route path="/manage-courses" element={<ManageCourses />} />
-        <Route path="/manage-courses/:courseId" element={<UploadLesson />} />
-        <Route path="/create-quiz/:courseId" element={<CreateQuiz />} />
+        <Route path="/edit-course/:courseId" element={<CreateCourse />} />
+        <Route path="manage-courses" element={<ManageCourses />} />
         <Route
-          path="/student-progress/:courseId"
+          path="manage-courses/:courseId/lessons"
+          element={<UploadLesson />}
+        />
+        <Route path="manage-courses/:courseId/quiz" element={<CreateQuiz />} />
+        <Route
+          path="manage-courses/:courseId/students"
           element={<StudentProgress />}
         />
         <Route
-          path="/course-analytics/:courseId"
+          path="manage-courses/:courseId/analytics"
           element={<CourseAnalytics />}
         />
         <Route path="/discussions" element={<Discussion />} />

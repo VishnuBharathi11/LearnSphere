@@ -4,7 +4,6 @@ import { courses, popularCourses } from "../../../data/courses";
 import CourseCard from "../../../components/CourseCard/CourseCard";
 import "./BrowseCourses.scss";
 import { useLocation } from "react-router-dom";
-import { SortAsc } from "lucide-react";
 function BrowseCourses() {
   const location=useLocation();
   const source=new URLSearchParams(location.search).get("source");

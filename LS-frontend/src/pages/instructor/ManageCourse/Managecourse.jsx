@@ -19,48 +19,38 @@ import { useNavigate } from "react-router-dom";
 function Managecourse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const courses = [
-    {
-      id: 1,
-      title: "Modern Frontend Development with React",
-      category: "Web Development",
-      students: 189,
-      lessons: 42,
-      revenue: 154500,
-      rating: 4.8,
-      status: "published",
-      //thumbnail: "🎨",
-    },
-    {
-      id: 2,
-      title: "Complete AI & Deep Learning",
-      category: "Artificial Intelligence",
-      students: 112,
-      lessons: 36,
-      revenue: 98500,
-      rating: 4.6,
-      status: "draft",
-      //thumbnail: "🤖",
-    },
-  ];
+  const [courses, setCourses] = useState(() => {
+    return JSON.parse(localStorage.getItem("courses")) || [];
+  });
   const filteredCourses = courses.filter((course) => {
     const matchesSearch =
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      course.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.category.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesStatus =
       filterStatus === "all" || course.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
   const togglePublish = (id) => {
-    console.log("Toggle publish:", id);
+    const updated = courses.map((course) =>
+      course.id === id
+        ? {
+            ...course,
+            status: course.status === "published" ? "draft" : "published",
+          }
+        : course,
+    );
+
+    setCourses(updated);
+    localStorage.setItem("courses", JSON.stringify(updated));
   };
-  const editCourse = (id) => {
-    console.log("Edit course:", id);
-  };
+
   const deleteCourse = (id) => {
-    console.log("Delete course:", id);
+    const updated = courses.filter((course) => course.id !== id);
+    setCourses(updated);
+    localStorage.setItem("courses", JSON.stringify(updated));
   };
-  const navigate=useNavigate();
+
+  const navigate = useNavigate();
   return (
     <div className="manage-course-layout">
       <SidebarInstructor />
@@ -73,7 +63,10 @@ function Managecourse() {
           <button className="logout-btn">Logout</button>
         </div>
         <div className="manage-course-meta">
-          <button className="create-btn">
+          <button
+            className="create-btn"
+            onClick={() => navigate("/create-course")}
+          >
             <Plus size={16} />
             Create Course
           </button>
@@ -104,12 +97,10 @@ function Managecourse() {
         ) : (
           filteredCourses.map((course) => (
             <div className="manage-course-card" key={course.id}>
-              {/* <div className="course-thumb">{course.thumbnail}</div> */}
-
               <div className="course-info">
                 <div className="course-top">
                   <div>
-                    <h3>{course.title}</h3>
+                    <h3>{course.courseName}</h3>
                     <p>{course.category}</p>
                   </div>
                   <span className={`status ${course.status}`}>
@@ -127,7 +118,7 @@ function Managecourse() {
                   </div>
                   <div>
                     <span>Revenue</span>
-                    <strong>₹{course.revenue.toLocaleString()}</strong>
+                    <strong>₹{(course.revenue ?? 0).toLocaleString()}</strong>
                   </div>
                   <div>
                     <span>Rating</span>
@@ -135,16 +126,32 @@ function Managecourse() {
                   </div>
                 </div>
                 <div className="course-actions">
-                  <button onClick={()=>navigate(`/manage-courses/${course.id}`)}>
+                  <button
+                    onClick={() =>
+                      navigate(`/manage-courses/${course.id}/lessons`)
+                    }
+                  >
                     <Upload size={14} /> Upload Lesson
                   </button>
-                  <button onClick={()=>navigate(`/create-quiz/${course.id}`)}>
+                  <button
+                    onClick={() =>
+                      navigate(`/manage-courses/${course.id}/quiz`)
+                    }
+                  >
                     <FileText size={14} /> Create Quiz
                   </button>
-                  <button onClick={()=>navigate(`/student-progress/${course.id}`)}>
+                  <button
+                    onClick={() =>
+                      navigate(`/manage-courses/${course.id}/students`)
+                    }
+                  >
                     <Users size={14} /> Students
                   </button>
-                  <button onClick={()=>navigate(`/course-analytics/${course.id}`)}>
+                  <button
+                    onClick={() =>
+                      navigate(`/manage-courses/${course.id}/analytics`)
+                    }
+                  >
                     <BarChart3 size={14} /> Analytics
                   </button>
                 </div>
@@ -158,7 +165,7 @@ function Managecourse() {
                   )}
                   {course.status === "published" ? "Unpublish" : "Publish"}
                 </button>
-                <button onClick={() => editCourse(course.id)}>
+                <button onClick={() => navigate(`/edit-course/${course.id}`)}>
                   <Edit size={14} /> Edit
                 </button>
                 <button

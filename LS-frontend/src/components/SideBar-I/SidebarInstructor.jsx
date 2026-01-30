@@ -5,7 +5,7 @@ import {
   PlusSquare,
   FolderKanban,
   MessageSquare,
-  User
+  User,
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import "./SidebarInstructor.scss";
@@ -19,11 +19,43 @@ function SidebarInstructor() {
         <div className="page-name">LearnSphere</div>
       </div>
       <div className="I-sidebar">
-        <Link to="/instructor-dashboard" className={location.pathname === "/instructor-dashboard" ? "active" : ""}><LayoutDashboard size={18}/>Dashboard</Link>
-        <Link to="/create-course" className={location.pathname === "/create-course" ? "active" : ""}><PlusSquare size={18}/>Create Course</Link>
-        <Link to="/manage-courses" className={location.pathname === "/manage-courses" ? "active" : ""}><FolderKanban size={18}/>Manage Courses</Link>
-        <Link to="/discussions" className={location.pathname === "/discussions" ? "active" : ""}><MessageSquare size={18}/>Discussions</Link>
-        <Link to="/profile" className={location.pathname === "/profile" ? "active" : ""}><User size={18}/>My Profile</Link>
+        <Link
+          to="/dashboard"
+          className={
+            location.pathname === "/dashboard" ? "active" : ""
+          }
+        >
+          <LayoutDashboard size={18} />
+          Dashboard
+        </Link>
+        <Link
+          to="/create-course"
+          className={location.pathname === "/create-course" ? "active" : ""}
+        >
+          <PlusSquare size={18} />
+          Create Course
+        </Link>
+        <Link
+          to="/manage-courses"
+          className={location.pathname === "/manage-courses" ? "active" : ""}
+        >
+          <FolderKanban size={18} />
+          Manage Courses
+        </Link>
+        <Link
+          to="/discussions"
+          className={location.pathname === "/discussions" ? "active" : ""}
+        >
+          <MessageSquare size={18} />
+          Discussions
+        </Link>
+        <Link
+          to="/profile"
+          className={location.pathname === "/profile" ? "active" : ""}
+        >
+          <User size={18} />
+          My Profile
+        </Link>
       </div>
     </nav>
   );

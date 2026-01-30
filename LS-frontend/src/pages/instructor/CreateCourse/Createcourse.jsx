@@ -1,217 +1,168 @@
 import React, { useState } from "react";
-import { Sidebar, Upload, X } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import "./Createcourse.scss";
+import "../../../components/SideBar-I/SidebarInstructor"
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 
-function Createcourse() {
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    level: "",
-    language: "",
-    duration: "",
-    price: "",
-    description: "",
-    tags: "",
-  });
-
-  const [thumbnail, setThumbnail] = useState(null);
-  const [thumbnailPreview, setThumbnailPreview] = useState("");
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+function CreateCourse() {
+  const navigate = useNavigate();
+  const { courseId } = useParams();
+  const isEditMode = Boolean(courseId);
+  const instructor = {
+    id: 10,
+    name: "John Instructor",
   };
-
-  const handleThumbnailChange = (e) => {
+  const [form, setForm] = useState(() => {
+    if (!courseId) {
+      return {
+        courseName: "",
+        category: "",
+        level: "",
+        price: "",
+        lessons: "",
+        thumbnail: "",
+      };
+    }
+    const courses = JSON.parse(localStorage.getItem("courses")) || [];
+    const existingCourse = courses.find((c) => String(c.id) === courseId);
+    return existingCourse
+      ? {
+          courseName: existingCourse.courseName,
+          category: existingCourse.category,
+          level: existingCourse.level,
+          price: existingCourse.price,
+          lessons: existingCourse.lessons,
+          thumbnail: existingCourse.thumbnail || "",
+        }
+      : {
+          courseName: "",
+          category: "",
+          level: "",
+          price: "",
+          lessons: "",
+          thumbnail: "",
+        };
+  });
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handleThumbnailUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert("Image must be under 5MB");
-      return;
-    }
-
-    setThumbnail(file);
     const reader = new FileReader();
-    reader.onloadend = () => setThumbnailPreview(reader.result);
+    reader.onloadend = () => {
+      setForm((prev) => ({
+        ...prev,
+        thumbnail: reader.result,
+      }));
+    };
     reader.readAsDataURL(file);
   };
-
-  const removeThumbnail = () => {
-    setThumbnail(null);
-    setThumbnailPreview("");
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData, thumbnail);
-  };
+    const courses = JSON.parse(localStorage.getItem("courses")) || [];
+    if (isEditMode) {
+      const updated = courses.map((course) =>
+        String(course.id) === courseId
+          ? {
+              ...course,
+              ...form,
+              price: Number(form.price),
+              lessons: Number(form.lessons),
+            }
+          : course,
+      );
 
-  const handleCancel = () => {
-    setFormData({
-      title: "",
-      category: "",
-      level: "",
-      language: "",
-      duration: "",
-      price: "",
-      description: "",
-      tags: "",
-    });
-    setThumbnail(null);
-    setThumbnailPreview("");
+      localStorage.setItem("courses", JSON.stringify(updated));
+    } else {
+      const newCourse = {
+        id: Date.now(),
+        courseName: form.courseName,
+        category: form.category,
+        level: form.level,
+        price: Number(form.price),
+        lessons: Number(form.lessons),
+        thumbnail: form.thumbnail,
+        instructorId: instructor.id,
+        instructorName: instructor.name,
+        rating: 0,
+        students: 0,
+        status: "draft",
+        createdAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem("courses", JSON.stringify([...courses, newCourse]));
+    }
+
+    navigate("/instructor/manage-courses");
   };
 
   return (
     <div className="create-course-layout">
-        <SidebarInstructor/>
-        <div className="create-course-page">
-      <div className="create-header">
-        <div>
-          <h1>Create New Course</h1>
-          <p>Fill in the details to create your course</p>
-        </div>
-        <button className="logout-btn">Logout</button>
-      </div>
+      <SidebarInstructor/>
+      <div className="create-course-container">
+      <h2>{isEditMode ? "Edit Course" : "Create New Course"}</h2>
 
-      <div className="form-card">
-        <h2>Basic Information</h2>
+      <form onSubmit={handleSubmit}>
+        <label>Course Name</label>
+        <input
+          name="courseName"
+          value={form.courseName}
+          onChange={handleChange}
+          required
+        />
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label>Course Title *</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              placeholder="Complete Web Development Bootcamp"
-              required
-            />
-          </div>
+        <label>Category</label>
+        <input
+          name="category"
+          value={form.category}
+          onChange={handleChange}
+          required
+        />
 
-          <div className="form-grid">
-            <div className="form-group">
-              <label>Category *</label>
-              <select name="category" value={formData.category} onChange={handleChange} required>
-                <option value="">Select Category</option>
-                <option>Web Development</option>
-                <option>Mobile Development</option>
-                <option>Data Science</option>
-                <option>Design</option>
-                <option>Business</option>
-              </select>
-            </div>
+        <label>Level</label>
+        <select
+          name="level"
+          value={form.level}
+          onChange={handleChange}
+          required
+        >
+          <option value="">Select</option>
+          <option value="Beginner">Beginner</option>
+          <option value="Intermediate">Intermediate</option>
+          <option value="Advanced">Advanced</option>
+        </select>
 
-            <div className="form-group">
-              <label>Level *</label>
-              <select name="level" value={formData.level} onChange={handleChange} required>
-                <option value="">Select Level</option>
-                <option>Beginner</option>
-                <option>Intermediate</option>
-                <option>Advanced</option>
-              </select>
-            </div>
+        <label>Price (₹)</label>
+        <input
+          type="number"
+          name="price"
+          value={form.price}
+          onChange={handleChange}
+          required
+        />
 
-            <div className="form-group">
-              <label>Language *</label>
-              <select name="language" value={formData.language} onChange={handleChange} required>
-                <option value="">Select Language</option>
-                <option>English</option>
-                <option>Hindi</option>
-                <option>Spanish</option>
-              </select>
-            </div>
-          </div>
+        <label>Total Lessons</label>
+        <input
+          type="number"
+          name="lessons"
+          value={form.lessons}
+          onChange={handleChange}
+          required
+        />
 
-          <div className="form-grid two">
-            <div className="form-group">
-              <label>Duration (hours) *</label>
-              <input
-                type="number"
-                name="duration"
-                value={formData.duration}
-                onChange={handleChange}
-                required
-              />
-            </div>
+        <label>Course Thumbnail</label>
+        <input type="file" accept="image/*" onChange={handleThumbnailUpload} />
 
-            <div className="form-group">
-              <label>Price (₹) *</label>
-              <input
-                type="number"
-                name="price"
-                value={formData.price}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
+        {form.thumbnail && <img src={form.thumbnail} alt="Thumbnail preview" />}
 
-          <div className="form-group">
-            <label>Tags</label>
-            <input
-              type="text"
-              name="tags"
-              value={formData.tags}
-              onChange={handleChange}
-              placeholder="React, JavaScript"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Description *</label>
-            <textarea
-              name="description"
-              rows="5"
-              value={formData.description}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Course Thumbnail</label>
-
-            {!thumbnailPreview ? (
-              <div className="upload-box">
-                <input
-                  type="file"
-                  id="thumbnail"
-                  accept="image/*"
-                  hidden
-                  onChange={handleThumbnailChange}
-                />
-                <label htmlFor="thumbnail">
-                  <Upload size={36} />
-                  <p>Click to upload thumbnail</p>
-                  <small>PNG / JPG (max 5MB)</small>
-                </label>
-              </div>
-            ) : (
-              <div className="thumbnail-preview">
-                <img src={thumbnailPreview} alt="preview" />
-                <button type="button" onClick={removeThumbnail}>
-                  <X size={18} />
-                </button>
-              </div>
-            )}
-          </div>
-
-          <div className="form-actions">
-            <button type="submit" className="primary-btn">
-              Create Course
-            </button>
-            <button type="button" className="secondary-btn" onClick={handleCancel}>
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
+        <button type="submit" className="primary-btn">
+          {isEditMode ? "Update Course" : "Create Course"}
+        </button>
+      </form>
     </div>
     </div>
   );
 }
 
-export default Createcourse;
+export default CreateCourse;
