@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link,useNavigate,useLocation } from "react-router-dom";
-import "./Login.css";
+import "./Login.scss";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
 import UserData from "../../data/UsersData"
@@ -29,7 +29,7 @@ function Login() {
       return;
     }
 
-    if (user.role === "learner") navigate("/learner-dashboard",{replace:true});
+    if (user.role === "learner") navigate("/student-layout",{replace:true});
     if (user.role === "instructor") navigate("/instructor-dashboard",{replace:true});
     if (user.role === "admin") navigate("/admin-dashboard",{replace:true});
   };

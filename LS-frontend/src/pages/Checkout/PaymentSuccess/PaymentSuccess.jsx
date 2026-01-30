@@ -9,7 +9,7 @@ import {
   Play,
 } from "lucide-react";
 import courses from "../../../data/courses";
-import "./PaymentSuccess.css";
+import "./PaymentSuccess.scss";
 
 function PaymentSuccess() {
   const navigate = useNavigate();

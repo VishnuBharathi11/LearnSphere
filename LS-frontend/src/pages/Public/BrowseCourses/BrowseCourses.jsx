@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import NavBar from "../../../components/NavBar/NavBar";
 import courses from "../../../data/courses";
 import CourseCard from "../../../components/CourseCard/CourseCard";
-import "./BrowseCourses.css";
+import "./BrowseCourses.scss";
 function BrowseCourses() {
   const [category, setCategory] = useState("");
   const [level, setLevel] = useState("");

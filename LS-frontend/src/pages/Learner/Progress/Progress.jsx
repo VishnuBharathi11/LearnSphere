@@ -10,7 +10,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import "./Progress.css";
+import "./Progress.scss";
 
 const stats = [
   { title: "Completed Courses", value: 3 },
@@ -55,12 +55,9 @@ const courses = [
 
 function Progress() {
   return (
-    <div className="progress-layout">
-      <SidebarStudent />
 
-      <div className="progress-content">
+      <div>
         <div className="progress-header">
-          <h2>Learning Progress</h2>
           <p>Track your learning journey and achievements</p>
         </div>
 
@@ -152,7 +149,6 @@ function Progress() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

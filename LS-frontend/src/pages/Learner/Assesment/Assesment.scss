@@ -3,42 +3,31 @@
   font-family: "Inter", sans-serif;
 }
 
-.assessment-layout {
-  display: flex;
-  background: #f6f8fc;
-  min-height: 100vh;
-}
-
 .assessment-content {
   width: 100%;
-  padding: 30px 40px;
-}
-
-.page-title {
-  font-family: "Poppins", sans-serif;
-  font-size: 26px;
-  font-weight: 600;
-  color: #111827;
 }
 
 .page-subtitle {
   font-size: 15px;
   color: #6b7280;
-  margin-bottom: 32px;
+  margin-bottom: 15px;
 }
 
 .assessment-summary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  margin-bottom: 40px;
+  gap: 22px;
+  margin: 24px 0 32px;
 }
 
 .summary-card {
   background: #ffffff;
-  padding: 22px 24px;
   border-radius: 18px;
+  padding: 22px 26px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .summary-card span {
@@ -47,9 +36,9 @@
 }
 
 .summary-card h3 {
-  font-size: 32px;
-  font-weight: 600;
-  margin-top: 8px;
+  font-size: 36px;
+  font-weight: 700;
+  margin-top: 12px;
   color: #111827;
 }
 
@@ -63,7 +52,7 @@
   font-size: 17px;
   font-weight: 600;
   color: #111827;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .assessment-card {
@@ -87,7 +76,7 @@
 .assessment-info p {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .assessment-info span {
@@ -147,12 +136,23 @@
   cursor: pointer;
 }
 
+.right-panel {
+  display: flex;
+  flex-direction: column;
+}
+
 .rules-card {
   background: #ffffff;
   padding: 26px;
   border-radius: 18px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   margin-bottom: 28px;
+}
+
+.rules-card h4 {
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 12px;
 }
 
 .rules-card ul {
@@ -170,24 +170,26 @@
   padding: 28px;
   border-radius: 18px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  text-align: center;
 }
 
 .result-card h4 {
   font-size: 18px;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
-.result-score {
-  font-size: 42px;
-  font-weight: 700;
+.result-card h1 {
+  font-size: 46px;
+  font-weight: 800;
+  margin: 0;
   color: #111827;
 }
 
-.score-label {
+.result-card p {
   font-size: 14px;
   color: #6b7280;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .pass-badge {
@@ -197,8 +199,7 @@
   border-radius: 20px;
   font-size: 13px;
   display: inline-block;
-  margin-top: 10px;
-
+  margin-bottom: 18px;
 }
 
 .score-box {
@@ -213,7 +214,8 @@
 
 .result-actions {
   display: flex;
-  gap: 18px;
+  gap: 16px;
+  justify-content: center;
 }
 
 .result-actions button {

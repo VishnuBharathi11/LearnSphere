@@ -8,7 +8,7 @@ import {
   User
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
-import "./SidebarInstructor.css";
+import "./SidebarInstructor.scss";
 
 function SidebarInstructor() {
   const location = useLocation();

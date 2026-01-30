@@ -1,8 +1,9 @@
 import React from "react";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
-import "./Assesment.css";
+import { useNavigate } from "react-router-dom";
+import "./Assesment.scss";
 
 function Assesment() {
+  const navigate = useNavigate();
   const availableAssessment = [
     {
       name: "Java Script Fundamentals Quiz",
@@ -28,11 +29,7 @@ function Assesment() {
   ];
 
   return (
-    <div className="assessment-layout">
-      <SidebarStudent />
-
       <div className="assessment-content">
-        <h2 className="page-title">Assessments</h2>
         <p className="page-subtitle">
           Test your knowledge and track your performance
         </p>
@@ -64,7 +61,7 @@ function Assesment() {
             <div className="ass-section-title">Available Assessments</div>
 
             {availableAssessment.map((item, index) => (
-              <div className="assessment-card" key={index}>
+              <div className="assessment-card "  key={index}>
                 <div className="assessment-info">
                   <h4>{item.name}</h4>
                   <p>{item.category}</p>
@@ -87,15 +84,15 @@ function Assesment() {
                   </span>
 
                   {item.status === "Pending" && (
-                    <button className="primary-btn">Start Test</button>
+                    <button className="primary-btn" onClick={() => navigate("/take-test")}>Start Test</button>
                   )}
 
                   {item.status === "Completed" && (
-                    <button className="outline-btn">View Result</button>
+                    <button className="outline-btn" onClick={() => navigate("")}>View Result</button>
                   )}
 
                   {item.status === "Failed" && (
-                    <button className="outline-btn">Retake Test</button>
+                    <button className="outline-btn" onClick={() => navigate("/take-test")}>Retake Test</button>
                   )}
                 </div>
               </div>
@@ -128,13 +125,12 @@ function Assesment() {
 
               <div className="result-actions">
                 <button className="outline-btn">Review Answers</button>
-                <button className="primary-btn">Retake Quiz</button>
+                <button className="primary-btn" onClick={() => navigate("/take-test")}>Retake Quiz</button>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

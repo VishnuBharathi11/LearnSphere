@@ -1,0 +1,99 @@
+.result-wrapper {
+  min-height: 100vh;
+  background: #f6f8fc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.result-card {
+  width: 420px;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 22px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.result-card h2 {
+  margin-bottom: 16px;
+}
+
+.result-status {
+  margin: 14px 0;
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 14px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.result-status.pass {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.result-status.fail {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.score-circle {
+  margin: 25px 0;
+}
+
+.score-circle h1 {
+  font-size: 56px;
+  color: #2563eb;
+}
+
+.progress-bar {
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: 20px;
+  overflow: hidden;
+  margin: 22px 0;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2563eb, #4f46e5);
+}
+
+.result-stats {
+  display: flex;
+  justify-content: space-between;
+  margin: 28px 0;
+}
+
+.result-stats div h4 {
+  font-size: 20px;
+}
+
+.result-stats span {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.result-actions {
+  display: flex;
+  gap: 14px;
+}
+
+.result-actions button {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.result-actions .retry {
+  background: #e5e7eb;
+}
+
+.result-actions .primary {
+  background: #2563eb;
+  color: white;
+}

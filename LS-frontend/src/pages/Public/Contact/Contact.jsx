@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Contact.css";
+import "./Contact.scss";
 import headset from "../../../assets/Contact/headset.png";
 import school from "../../../assets/Contact/school.png";
 import teacher from "../../../assets/Contact/teacher.png";

@@ -8,7 +8,7 @@ import {
   BarChart3,
 } from "lucide-react";
 import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
-import "./Dashboard.css";
+import "./Dashboard.scss";
 
 function Dashboard() {
   const stats = [

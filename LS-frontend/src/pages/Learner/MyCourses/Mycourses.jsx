@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./MyCourses.css";
+import "./MyCourses.scss";
 import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
 import courses from "../../../data/courses";
 
@@ -57,13 +57,8 @@ function MyCourses() {
       : completedCourses;
 
   return (
-    <div className="mycourses-layout">
-      <SidebarStudent />
+      <div>
 
-      <div className="mycourses-content">
-        <h2 className="page-title">My Courses</h2>
-
-        {/* TABS */}
         <div className="tabs">
           <button
             className={activeTab === "all" ? "active" : ""}
@@ -87,7 +82,6 @@ function MyCourses() {
           </button>
         </div>
 
-        {/* COURSE GRID */}
         <div className="mycourse-grid">
           {coursesToShow.length === 0 ? (
             <p className="empty-text">No courses found</p>
@@ -132,7 +126,6 @@ function MyCourses() {
           )}
         </div>
       </div>
-    </div>
   );
 }
 

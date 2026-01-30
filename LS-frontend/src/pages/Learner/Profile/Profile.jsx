@@ -1,8 +1,7 @@
 import React, { useRef, useState } from "react";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
 import { FaRegEdit } from "react-icons/fa";
 import profileImage from "../../../assets/Learner/learner-profile.jpeg";
-import "./Profile.css";
+import "./Profile.scss";
 
 function Profile() {
   const infoRef = useRef(null);
@@ -56,11 +55,7 @@ function Profile() {
   };
 
   return (
-    <div className="profile-page">
-      <SidebarStudent />
-
-      <div className="profile-content">
-        <h2 className="profile-title">My Profile</h2>
+      <div >
         <p className="profile-subtitle">
           Manage your personal information and preferences
         </p>
@@ -187,7 +182,6 @@ function Profile() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
 

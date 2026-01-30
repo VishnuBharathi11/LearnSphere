@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
 import logo from '../../assets/Logo/logo.png'
-import './NavBar.css' 
+import './NavBar.scss' 
 function NavBar() {
   const scrollToSection=(id)=>{
       const section=document.getElementById(id);
@@ -12,9 +12,10 @@ function NavBar() {
   return (
     <>
     <nav className="navbar">
+      <div className="logo-section">
           <img src={logo} className="logo"/>
-          <div className="page-name">LearnSphere</div>
-    
+          <div className="n-page-name">LearnSphere</div>
+          </div>
           <div className="nav-links">
           <Link to="/">Home</Link>
           <span onClick={()=>scrollToSection("about")}>About</span>

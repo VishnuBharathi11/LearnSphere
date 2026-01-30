@@ -1,0 +1,84 @@
+.test-container {
+  max-width: 100%;
+  background: #ffffff;
+  padding: 32px;
+  border-radius: 18px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.test-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.test-header h2 {
+  font-size: 22px;
+  font-weight: 600;
+}
+
+.test-header span {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.question-box h3 {
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.option {
+  padding: 14px 18px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 15px;
+}
+
+.option:hover {
+  background: #f3f4f6;
+}
+
+.option.selected {
+  background: #e8f0ff;
+  border-color: #2563eb;
+  color: #2563eb;
+  font-weight: 500;
+}
+
+.test-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.test-actions button {
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.test-actions button:disabled {
+  background: #e5e7eb;
+  cursor: not-allowed;
+}
+
+.primary {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.submit {
+  background: #16a34a;
+  color: #ffffff;
+}
