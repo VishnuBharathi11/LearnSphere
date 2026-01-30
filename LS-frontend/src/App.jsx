@@ -60,12 +60,9 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
 
         <Route path="/buy/:id" element={<PaymentPage />} />
-        <Route path="/student-layout" element={<StudentLayout />} />
-        <Route path="/student-layout" element={<StudentLayout />} />
-        <Route path="/student-layout/learn/:id" element={<StudentLayout />} />
-
-
-        <Route path="/learner-dashboard" element={<LearnerDashboard />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
+        
+        <Route path="/student-layout" element={<StudentLayout/>}/>
         <Route path="/learner-dashboard" element={<LearnerDashboard />} />
         <Route path="/learner-my-courses" element={<LearnerMyCourses />} />
         <Route path="/learner-progress" element={<LearnerProgress />} />
