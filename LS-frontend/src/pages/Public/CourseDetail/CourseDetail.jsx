@@ -9,6 +9,8 @@ function CourseDetail() {
   const navigate = useNavigate();
   const course = courses.find((c) => c.id === Number(id));
   const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const isFree = course.price === 0;
+  const [previewVideo,setPreviewVideo]=useState(null);
     const curriculum = [
     {
       section: "Introduction to JavaScript",
@@ -33,7 +35,18 @@ function CourseDetail() {
       ],
     },
   ];
-  const [previewVideo,setPreviewVideo]=useState(null);
+  const getEnrolledCourses=()=>{
+    try{
+      return JSON.parse(localStorage.getItem("enrolledCourses"))||[];
+    }
+    catch{
+      return []
+    }
+  };
+  const [enrolledCourses,setEnrolledCourses]=useState(getEnrolledCourses());
+  const isEnrolled = enrolledCourses.some(
+    (c)=>c.courseId===course.id
+  );
   if (!course) {
     return <p style={{ padding: "40px" }}>Course not found</p>;
   }
@@ -46,32 +59,22 @@ function CourseDetail() {
     }
     callback();
   };
-  const isFree = course.price === 0;
   const handlePrimaryAction = () => {
     requireAuth(() => {
       if (isFree) {
-        navigate(`/enroll/${course.id}`);
+        const updated=[...enrolledCourses,{
+          courseId:course.id,
+          enrolledAt:Date.now(),
+        },];
+        localStorage.setItem("enrolledCourses",JSON.stringify(updated));
+        setEnrolledCourses(updated);
+        alert("Enrolled Successfully");
       } else {
         navigate(`/buy/${course.id}`);
       }
     });
   };
-  const handleAddToCart = () => {
-    requireAuth(() => {
-      alert("Added to cart");
-    });
-  };
-  const enrolledCourses = (() => {
-    try {
-      return JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-    } catch {
-      return [];
-    }
-  })();
-  const isEnrolled = enrolledCourses.some(
-    (c)=>c.courseId===course.id
-  );
-
+ 
   return (
     <>
       <NavBar />
@@ -198,16 +201,9 @@ function CourseDetail() {
                     ? "Start Learning"
                     : isFree
                       ? "Enroll for Free"
-                      : "Buy Now"}
+                      : "Buy Now"
+                  }
                 </button>
-                {!isFree && (
-                  <button
-                    className="cd-secondary-btn"
-                    onClick={handleAddToCart}
-                  >
-                    Add to Cart
-                  </button>
-                )}
                 <p className="guarantee">30-Day Money-Back Guarantee</p>
 
                 <div className="includes-title">

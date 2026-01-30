@@ -62,6 +62,7 @@ function App() {
         <Route path="/buy/:id" element={<PaymentPage />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
         
+        <Route path="/student-layout" element={<StudentLayoutg/>}/>
         <Route path="/learner-dashboard" element={<LearnerDashboard />} />
         <Route path="/learner-my-courses" element={<LearnerMyCourses />} />
         <Route path="/learner-progress" element={<LearnerProgress />} />
