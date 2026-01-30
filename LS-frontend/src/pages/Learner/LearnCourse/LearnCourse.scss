@@ -52,7 +52,7 @@ $learn-text-white: #ffffff;
   width: 320px;
   background: $learn-bg-sidebar;
   border-right: 1px solid $learn-border;
-  padding: 20px;
+  padding: 5px;
   @include scroll-y;
 
   h3 {
@@ -99,6 +99,7 @@ $learn-text-white: #ffffff;
 .learn-content {
   flex: 1;
   padding: 32px;
+  margin-top: -40px;
   @include scroll-y;
 
   h2 {

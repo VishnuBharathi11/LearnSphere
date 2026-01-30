@@ -1,9 +1,10 @@
-import React from "react";
+import {useNavigate} from "react-router-dom";
 import "./About.scss";
 import aboutimg from "../../../assets/about/learnImg.png";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { FiArrowRight } from "react-icons/fi";
 function About() {
+  const navigate=useNavigate();
   return (
     <>
       <div className="about" id="about">
@@ -57,7 +58,7 @@ function About() {
                   and guided practice.
                 </div>
                 <div className="ab-btn">
-                  <button>
+                  <button onClick={()=>navigate("/courses?source=explore")}>
                     Explore Courses <FiArrowRight />
                   </button>
                 </div>
@@ -71,7 +72,7 @@ function About() {
                   in a fast-changing world.
                 </div>
                 <div className="ab-btn">
-                  <button>
+                  <button onClick={()=>navigate("instructors")}>
                     Meet Our Instructors <FiArrowRight />
                   </button>
                 </div>
@@ -86,8 +87,8 @@ function About() {
                 paths. Our platform helps you showcase your skills, boost your
                 resume, and move confidently toward your career goals.
               </div>
-              <div className="ab-btn ab-primary">
-                <button>
+              <div className="ab-btn primary">
+                <button onClick={()=>navigate("/courses?source=cta")}>
                   Start Learning Today <MdOutlineKeyboardArrowRight />
                 </button>
               </div>

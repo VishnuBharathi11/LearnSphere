@@ -1,42 +1,111 @@
-* {
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+/* ================================
+   Variables
+================================ */
+$profile-font-primary: "Inter", sans-serif;
+$profile-font-heading: "Poppins", sans-serif;
+
+$profile-white: #ffffff;
+$profile-text-dark: #111827;
+$profile-text-muted: #6b7280;
+
+$profile-primary: #4a6cf7;
+$profile-primary-hover: #3b5bf0;
+
+$profile-border-light: #e5e7eb;
+$profile-bg-disabled: #f3f4f6;
+$profile-bg-soft: #eef2ff;
+
+$profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+
+/* ================================
+   Mixins
+================================ */
+@mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
+  display: flex;
+  gap: $gap;
+  justify-content: $justify;
+  align-items: $align;
 }
 
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin card-base($padding: 28px, $radius: 18px) {
+  background: $profile-white;
+  padding: $padding;
+  border-radius: $radius;
+  box-shadow: $profile-shadow;
+}
+
+@mixin button-primary($padding: 10px 30px) {
+  background: $profile-primary;
+  color: $profile-white;
+  border: none;
+  padding: $padding;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: $profile-primary-hover;
+  }
+}
+
+/* ================================
+   Base
+================================ */
+* {
+  box-sizing: border-box;
+  font-family: $profile-font-primary;
+}
+
+/* ================================
+   Profile Content
+================================ */
 .profile-content {
   width: 100%;
   padding: 30px 40px;
 }
 
 .profile-title {
-  font-family: "Poppins", sans-serif;
+  font-family: $profile-font-heading;
   font-size: 26px;
   font-weight: 600;
 }
 
 .profile-subtitle {
   font-size: 15px;
-  color: #6b7280;
+  color: $profile-text-muted;
   margin-bottom: 28px;
 }
 
+/* ================================
+   Summary
+================================ */
 .profile-summary {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 15px 36px 2px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  @include card-base(15px 36px 2px);
 }
 
 .summary-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-row(space-between, space-between, center);
 }
 
 .summary-left {
-  display: flex;
-  align-items: center;
-  gap: 22px;
+  @include flex-row(22px, flex-start, center);
+
+  h3 {
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $profile-text-muted;
+  }
 }
 
 .profile-image-wrapper {
@@ -45,14 +114,14 @@
   height: 90px;
   border-radius: 50%;
   cursor: pointer;
-}
 
-.profile-image-wrapper img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  border: 3px solid #4a6cf7;
-  object-fit: cover;
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 3px solid $profile-primary;
+    object-fit: cover;
+  }
 }
 
 .edit-icon {
@@ -61,54 +130,31 @@
   right: 4px;
   width: 26px;
   height: 26px;
-  background: #4a6cf7;
-  color: #ffffff;
+  background: $profile-primary;
+  color: $profile-white;
   border-radius: 50%;
   font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  @include flex-row(0, center, center);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-}
-
-.summary-left h3 {
-  font-size: 19px;
-  font-weight: 600;
-  margin-bottom: 2px;
-}
-
-.summary-left p {
-  font-size: 14px;
-  color: #6b7280;
 }
 
 .role-badge {
   display: inline-block;
   margin-top: 6px;
-  background: #eef2ff;
-  color: #4a6cf7;
+  background: $profile-bg-soft;
+  color: $profile-primary;
   font-size: 12px;
   padding: 4px 14px;
   border-radius: 20px;
 }
 
 .edit-profile-btn {
-  background: #4a6cf7;
-  color: #ffffff;
-  border: none;
-  padding: 10px 30px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.edit-profile-btn:hover {
-  background: #3b5bf0;
+  @include button-primary(10px 30px);
 }
 
 .summary-divider {
   height: 1px;
-  background: #e5e7eb;
+  background: $profile-border-light;
   margin: 15px 0;
 }
 
@@ -116,37 +162,40 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   text-align: center;
+
+  div {
+    position: relative;
+    padding: 10px 0;
+
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: -1%;
+      height: 80%;
+      width: 1px;
+      background: $profile-border-light;
+    }
+  }
+
+  span {
+    display: block;
+    font-size: 14px;
+    color: $profile-text-muted;
+    margin-bottom: 6px;
+    margin-top: -10px;
+  }
+
+  strong {
+    font-size: 32px;
+    font-weight: 600;
+    color: $profile-text-dark;
+  }
 }
 
-.summary-stats div {
-  position: relative;
-  padding: 10px 0;
-}
-
-.summary-stats div:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: -1%;
-  height: 80%;
-  width: 1px;
-  background: #e5e7eb;
-}
-
-.summary-stats span {
-  display: block;
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 6px;
-  margin-top: -10px;
-}
-
-.summary-stats strong {
-  font-size: 32px;
-  font-weight: 600;
-  color: #111827;
-}
-
+/* ================================
+   Bottom Grid
+================================ */
 .profile-bottom {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
@@ -154,91 +203,78 @@
   margin-top: 32px;
 }
 
+/* ================================
+   Personal Info
+================================ */
 .personal-info {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-}
+  @include card-base;
 
-.personal-info h3 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
 
-.personal-info label {
-  display: block;
-  font-size: 14px;
-  margin-bottom: 6px;
-  color: #111827;
-}
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 6px;
+    color: $profile-text-dark;
+  }
 
-.personal-info input,
-.personal-info textarea {
-  width: 100%;
-  padding: 12px 14px;
-  border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  font-size: 14px;
-  margin-bottom: 18px;
-  outline: none;
-}
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 10px;
+    border: 1px solid $profile-border-light;
+    font-size: 14px;
+    margin-bottom: 18px;
+    outline: none;
 
-.personal-info input:disabled,
-.personal-info textarea:disabled {
-  background: #f3f4f6;
-  color: #6b7280;
+    &:disabled {
+      background: $profile-bg-disabled;
+      color: $profile-text-muted;
+    }
+  }
 }
 
 .save-btn {
-  background: #4a6cf7;
-  color: white;
-  border: none;
-  padding: 11px 30px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
+  @include button-primary(11px 30px);
 }
 
-.save-btn:hover {
-  background: #3b5bf0;
-}
-
-
+/* ================================
+   Achievements
+================================ */
 .achievements {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 28px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-}
+  @include card-base;
 
-.achievements h3 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 20px;
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
 }
 
 .achievement-card {
-  display: flex;
-  gap: 14px;
+  @include flex-row(14px);
   padding: 14px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid $profile-border-light;
   border-radius: 12px;
   margin-bottom: 16px;
-}
 
-.achievement-card strong {
-  font-size: 14px;
-}
+  strong {
+    font-size: 14px;
+  }
 
-.achievement-card p {
-  font-size: 13px;
-  color: #6b7280;
+  p {
+    font-size: 13px;
+    color: $profile-text-muted;
+  }
 }
 
 .achievement-tip {
-  background: #eef2ff;
+  background: $profile-bg-soft;
   border-radius: 12px;
   padding: 14px;
   font-size: 14px;

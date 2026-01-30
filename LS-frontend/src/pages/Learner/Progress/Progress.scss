@@ -1,65 +1,131 @@
+/* ================================
+   Variables
+================================ */
+$progress-font: "Inter", sans-serif;
+
+$progress-white: #ffffff;
+$progress-text-dark: #111827;
+$progress-text-muted: #6b7280;
+
+$progress-primary: #4a6cf7;
+$progress-primary-hover: #3b5bf0;
+$progress-blue: #2563eb;
+
+$progress-border: #e5e7eb;
+
+$progress-warning-bg: #ffe7d6;
+$progress-warning-text: #f97316;
+
+$progress-success-bg: #dcfce7;
+$progress-success-text: #15803d;
+
+$progress-tip-bg: #eef2ff;
+$progress-tip-text: #1e40af;
+
+$progress-shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.08);
+$progress-shadow-md: 0 8px 22px rgba(0, 0, 0, 0.06);
+$progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
+
+/* ================================
+   Mixins
+================================ */
+@mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
+  display: flex;
+  gap: $gap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin card($padding: 24px, $radius: 18px, $shadow: $progress-shadow-lg) {
+  background: $progress-white;
+  padding: $padding;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}
+
+/* ================================
+   Base
+================================ */
 * {
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+  font-family: $progress-font;
 }
 
-/* ================= HEADER ================= */
+/* ================================
+   Page Wrapper
+================================ */
+.assessment-content {
+  width: 100%;
+  max-width: 100%;
+}
 
+/* ================================
+   Header
+================================ */
 .progress-header {
   margin-bottom: 16px;
+
+  p {
+    font-size: 15px;
+    color: $progress-text-muted;
+    margin: 0;
+  }
 }
 
-.progress-header p {
-  font-size: 15px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.stats-grid {
+/* ================================
+   Stats Grid (FIXED)
+================================ */
+.status-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 22px;
   margin: 24px 0 32px;
 }
 
-.stat-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 26px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
+.status-card {
+  @include card(22px 26px);
+  @include flex-column;
   align-items: center;
+  min-width: 0;
+
+  p {
+    font-size: 14px;
+    color: $progress-text-muted;
+    margin: 0;
+  }
+
+  h3 {
+    font-size: 34px;
+    font-weight: 700;
+    margin-top: 8px;
+    color: $progress-text-dark;
+  }
 }
 
-.stat-card p {
-  font-size: 14px;
-  color: #6b7280;
-  margin: 0;
-}
-
-.stat-card h3 {
-  font-size: 34px;
-  font-weight: 700;
-  margin-top: 8px;
-  color: #111827;
-}
-
+/* ================================
+   Chart Card
+================================ */
 .chart-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 24px 28px;
+  @include card(24px 28px, 18px, $progress-shadow-md);
   margin-bottom: 32px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+
+  h4 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 18px;
+    color: $progress-text-dark;
+  }
 }
 
-.chart-card h4 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 18px;
-  color: #111827;
-}
-
+/* ================================
+   Lower Layout
+================================ */
 .lower-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -70,17 +136,16 @@
   font-size: 17px;
   font-weight: 600;
   margin-bottom: 18px;
-  color: #111827;
+  color: $progress-text-dark;
 }
 
+/* ================================
+   Course Progress
+================================ */
 .course-progress-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 18px;
+  @include card(18px, 16px, $progress-shadow-sm);
+  @include flex-row(18px);
   margin-bottom: 18px;
-  display: flex;
-  gap: 18px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
 .course-img {
@@ -95,43 +160,47 @@
 }
 
 .course-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  @include flex-row(0, space-between, center);
+
+  h5 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0 0 2px;
+    color: $progress-text-dark;
+  }
+
+  span {
+    font-size: 13px;
+    color: $progress-text-muted;
+  }
 }
 
-.course-header h5 {
-  font-size: 15px;
-  font-weight: 600;
-  margin: 0 0 2px;
-  color: #111827;
-}
-
-.course-header span {
-  font-size: 13px;
-  color: #6b7280;
-}
-
+/* ================================
+   Badges
+================================ */
 .badge {
   font-size: 12px;
   padding: 4px 14px;
   border-radius: 20px;
   font-weight: 500;
+
+  &.progress {
+    background: $progress-warning-bg;
+    color: $progress-warning-text;
+  }
+
+  &.completed {
+    background: $progress-success-bg;
+    color: $progress-success-text;
+  }
 }
 
-.badge.progress {
-  background: #ffe7d6;
-  color: #f97316;
-}
-
-.badge.completed {
-  background: #dcfce7;
-  color: #15803d;
-}
-
+/* ================================
+   Progress Bar
+================================ */
 .course-progress-text {
   font-size: 12px;
-  color: #2563eb;
+  color: $progress-blue;
   text-align: right;
   margin: 6px 0;
 }
@@ -139,36 +208,36 @@
 .progress-bar {
   width: 100%;
   height: 6px;
-  background: #e5e7eb;
+  background: $progress-border;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
-  background: #4a6cf7;
+  background: $progress-primary;
   border-radius: 10px;
 }
 
+/* ================================
+   Achievements
+================================ */
 .achievement-card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  @include card(20px, 16px, $progress-shadow-md);
   font-size: 14px;
-}
+  margin-bottom: 18px;
 
-.achievement-card p {
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 4px;
+  p {
+    font-size: 13px;
+    color: $progress-text-muted;
+    margin-top: 4px;
+  }
 }
 
 .achievement-tip {
-  background: #eef2ff;
+  background: $progress-tip-bg;
   border-radius: 16px;
   padding: 18px;
   font-size: 14px;
-  color: #1e40af;
+  color: $progress-tip-text;
 }

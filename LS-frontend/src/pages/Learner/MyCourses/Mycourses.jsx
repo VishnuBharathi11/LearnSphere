@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./MyCourses.scss";
 import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
-import courses from "../../../data/courses";
+import {courses} from "../../../data/courses";
 
 const CATEGORY_IMAGES = {
   "Web Development":
@@ -116,7 +116,7 @@ function MyCourses() {
                   ></div>
                 </div>
 
-                <button className="mycourse-btn" onClick={()=>navigate(`/learn/${course.id}`)}>
+                <button className="mycourse-btn" onClick={()=>navigate(`/student-layout/learn/${course.id}`)}>
                   {course.progress === 100
                     ? "Download Certificate"
                     : "Continue Learning"}

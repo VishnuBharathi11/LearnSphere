@@ -61,9 +61,9 @@ function Progress() {
           <p>Track your learning journey and achievements</p>
         </div>
 
-        <div className="stats-grid">
+        <div className="status-grid">
           {stats.map((item, i) => (
-            <div className="stat-card" key={i}>
+            <div className="status-card" key={i}>
               <p>{item.title}</p>
               <h3>{item.value}</h3>
             </div>

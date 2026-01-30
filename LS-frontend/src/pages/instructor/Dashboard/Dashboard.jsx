@@ -51,23 +51,23 @@ function Dashboard() {
           </div>
           <button className="logout-btn">Logout</button>
         </div>
-        <div className="stats-grid">
+        <div className="status-grid">
           {stats.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div className="stat-card" key={index}>
-                <div className="stat-icon">
+              <div className="status-card" key={index}>
+                <div className="status-icon">
                   <Icon size={22} />
                 </div>
                 <div>
-                  <p className="stat-title">{item.title}</p>
-                  <p className="stat-value">{item.value}</p>
+                  <p className="status-title">{item.title}</p>
+                  <p className="status -value">{item.value}</p>
                 </div>
               </div>
             );
           })}
         </div>
-        <div className="charts-grid">
+        <div className="chart-grid">
           <div className="chart-card">
             <div className="chart-header">
               <TrendingUp size={20} />

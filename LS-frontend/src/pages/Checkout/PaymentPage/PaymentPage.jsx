@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./PaymentPage.scss";
-import courses from "../../../data/courses";
+import {courses} from "../../../data/courses";
 function PaymentPage() {
   const [active, setActice] = useState("card");
 

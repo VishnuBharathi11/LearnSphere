@@ -8,7 +8,7 @@ import {
   Calendar,
   Play,
 } from "lucide-react";
-import courses from "../../../data/courses";
+import {courses} from "../../../data/courses";
 import "./PaymentSuccess.scss";
 
 function PaymentSuccess() {

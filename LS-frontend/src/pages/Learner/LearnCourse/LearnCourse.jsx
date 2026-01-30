@@ -1,7 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import courses from "../../../data/courses";
-import NavBar from "../../../components/NavBar/NavBar";
+import {courses} from "../../../data/courses";
 import "./LearnCourse.scss";
 
 function LearnCourse() {
@@ -72,7 +71,6 @@ function LearnCourse() {
   }
   return (
     <>
-      <NavBar />
       <div className="learn-page">
         <div className="learn-sidebar">
           <h3>{course.courseName}</h3>
