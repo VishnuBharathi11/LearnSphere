@@ -27,6 +27,9 @@ import Discussion from './pages/instructor/Discussion/Discussion.jsx';
 import InstructorProfile from './pages/instructor/Profile/InstructorProfile.jsx';
 
 import AdminDashboard from './pages/admin/Dashboard/AdminDashboard.jsx';
+import TestTaking from './pages/Learner/TestTaking/TestTaking.jsx';
+import MyCourses from './pages/Learner/MyCourses/Mycourses.jsx';
+// import AssessmentResult from './pages/Learner/ResultPage/ResultPage.jsx';
 
 function App() {
   return (
@@ -44,9 +47,11 @@ function App() {
           
           <Route path="/buy/:id" element={<PaymentPage/>}/>
           <Route path="/payment-success" element={<PaymentSuccess/>}/>
-
+          {/* <Route path="/assessment-result" element={<AssessmentResult/>}/> */}
+          <Route path="/learner-my-courses" element={ <MyCourses/>} />
           <Route path="/student-layout" element={ <StudentLayout/>} />
           <Route path="/learn/:id" element={<LearnCourse/>}/>
+          <Route path="/take-test" element={<TestTaking />} />
 
           <Route path="/instructor" element={<InstructorDashboard/>} />
           <Route path="/create-course" element={<CreateCourse/>} />

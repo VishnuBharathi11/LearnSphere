@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   BookOpen,
@@ -12,6 +13,7 @@ import logo from "../../assets/Logo/logo.png";
 import "./SidebarStudent.css";
 
 function SidebarStudent({ activeTab, setActiveTab, children }) {
+   const navigate = useNavigate();
   return (
     <div className="student-layout">
       <nav className="L-navbar">
@@ -64,7 +66,7 @@ function SidebarStudent({ activeTab, setActiveTab, children }) {
 
           <div className="nav-item logout">
             <LogOut size={20} />
-            <span>Logout</span>
+            <div onClick={()=>navigate("/login")}>Logout</div>
           </div>
 
         </div>
