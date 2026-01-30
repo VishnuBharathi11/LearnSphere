@@ -116,7 +116,7 @@ function MyCourses() {
                   ></div>
                 </div>
 
-                <button className="mycourse-btn" onClick={()=>navigate(`/learn/${course.id}`)}>
+                <button className="mycourse-btn" onClick={()=>navigate(`/student-layout/learn/${course.id}`)}>
                   {course.progress === 100
                     ? "Download Certificate"
                     : "Continue Learning"}

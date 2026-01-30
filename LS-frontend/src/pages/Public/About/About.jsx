@@ -3,7 +3,6 @@ import "./About.scss";
 import aboutimg from "../../../assets/about/learnImg.png";
 import { MdOutlineKeyboardArrowRight } from "react-icons/md";
 import { FiArrowRight } from "react-icons/fi";
-import Instructors from "../Instructors/Instructors";
 function About() {
   const navigate=useNavigate();
   return (

@@ -1,18 +1,83 @@
-* {
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+/* ================================
+   Variables
+================================ */
+$ass-font-primary: "Inter", sans-serif;
+
+$ass-white: #ffffff;
+$ass-text-dark: #111827;
+$ass-text-muted: #6b7280;
+
+$ass-primary: #4a6cf7;
+$ass-primary-hover: #3b5bf0;
+
+$ass-border-light: #cbd5e1;
+
+$ass-bg-pending: #ffe6cc;
+$ass-text-pending: #ff8a00;
+
+$ass-bg-completed: #daf5dc;
+$ass-text-completed: #2e7d32;
+
+$ass-bg-failed: #f8d7da;
+$ass-text-failed: #d32f2f;
+
+$ass-bg-score: #eef2ff;
+
+/* ================================
+   Mixins
+================================ */
+@mixin flex-row($gap: 0, $justify: flex-start) {
+  display: flex;
+  gap: $gap;
+  justify-content: $justify;
 }
 
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin card-base($padding: 24px, $radius: 18px) {
+  background: $ass-white;
+  padding: $padding;
+  border-radius: $radius;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+}
+
+@mixin button-base($bg, $color) {
+  background: $bg;
+  color: $color;
+  border: none;
+  border-radius: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ================================
+   Base
+================================ */
+* {
+  box-sizing: border-box;
+  font-family: $ass-font-primary;
+}
+
+/* ================================
+   Layout
+================================ */
 .assessment-content {
   width: 100%;
 }
 
 .page-subtitle {
   font-size: 15px;
-  color: #6b7280;
+  color: $ass-text-muted;
   margin-bottom: 15px;
 }
 
+/* ================================
+   Summary
+================================ */
 .assessment-summary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -21,27 +86,26 @@
 }
 
 .summary-card {
-  background: #ffffff;
-  border-radius: 18px;
-  padding: 22px 26px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-  display: flex;
-  flex-direction: column;
+  @include card-base(22px 26px);
+  @include flex-column;
   align-items: center;
+
+  span {
+    font-size: 14px;
+    color: $ass-text-muted;
+  }
+
+  h3 {
+    font-size: 36px;
+    font-weight: 700;
+    margin-top: 12px;
+    color: $ass-text-dark;
+  }
 }
 
-.summary-card span {
-  font-size: 14px;
-  color: #6b7280;
-}
-
-.summary-card h3 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-top: 12px;
-  color: #111827;
-}
-
+/* ================================
+   Main Grid
+================================ */
 .assessment-grid {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
@@ -51,14 +115,15 @@
 .ass-section-title {
   font-size: 17px;
   font-weight: 600;
-  color: #111827;
+  color: $ass-text-dark;
   margin-bottom: 18px;
 }
 
+/* ================================
+   Assessment Cards
+================================ */
 .assessment-card {
-  background: #ffffff;
-  padding: 24px 28px;
-  border-radius: 18px;
+  @include card-base(24px 28px);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -66,135 +131,132 @@
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 }
 
-.assessment-info h4 {
-  font-size: 14px;
-  font-weight: 600;
-  margin-bottom: 6px;
-  color: #111827;
-}
+.assessment-info {
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: $ass-text-dark;
+  }
 
-.assessment-info p {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 8px;
-}
+  p {
+    font-size: 14px;
+    color: $ass-text-muted;
+    margin-bottom: 8px;
+  }
 
-.assessment-info span {
-  font-size: 13px;
-  color: #6b7280;
+  span {
+    font-size: 13px;
+    color: $ass-text-muted;
+  }
 }
 
 .assessment-actions {
-  display: flex;
-  flex-direction: column;
+  @include flex-column(14px);
   align-items: center;
-  gap: 14px;
 }
 
+/* ================================
+   Status
+================================ */
 .status {
   padding: 6px 16px;
   border-radius: 14px;
   font-size: 13px;
   font-weight: 500;
+
+  &.pending {
+    background: $ass-bg-pending;
+    color: $ass-text-pending;
+  }
+
+  &.completed {
+    background: $ass-bg-completed;
+    color: $ass-text-completed;
+  }
+
+  &.failed {
+    background: $ass-bg-failed;
+    color: $ass-text-failed;
+  }
 }
 
-.pending {
-  background: #ffe6cc;
-  color: #ff8a00;
-}
-
-.completed {
-  background: #daf5dc;
-  color: #2e7d32;
-}
-
-.failed {
-  background: #f8d7da;
-  color: #d32f2f;
-}
-
+/* ================================
+   Buttons
+================================ */
 .primary-btn {
-  background: #4a6cf7;
-  color: #ffffff;
-  border: none;
+  @include button-base($ass-primary, $ass-white);
   padding: 10px 26px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-}
 
-.primary-btn:hover {
-  background: #3b5bf0;
+  &:hover {
+    background: $ass-primary-hover;
+  }
 }
 
 .outline-btn {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
+  background: $ass-white;
+  border: 1px solid $ass-border-light;
   padding: 10px 26px;
   border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
 }
 
+/* ================================
+   Right Panel
+================================ */
 .right-panel {
-  display: flex;
-  flex-direction: column;
+  @include flex-column;
 }
 
 .rules-card {
-  background: #ffffff;
-  padding: 26px;
-  border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  @include card-base(26px);
   margin-bottom: 28px;
-}
 
-.rules-card h4 {
-  font-size: 17px;
-  font-weight: 600;
-  margin-bottom: 12px;
-}
+  h4 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 12px;
+  }
 
-.rules-card ul {
-  margin-top: 12px;
-  padding-left: 18px;
-  color: #6b7280;
-}
+  ul {
+    margin-top: 12px;
+    padding-left: 18px;
+    color: $ass-text-muted;
+  }
 
-.rules-card li {
-  margin-bottom: 10px;
+  li {
+    margin-bottom: 10px;
+  }
 }
 
 .result-card {
-  background: #ffffff;
-  padding: 28px;
-  border-radius: 18px;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  @include card-base(28px);
   text-align: center;
-}
 
-.result-card h4 {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 14px;
-}
+  h4 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
 
-.result-card h1 {
-  font-size: 46px;
-  font-weight: 800;
-  margin: 0;
-  color: #111827;
-}
+  h1 {
+    font-size: 46px;
+    font-weight: 800;
+    margin: 0;
+    color: $ass-text-dark;
+  }
 
-.result-card p {
-  font-size: 14px;
-  color: #6b7280;
-  margin-bottom: 14px;
+  p {
+    font-size: 14px;
+    color: $ass-text-muted;
+    margin-bottom: 14px;
+  }
 }
 
 .pass-badge {
-  background: #2e7d32;
-  color: #ffffff;
+  background: $ass-text-completed;
+  color: $ass-white;
   padding: 6px 18px;
   border-radius: 20px;
   font-size: 13px;
@@ -203,7 +265,7 @@
 }
 
 .score-box {
-  background: #eef2ff;
+  background: $ass-bg-score;
   padding: 14px 18px;
   border-radius: 12px;
   display: flex;
@@ -213,14 +275,12 @@
 }
 
 .result-actions {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-}
+  @include flex-row(16px, center);
 
-.result-actions button {
-  padding: 10px 24px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
+  button {
+    padding: 10px 24px;
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+  }
 }

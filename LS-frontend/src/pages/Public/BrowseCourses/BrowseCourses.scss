@@ -1,60 +1,86 @@
-.browse-page{
-  padding: 10px 40px;
-}
-.browse-page .title{
-  font-size: 25px;
-  font-weight: 600;
-}
-.browse-page .subtitle{
-  font-family: "Inter", sans-serif;
-  color: #666;
-}
-.browse-page .filter-bar{
+$font-primary: "Inter", sans-serif;
+$primary: #4f46e5;
+$text-dark: #111827;
+$text-gray: #666;
+$bg-white: #ffffff;
+$border: #d1d5db;
+$radius-sm: 10px;
+$radius-md: 14px;
+$shadow-card: 0 6px 20px rgba(0, 0, 0, 0.06);
+
+@mixin flex-center {
   display: flex;
-  gap: 16px;
   align-items: center;
-  background: #fff;
-  padding: 16px 20px;
-  margin-top: 20px;
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
 }
-.browse-page .filter-bar input,
-.browse-page .filter-bar select {
+
+@mixin input-style {
   height: 44px;
   padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #d1d5db;
+  border-radius: $radius-sm;
+  border: 1px solid $border;
   font-size: 14px;
-  background-color: #fff;
+  background-color: $bg-white;
   outline: none;
+  font-family: $font-primary;
 }
-.browse-page .filter-bar input{
-  flex: 1;
-}
-.browse-page .filter-bar select{
-  width: 190px;
-  padding-right: 24px;
-  appearance: none;
-  cursor: pointer;
-}
-.browse-page .filter-bar select{
-  background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-}
-.browse-page .course-grid{
-  display: grid;
-  grid-template-columns: repeat(3,1fr);
-  gap: 20px;
-  max-width: 1200px;
-  margin: 30px auto;
-}
-.browse-page .no-results{
-  font-family: "Inter" ,sans-serif;
-  color: #666;
-  text-align: center;
-  grid-column: 1/-1;
-  font-size: 16px;
-  padding: 40px 0;
+
+.browse-page {
+  padding: 10px 40px;
+  font-family: $font-primary;
+
+  .title {
+    font-size: 25px;
+    font-weight: 600;
+    color: $text-dark;
+  }
+
+  .subtitle {
+    color: $text-gray;
+  }
+
+  .filter-bar {
+    @include flex-center;
+    gap: 16px;
+    background: $bg-white;
+    padding: 16px 20px;
+    margin-top: 20px;
+    border-radius: $radius-md;
+    box-shadow: $shadow-card;
+
+    input {
+      @include input-style;
+      flex: 1;
+    }
+
+    select {
+      @include input-style;
+      width: 190px;
+      padding-right: 24px;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 18px;
+    }
+  }
+
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 1200px;
+    margin: 30px auto;
+  }
+
+  .no-results {
+    font-family: $font-primary;
+    color: $text-gray;
+    text-align: center;
+    grid-column: 1 / -1;
+    font-size: 16px;
+    padding: 40px 0;
+  }
 }

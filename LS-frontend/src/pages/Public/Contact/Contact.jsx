@@ -94,7 +94,7 @@ function Contact() {
               Questions about course <br /> creation, approvals, <br />{" "}
               publishing, or earnings.
             </div>
-            <div className="ct-card-link primary">
+            <div className="ct-card-link ct-primary">
               {" "}
               <img src={email} /> instructors@learnsphere.com
             </div>
@@ -110,7 +110,7 @@ function Contact() {
               Business partnerships, <br /> collaborations, or general
               questions.
             </div>
-            <div className="ct-card-link secondary">
+            <div className="ct-card-link ct-secondary">
               {" "}
               <img src={email} /> info@learnsphere.com
             </div>

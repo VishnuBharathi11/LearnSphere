@@ -1,144 +1,184 @@
-.payment-page {
-    font-family: "Inter", sans-serif;
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    margin-bottom: 30px;
+/* ================================
+   Variables
+================================ */
+$payment-font: "Inter", sans-serif;
+
+$payment-white: #ffffff;
+$payment-border-light: #e5e3eb;
+$payment-border-gray: #d1d5db;
+
+$payment-primary: #2563eb;
+$payment-primary-light: #eff6ff;
+$payment-primary-btn: #3b82f6;
+
+$payment-bg-light: #f8f9ff;
+$payment-bg-hover: #f1f5f9;
+
+$payment-text-muted: #6b7280;
+
+/* ================================
+   Mixins
+================================ */
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
 }
 
-.payment-page h2 {
+@mixin flex-row($gap: 0) {
+  display: flex;
+  gap: $gap;
+}
+
+@mixin input-base {
+  width: 100%;
+  font-family: $payment-font;
+  border-radius: 10px;
+  border: 1px solid $payment-border-light;
+  background: $payment-white;
+}
+
+@mixin button-base {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+/* ================================
+   Payment Page
+================================ */
+.payment-page {
+  font-family: $payment-font;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 30px;
+
+  h2 {
     font-size: 20px;
-    border-bottom: 1px solid #e5e3eb;
+    border-bottom: 1px solid $payment-border-light;
     padding: 16px 76px;
-    background: #fff;
+    background: $payment-white;
+  }
 }
 
 .payment-summary {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .card {
-    width: 100%;
-    max-width: 1200px;
-    padding: 28px;
-    border-radius: 10px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    background: #fff;
+  width: 100%;
+  max-width: 1200px;
+  padding: 28px;
+  border-radius: 10px;
+  background: $payment-white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .paycard {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  p {
+    text-align: center;
+    font-size: 12px;
+    color: $payment-text-muted;
+  }
 }
 
 .order-summary {
-    margin-top: 30px;
-    padding: 20px;
-    background: #f8f9ff;
-    border-radius: 8px;
-    box-shadow: none;
+  margin-top: 30px;
+  padding: 20px;
+  background: $payment-bg-light;
+  border-radius: 8px;
+  box-shadow: none;
 }
 
 .payment-methods {
-    display: flex;
-    gap: 36px;
+  display: flex;
+  gap: 36px;
+
+  button:hover {
+    cursor: pointer;
+  }
 }
 
 .method-btn {
-    flex: 1;
-    padding: 18px 16px;
-    border: 1px solid #d1d5db;
-    background: #ffffff;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
+  flex: 1;
+  padding: 18px 16px;
+  border: 1px solid $payment-border-gray;
+  background: $payment-white;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
 
-.method-btn:hover {
-    background: #f1f5f9;
-}
+  &:hover {
+    background: $payment-bg-hover;
+  }
 
-.method-btn.active {
-    border-color: #2563eb;
-    background: #eff6ff;
-    color: #2563eb;
+  &.active {
+    border-color: $payment-primary;
+    background: $payment-primary-light;
+    color: $payment-primary;
     font-weight: 600;
-}
-
-.payment-form input,
-.payment-form select {
-    width: 100%;
-    font-family: "Inter", sans-serif;
-    padding: 25px;
-    border-radius: 10px;
-    border: 1px solid #e5e3eb;
-    background: #fff;
-}
-
-.payment-methods button:hover {
-    cursor: pointer;
+  }
 }
 
 .payment-form,
 .row-column {
-    display: flex;
-    flex-direction: column;
-    font-size: 12px;
-    font-weight: 600;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 10px;
 }
 
-.payment-form input,
-.payment-form select {
+.payment-form {
+  input,
+  select {
+    width: 100%;
+    font-family: $payment-font;
     padding: 14px;
-}
+    border-radius: 10px;
+    border: 1px solid $payment-border-light;
+    background: $payment-white;
+  }
 
-.payment-form ::placeholder {
+  select {
+    padding: 15px;
+  }
+
+  ::placeholder {
     font-size: 12px;
-    font-family: "Inter", sans-serif;
+    font-family: $payment-font;
     font-weight: 500;
+  }
 }
 
 .row {
-    display: flex;
-    gap: 24px;
-
+  display: flex;
+  gap: 24px;
 }
 
 .row-column {
-    width: 100%;
+  width: 100%;
 }
 
 .pay-btn {
-    flex: 1;
-    padding: 12px 16px;
-    border: none;
-    background: #3b82f6;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    color: #fff;
-}
-
-.paycard p {
-    text-align: center;
-    font-size: 12px;
-    color: #6b7280;
-}
-
-.payment-form select {
-    padding: 15px;
-}
-
-.order-summary {
-    margin-top: 30px;
-    padding: 20px;
-    background: #f8f9ff;
-    border-radius: 8px;
+  flex: 1;
+  padding: 12px 16px;
+  border: none;
+  background: $payment-primary-btn;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: $payment-white;
 }
