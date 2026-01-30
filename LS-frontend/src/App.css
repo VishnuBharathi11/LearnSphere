@@ -1,13 +1,11 @@
 #root {
   width: 100%;
 }
-
 .poppins-regular {
   font-family: "Poppins", sans-serif;
   font-weight: 400;
   font-style: normal;
 }
-
 .inter {
   font-family: "Inter", sans-serif;
   font-optical-sizing: auto;
@@ -21,14 +19,10 @@
   display: flex;
   flex-direction: column;
 }
-
-/* ===== NAVBAR FIX ===== */
 .navbar {
   width: 100%;
   flex-shrink: 0;
 }
-
-/* ===== HERO SECTION ===== */
 .hero {
   flex: 1;
   min-height: calc(100svh - 72px);
