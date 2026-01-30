@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Shield, Plus, Edit, Trash2, X } from "lucide-react";
-import "./RoleManagement.css";
+import "./RoleManagement.scss";
 import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function RoleManagement() {

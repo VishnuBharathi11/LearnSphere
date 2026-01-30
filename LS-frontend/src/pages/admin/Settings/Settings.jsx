@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
-import "./Settings.css";
+import "./Settings.scss";
 
 function Settings(){
   const [settings, setSettings] = useState({
