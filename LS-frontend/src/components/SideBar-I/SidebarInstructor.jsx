@@ -19,7 +19,7 @@ function SidebarInstructor() {
         <div className="page-name">LearnSphere</div>
       </div>
       <div className="I-sidebar">
-        <Link to="/instructor" className={location.pathname === "/instructor" ? "active" : ""}><LayoutDashboard size={18}/>Dashboard</Link>
+        <Link to="/instructor-dashboard" className={location.pathname === "/instructor-dashboard" ? "active" : ""}><LayoutDashboard size={18}/>Dashboard</Link>
         <Link to="/create-course" className={location.pathname === "/create-course" ? "active" : ""}><PlusSquare size={18}/>Create Course</Link>
         <Link to="/manage-courses" className={location.pathname === "/manage-courses" ? "active" : ""}><FolderKanban size={18}/>Manage Courses</Link>
         <Link to="/discussions" className={location.pathname === "/discussions" ? "active" : ""}><MessageSquare size={18}/>Discussions</Link>
