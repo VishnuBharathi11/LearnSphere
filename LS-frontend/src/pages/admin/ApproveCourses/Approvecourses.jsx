@@ -9,7 +9,7 @@ import {
   CheckCircle,
   XCircle
 } from "lucide-react";
-import "./Approvecourses.css";
+import "./Approvecourses.scss";
 
 function ApproveCourses(){
   const navigate = useNavigate();

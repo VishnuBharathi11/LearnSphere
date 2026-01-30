@@ -1,7 +1,7 @@
 import { useState } from "react";
 import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 import { Plus, Edit, BookOpen } from "lucide-react";
-import "./Categories.css";
+import "./Categories.scss";
 
 const Categories = () => {
   const [categories, setCategories] = useState([

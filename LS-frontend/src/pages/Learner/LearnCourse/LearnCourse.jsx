@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import courses from "../../../data/courses";
+import {courses} from "../../../data/courses";
 import NavBar from "../../../components/NavBar/NavBar";
 import "./LearnCourse.scss";
 

@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   Users, Search, Eye, Edit, Ban, UserCheck, MoreVertical
 } from "lucide-react";
-// import "./Manageuser.css";
+import "./Manageuser.scss";
 import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function Manageusers(){

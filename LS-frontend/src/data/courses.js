@@ -1,4 +1,4 @@
-const courses = [
+export const rawCourses= [
   {
     id: 1,
     courseName: "Modern JavaScript from the Beginning",
@@ -820,5 +820,31 @@ const courses = [
     lessons: 8,
   },
 ];
+const randomBetween = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min;
+export const courses = rawCourses.map((course, index) => {
+  const enrollments = randomBetween(50, 5000);
+  return {
+    ...course,
+    enrollments,
+    featured:
+      index <= 8 ||
+      course.rating >= 4.7 ||
+      course.category === "Web Development",
+    popular: enrollments >= 1500
+  };
+});
 
-export default courses;
+export const freeCourses=courses.filter(c=>c.price===0);
+// Home page
+export const featuredCourses = courses.filter(c => c.featured)
+.slice(0,4);
+// Browse / CTA
+export const popularCourses = courses
+  .filter(c => c.popular)
+  .sort((a, b) => b.enrollments - a.enrollments);
+// Utilities
+// export const getCoursesByCategory = (category) =>
+//   courses.filter(c => c.category === category);
+// export const getBeginnerCourses = () =>
+//   courses.filter(c => c.level === "Beginner");

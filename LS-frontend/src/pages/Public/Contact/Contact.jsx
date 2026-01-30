@@ -50,6 +50,9 @@ function Contact() {
       setErrors(validationErrors);
     }
   };
+  const handleSendMessage=()=>{
+    alert("Message Sent Successfully");
+  }
 
   return (
     <>
@@ -202,7 +205,7 @@ function Contact() {
                   />
                   {errors.message && <p className="error">{errors.message}</p>}
                 </div>
-                <button type="submit" className="ct-form-btn">
+                <button type="submit" className="ct-form-btn" onClick={handleSendMessage}>
                   Send Message
                 </button>
               </form>

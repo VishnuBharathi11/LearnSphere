@@ -1,42 +1,54 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import NavBar from "../../../components/NavBar/NavBar";
-import courses from "../../../data/courses";
+import { courses, popularCourses } from "../../../data/courses";
 import CourseCard from "../../../components/CourseCard/CourseCard";
 import "./BrowseCourses.scss";
+import { useLocation } from "react-router-dom";
+import { SortAsc } from "lucide-react";
 function BrowseCourses() {
-  const [category, setCategory] = useState("");
-  const [level, setLevel] = useState("");
-  const [price, setPrice] = useState("");
+  const location=useLocation();
+  const source=new URLSearchParams(location.search).get("source");
+  const [category, setCategory] = useState("All");
+  const [level, setLevel] = useState("All");
+  const [sort, setSort] = useState("default");
   const [search, setSearch] = useState("");
-  const filteredCourses = courses.filter((course) => {
-    const matchSearch = course.courseName
-      ?.toLowerCase()
-      .includes(search.trim().toLowerCase());
-    const matchCategory =
-      category === "" ||
-      course.category.toLowerCase().trim() === category.trim();
-    const matchlevel = level === "" || course.level.toLowerCase() === level;
-    const matchPrice =
-      price === "" ||
-      (price === "free" && course.price === 0) ||
-      (price === "min" && course.price >= 1 && course.price <= 499) ||
-      (price === "mid" && course.price >= 500 && course.price <= 999) ||
-      (price === "max" && course.price >= 1000);
-    return matchSearch && matchCategory && matchlevel && matchPrice;
-  });
-
+  
+  const baseCourses=useMemo(()=>{
+    return source==="cta"?popularCourses:courses;
+  },[source]);
+  const filteredCourses=useMemo(()=>{
+    let result=[...baseCourses];
+    if(search.trim()){
+      result=result.filter(course=>
+        course.title.toLowerCase().includes(search.LowerCase())
+      );
+    }
+    if(category!=="All"){
+      result=result.filter(course=>course.category===category);
+    }
+    if(level!=="All"){
+      result=result.filter(course=>course.level===level);
+    }
+    if (sort === "rating") {
+        result.sort((a, b) => b.rating - a.rating);
+      }
+      if(sort==="popular"){
+        result.sort((a,b)=>b.enrollments-a.enrollments);
+      }
+      return result;
+  },[baseCourses,search,category,level,sort]);
   return (
     <>
       <NavBar />
       <div className="browse-page">
-        <div className="title">Browse Course</div>
+        <h1>{source==="explore"?"Explore Courses":source==="cta"?"Start Learning":"Browse Courses"}</h1> {/*scss not done*/} 
         <div className="subtitle">
           Explore courses and find what you want to learn next
         </div>
         <div className="filter-bar">
           <input
             type="search"
-            placeholder="Search for Course"
+            placeholder="Search courses"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -44,32 +56,31 @@ function BrowseCourses() {
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
-            <option value="">Category</option>
-            <option value="web development">Web Development</option>
-            <option value="ui/ux design">UI/Ux Design</option>
-            <option value="data science">Data Science</option>
-            <option value="mobile development">Mobile Development</option>
-            <option value="artificial intelligence">Artificial Intelligence</option>
-            <option value="cybersecurity">Cybersecurity</option>
-            <option value="cloud computing">Cloud Computing</option>
-            <option value="devops">DevOps</option>
-            <option value="blockchain">Blockchain</option>
-            <option value="software engineering">Software Engineering</option>
+            <option >All</option>
+            <option >Category</option>
+            <option >Web Development</option>
+            <option >UI/Ux Design</option>
+            <option >Data Science</option>
+            <option >Mobile Development</option>
+            <option >Artificial Intelligence</option>
+            <option >Cybersecurity</option>
+            <option >Cloud Computing</option>
+            <option >DevOps</option>
+            <option >Blockchain</option>
+            <option >Software Engineering</option>
           </select>
 
           <select value={level} onChange={(e) => setLevel(e.target.value)}>
-            <option value="">Level</option>
-            <option value="beginner">Beginner</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="advanced">Advanced</option>
+            <option >All</option>
+            <option >Beginner</option>
+            <option >Intermediate</option>
+            <option >Advanced</option>
           </select>
 
-          <select value={price} onChange={(e) => setPrice(e.target.value)}>
-            <option value="">Price</option>
-            <option value="free">Free</option>
-            <option value="min">₹1 – ₹499</option>
-            <option value="mid">₹500 – ₹999</option>
-            <option value="max">₹1000+</option>
+          <select value={sort} onChange={(e) => setSort(e.target.value)}>
+            <option value="default">Default</option>
+        <option value="rating">Highest Rated</option>
+        <option value="popular">Most Popular</option>
           </select>
         </div>
 

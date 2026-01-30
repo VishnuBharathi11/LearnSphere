@@ -1,7 +1,7 @@
 import { useNavigate, useParams} from "react-router-dom";
 import {useState} from "react";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
-import courses from "../../../data/courses.js";
+import {courses} from "../../../data/courses.js";
 import "./CourseDetail.scss";
 
 function CourseDetail() {

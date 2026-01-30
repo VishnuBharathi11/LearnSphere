@@ -6,23 +6,28 @@ import mobile from "../../../assets/Popular Categories/app-development.png";
 import ui from "../../../assets/Popular Categories/ui.png";
 import cy from "../../../assets/Popular Categories/cyber-security.png";
 import data from "../../../assets/Popular Categories/data-science.png";
-import f1 from "../../../assets/Featured Courses/1.jpg";
-import f2 from "../../../assets/Featured Courses/2.jpg";
-import f3 from "../../../assets/Featured Courses/3.jpg";
-import f4 from "../../../assets/Featured Courses/4.jpg";
+
 import { FaSearch } from "react-icons/fa";
-import Footer from '../../../components/Footer/Footer';
-import NavBar from '../../../components/NavBar/NavBar';
+import Footer from "../../../components/Footer/Footer";
+import NavBar from "../../../components/NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import About from "../About/About";
 import Contact from "../Contact/Contact";
+import { featuredCourses } from "../../../data/courses";
 function Home() {
   const navigate = useNavigate();
   return (
-    <> 
-    <NavBar/>
-      <div className="main-head">Unlock Your<br/> Potential with<br/> Online Learning</div>
-      <div className="sub-main">LearnSphere helps you master new skills with high-quality courses, expert instructors, and flexible learning paths tailored for you.</div>   
+    <>
+      <NavBar />
+      <div className="main-head">
+        Unlock Your
+        <br /> Potential with
+        <br /> Online Learning
+      </div>
+      <div className="sub-main">
+        LearnSphere helps you master new skills with high-quality courses,
+        expert instructors, and flexible learning paths tailored for you.
+      </div>
 
       <div className="search">
         <input
@@ -35,8 +40,12 @@ function Home() {
         </div>
       </div>
       <div className="btn-get-browse">
-        <button className="btn-get" onClick={()=>navigate("/pricing")}>Get Started for Free</button>
-        <button className="btn-browse" onClick={()=>navigate("/courses")}>Browse Course</button>
+        <button className="btn-get" onClick={() => navigate("/free-courses")}>
+          Get Started for Free
+        </button>
+        <button className="btn-browse" onClick={() => navigate("/courses")}>
+          Browse Course
+        </button>
       </div>
 
       <div className="pop-cat">
@@ -119,78 +128,37 @@ function Home() {
       </div>
 
       <div className="fea-cour">
-        <div className="pop-cat-head">Featured Courses Section</div>
+        <div className="pop-cat-head">Featured Courses</div>
         <div className="fea-cat-sub-title">
           Learn from high-quality courses curated by industry experts.
         </div>
-
         <div className="fea-cour-box">
-          <div className="fea-cour-cont">
-            <div className="fea-cour-title-align">
-              <img src={f1} />
-              <div className="fea-cour-title">
-                Modern Frontend Development with React <br />
-                <span className="fea-cour-inst-name">Arun Prakash</span>
+          {featuredCourses.map((course) => (
+            <div className="fea-cour-cont" key={course.id}>
+              <div className="fea-cour-title-align">
+                <img
+                  src={course.thumbnail || "/assets/course-placeholder.png"}
+                  alt={course.courseName}
+                />
+                <div className="fea-cour-title">
+                  {course.courseName}
+                  <br />
+                  <span className="fea-cour-inst-name">
+                    {course.instructor}
+                  </span>
+                </div>
+              </div>
+              <div className="fea-cour-review">
+                ⭐ {course.rating}
+                <span className="fea-cour-price">
+                  {course.price === 0 ? "Free" : `₹${course.price}`}
+                </span>
+              </div>
+              <div className="fea-cour-module-font">
+                {course.category} • {course.level}
               </div>
             </div>
-            <div className="fea-cour-review">
-              ⭐ 4.8 (1.4k reviews)
-              <span className="fea-cour-price">₹799</span>
-            </div>
-            <div className="fea-cour-module-font">
-              React • JavaScript • UI Development
-            </div>
-          </div>
-
-          <div className="fea-cour-cont">
-            <div className="fea-cour-title-align">
-              <img src={f2} />
-              <div className="fea-cour-title">
-                Artificial Intelligence & Deep Learning Bootcamp
-                <br />
-                <span className="fea-cour-inst-name">Tony Stark</span>
-              </div>
-            </div>
-            <div className="fea-cour-review">
-              ⭐ 4.9 (4.2k reviews)
-              <span className="fea-cour-price">₹1099</span>
-            </div>
-            <div className="fea-cour-module-font">
-              Neural Networks • TensorFlow • Deep Learning
-            </div>
-          </div>
-
-          <div className="fea-cour-cont">
-            <div className="fea-cour-title-align">
-              <img src={f3} />
-              <div className="fea-cour-title">
-                Python Programming for Data Science & ML
-                <br />
-                <span className="fea-cour-inst-name">Dr. Kishore Menon</span>
-              </div>
-            </div>
-            <div className="fea-cour-review">
-              ⭐ 4.7 (2.6k reviews)<span className="fea-cour-price">₹699</span>
-            </div>
-            <div className="fea-cour-module-font">Python • ML • Pandas</div>
-          </div>
-
-          <div className="fea-cour-cont">
-            <div className="fea-cour-title-align">
-              <img src={f4} />
-              <div className="fea-cour-title">
-                Ethical Hacking & Cybersecurity Basics <br />
-                <span className="fea-cour-inst-name">Maya Joseph</span>
-              </div>
-            </div>
-            <div className="fea-cour-review">
-              ⭐ 4.6 (1.8k reviews)
-              <span className="fea-cour-price">₹899</span>
-            </div>
-            <div className="fea-cour-module-font">
-              Cybersecurity • Networking • Tools
-            </div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -250,9 +218,9 @@ function Home() {
           </div>
         </div>
       </div>
-      <About/>
-      <Contact/>
-      <Footer/>
+      <About />
+      <Contact />
+      <Footer />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import "./AdminDashboard.css";
+import "./AdminDashboard.scss";
 import {
   Users,
   GraduationCap,

@@ -1,5 +1,5 @@
 import {  useNavigate } from "react-router-dom";
-import "./ReviewCourse.css";
+import "./ReviewCourse.scss";
 
 function ReviewCourse(){
 //   const { courseId } = useParams();

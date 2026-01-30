@@ -6,7 +6,7 @@ import {
   Edit,
   Trash2
 } from "lucide-react";
-import "./HandleCourses.css";
+import "./HandleCourses.scss";
 import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function HandleCourses(){
