@@ -192,7 +192,7 @@ $transition: 0.25s ease;
       color: #fff;
 
       &:hover {
-        background: darken($primary, 6%);
+        background: ($primary, 6%);
       }
     }
   }
