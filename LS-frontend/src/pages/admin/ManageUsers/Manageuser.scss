@@ -61,7 +61,17 @@ $danger: #dc2626;
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
-}
+  background: $white;
+
+  select{
+    width:30%;
+    height: 30%;
+    border: 1px solid $border;
+    padding: 8px 12px;
+    border-radius: 8px;
+    outline: none;
+    
+  }
 
 .search-box {
   display: flex;
@@ -70,8 +80,6 @@ $danger: #dc2626;
   border: 1px solid $border;
   padding: 8px 12px;
   border-radius: 8px;
-  flex: 1;
-  background: $white;
 
   input {
     border: none;
@@ -80,6 +88,7 @@ $danger: #dc2626;
     font-size: 14px;
     background: transparent;
   }
+}
 }
 
 .table-wrapper {
@@ -131,12 +140,12 @@ th {
   font-weight: 600;
 }
 
-.actions {
+  .actions td{
   display: flex;
   gap: 10px;
+  background-color: #111827;
   cursor: pointer;
 }
-
 .active {
   color: $success;
   font-weight: 500;

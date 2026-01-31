@@ -70,7 +70,7 @@ function App() {
           <Route path="my-courses" element={<LearnerMyCourses />} />
           <Route path="progress" element={<LearnerProgress />} />
           <Route path="assessment" element={<Assesment />} />
-          <Route path="test/:" element={<TestTaking />} />
+          <Route path="test/:id" element={<TestTaking />} />
           <Route path="profile" element={<Profile />} />
           <Route path="learn/:id" element={<LearnCourse />} />
           <Route path="certificate/:id" element={<Certificate />} />
