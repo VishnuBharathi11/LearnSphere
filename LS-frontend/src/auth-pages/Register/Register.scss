@@ -5,90 +5,90 @@
   align-items: center;
   justify-content: center;
   background: #ffffff;
-}
 
-.reg-form-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  padding: 50px;
-  text-align: center;
-  background: #ffffff;
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.06),
-    0 8px 20px rgba(0, 0, 0, 0.08);
-}
+  .reg-form-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 50px;
+    text-align: center;
+    background: #ffffff;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.06),
+      0 8px 20px rgba(0, 0, 0, 0.08);
 
-.reg-page-name {
-  font-family: "Poppins", sans-serif;
-  font-size: 30px;
-  font-weight: 600;
-  color: #2f62b3;
-  padding: 5px;
-  margin-top: -30px;
-}
+    .reg-page-name {
+      font-family: "Poppins", sans-serif;
+      font-size: 30px;
+      font-weight: 600;
+      color: #2f62b3;
+      padding: 5px;
+      margin-top: -30px;
+    }
 
-.reg-form-welcome {
-  font-family: "Poppins", sans-serif;
-  font-weight: 700;
-  font-size: 30px;
-}
+    .reg-form-welcome {
+      font-family: "Poppins", sans-serif;
+      font-weight: 700;
+      font-size: 30px;
 
-.reg-form-welcome p {
-  font-size: 16px;
-  font-family: "Inter" ,sans-serif;
-  font-weight: 400;
-  color: #666;
-  margin-top: 6px;
-}
+      p {
+        font-size: 16px;
+        font-family: "Inter", sans-serif;
+        font-weight: 400;
+        color: #666;
+        margin-top: 6px;
+      }
+    }
 
-.reg-form-input{
-  padding: 10px 0;
-}
-.reg-form-input ::placeholder{
-  font-family: "Inter" ,sans-serif;
-}
+    .reg-form-input {
+      padding: 10px 0;
 
-.reg-form input {
-  width: 300px;
-  height: 45px;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  padding-left: 12px;
-  /* font-family: "Poppins", sans-serif; */
-  font-size: 14px;
-}
+      input {
+        width: 300px;
+        height: 45px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding-left: 12px;
+        font-size: 14px;
 
-.reg-form input:focus {
-  outline: none;
-  border-color: #e5e7eb;
-}
+        &:focus {
+          outline: none;
+          border-color: #e5e7eb;
+        }
 
-.reg-form-btn {
-  width: 300px;
-  height: 45px;
-  margin-top: 15px;
-  border-radius: 8px;
-  border: none;
-  background-color: #4f6ef7;
-  color: #ffffff;
-  font-size: 16px;
-  font-family: "Inter" ,sans-serif;
-  cursor: pointer;
-}
+        &::placeholder {
+          font-family: "Inter", sans-serif;
+        }
+      }
+    }
 
-.reg-form-login {
-  margin-top: 15px;
-  font-family: "Inter", sans-serif;
-  font-size: 14px;
-  margin-bottom: -30px;
-}
+    .reg-form-btn {
+      width: 300px;
+      height: 45px;
+      margin-top: 15px;
+      border-radius: 8px;
+      border: none;
+      background-color: #4f6ef7;
+      color: #ffffff;
+      font-size: 16px;
+      font-family: "Inter", sans-serif;
+      cursor: pointer;
+    }
 
-.reg-text {
-  color: #4f6ef7;
-  margin-left: 5px;
-  text-decoration: none;
+    .reg-form-login {
+      margin-top: 15px;
+      font-family: "Inter", sans-serif;
+      font-size: 14px;
+      margin-bottom: -30px;
+
+      .reg-text {
+        color: #4f6ef7;
+        margin-left: 5px;
+        text-decoration: none;
+      }
+    }
+  }
 }

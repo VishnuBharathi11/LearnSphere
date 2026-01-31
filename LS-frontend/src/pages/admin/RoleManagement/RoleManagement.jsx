@@ -120,7 +120,7 @@ function RoleManagement() {
       <SidebarAdmin />
 
       <div className="admin-content">
-        {/* HEADER */}
+
         <header className="admin-header">
           <div>
             <h1>Role Management</h1>
@@ -128,7 +128,7 @@ function RoleManagement() {
           </div>
         </header>
 
-        {/* ROLES GRID */}
+
         <main className="role-container">
           {roles.map((role) => (
             <div className="role-card" key={role.id}>
@@ -170,7 +170,6 @@ function RoleManagement() {
             </div>
           ))}
 
-          {/* CREATE ROLE */}
           <button className="role-add" onClick={openCreate}>
             <Plus size={28} />
             <span>Create Role</span>
@@ -178,7 +177,6 @@ function RoleManagement() {
         </main>
       </div>
 
-      {/* MODAL */}
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">

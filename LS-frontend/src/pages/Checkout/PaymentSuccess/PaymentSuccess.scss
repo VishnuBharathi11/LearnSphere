@@ -1,28 +1,17 @@
-/* ================================
-   Variables
-================================ */
 $success-font: "Inter", sans-serif;
-
 $success-white: #ffffff;
-
 $success-green: #22c55e;
 $success-green-dark: #16a34a;
-
 $success-blue: #2563eb;
 $success-purple: #7c3aed;
 $success-indigo: #8b5cf6;
-
 $success-gray-700: #4b5563;
 $success-gray-500: #6b7280;
 $success-gray-300: #d1d5db;
-
 $success-bg-main: linear-gradient(135deg, #ecfdf5, #eef2ff, #faf5ff);
 $success-badge-gradient: linear-gradient(to right, #3b82f6, #8b5cf6);
 $success-btn-gradient: linear-gradient(to right, #2563eb, #7c3aed);
 
-/* ================================
-   Mixins
-================================ */
 @mixin flex-center($gap: 0) {
   display: flex;
   align-items: center;
@@ -40,9 +29,6 @@ $success-btn-gradient: linear-gradient(to right, #2563eb, #7c3aed);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
-/* ================================
-   Success Page
-================================ */
 .success-page {
   min-height: 100vh;
   background: $success-bg-main;

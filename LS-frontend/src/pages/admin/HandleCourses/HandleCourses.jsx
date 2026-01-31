@@ -60,20 +60,20 @@ function HandleCourses(){
         <div className="manage-courses">
       <h2 className="page-title">Manage Courses</h2>
       <p className="page-subtitle">Oversee all courses in the platform</p>
-      <div className="stats">
-        <div className="stat-card">
+      <div className="summ-status">
+        <div className="summ-status-card">
           <p>Total Courses</p>
           <h3>3</h3>
         </div>
-        <div className="stat-card">
+        <div className="summ-status-card">
           <p>Published</p>
           <h3>2</h3>
         </div>
-        <div className="stat-card">
+        <div className="summ-status-card">
           <p>Suspended</p>
           <h3>1</h3>
         </div>
-        <div className="stat-card">
+        <div className="summ-status-card">
           <p>Total Revenue</p>
           <h3>₹2.1L</h3>
         </div>

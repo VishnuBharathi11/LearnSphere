@@ -1,30 +1,17 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $primary: #2563eb;
-
 $border: #e5e7eb;
-
 $danger: #dc2626;
 $danger-bg: #fee2e2;
-
 $video-bg: #dbeafe;
 $video-text: #1e40af;
-
 $pdf-bg: #fee2e2;
 $pdf-text: #991b1b;
 
-/* ===============================
-   Layout
-================================ */
 .upload-lesson-layout {
   display: flex;
   font-family: $font;
@@ -37,9 +24,6 @@ $pdf-text: #991b1b;
   background-color: $bg;
 }
 
-/* ===============================
-   Header
-================================ */
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -47,7 +31,6 @@ $pdf-text: #991b1b;
   margin-bottom: 24px;
 }
 
-/* Course ID */
 .course-id {
   margin-top: 6px;
 
@@ -58,9 +41,6 @@ $pdf-text: #991b1b;
   }
 }
 
-/* ===============================
-   Lesson Card
-================================ */
 .lesson-card {
   background-color: $white;
   border: 1px solid $border;
@@ -69,9 +49,6 @@ $pdf-text: #991b1b;
   max-width: 900px;
 }
 
-/* ===============================
-   Lesson Row
-================================ */
 .lesson-row {
   display: flex;
   align-items: center;
@@ -84,7 +61,6 @@ $pdf-text: #991b1b;
   }
 }
 
-/* Lesson Number */
 .lesson-index {
   width: 36px;
   height: 36px;
@@ -99,7 +75,6 @@ $pdf-text: #991b1b;
   font-weight: 600;
 }
 
-/* Lesson Info */
 .lesson-info {
   h3 {
     font-size: 15px;
@@ -109,7 +84,6 @@ $pdf-text: #991b1b;
   }
 }
 
-/* Meta */
 .lesson-meta {
   display: flex;
   gap: 10px;
@@ -117,9 +91,6 @@ $pdf-text: #991b1b;
   color: $text-muted;
 }
 
-/* ===============================
-   Tags
-================================ */
 .tag {
   padding: 2px 8px;
   border-radius: 12px;
@@ -136,9 +107,6 @@ $pdf-text: #991b1b;
   }
 }
 
-/* ===============================
-   Lesson Actions
-================================ */
 .lesson-actions {
   display: flex;
   gap: 8px;
@@ -158,9 +126,6 @@ $pdf-text: #991b1b;
   }
 }
 
-/* ===============================
-   Add Lesson
-================================ */
 .add-lesson-btn {
   width: 100%;
   margin-top: 16px;
@@ -171,9 +136,6 @@ $pdf-text: #991b1b;
   border-radius: 6px;
 }
 
-/* ===============================
-   Modal
-================================ */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -191,9 +153,6 @@ $pdf-text: #991b1b;
   width: 400px;
 }
 
-/* ===============================
-   Form
-================================ */
 .form-group {
   margin-bottom: 14px;
 }
@@ -203,9 +162,6 @@ $pdf-text: #991b1b;
   gap: 10px;
 }
 
-/* ===============================
-   Buttons
-================================ */
 .primary-btn {
   background-color: $primary;
   color: white;

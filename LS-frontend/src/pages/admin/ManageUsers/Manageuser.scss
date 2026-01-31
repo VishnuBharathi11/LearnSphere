@@ -1,23 +1,13 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $primary: #2563eb;
 $border: #e5e7eb;
-
 $success: #16a34a;
 $danger: #dc2626;
 
-/* ===============================
-   Layout
-================================ */
 .manage-users-layout {
   display: flex;
   font-family: $font;
@@ -29,9 +19,6 @@ $danger: #dc2626;
   background: $bg;
 }
 
-/* ===============================
-   Page Header
-================================ */
 .page-title {
   font-size: 22px;
   font-weight: 600;
@@ -44,9 +31,6 @@ $danger: #dc2626;
   margin-bottom: 20px;
 }
 
-/* ===============================
-   Tabs
-================================ */
 .tabs {
   display: flex;
   gap: 10px;
@@ -73,9 +57,6 @@ $danger: #dc2626;
   }
 }
 
-/* ===============================
-   Filters
-================================ */
 .filters {
   display: flex;
   gap: 12px;
@@ -101,9 +82,6 @@ $danger: #dc2626;
   }
 }
 
-/* ===============================
-   Table Wrapper
-================================ */
 .table-wrapper {
   background: $white;
   border: 1px solid $border;
@@ -111,9 +89,6 @@ $danger: #dc2626;
   overflow: hidden;
 }
 
-/* ===============================
-   Table
-================================ */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -137,9 +112,6 @@ th {
   color: #374151;
 }
 
-/* ===============================
-   User Cell
-================================ */
 .user-cell {
   display: flex;
   align-items: center;
@@ -159,18 +131,12 @@ th {
   font-weight: 600;
 }
 
-/* ===============================
-   Actions
-================================ */
 .actions {
   display: flex;
   gap: 10px;
   cursor: pointer;
 }
 
-/* ===============================
-   Status
-================================ */
 .active {
   color: $success;
   font-weight: 500;
@@ -181,9 +147,6 @@ th {
   font-weight: 500;
 }
 
-/* ===============================
-   Empty State
-================================ */
 .empty {
   text-align: center;
   padding: 40px;

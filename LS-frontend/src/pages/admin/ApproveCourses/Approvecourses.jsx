@@ -10,6 +10,7 @@ import {
   XCircle
 } from "lucide-react";
 import "./Approvecourses.scss";
+import SideBarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function ApproveCourses(){
   const navigate = useNavigate();
@@ -60,11 +61,11 @@ function ApproveCourses(){
   ];
 
   return (
-    <div className="approve-courses">
+    <div className="approve-courses-layout">
+      <SideBarAdmin />
+      <div className="approve-course-content">
       <h2 className="page-title">Approve / Reject Courses</h2>
       <p className="page-subtitle">Review and approve course submissions</p>
-
-      {/* Stats */}
       <div className="stats-grid">
         {stats.map((s, i) => (
           <div key={i} className={`stat-card ${s.type}`}>
@@ -77,10 +78,9 @@ function ApproveCourses(){
         ))}
       </div>
 
-      {/* Course List */}
       <div className="course-list">
         {courses.map(course => (
-          <div key={course.id} className="course-card">
+          <div key={course.id} className="admin-course-card">
             <div className="course-main">
               <div className="thumb">{course.thumbnail}</div>
 
@@ -106,7 +106,6 @@ function ApproveCourses(){
               </div>
             </div>
 
-            {/* Actions */}
             <div className="actions">
               <button
                 className="review"
@@ -120,6 +119,7 @@ function ApproveCourses(){
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 };

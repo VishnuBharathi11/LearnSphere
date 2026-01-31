@@ -1,55 +1,55 @@
 .I-navbar {
-  width: 240px;
-  height: 100vh;
-  background-color: #ffffff;
+width: 250px;
+  height: 100%;
+  background: #ffffff;
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   padding: 20px 16px;
-}
 
-.logo-name {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 30px;
-}
+  .logo-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 28px;
 
-.logo {
-  width: 36px;
-  height: 36px;
-  margin-left: 70px;
-}
+    .logo {
+      width: 36px;
+      height: 36px;
 
-.page-name {
-  font-size: 18px;
-  font-weight: 600;
-  color: #111827;
-}
+    }
 
-.I-sidebar {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+    .page-name {
+      font-size: 25px;
+      font-weight: 600;
+      color: #234a9f;
+    }
+  }
 
-.I-sidebar a {
-  text-decoration: none;
-  color: #374151;
-  font-size: 14px;
-  padding: 10px 12px;
-  border-radius: 6px;
-  transition: background-color 0.2s ease;
-  display: flex;
-  gap: 4px;
-}
+  .I-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 
-.I-sidebar a:hover {
-  background-color: #eef2ff;
-}
+    a {
+      text-decoration: none;
+      color: #374151;
+      font-size: 14px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+      display: flex;
+      gap: 4px;
 
-.I-sidebar a.active {
-  background-color: #eef2ff;
-  font-weight: 500;
-  color: #3b82f6;
+      &:hover {
+        background-color: #eef2ff;
+      }
+
+      &.active {
+        background-color: #eef2ff;
+        font-weight: 500;
+        color: #3b82f6;
+      }
+    }
+  }
 }

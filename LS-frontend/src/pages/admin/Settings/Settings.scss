@@ -1,22 +1,12 @@
-/* ===============================
-   VARIABLES
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f5f7fb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $border: #d1d5db;
 $light-border: #f1f5f9;
-
 $primary: #4f6ef7;
 
-/* ===============================
-   LAYOUT
-================================ */
 .settings-layout {
   display: flex;
   font-family: $font;
@@ -29,9 +19,6 @@ $primary: #4f6ef7;
   width: 100%;
 }
 
-/* ===============================
-   PAGE HEADER
-================================ */
 .page-title {
   font-size: 26px;
   font-weight: 700;
@@ -44,9 +31,6 @@ $primary: #4f6ef7;
   margin-bottom: 24px;
 }
 
-/* ===============================
-   SETTINGS CARD
-================================ */
 .settings-card {
   background: $white;
   border-radius: 12px;
@@ -62,9 +46,6 @@ $primary: #4f6ef7;
   }
 }
 
-/* ===============================
-   FORM GRID
-================================ */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -98,9 +79,6 @@ $primary: #4f6ef7;
   }
 }
 
-/* ===============================
-   TOGGLE ROW
-================================ */
 .toggle-row {
   display: flex;
   justify-content: space-between;
@@ -111,9 +89,6 @@ $primary: #4f6ef7;
   color: $text-dark;
 }
 
-/* ===============================
-   TOGGLE SWITCH
-================================ */
 .toggle {
   width: 44px;
   height: 22px;
@@ -143,9 +118,6 @@ $primary: #4f6ef7;
   }
 }
 
-/* ===============================
-   SAVE BUTTON
-================================ */
 .save-btn {
   margin-top: 12px;
   background: $primary;

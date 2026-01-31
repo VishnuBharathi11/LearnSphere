@@ -14,7 +14,7 @@ function NavBar() {
     <nav className="navbar">
       <div className="logo-section">
           <img src={logo} className="logo"/>
-          <div className="n-page-name">LearnSphere</div>
+          <div className="logo-page-name">LearnSphere</div>
           </div>
           <div className="nav-links">
           <Link to="/">Home</Link>

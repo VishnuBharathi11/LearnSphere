@@ -1,22 +1,12 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f8fafc;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $primary: #2563eb;
 $primary-soft: #eef2ff;
-
 $border: #e5e7eb;
 
-/* ===============================
-   Layout
-================================ */
 .admin-layout {
   display: flex;
   min-height: 100vh;
@@ -29,9 +19,6 @@ $border: #e5e7eb;
   background: $bg;
 }
 
-/* ===============================
-   Page Header
-================================ */
 .page-title {
   font-size: 22px;
   font-weight: 600;
@@ -44,18 +31,12 @@ $border: #e5e7eb;
   margin-bottom: 24px;
 }
 
-/* ===============================
-   Category Grid
-================================ */
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 20px;
 }
 
-/* ===============================
-   Category Card
-================================ */
 .category-card {
   background: $white;
   border-radius: 16px;
@@ -83,9 +64,6 @@ $border: #e5e7eb;
   margin-bottom: 10px;
 }
 
-/* ===============================
-   Courses Count
-================================ */
 .courses {
   display: flex;
   align-items: center;
@@ -95,9 +73,6 @@ $border: #e5e7eb;
   font-size: 14px;
 }
 
-/* ===============================
-   Edit Button
-================================ */
 .edit-btn {
   position: absolute;
   top: 14px;
@@ -110,9 +85,6 @@ $border: #e5e7eb;
   color: #475569;
 }
 
-/* ===============================
-   Add Category Card
-================================ */
 .add-card {
   border: 2px dashed #c7d2fe;
   border-radius: 16px;
@@ -133,9 +105,6 @@ $border: #e5e7eb;
   }
 }
 
-/* ===============================
-   Modal Overlay
-================================ */
 .modal-overlay {
   position: fixed;
   inset: 0;
@@ -146,9 +115,6 @@ $border: #e5e7eb;
   z-index: 1000;
 }
 
-/* ===============================
-   Modal Box
-================================ */
 .modal {
   background: $white;
   padding: 22px;
@@ -179,9 +145,6 @@ $border: #e5e7eb;
   }
 }
 
-/* ===============================
-   Modal Actions
-================================ */
 .modal-actions {
   display: flex;
   gap: 10px;
