@@ -6,7 +6,7 @@ function AssessmentResult() {
   const navigate = useNavigate();
   const location = useLocation();
   const {
-    score = 0,
+    
     total = 0,
     correct = 0,
   } = location.state || {};

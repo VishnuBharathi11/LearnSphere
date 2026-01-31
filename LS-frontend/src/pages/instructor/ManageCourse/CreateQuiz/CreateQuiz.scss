@@ -1,29 +1,17 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $primary: #2563eb;
 $primary-hover: #1e4fd6;
-
 $success: #16a34a;
 $success-hover: #15803d;
-
 $border: #e5e7eb;
-
 $danger-bg: #fee2e2;
 $danger-text: #b91c1c;
 $danger-hover: #fecaca;
 
-/* ===============================
-   Layout
-================================ */
 .create-quiz-layout {
   display: flex;
   font-family: $font;
@@ -43,18 +31,12 @@ $danger-hover: #fecaca;
   }
 }
 
-/* ===============================
-   Course Reference
-================================ */
 .course-ref {
   font-size: 14px;
   color: $text-muted;
   margin-bottom: 20px;
 }
 
-/* ===============================
-   Quiz Card
-================================ */
 .quiz-card {
   background-color: $white;
   border: 1px solid $border;
@@ -109,9 +91,6 @@ $danger-hover: #fecaca;
   }
 }
 
-/* ===============================
-   Options Grid
-================================ */
 .quiz-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -136,9 +115,6 @@ $danger-hover: #fecaca;
   }
 }
 
-/* ===============================
-   Question Preview
-================================ */
 .question-preview {
   border: 1px solid $border;
   border-radius: 6px;
@@ -173,9 +149,6 @@ $danger-hover: #fecaca;
   }
 }
 
-/* ===============================
-   Page Actions
-================================ */
 .quiz-actions {
   display: flex;
   gap: 12px;

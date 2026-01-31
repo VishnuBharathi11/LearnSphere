@@ -12,7 +12,7 @@ import {
   Settings,
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
-import "./SidebarAdmin.css";
+import "./SidebarAdmin.scss";
 function SidebarAdmin() {
   const location = useLocation();
   const isActive = (path) => {

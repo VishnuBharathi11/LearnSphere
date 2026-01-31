@@ -1,34 +1,21 @@
-/* ================================
-   Variables
-================================ */
 $progress-font: "Inter", sans-serif;
-
 $progress-white: #ffffff;
 $progress-text-dark: #111827;
 $progress-text-muted: #6b7280;
-
 $progress-primary: #4a6cf7;
 $progress-primary-hover: #3b5bf0;
 $progress-blue: #2563eb;
-
 $progress-border: #e5e7eb;
-
 $progress-warning-bg: #ffe7d6;
 $progress-warning-text: #f97316;
-
 $progress-success-bg: #dcfce7;
 $progress-success-text: #15803d;
-
 $progress-tip-bg: #eef2ff;
 $progress-tip-text: #1e40af;
-
 $progress-shadow-lg: 0 10px 28px rgba(0, 0, 0, 0.08);
 $progress-shadow-md: 0 8px 22px rgba(0, 0, 0, 0.06);
 $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
 
-/* ================================
-   Mixins
-================================ */
 @mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
   display: flex;
   gap: $gap;
@@ -49,25 +36,16 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   box-shadow: $shadow;
 }
 
-/* ================================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $progress-font;
 }
 
-/* ================================
-   Page Wrapper
-================================ */
 .assessment-content {
   width: 100%;
   max-width: 100%;
 }
 
-/* ================================
-   Header
-================================ */
 .progress-header {
   margin-bottom: 16px;
 
@@ -78,9 +56,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ================================
-   Stats Grid (FIXED)
-================================ */
 .status-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -108,9 +83,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ================================
-   Chart Card
-================================ */
 .chart-card {
   @include card(24px 28px, 18px, $progress-shadow-md);
   margin-bottom: 32px;
@@ -123,9 +95,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ================================
-   Lower Layout
-================================ */
 .lower-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -139,9 +108,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   color: $progress-text-dark;
 }
 
-/* ================================
-   Course Progress
-================================ */
 .course-progress-card {
   @include card(18px, 16px, $progress-shadow-sm);
   @include flex-row(18px);
@@ -175,9 +141,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ================================
-   Badges
-================================ */
 .badge {
   font-size: 12px;
   padding: 4px 14px;
@@ -195,9 +158,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ================================
-   Progress Bar
-================================ */
 .course-progress-text {
   font-size: 12px;
   color: $progress-blue;
@@ -219,9 +179,6 @@ $progress-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
   border-radius: 10px;
 }
 
-/* ================================
-   Achievements
-================================ */
 .achievement-card {
   @include card(20px, 16px, $progress-shadow-md);
   font-size: 14px;

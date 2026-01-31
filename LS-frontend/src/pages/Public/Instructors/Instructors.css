@@ -1,92 +1,85 @@
 .instructors-page {
   background: #f7f9fc;
   padding: 48px 64px;
-}
 
-/* Hero section */
-.instructors-hero {
-  max-width: 900px;
-  margin-bottom: 40px;
-}
+  .instructors-hero {
+    max-width: 900px;
+    margin-bottom: 40px;
 
-.instructors-hero h1 {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
 
-.instructors-hero p {
-  font-size: 16px;
-  color: #6b7280;
-}
+    p {
+      font-size: 16px;
+      color: #6b7280;
+    }
+  }
 
-/* Grid */
-.instructors-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 28px;
-}
+  .instructors-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 28px;
+  }
 
-/* Instructor card */
-.instructor-card {
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 28px 20px;
-  text-align: center;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
+  .instructor-card {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 28px 20px;
+    text-align: center;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
 
-.instructor-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
-}
+    &:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.1);
+    }
 
-/* Profile image */
-.instructor-card img {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 14px;
-}
+    img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 14px;
+    }
 
-/* Name */
-.instructor-card h3 {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
 
-/* Role */
-.instructor-card .role {
-  font-size: 13px;
-  color: #6b7280;
-  margin-bottom: 14px;
-}
+    .role {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 14px;
+    }
 
-.instructor-card .socials {
-  display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-top: 8px;
-}
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-top: 8px;
 
-.instructor-card .socials a {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #f1f5f9;
-  color: #0a66c2;
-  font-size: 16px;
-  transition: all 0.2s ease;
-}
+      a {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: #0a66c2;
+        font-size: 16px;
+        transition: all 0.2s ease;
 
-.instructor-card .socials a:hover {
-  background: #0a66c2;
-  color: #ffffff;
+        &:hover {
+          background: #0a66c2;
+          color: #ffffff;
+        }
+      }
+    }
+  }
 }
-

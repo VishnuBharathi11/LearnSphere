@@ -1,27 +1,16 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $primary: #2563eb;
 $purple: #7c3aed;
 $green: #10b981;
 $yellow: #f59e0b;
-
 $warning-bg: #fef3c7;
-
 $border: #e5e7eb;
 $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
-/* ===============================
-   Layout
-================================ */
 .admin-dasboard-layout {
   display: flex;
   font-family: $font;
@@ -33,9 +22,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   background: $bg;
 }
 
-/* ===============================
-   Page Header
-================================ */
 .page-title {
   font-size: 22px;
   font-weight: 600;
@@ -48,9 +34,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   margin-bottom: 22px;
 }
 
-/* ===============================
-   Stats Section
-================================ */
 .status-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -109,9 +92,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Pending Tasks
-================================ */
 .pending-box {
   margin: 24px 0;
   padding: 18px;
@@ -161,9 +141,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Charts Section
-================================ */
 .charts-grid {
   display: grid;
   grid-template-columns: 2fr 2fr 1.5fr;
@@ -186,9 +163,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Activity Section
-================================ */
 .activity-box {
   background: $white;
   padding: 18px;

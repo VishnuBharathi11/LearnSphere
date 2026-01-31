@@ -1,24 +1,14 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $primary: #2563eb;
 $border: #e5e7eb;
-
 $success: #16a34a;
 $danger: #dc2626;
 $warning: #f59e0b;
 
-/* ===============================
-   Layout
-================================ */
 .handle-courses-layout {
   display: flex;
   font-family: $font;
@@ -30,9 +20,6 @@ $warning: #f59e0b;
   background: $bg;
 }
 
-/* ===============================
-   Page Header
-================================ */
 .page-title {
   font-size: 22px;
   font-weight: 600;
@@ -45,17 +32,14 @@ $warning: #f59e0b;
   margin-bottom: 20px;
 }
 
-/* ===============================
-   Stats Cards
-================================ */
-.stats {
+.summ-status {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 20px;
 }
 
-.stat-card {
+.summ-status-card {
   background: $white;
   border: 1px solid $border;
   border-radius: 12px;
@@ -74,9 +58,6 @@ $warning: #f59e0b;
   }
 }
 
-/* ===============================
-   Filters
-================================ */
 .filters {
   display: flex;
   gap: 12px;
@@ -102,9 +83,6 @@ $warning: #f59e0b;
   }
 }
 
-/* ===============================
-   Table Wrapper
-================================ */
 .table-wrapper {
   background: $white;
   border: 1px solid $border;
@@ -112,9 +90,6 @@ $warning: #f59e0b;
   overflow: hidden;
 }
 
-/* ===============================
-   Table
-================================ */
 table {
   width: 100%;
   border-collapse: collapse;
@@ -138,9 +113,6 @@ th {
   color: #374151;
 }
 
-/* ===============================
-   Course Title
-================================ */
 .course-title {
   font-weight: 500;
   color: $text-dark;
@@ -153,17 +125,11 @@ th {
   }
 }
 
-/* ===============================
-   Revenue
-================================ */
 .revenue {
   color: $success;
   font-weight: 500;
 }
 
-/* ===============================
-   Rating
-================================ */
 .rating {
   display: flex;
   align-items: center;
@@ -176,9 +142,6 @@ th {
   color: #9ca3af;
 }
 
-/* ===============================
-   Status Badge
-================================ */
 .status {
   padding: 4px 12px;
   border-radius: 999px;
@@ -197,9 +160,6 @@ th {
   color: #991b1b;
 }
 
-/* ===============================
-   Actions
-================================ */
 .actions {
   display: flex;
   gap: 10px;

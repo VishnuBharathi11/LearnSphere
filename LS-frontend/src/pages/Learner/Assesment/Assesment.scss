@@ -1,31 +1,18 @@
-/* ================================
-   Variables
-================================ */
 $ass-font-primary: "Inter", sans-serif;
-
 $ass-white: #ffffff;
 $ass-text-dark: #111827;
 $ass-text-muted: #6b7280;
-
 $ass-primary: #4a6cf7;
 $ass-primary-hover: #3b5bf0;
-
 $ass-border-light: #cbd5e1;
-
 $ass-bg-pending: #ffe6cc;
 $ass-text-pending: #ff8a00;
-
 $ass-bg-completed: #daf5dc;
 $ass-text-completed: #2e7d32;
-
 $ass-bg-failed: #f8d7da;
 $ass-text-failed: #d32f2f;
-
 $ass-bg-score: #eef2ff;
 
-/* ================================
-   Mixins
-================================ */
 @mixin flex-row($gap: 0, $justify: flex-start) {
   display: flex;
   gap: $gap;
@@ -54,17 +41,11 @@ $ass-bg-score: #eef2ff;
   cursor: pointer;
 }
 
-/* ================================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $ass-font-primary;
 }
 
-/* ================================
-   Layout
-================================ */
 .assessment-content {
   width: 100%;
 }
@@ -75,9 +56,6 @@ $ass-bg-score: #eef2ff;
   margin-bottom: 15px;
 }
 
-/* ================================
-   Summary
-================================ */
 .assessment-summary {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -103,9 +81,6 @@ $ass-bg-score: #eef2ff;
   }
 }
 
-/* ================================
-   Main Grid
-================================ */
 .assessment-grid {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
@@ -119,9 +94,6 @@ $ass-bg-score: #eef2ff;
   margin-bottom: 18px;
 }
 
-/* ================================
-   Assessment Cards
-================================ */
 .assessment-card {
   @include card-base(24px 28px);
   display: flex;
@@ -156,9 +128,6 @@ $ass-bg-score: #eef2ff;
   align-items: center;
 }
 
-/* ================================
-   Status
-================================ */
 .status {
   padding: 6px 16px;
   border-radius: 14px;
@@ -181,9 +150,6 @@ $ass-bg-score: #eef2ff;
   }
 }
 
-/* ================================
-   Buttons
-================================ */
 .primary-btn {
   @include button-base($ass-primary, $ass-white);
   padding: 10px 26px;
@@ -202,9 +168,6 @@ $ass-bg-score: #eef2ff;
   cursor: pointer;
 }
 
-/* ================================
-   Right Panel
-================================ */
 .right-panel {
   @include flex-column;
 }

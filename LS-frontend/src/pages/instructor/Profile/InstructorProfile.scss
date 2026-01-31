@@ -1,28 +1,17 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $blue: #3b82f6;
 $green: #22c55e;
 $yellow: #facc15;
 $purple: #a855f7;
-
 $primary: #2563eb;
 $primary-hover: #1d4ed8;
-
 $border: #d1d5db;
 $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
-/* ===============================
-   Layout
-================================ */
 .instructor-profile-layout {
   display: flex;
   font-family: $font;
@@ -34,9 +23,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   background: $bg;
 }
 
-/* ===============================
-   Header
-================================ */
 .instructor-profile-header {
   display: flex;
   justify-content: space-between;
@@ -52,9 +38,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Stats Section
-================================ */
 .instructor-profile-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -118,18 +101,12 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   color: #ffffff;
 }
 
-/* ===============================
-   Profile Content Layout
-================================ */
 .instructor-profile-content {
   display: grid;
   grid-template-columns: 1290px 1fr;
   gap: 32px;
 }
 
-/* ===============================
-   Profile Form
-================================ */
 .instructor-profile-form {
   background: $white;
   padding: 24px;
@@ -151,9 +128,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Profile Picture
-================================ */
 .profile-pic-row {
   display: flex;
   align-items: center;
@@ -196,9 +170,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Form Fields
-================================ */
 .profile-form {
   label {
     display: block;
@@ -238,9 +209,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Save Button
-================================ */
 .save-btn {
   margin-top: 24px;
   width: 100%;
@@ -258,18 +226,10 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Empty Placeholder
-================================ */
 .profile-empty {
   background: transparent;
 }
 
-/* ===============================
-   Enhanced Basic Information
-================================ */
-
-/* Card look upgrade */
 .instructor-profile-form {
   width: 100%;
   background: $white;
@@ -293,9 +253,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Profile Picture Section
-================================ */
 .profile-pic-row {
   display: flex;
   align-items: center;
@@ -346,9 +303,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Form Inputs
-================================ */
 .form-row {
   margin-bottom: 16px;
 }
@@ -391,9 +345,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   line-height: 1.6;
 }
 
-/* ===============================
-   Save Button Enhancement
-================================ */
 .save-btn {
   margin-top: 28px;
   width: 100%;

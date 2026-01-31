@@ -1,33 +1,19 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $border: #e5e7eb;
 $border-input: #d1d5db;
-
 $primary: #2563eb;
 $danger: #dc2626;
 $secondary-bg: #e5e7eb;
 $secondary-text: #374151;
 
-/* ===============================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $font;
 }
-
-/* ===============================
-   Layout
-================================ */
 .create-course-layout {
   display: flex;
   min-height: 100vh;
@@ -39,9 +25,6 @@ $secondary-text: #374151;
   background-color: $bg;
 }
 
-/* ===============================
-   Header
-================================ */
 .create-header {
   display: flex;
   justify-content: space-between;
@@ -57,9 +40,6 @@ $secondary-text: #374151;
   }
 }
 
-/* ===============================
-   Form Card
-================================ */
 .form-card {
   background-color: $white;
   border: 1px solid $border;
@@ -74,9 +54,6 @@ $secondary-text: #374151;
   }
 }
 
-/* ===============================
-   Form Groups
-================================ */
 .form-group {
   margin-bottom: 18px;
 
@@ -103,9 +80,6 @@ $secondary-text: #374151;
   }
 }
 
-/* ===============================
-   Grid Layouts
-================================ */
 .form-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -116,9 +90,6 @@ $secondary-text: #374151;
   }
 }
 
-/* ===============================
-   Upload Section
-================================ */
 .upload-box {
   border: 2px dashed $border-input;
   padding: 24px;
@@ -133,9 +104,6 @@ $secondary-text: #374151;
   }
 }
 
-/* ===============================
-   Thumbnail Preview
-================================ */
 .thumbnail-preview {
   position: relative;
   display: inline-block;
@@ -159,18 +127,12 @@ $secondary-text: #374151;
   }
 }
 
-/* ===============================
-   Form Actions
-================================ */
 .form-actions {
   display: flex;
   gap: 12px;
   margin-top: 20px;
 }
 
-/* ===============================
-   Buttons
-================================ */
 .primary-btn {
   background-color: $primary;
   color: $white;

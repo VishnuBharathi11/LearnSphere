@@ -1,25 +1,15 @@
-/* ================================
-   Variables
-================================ */
 $profile-font-primary: "Inter", sans-serif;
 $profile-font-heading: "Poppins", sans-serif;
-
 $profile-white: #ffffff;
 $profile-text-dark: #111827;
 $profile-text-muted: #6b7280;
-
 $profile-primary: #4a6cf7;
 $profile-primary-hover: #3b5bf0;
-
 $profile-border-light: #e5e7eb;
 $profile-bg-disabled: #f3f4f6;
 $profile-bg-soft: #eef2ff;
+$profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
 
-$profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
-
-/* ================================
-   Mixins
-================================ */
 @mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
   display: flex;
   gap: $gap;
@@ -54,17 +44,11 @@ $profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   }
 }
 
-/* ================================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $profile-font-primary;
 }
 
-/* ================================
-   Profile Content
-================================ */
 .profile-content {
   width: 100%;
   padding: 30px 40px;
@@ -82,9 +66,6 @@ $profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   margin-bottom: 28px;
 }
 
-/* ================================
-   Summary
-================================ */
 .profile-summary {
   @include card-base(15px 36px 2px);
 }
@@ -193,9 +174,6 @@ $profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   }
 }
 
-/* ================================
-   Bottom Grid
-================================ */
 .profile-bottom {
   display: grid;
   grid-template-columns: 2.2fr 1fr;
@@ -203,9 +181,6 @@ $profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   margin-top: 32px;
 }
 
-/* ================================
-   Personal Info
-================================ */
 .personal-info {
   @include card-base;
 
@@ -243,9 +218,6 @@ $profile-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
   @include button-primary(11px 30px);
 }
 
-/* ================================
-   Achievements
-================================ */
 .achievements {
   @include card-base;
 

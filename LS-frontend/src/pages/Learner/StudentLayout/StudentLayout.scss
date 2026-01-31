@@ -5,7 +5,6 @@
   overflow: hidden;
 }
 
-/* ===== SIDEBAR ===== */
 .L-navbar {
   width: 240px;
   height: 100vh;
@@ -14,9 +13,8 @@
   z-index: 100;
 }
 
-/* ===== MAIN CONTENT ===== */
 .student-main {
-  margin-left: 240px; /* SAME AS SIDEBAR WIDTH */
+  margin-left: 240px; 
   width: calc(100% - 240px);
   display: flex;
   flex-direction: column;
@@ -24,7 +22,6 @@
   background: #f8fafc;
 }
 
-/* ===== TOP NAVBAR ===== */
 .dashboard-header {
   position: sticky;
   top: 0;
@@ -40,8 +37,6 @@
 
 .student-layout-content
 {
-    /* background-color: aqua;
-    border: solid; */
     width: 1273px;
     position: absolute;
     transform: translate(241px,-735px);

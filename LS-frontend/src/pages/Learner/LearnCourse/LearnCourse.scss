@@ -1,22 +1,13 @@
-/* ================================
-   Variables
-================================ */
 $learn-font-main: "Inter", sans-serif;
 $learn-font-heading: "Poppins", sans-serif;
-
 $learn-bg-sidebar: #f8fafc;
 $learn-bg-hover: #e5e7eb;
 $learn-bg-active: #2563eb;
 $learn-bg-video: #111827;
-
 $learn-border: #e5e7eb;
-
 $learn-text-dark: #374151;
 $learn-text-white: #ffffff;
 
-/* ================================
-   Mixins
-================================ */
 @mixin flex-row {
   display: flex;
 }
@@ -31,17 +22,11 @@ $learn-text-white: #ffffff;
   overflow-y: auto;
 }
 
-/* ================================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $learn-font-main;
 }
 
-/* ================================
-   Learn Page Layout
-================================ */
 .learn-page {
   @include flex-row;
   height: calc(100vh - 64px);

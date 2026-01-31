@@ -46,7 +46,6 @@ function Dashboard() {
       <SidebarInstructor />
 
       <div className="instructor-dashboard">
-        {/* HEADER */}
         <div className="dashboard-header">
           <div>
             <h1>Instructor Dashboard</h1>
@@ -55,7 +54,6 @@ function Dashboard() {
           <button className="logout-btn">Logout</button>
         </div>
 
-        {/* STATUS CARDS */}
         <div className="status-grid">
           {stats.map((item, index) => {
             const Icon = item.icon;
@@ -77,9 +75,7 @@ function Dashboard() {
           })}
         </div>
 
-        {/* CHARTS */}
         <div className="chart-grid">
-          {/* Enrollment Chart */}
           <div className="chart-card">
             <div className="chart-header">
               <TrendingUp size={20} />
@@ -103,7 +99,6 @@ function Dashboard() {
             </div>
           </div>
 
-          {/* Course Completion */}
           <div className="chart-card">
             <div className="chart-header">
               <BarChart3 size={20} />
@@ -128,7 +123,6 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* RECENT ACTIVITY */}
         <div className="activity-card">
           <h3>Recent Activity</h3>
 

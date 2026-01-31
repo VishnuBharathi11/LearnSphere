@@ -1,23 +1,13 @@
-/* ================================
-   Variables
-================================ */
 $course-font-primary: "Inter", sans-serif;
-
 $course-white: #ffffff;
 $course-text-dark: #111827;
 $course-text-muted: #6b7280;
-
 $course-primary: #4f46e5;
 $course-primary-hover: #4338ca;
-
 $course-border-light: #e5e7eb;
 $course-border-active: #c7d2fe;
-
 $course-bg-active: #eef2ff;
 
-/* ================================
-   Mixins
-================================ */
 @mixin flex-row($gap: 0) {
   display: flex;
   gap: $gap;
@@ -36,17 +26,11 @@ $course-bg-active: #eef2ff;
   cursor: pointer;
 }
 
-/* ================================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $course-font-primary;
 }
 
-/* ================================
-   Tabs
-================================ */
 .tabs {
   @include flex-row(20px);
   margin: 15px 0 25px;
@@ -69,9 +53,6 @@ $course-bg-active: #eef2ff;
   }
 }
 
-/* ================================
-   Course Grid
-================================ */
 .mycourse-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -80,9 +61,6 @@ $course-bg-active: #eef2ff;
   margin-top: 30px;
 }
 
-/* ================================
-   Course Card
-================================ */
 .mycourse-card {
   @include card-base;
   line-height: 1.6;

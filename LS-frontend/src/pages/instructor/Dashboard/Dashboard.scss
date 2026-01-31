@@ -1,27 +1,20 @@
-/* ================= VARIABLES ================= */
 $font: "Inter", sans-serif;
-
 $bg: #f9fafb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $blue: #3b82f6;
 $yellow: #facc15;
 $green: #22c55e;
 $red: #ef4444;
-
 $border: #e5e7eb;
 $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
-/* ================= BASE ================= */
 * {
   box-sizing: border-box;
   font-family: $font;
 }
 
-/* ================= LAYOUT ================= */
 .instructor-layout {
   display: flex;
   min-height: 100vh;
@@ -33,7 +26,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   padding: 24px;
 }
 
-/* ================= HEADER ================= */
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -58,7 +50,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   cursor: pointer;
 }
 
-/* ================= STATUS CARDS ================= */
 .status-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -114,7 +105,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 .status-green .status-icon { background: $green; }
 .status-red .status-icon { background: $red; }
 
-/* ================= CHARTS ================= */
 .chart-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -136,7 +126,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   margin-bottom: 16px;
 }
 
-/* ================= BAR CHART ================= */
 .bar-chart {
   display: flex;
   align-items: flex-end;
@@ -173,7 +162,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   margin-right: 20px;
 }
 
-/* ================= PROGRESS ================= */
 .progress-row {
   margin-bottom: 14px;
 }
@@ -198,7 +186,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   border-radius: 6px;
 }
 
-/* ================= ACTIVITY ================= */
 .activity-card {
   background: $white;
   border-radius: 12px;

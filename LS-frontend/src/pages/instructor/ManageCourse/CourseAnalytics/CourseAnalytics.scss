@@ -1,37 +1,22 @@
-/* ===============================
-   Variables
-================================ */
 $font: "Inter", sans-serif;
-
 $bg: #f5f7fb;
 $white: #ffffff;
-
 $text-dark: #111827;
 $text-muted: #6b7280;
-
 $green: #22c55e;
 $blue: #3b82f6;
 $yellow: #facc15;
 $purple: #a855f7;
-
 $danger: #ef4444;
 $warning: #f59e0b;
-
 $border: #e5e7eb;
-
 $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 
-/* ===============================
-   Base
-================================ */
 * {
   box-sizing: border-box;
   font-family: $font;
 }
 
-/* ===============================
-   Layout
-================================ */
 .analytics-layout {
   display: flex;
 }
@@ -43,9 +28,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   min-height: 100vh;
 }
 
-/* ===============================
-   Title
-================================ */
 .analytics-title {
   font-size: 26px;
   font-weight: 600;
@@ -53,9 +35,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   color: $text-dark;
 }
 
-/* ===============================
-   Stats Cards
-================================ */
 .analytics-stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -82,9 +61,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Stat Icon
-================================ */
 .stat-icon {
   width: 44px;
   height: 44px;
@@ -112,18 +88,12 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Analytics Grid
-================================ */
 .analytics-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
 
-/* ===============================
-   Analytics Cards
-================================ */
 .analytics-card {
   background: $white;
   border-radius: 14px;
@@ -142,9 +112,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Recharts Overrides
-================================ */
 .recharts-tooltip-label {
   font-size: 13px;
   font-weight: 500;
@@ -161,9 +128,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Completion Chart
-================================ */
 .completion-card {
   position: relative;
   text-align: center;
@@ -190,9 +154,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Legend
-================================ */
 .legend {
   display: flex;
   justify-content: center;
@@ -227,9 +188,6 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 }
 
-/* ===============================
-   Lesson Progress
-================================ */
 .lesson-row {
   display: flex;
   align-items: center;

@@ -24,8 +24,6 @@ function SidebarStudent({ activeTab, setActiveTab, children }) {
         </div>
 
         <div className="L-sidebar">
-
-          {/* DASHBOARD */}
           <div
             className={`nav-item ${activeTab === "Dashboard" ? "active" : ""}`}
             onClick={() => {
@@ -36,8 +34,6 @@ function SidebarStudent({ activeTab, setActiveTab, children }) {
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
-
-          {/* MY COURSES */}
           <div
             className={`nav-item ${activeTab === "My Courses" ? "active" : ""}`}
             onClick={() => {
@@ -48,8 +44,6 @@ function SidebarStudent({ activeTab, setActiveTab, children }) {
             <BookOpen size={20} />
             <span>My Courses</span>
           </div>
-
-          {/* PROGRESS */}
           <div
             className={`nav-item ${activeTab === "Progress" ? "active" : ""}`}
             onClick={() => {
@@ -60,8 +54,6 @@ function SidebarStudent({ activeTab, setActiveTab, children }) {
             <BarChart3 size={20} />
             <span>Progress</span>
           </div>
-
-          {/* ASSESSMENT */}
           <div
             className={`nav-item ${activeTab === "Assessment" ? "active" : ""}`}
             onClick={() => {
@@ -72,8 +64,6 @@ function SidebarStudent({ activeTab, setActiveTab, children }) {
             <ClipboardList size={20} />
             <span>Assessment</span>
           </div>
-
-          {/* PROFILE */}
           <div
             className={`nav-item ${activeTab === "Profile" ? "active" : ""}`}
             onClick={() => {

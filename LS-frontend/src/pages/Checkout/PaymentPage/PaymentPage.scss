@@ -1,24 +1,14 @@
-/* ================================
-   Variables
-================================ */
 $payment-font: "Inter", sans-serif;
-
 $payment-white: #ffffff;
 $payment-border-light: #e5e3eb;
 $payment-border-gray: #d1d5db;
-
 $payment-primary: #2563eb;
 $payment-primary-light: #eff6ff;
 $payment-primary-btn: #3b82f6;
-
 $payment-bg-light: #f8f9ff;
 $payment-bg-hover: #f1f5f9;
-
 $payment-text-muted: #6b7280;
 
-/* ================================
-   Mixins
-================================ */
 @mixin flex-column($gap: 0) {
   display: flex;
   flex-direction: column;
@@ -46,9 +36,6 @@ $payment-text-muted: #6b7280;
   transition: all 0.2s ease;
 }
 
-/* ================================
-   Payment Page
-================================ */
 .payment-page {
   font-family: $payment-font;
   display: flex;
