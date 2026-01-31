@@ -10,6 +10,10 @@ $yellow: #f59e0b;
 $warning-bg: #fef3c7;
 $border: #e5e7eb;
 $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+$priority-high: #ef4444;
+$priority-high-muted: #fee2e2;
+$priority-medium: #f59e0b;
+$priority-medium-muted: #fef3c7;
 
 .admin-dasboard-layout {
   display: flex;
@@ -133,17 +137,19 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   }
 
   &.high .badge {
-    color: #b91c1c;
+    background: $priority-high-muted;
+    color: $priority-high;
   }
 
   &.medium .badge {
-    color: #92400e;
+    background: $priority-medium-muted;
+    color: $priority-medium;
   }
 }
 
 .charts-grid {
   display: grid;
-  grid-template-columns: 2fr 2fr 1.5fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -154,6 +160,7 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   border-radius: 14px;
   border: 1px solid $border;
   box-shadow: $shadow;
+  min-height: 320px;
 
   h3 {
     font-size: 15px;
@@ -162,6 +169,7 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
     color: $text-dark;
   }
 }
+
 
 .activity-box {
   background: $white;

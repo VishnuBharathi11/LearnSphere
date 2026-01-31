@@ -61,7 +61,6 @@ function UpdateLesson() {
             <h1>Upload Lessons</h1>
             <p>Course ID: {id}</p>
           </div>
-          <button className="logout-btn">Logout</button>
         </div>
         <div className="lesson-card">
           {lessons.length === 0 ? (

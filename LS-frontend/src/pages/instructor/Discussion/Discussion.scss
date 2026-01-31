@@ -55,14 +55,6 @@ $shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
     color: $text-muted;
   }
 }
-
-.logout-btn {
-  background: none;
-  border: none;
-  color: $red;
-  cursor: pointer;
-}
-
 .discussion-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -155,7 +147,7 @@ $shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
 
   .pending.active {
     background: $yellow;
-    color: #000;
+    color: #fff;
   }
 
   .flagged.active {

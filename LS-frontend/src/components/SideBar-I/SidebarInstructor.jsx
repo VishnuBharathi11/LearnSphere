@@ -6,6 +6,7 @@ import {
   FolderKanban,
   MessageSquare,
   User,
+  LogOut
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import "./SidebarInstructor.scss";
@@ -20,9 +21,9 @@ function SidebarInstructor() {
       </div>
       <div className="I-sidebar">
         <Link
-          to="/dashboard"
+          to="/instructor-dashboard"
           className={
-            location.pathname === "/dashboard" ? "active" : ""
+            location.pathname === "/instructor-dashboard" ? "active" : ""
           }
         >
           <LayoutDashboard size={18} />
@@ -37,7 +38,7 @@ function SidebarInstructor() {
         </Link>
         <Link
           to="/manage-courses"
-          className={location.pathname === "/manage-courses" ? "active" : ""}
+          className= {location.pathname === "/manage-courses" ? "active" : ""}
         >
           <FolderKanban size={18} />
           Manage Courses
@@ -55,6 +56,10 @@ function SidebarInstructor() {
         >
           <User size={18} />
           My Profile
+        </Link>
+        <Link to="/login" className={`logout ${location.pathname==="/login"?"active":""}`}>
+        <LogOut size={20} />
+          Logout
         </Link>
       </div>
     </nav>

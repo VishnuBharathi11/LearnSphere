@@ -60,9 +60,6 @@ function Managecourse() {
             <h1>Manage Courses</h1>
             <p>Manage and organize your courses</p>
           </div>
-          <button className="logout-btn">Logout</button>
-        </div>
-        <div className="manage-course-meta">
           <button
             className="create-btn"
             onClick={() => navigate("/create-course")}
@@ -70,6 +67,9 @@ function Managecourse() {
             <Plus size={16} />
             Create Course
           </button>
+        </div>
+        <div className="manage-course-meta">
+          
           <div className="filter-card">
             <div className="filter-search">
               <Search size={18} />

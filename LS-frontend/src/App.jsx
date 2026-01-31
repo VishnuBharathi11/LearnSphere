@@ -75,7 +75,7 @@ function App() {
           <Route path="learn/:id" element={<LearnCourse />} />
           <Route path="certificate/:id" element={<Certificate />} />
         </Route>
-        <Route path="/dashboard" element={<InstructorDashboard />} />
+        <Route path="/instructor-dashboard" element={<InstructorDashboard />} />
         <Route path="/create-course" element={<CreateCourse />} />
         <Route path="/edit-course/:courseId" element={<CreateCourse />} />
         <Route path="manage-courses" element={<ManageCourses />} />

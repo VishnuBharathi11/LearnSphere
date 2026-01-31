@@ -50,7 +50,6 @@ function Discussion() {
             <h1>Discussion Moderation</h1>
             <p>Manage and moderate course discussions</p>
           </div>
-          <button className="logout-btn">Logout</button>
         </div>
         <div className="discussion-stats">
           <div className="discussion-stat-card blue">

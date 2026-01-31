@@ -80,14 +80,14 @@ function PaymentSuccess() {
         <div className="actions">
           <button
             className="ps-primary-btn"
-            onClick={() => navigate(`/learn/${course.id}`)}
+            onClick={() => navigate(`/student-layout/learn/${course.id}`)}
           >
             <Play size={20} />
             Start Learning
           </button>
           <button
             className="ps-secondary-btn"
-            onClick={() => navigate("/learner-my-courses")}
+            onClick={() => navigate("/student-layout/my-courses")}
           >
             Go to My Courses
           </button>
