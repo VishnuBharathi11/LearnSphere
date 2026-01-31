@@ -56,7 +56,6 @@ function BrowseCourses() {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option >All</option>
-            <option >Category</option>
             <option >Web Development</option>
             <option >UI/Ux Design</option>
             <option >Data Science</option>

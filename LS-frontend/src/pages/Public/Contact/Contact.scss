@@ -95,7 +95,7 @@ $contact-white: #ffffff;
 .ct-card {
   @include card-base;
   width: 300px;
-  height: 300px;
+  height: 220px;
   font-family: $contact-font-primary;
 
   &-icon img {
@@ -114,7 +114,7 @@ $contact-white: #ffffff;
     padding-bottom: 15px;
   }
 
-  &-link {
+  &-email {
     @include flex-row(5px);
     align-items: center;
     margin-top: 10px;
