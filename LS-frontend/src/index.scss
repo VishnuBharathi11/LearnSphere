@@ -1,0 +1,47 @@
+/* =========================
+   Variables (file-scoped)
+   ========================= */
+
+$app-font-primary: "Poppins", sans-serif;
+
+$app-bg-body: #f9fafb;
+$app-text-color: #111827;
+
+$app-full-size: 100%;
+
+/* =========================
+   Mixins
+   ========================= */
+
+@mixin reset-box {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+@mixin full-size {
+  width: $app-full-size;
+  height: $app-full-size;
+}
+
+/* =========================
+   Styles
+   ========================= */
+
+* {
+  @include reset-box;
+}
+
+html,
+body,
+#root {
+  @include full-size;
+}
+
+body {
+  font-family: $app-font-primary;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: $app-bg-body;
+  color: $app-text-color;
+}

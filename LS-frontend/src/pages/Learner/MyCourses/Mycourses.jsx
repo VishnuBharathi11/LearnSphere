@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { courses } from "../../../data/courses";
 import "./MyCourses.scss";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent"
-import {courses} from "../../../data/courses";
 
 const CATEGORY_IMAGES = {
   "Web Development":
@@ -28,104 +27,113 @@ const CATEGORY_IMAGES = {
 };
 
 function MyCourses() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
-  const enrolledCourses=JSON.parse(localStorage.getItem("enrolledCourses"))||[];
-  const mergedCourses = enrolledCourses.map((item) => {
-      const course = courses.find((c) => c.id === item.courseId);
-      if (!course) 
-        return null;
-      return { ...course, progress: item.progress };
+  const myCourses = useMemo(() => {
+  const enrolled =
+    JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+
+  return enrolled
+    .map(ec => {
+      const course = courses.find(c => c.id === ec.courseId);
+      if (!course) return null;
+
+      const completed = ec.completedLessons || 0;
+      const total = ec.totalLessons || course.lessons;
+
+      const progress = Math.floor(
+        (completed / total) * 100
+      );
+
+      return {
+        ...course,
+        completedLessons: completed,
+        totalLessons: total,
+        progress
+      };
     })
     .filter(Boolean);
-
-  const allCourses = mergedCourses;
-
-  const inProgressCourses = mergedCourses.filter(
-    (course) => course.progress > 0 && course.progress < 100
-  );
-
-  const completedCourses = mergedCourses.filter(
-    (course) => course.progress === 100
-  );
-
-  const coursesToShow =
-    activeTab === "all"
-      ? allCourses
-      : activeTab === "progress"
-      ? inProgressCourses
-      : completedCourses;
-
+}, []);
+  const coursesToShow = myCourses.filter(course => {
+    if (activeTab === "progress")
+      return course.progress > 0 && course.progress < 100;
+    if (activeTab === "completed")
+      return course.progress === 100;
+    return true;
+  });
   return (
-      <div>
-
-        <div className="tabs">
-          <button
-            className={activeTab === "all" ? "active" : ""}
-            onClick={() => setActiveTab("all")}
-          >
-            All Courses
-          </button>
-
-          <button
-            className={activeTab === "progress" ? "active" : ""}
-            onClick={() => setActiveTab("progress")}
-          >
-            In Progress
-          </button>
-
-          <button
-            className={activeTab === "completed" ? "active" : ""}
-            onClick={() => setActiveTab("completed")}
-          >
-            Completed
-          </button>
-        </div>
-
-        <div className="mycourse-grid">
-          {coursesToShow.length === 0 ? (
-            <p className="empty-text">No courses found</p>
-          ) : (
-            coursesToShow.map((course) => (
-              <div className="mycourse-card" key={course.id}>
-                <img
-                  src={
-                    CATEGORY_IMAGES[course.category] ||
-                    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3"
-                  }
-                  alt={course.courseName}
-                  className="mycourse-img"
-                />
-
-                <div className="mycourse-title">
-                  {course.courseName}
-                </div>
-
-                <div className="mycourse-instructor">
-                  {course.instructor}
-                </div>
-
-                <div className="mycourse-progress-text">
-                  Progress: {course.progress}%
-                </div>
-
-                <div className="mycourse-progress-track">
-                  <div
-                    className="mycourse-progress-fill"
-                    style={{ width: `${course.progress}%` }}
-                  ></div>
-                </div>
-
-                <button className="mycourse-btn" onClick={()=>navigate(`/student-layout/learn/${course.id}`)}>
-                  {course.progress === 100
-                    ? "Download Certificate"
-                    : "Continue Learning"}
-                </button>
-              </div>
-            ))
-          )}
-        </div>
+    <div className="mycourses-container">
+      <h2>My Courses</h2>
+      <div className="tabs">
+        <button
+          className={activeTab === "all" ? "active" : ""}
+          onClick={() => setActiveTab("all")}
+        >
+          All Courses
+        </button>
+        <button
+          className={activeTab === "progress" ? "active" : ""}
+          onClick={() => setActiveTab("progress")}
+        >
+          In Progress
+        </button>
+        <button
+          className={activeTab === "completed" ? "active" : ""}
+          onClick={() => setActiveTab("completed")}
+        >
+          Completed
+        </button>
       </div>
+      <div className="mycourse-grid">
+        {coursesToShow.length === 0 ? (
+          <p className="empty-text">No courses found</p>
+        ) : (
+          coursesToShow.map(course => (
+            <div className="mycourse-card" key={course.id}>
+              <img
+                src={
+                  CATEGORY_IMAGES[course.category] ||
+                  CATEGORY_IMAGES.default
+                }
+                alt={course.courseName}
+                className="mycourse-img"
+              />
+              <div className="mycourse-title">
+                {course.courseName}
+              </div>
+              <div className="mycourse-instructor">
+                {course.instructor}
+              </div>
+              <div className="mycourse-progress-text">
+                Progress: {course.progress}%
+              </div>
+              <div className="mycourse-progress-track">
+                <div
+                  className="mycourse-progress-fill"
+                  style={{
+                    width: `${course.progress}%`
+                  }}
+                />
+              </div>
+              <button
+                className="mycourse-btn"
+                onClick={() => {
+                  if (course.progress === 100) {
+                    navigate(`/student-layout/certificate/${course.id}`);
+                  } else {
+                    navigate(`/student-layout/learn/${course.id}`);
+                  }
+                }}
+              >
+                {course.progress === 100
+                  ? "Download Certificate"
+                  : "Continue Learning"}
+              </button>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
 

@@ -26,11 +26,8 @@ function Dashboard() {
   "Software Engineering":
     "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
 };
-  // 1️⃣ Get enrolled courses from storage
   const enrolledCourses =
     JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-
-  // 2️⃣ Continue Learning (enrolled but not completed)
   const continueCourses = enrolledCourses
     .map(ec => {
       const course = courses.find(c => c.id === ec.courseId);
@@ -42,18 +39,14 @@ function Dashboard() {
       };
     })
     .filter(course => course && course.progress < 100);
-
-  // 3️⃣ Recommended Courses (not enrolled)
   const recommendedCourses = courses
     .filter(
       course =>
         !enrolledCourses.some(ec => ec.courseId === course.id)
     )
     .slice(0, 5);
-
   return (
     <div className="dashboard-container">
-      {/* ===== WELCOME BOARD (UNCHANGED) ===== */}
       <div className="welcome-row">
         <div className="welcome-card">
           <div>
@@ -63,7 +56,6 @@ function Dashboard() {
               Continue Learning
             </button>
           </div>
-
           <img
             src={LearnerImg}
             alt="learning"
@@ -71,14 +63,9 @@ function Dashboard() {
           />
         </div>
       </div>
-
-      {/* ===== DASHBOARD CONTENT ===== */}
       <div className="dashboard-grid">
-
-        {/* ===== CONTINUE LEARNING ===== */}
         <div className="continue-section">
           <h3>Continue Learning</h3>
-
           <div className="course-grid">
             {continueCourses.length === 0 ? (
               <p>No courses in progress</p>
@@ -91,20 +78,17 @@ function Dashboard() {
                       alt={course.courseName}
                       className="cont-learn-img"
                     />
-
                     <div>
                       <h4>{course.courseName}</h4>
                       <p>{course.instructor}</p>
                     </div>
                   </div>
-
                   <div className="course-footer">
                     <span className="link">
                       Continue Learning
                     </span>
                     <span>{course.progress}%</span>
                   </div>
-
                   <div className="progress-bar">
                     <div
                       className="progress-fill"
@@ -118,8 +102,6 @@ function Dashboard() {
             )}
           </div>
         </div>
-
-        {/* ===== RECOMMENDED COURSES ===== */}
         <div className="recommended-section">
           <h3>Recommended Courses</h3>
 

@@ -1,154 +1,136 @@
-import React from "react";
-import SidebarStudent from "../../../components/SideBar-S/SidebarStudent";
-import progressImage from "../../../assets/Featured Courses/3.jpg";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import { useMemo } from "react";
+import { courses } from "../../../data/courses";
 import "./Progress.scss";
 
-const stats = [
-  { title: "Completed Courses", value: 3 },
-  { title: "Enrolled Courses", value: 5 },
-  { title: "Hours Studied", value: 52 },
-  { title: "Certificates", value: 2 },
-];
-
-const weeklyData = [
-  { day: "Mon", hours: 5 },
-  { day: "Tue", hours: 8 },
-  { day: "Wed", hours: 11 },
-  { day: "Thu", hours: 5 },
-  { day: "Fri", hours: 9 },
-  { day: "Sat", hours: 14 },
-  { day: "Sun", hours: 7 },
-];
-
-const courses = [
-  {
-    title: "Advance Java Script",
-    instructor: "Sarah Chen",
-    progress: 15,
-    status: "In Progress",
-    image: progressImage,
-  },
-  {
-    title: "Data Science Fundamentals",
-    instructor: "Dr. Lee",
-    progress: 100,
-    status: "Completed",
-    image: progressImage,
-  },
-  {
-    title: "Cybersecurity",
-    instructor: "John Smith",
-    progress: 38,
-    status: "In Progress",
-    image: progressImage,
-  },
-];
-
 function Progress() {
+  const progressData = useMemo(() => {
+    const enrolled =
+      JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+
+    return enrolled
+      .map(ec => {
+        const course = courses.find(c => c.id === ec.courseId);
+        if (!course) return null;
+
+        const completed = ec.completedLessons || 0;
+        const total = ec.totalLessons || course.lessons;
+
+        const progress = Math.floor(
+          (completed / total) * 100
+        );
+
+        let status = "Pending";
+        if (progress > 0 && progress < 100) status = "In Progress";
+        if (progress === 100) status = "Completed";
+
+        return {
+          id: course.id,
+          courseName: course.courseName,
+          instructor: course.instructor,
+          completedLessons: completed,
+          totalLessons: total,
+          progress,
+          status
+        };
+      })
+      .filter(Boolean);
+  }, []);
+
+  const totalCourses = progressData.length;
+  const inProgressCourses = progressData.filter(
+    c => c.status === "In Progress"
+  ).length;
+  const completedCourses = progressData.filter(
+    c => c.status === "Completed"
+  ).length;
+
+  const avgProgress =
+    totalCourses === 0
+      ? 0
+      : Math.floor(
+          progressData.reduce(
+            (sum, c) => sum + c.progress,
+            0
+          ) / totalCourses
+        );
+
   return (
-
-      <div>
-        <div className="progress-header">
-          <p>Track your learning journey and achievements</p>
+    <div className="progress-container">
+      <h2>Learning Progress</h2>
+      <div className="progress-stats">
+        <div className="progress-stat-card">
+          <h3>{totalCourses}</h3>
+          <p>Total Courses</p>
         </div>
-
-        <div className="status-grid">
-          {stats.map((item, i) => (
-            <div className="status-card" key={i}>
-              <p>{item.title}</p>
-              <h3>{item.value}</h3>
-            </div>
-          ))}
+        <div className="progress-stat-card">
+          <h3>{inProgressCourses}</h3>
+          <p>In Progress</p>
         </div>
-
-        <div className="chart-card">
-          <h4>Weekly Learning Activity</h4>
-          <ResponsiveContainer width="100%" height={260}>
-            <LineChart data={weeklyData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="day" />
-              <YAxis />
-              <Tooltip />
-              <Line
-                type="monotone"
-                dataKey="hours"
-                stroke="#4a6cf7"
-                strokeWidth={3}
-              />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="progress-stat-card">
+          <h3>{completedCourses}</h3>
+          <p>Completed</p>
         </div>
-
-        <div className="lower-grid">
-          <div>
-            <h4 className="prog-section-title">Course Progress</h4>
-
-            {courses.map((course, index) => (
-              <div className="course-progress-card" key={index}>
-                <img
-                  src={course.image}
-                  alt={course.title}
-                  className="course-img"
-                />
-
-                <div className="course-content">
-                  <div className="course-header">
-                    <div>
-                      <h5>{course.title}</h5>
-                      <span>{course.instructor}</span>
-                    </div>
-
-                    <span
-                      className={
-                        course.status === "Completed"
-                          ? "badge completed"
-                          : "badge progress"
-                      }
-                    >
-                      {course.status}
-                    </span>
-                  </div>
-
-                  <div className="course-progress-text">
-                    Progress: {course.progress}%
-                  </div>
-
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: `${course.progress}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div>
-            <h4 className="prog-section-title">Achievements</h4>
-
-            <div className="achievement-card">
-              🏆 <strong>Web Development Master</strong>
-              <p>Completed Nov 26, 2024</p>
-            </div>
-
-            <div className="achievement-tip">
-              🔥 You're doing great!
-              <br />
-              Complete 1 more course to earn a new certificate.
-            </div>
-          </div>
+        <div className="progress-stat-card">
+          <h3>{avgProgress}%</h3>
+          <p>Average Progress</p>
         </div>
       </div>
+      <div className="progress-graph-card">
+        <h3>Overall Progress</h3>
+
+        <div className="graph-track">
+          <div
+            className="graph-fill"
+            style={{ width: `${avgProgress}%` }}
+          />
+        </div>
+
+        <p className="graph-label">
+          Average completion across all enrolled courses
+        </p>
+      </div>
+      <div className="course-progress-section">
+        <h3>Course Progress</h3>
+
+        {progressData.length === 0 ? (
+          <p>No learning activity yet</p>
+        ) : (
+          progressData.map(course => (
+            <div
+              key={course.id}
+              className="course-progress-card"
+            >
+              <div className="course-left">
+                <h4>{course.courseName}</h4>
+                <p>{course.instructor}</p>
+
+                <div className="progress-bar">
+                  <div
+                    className="progress-fill"
+                    style={{
+                      width: `${course.progress}%`
+                    }}
+                  />
+                </div>
+
+                <span className="lesson-count">
+                  {course.completedLessons} /{" "}
+                  {course.totalLessons} lessons completed
+                </span>
+              </div>
+
+              <div
+                className={`status-tag ${course.status
+                  .toLowerCase()
+                  .replace(" ", "-")}`}
+              >
+                {course.status}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </div>
   );
 }
 

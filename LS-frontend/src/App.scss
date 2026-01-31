@@ -1,0 +1,76 @@
+/* =========================
+   Variables (file-scoped)
+   ========================= */
+
+$app-root-width: 100%;
+$app-bg-hero: #F5F6FA;
+
+$app-font-poppins: "Poppins", sans-serif;
+$app-font-inter: "Inter", sans-serif;
+
+$app-navbar-height: 72px;
+$app-padding-hero: clamp(1rem, 4vw, 4rem);
+
+/* =========================
+   Mixins
+   ========================= */
+
+@mixin full-width {
+  width: 100%;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@mixin flex-center-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin font-base($family, $weight) {
+  font-family: $family;
+  font-weight: $weight;
+  font-style: normal;
+}
+
+/* =========================
+   Styles
+   ========================= */
+
+#root {
+  @include full-width;
+}
+
+.poppins-regular {
+  @include font-base($app-font-poppins, 400);
+}
+
+.inter {
+  font-family: $app-font-inter;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.App {
+  min-height: 100%;
+  @include full-width;
+  @include flex-column;
+}
+
+.navbar {
+  @include full-width;
+  flex-shrink: 0;
+}
+
+.hero {
+  flex: 1;
+  min-height: calc(100svh - #{$app-navbar-height});
+  @include full-width;
+  @include flex-center-between;
+  padding: 0 $app-padding-hero;
+  background: $app-bg-hero;
+}
