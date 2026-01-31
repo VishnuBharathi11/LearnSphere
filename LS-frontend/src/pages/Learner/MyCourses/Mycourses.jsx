@@ -63,7 +63,6 @@ function MyCourses() {
   });
   return (
     <div className="mycourses-container">
-      <h2>My Courses</h2>
       <div className="tabs">
         <button
           className={activeTab === "all" ? "active" : ""}

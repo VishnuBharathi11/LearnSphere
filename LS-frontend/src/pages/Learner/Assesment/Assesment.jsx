@@ -96,25 +96,20 @@ function Assessment() {
 
   return (
     <div className="assessment-container">
-      <h2>Assessments</h2>
-      <p className="assessment-subtitle">
-        Test your knowledge and track your performance
-      </p>
-
-      <div className="assessment-stats">
-        <div className="stat-card">
+      <div className="assessment-status">
+        <div className="status-card">
           <h3>{totalAssessments}</h3>
           <p>Total Assessments</p>
         </div>
-        <div className="stat-card">
+        <div className="status-card">
           <h3>{completed}</h3>
           <p>Completed</p>
         </div>
-        <div className="stat-card">
+        <div className="status-card">
           <h3>{pending}</h3>
           <p>Pending</p>
         </div>
-        <div className="stat-card">
+        <div className="status-card">
           <h3>{avgScore}%</h3>
           <p>Average Score</p>
         </div>

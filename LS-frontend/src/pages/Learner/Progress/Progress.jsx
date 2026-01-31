@@ -56,7 +56,6 @@ function Progress() {
 
   return (
     <div className="progress-container">
-      <h2>Learning Progress</h2>
       <div className="progress-stats">
         <div className="progress-stat-card">
           <h3>{totalCourses}</h3>

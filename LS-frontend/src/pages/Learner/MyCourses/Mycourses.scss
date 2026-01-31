@@ -53,6 +53,10 @@ $course-bg-active: #eef2ff;
   }
 }
 
+
+.mycourses-container {
+  margin-top: -40px;
+}
 .mycourse-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);

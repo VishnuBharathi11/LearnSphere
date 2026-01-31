@@ -13,14 +13,13 @@ $progress-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
 $progress-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
 
 .progress-container {
-  padding: 24px;
   background: $progress-bg-page;
   min-height: 100vh;
+  margin-top: -20px;
 
-  h2 {
-    font-size: 24px;
-    font-weight: 600;
-    color: $progress-text-primary;
+  p {
+    font-size: 14px;
+    color: #64748b;
     margin-bottom: 24px;
   }
 }
@@ -33,7 +32,7 @@ $progress-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
 
   .progress-stat-card {
     background: $progress-bg-card;
-    padding: 20px;
+    padding: 10px;
     border-radius: 14px;
     box-shadow: $progress-shadow-sm;
     text-align: center;

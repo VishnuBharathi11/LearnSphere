@@ -20,9 +20,9 @@ function SidebarInstructor() {
       </div>
       <div className="I-sidebar">
         <Link
-          to="/dashboard"
+          to="/instructor-dashboard"
           className={
-            location.pathname === "/dashboard" ? "active" : ""
+            location.pathname === "/instructor-dashboard" ? "active" : ""
           }
         >
           <LayoutDashboard size={18} />

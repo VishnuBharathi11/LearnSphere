@@ -101,10 +101,7 @@ function Profile() {
     setProfile((prev) => ({ ...prev, image: imageURL }));
   };
   return (
-    <div>
-      <p className="profile-subtitle">
-        Manage your personal information and preferences
-      </p>
+    <div className="profile-content">
       <div className="profile-summary" ref={summaryRef}>
         <div className="summary-top">
           <div className="summary-left">
