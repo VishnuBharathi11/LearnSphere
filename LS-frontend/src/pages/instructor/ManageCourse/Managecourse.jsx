@@ -20,16 +20,34 @@ function Managecourse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [courses, setCourses] = useState(() => {
-    return JSON.parse(localStorage.getItem("courses")) || [];
-  });
+  const stored = JSON.parse(localStorage.getItem("courses")) || [];
+
+  return stored.map(c => ({
+    id: c.id,
+    courseName: c.courseName || c.title || "Untitled Course",
+    category: c.category || "General",
+    status: c.status || "draft",
+    students: c.students || 0,
+    lessons: c.lessons || 0,
+    rating: c.rating || 0,
+    revenue: c.revenue || 0
+  }));
+});
+
   const filteredCourses = courses.filter((course) => {
-    const matchesSearch =
-      course.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.category.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus =
-      filterStatus === "all" || course.status === filterStatus;
-    return matchesSearch && matchesStatus;
-  });
+  const name = course.courseName ?? "";
+  const category = course.category ?? "";
+
+  const matchesSearch =
+    name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    category.toLowerCase().includes(searchQuery.toLowerCase());
+
+  const matchesStatus =
+    filterStatus === "all" || course.status === filterStatus;
+
+  return matchesSearch && matchesStatus;
+});
+
   const togglePublish = (id) => {
     const updated = courses.map((course) =>
       course.id === id
