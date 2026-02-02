@@ -101,7 +101,6 @@ function CourseAnalytics() {
       value: d.value * course.price,
     }));
 
-    // 🟢 Completion pie
     let completed = 0;
     let inProgress = 0;
     let notStarted = 0;
