@@ -38,6 +38,21 @@ $danger-text: #b91c1c;
   p{
     color: $text-muted;
   }
+  .create-btn {
+  background-color: $primary;
+  color: white;
+  border: none;
+  padding: 16px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  width: 150px;
+  margin-left: auto;
+}
 }
 
 .manage-course-meta {
@@ -90,21 +105,7 @@ $danger-text: #b91c1c;
   }
 }
 
-.create-btn {
-  background-color: $primary;
-  color: white;
-  border: none;
-  padding: 16px 12px;
-  border-radius: 6px;
-  cursor: pointer;
 
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  width: 150px;
-  margin-left: auto;
-}
 
 .manage-course-card {
   background-color: $white;

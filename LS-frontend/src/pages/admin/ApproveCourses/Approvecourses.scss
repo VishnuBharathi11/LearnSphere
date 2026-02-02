@@ -90,7 +90,6 @@ $transition: 0.25s ease;
   flex-direction: column;
   gap: 22px;
 }
-
 .admin-course-card {
   background: $white;
   border-radius: $radius-lg;
@@ -102,13 +101,10 @@ $transition: 0.25s ease;
     box-shadow: 0 14px 32px rgba(0, 0, 0, 0.07);
     transform: translateY(-2px);
   }
-
   .course-main {
     display: flex;
     gap: 22px;
   }
-
-  /* Thumbnail */
   .thumb {
     width: 96px;
     height: 96px;

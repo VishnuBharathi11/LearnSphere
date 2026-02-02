@@ -78,7 +78,7 @@ function Contact() {
               Need help with courses, <br /> payments, certificates, <br /> or
               account access?
             </div>
-            <div className="ct-card-link ">
+            <div className="ct-card-email ">
               {" "}
               <img src={email} /> support@learnsphere.com
             </div>
@@ -94,7 +94,7 @@ function Contact() {
               Questions about course <br /> creation, approvals, <br />{" "}
               publishing, or earnings.
             </div>
-            <div className="ct-card-link ct-primary">
+            <div className="ct-card-email ct-primary">
               {" "}
               <img src={email} /> instructors@learnsphere.com
             </div>
@@ -110,7 +110,7 @@ function Contact() {
               Business partnerships, <br /> collaborations, or general
               questions.
             </div>
-            <div className="ct-card-link ct-secondary">
+            <div className="ct-card-email ct-secondary">
               {" "}
               <img src={email} /> info@learnsphere.com
             </div>

@@ -24,10 +24,11 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   padding: 24px;
 }
 
-.dashboard-header {
+.i-dashboard-header {
   display: flex;
   justify-content: space-between;
   margin-bottom: 24px;
+  padding-left: 20px;
 
    h1 {
     font-size: 22px;
@@ -39,13 +40,6 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
     color: $text-muted;
     margin-left: -20px;
   }
-}
-
-.logout-btn {
-  background: none;
-  border: none;
-  color: $red;
-  cursor: pointer;
 }
 
 .status-grid {

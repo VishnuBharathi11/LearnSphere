@@ -100,12 +100,11 @@ function Dashboard() {
     <div className="instructor-layout">
       <SidebarInstructor />
       <div className="instructor-dashboard">
-        <div className="dashboard-header">
+        <div className="i-dashboard-header">
           <div>
             <h1>Instructor Dashboard</h1>
             <p>Welcome back, Instructor</p>
           </div>
-          <button className="logout-btn">Logout</button>
         </div>
         <div className="status-grid">
           {stats.map((item, index) => {
