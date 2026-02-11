@@ -84,9 +84,6 @@ $contact-white: #ffffff;
   margin-top: 8px;
 }
 
-/* ================================
-   Contact Cards
-================================ */
 .contact-card {
   @include flex-row(25px, center);
   margin-top: 20px;
@@ -136,9 +133,6 @@ $contact-white: #ffffff;
   }
 }
 
-/* ================================
-   Content + Form
-================================ */
 .ct-content-form {
   @include flex-row(50px);
   margin-top: 25px;
@@ -191,9 +185,6 @@ $contact-white: #ffffff;
   }
 }
 
-/* ================================
-   Contact Form
-================================ */
 .contact-form {
   border: 1px solid $contact-border-light;
   border-radius: 16px;
@@ -204,12 +195,15 @@ $contact-white: #ffffff;
 .ct-form-title {
   font-size: 24px;
   font-weight: 420;
+  margin-bottom: 6px;
 }
-
 .ct-form-field {
+  margin-bottom: 18px;
   label {
+    display: block;
     font-size: 15px;
     font-weight: 500;
+    margin-bottom: 6px
   }
 
   input,

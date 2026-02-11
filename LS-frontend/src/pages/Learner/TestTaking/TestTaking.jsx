@@ -62,7 +62,7 @@ function TestTaking() {
     });
 
     const total = questions.length;
-    const passed = score >= Math.ceil(total * 0.6); // 60% pass
+    const passed = score >= Math.ceil(total * 0.6);
 
     const storedResults =
       JSON.parse(localStorage.getItem("testResults")) || [];

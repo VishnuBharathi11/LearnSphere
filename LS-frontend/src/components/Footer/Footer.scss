@@ -36,7 +36,8 @@
 
   .logo-text {
     display: flex;
-    align-items: center;
+    align-items: baseline;
+    gap: 2px;
   }
 
   .footer-brand {
@@ -46,7 +47,7 @@
     line-height: 1;
     font-family: "Averia Serif Libre", serif;
 
-    &.primary {
+    &.first {
       font-family: "Bree Serif", serif;
       text-decoration: underline;
       text-decoration-thickness: 2px;

@@ -147,7 +147,7 @@ function Contact() {
             <div className="ct-form">
               <form autoComplete="off" onSubmit={handleSubmit}>
                 <div className="ct-form-field">
-                  <label> Name </label> <br />
+                  <label> Name </label>
                   <input
                     type="text"
                     name="name"
@@ -158,7 +158,7 @@ function Contact() {
                   {errors.name && <p className="error">{errors.name}</p>}
                 </div>
                 <div className="ct-form-field">
-                  <label>Email</label> <br />
+                  <label>Email</label>
                   <input
                     type="email"
                     name="email"
@@ -169,7 +169,7 @@ function Contact() {
                   {errors.email && <p className="error">{errors.email}</p>}
                 </div>
                 <div className="ct-form-field">
-                  <label>Role</label> <br />
+                  <label>Role</label>
                   <select name="role" value={form.role} onChange={handleChange}>
                     <option value="">Select a Role</option>
                     <option value="student">Student</option>
@@ -179,7 +179,7 @@ function Contact() {
                   {errors.role && <p className="error">{errors.role}</p>}
                 </div>
                 <div className="ct-form-field">
-                  <label>Subject</label> <br />
+                  <label>Subject</label>
                   <select name="subject" value={form.subject} onChange={handleChange}>
                     <option value="">Select a subject</option>
                     <option value="course related issue">
