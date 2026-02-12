@@ -6,6 +6,11 @@ import certificateImage from "../../../assets/Learner/certificate.png";
 function Certificate() {
   const location = useLocation();
   const {id}=useParams();
+  const results=JSON.parse(localStorage.getItem("testResults"))||[];
+  const result=results.find((r)=>r.courseId===Number(id));
+  if(!result||result.passed){
+    return <p style={{ padding: 40 }}>Certificate locked. Pass assessment first.</p>
+  }
   const courseName =
     location.state?.courseName||"Course";
     const handleDownload=async()=>{
