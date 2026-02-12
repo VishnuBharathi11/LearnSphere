@@ -67,7 +67,6 @@ function StudentProgress() {
   );
   return (
     <div className="student-progress-layout">
-      <SidebarInstructor />
       <div className="student-progress-page">
         <div className="sp-page-header">
           <div>

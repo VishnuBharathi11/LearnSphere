@@ -98,7 +98,6 @@ function Dashboard() {
     }, []);
   return (
     <div className="instructor-layout">
-      <SidebarInstructor />
       <div className="instructor-dashboard">
         <div className="i-dashboard-header">
           <div>

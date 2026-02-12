@@ -99,7 +99,6 @@ function CreateCourse() {
 
   return (
     <div className="create-course-layout">
-      <SidebarInstructor/>
       <div className="create-course-container">
       <h2>{isEditMode ? "Edit Course" : "Create New Course"}</h2>
 

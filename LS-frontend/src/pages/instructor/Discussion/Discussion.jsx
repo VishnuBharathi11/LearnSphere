@@ -43,7 +43,6 @@ function Discussion() {
   };
   return (
     <div className="discussion-layout">
-      <SidebarInstructor />
       <div className="discussion-page">
         <div className="discussion-header">
           <div>

@@ -10,43 +10,42 @@ import {
   Trash2,
   Eye,
   EyeOff,
-  Sidebar,
 } from "lucide-react";
 import "./Managecourse.scss";
-import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 import { useNavigate } from "react-router-dom";
 
 function Managecourse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
-  const [courses, setCourses] = useState(() => {
-  const stored = JSON.parse(localStorage.getItem("courses")) || [];
 
-  return stored.map(c => ({
-    id: c.id,
-    courseName: c.courseName || c.title || "Untitled Course",
-    category: c.category || "General",
-    status: c.status || "draft",
-    students: c.students || 0,
-    lessons: c.lessons || 0,
-    rating: c.rating || 0,
-    revenue: c.revenue || 0
-  }));
-});
+  const [courses, setCourses] = useState(() => {
+    const stored = JSON.parse(localStorage.getItem("courses")) || [];
+
+    return stored.map((c) => ({
+      id: c.id,
+      courseName: c.courseName || c.title || "Untitled Course",
+      category: c.category || "General",
+      status: c.status || "draft",
+      students: c.students || 0,
+      lessons: c.lessons || 0,
+      rating: c.rating || 0,
+      revenue: c.revenue || 0,
+    }));
+  });
 
   const filteredCourses = courses.filter((course) => {
-  const name = course.courseName ?? "";
-  const category = course.category ?? "";
+    const name = course.courseName ?? "";
+    const category = course.category ?? "";
 
-  const matchesSearch =
-    name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    category.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSearch =
+      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      category.toLowerCase().includes(searchQuery.toLowerCase());
 
-  const matchesStatus =
-    filterStatus === "all" || course.status === filterStatus;
+    const matchesStatus =
+      filterStatus === "all" || course.status === filterStatus;
 
-  return matchesSearch && matchesStatus;
-});
+    return matchesSearch && matchesStatus;
+  });
 
   const togglePublish = (id) => {
     const updated = courses.map((course) =>
@@ -55,7 +54,7 @@ function Managecourse() {
             ...course,
             status: course.status === "published" ? "draft" : "published",
           }
-        : course,
+        : course
     );
 
     setCourses(updated);
@@ -69,25 +68,25 @@ function Managecourse() {
   };
 
   const navigate = useNavigate();
+
   return (
     <div className="manage-course-layout">
-      <SidebarInstructor />
       <div className="manage-courses-page">
         <div className="page-header">
           <div>
-            <h1>Manage Courses</h1>
             <p>Manage and organize your courses</p>
           </div>
+
           <button
             className="create-btn"
-            onClick={() => navigate("/create-course")}
+            onClick={() => navigate("/instructor-layout/create-course")}
           >
             <Plus size={16} />
             Create Course
           </button>
         </div>
+
         <div className="manage-course-meta">
-          
           <div className="filter-card">
             <div className="filter-search">
               <Search size={18} />
@@ -98,6 +97,7 @@ function Managecourse() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
+
             <div className="filter-select">
               <select
                 value={filterStatus}
@@ -110,6 +110,7 @@ function Managecourse() {
             </div>
           </div>
         </div>
+
         {filteredCourses.length === 0 ? (
           <div className="empty-box">No courses found</div>
         ) : (
@@ -121,10 +122,12 @@ function Managecourse() {
                     <h3>{course.courseName}</h3>
                     <p>{course.category}</p>
                   </div>
+
                   <span className={`status ${course.status}`}>
                     {course.status}
                   </span>
                 </div>
+
                 <div className="course-stats">
                   <div>
                     <span>Students</span>
@@ -143,37 +146,50 @@ function Managecourse() {
                     <strong>{course.rating} ⭐</strong>
                   </div>
                 </div>
+
                 <div className="course-actions">
                   <button
                     onClick={() =>
-                      navigate(`/manage-courses/${course.id}/lessons`)
+                      navigate(
+                        `/instructor-layout/manage-courses/${course.id}/lessons`
+                      )
                     }
                   >
                     <Upload size={14} /> Upload Lesson
                   </button>
+
                   <button
                     onClick={() =>
-                      navigate(`/manage-courses/${course.id}/quiz`)
+                      navigate(
+                        `/instructor-layout/manage-courses/${course.id}/quiz`
+                      )
                     }
                   >
                     <FileText size={14} /> Create Quiz
                   </button>
+
                   <button
                     onClick={() =>
-                      navigate(`/manage-courses/${course.id}/students`)
+                      navigate(
+                        `/instructor-layout/manage-courses/${course.id}/students`
+                      )
                     }
                   >
                     <Users size={14} /> Students
                   </button>
+
                   <button
                     onClick={() =>
-                      navigate(`/manage-courses/${course.id}/analytics`)
+                      navigate(
+                        `/instructor-layout/manage-courses/${course.id}/analytics`
+                      )
                     }
                   >
                     <BarChart3 size={14} /> Analytics
                   </button>
                 </div>
               </div>
+
               <div className="manage-actions">
                 <button onClick={() => togglePublish(course.id)}>
                   {course.status === "published" ? (
@@ -183,9 +199,17 @@ function Managecourse() {
                   )}
                   {course.status === "published" ? "Unpublish" : "Publish"}
                 </button>
-                <button onClick={() => navigate(`/edit-course/${course.id}`)}>
+
+                <button
+                  onClick={() =>
+                    navigate(
+                      `/instructor-layout/edit-course/${course.id}`
+                    )
+                  }
+                >
                   <Edit size={14} /> Edit
                 </button>
+
                 <button
                   onClick={() => deleteCourse(course.id)}
                   className="danger"

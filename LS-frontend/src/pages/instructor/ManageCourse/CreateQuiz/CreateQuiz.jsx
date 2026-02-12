@@ -70,7 +70,6 @@ function CreateQuiz() {
 
   return (
     <div className="create-quiz-layout">
-      <SidebarInstructor />
       <div className="quiz-page">
         <h1>Create Quiz</h1>
         <p className="course-ref">Course ID: {courseId}</p>

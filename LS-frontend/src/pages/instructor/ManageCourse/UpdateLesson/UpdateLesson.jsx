@@ -54,7 +54,6 @@ function UpdateLesson() {
   };
   return (
     <div className="upload-lesson-layout">
-      <SidebarInstructor />
       <div className="upload-lessons-page">
         <div className="page-header">
           <div>

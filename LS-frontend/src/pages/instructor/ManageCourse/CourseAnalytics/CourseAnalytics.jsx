@@ -157,7 +157,6 @@ function CourseAnalytics() {
 
   return (
     <div className="analytics-layout">
-      <SidebarInstructor />
 
       <div className="analytics-page">
         <h1 className="analytics-title">Course Analytics</h1>
