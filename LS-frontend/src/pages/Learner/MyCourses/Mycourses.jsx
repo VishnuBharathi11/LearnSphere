@@ -118,7 +118,9 @@ function MyCourses() {
                 className="mycourse-btn"
                 onClick={() => {
                   if (course.progress === 100) {
-                    navigate(`/student-layout/certificate/${course.id}`);
+                    navigate(`/student-layout/certificate/${course.id}`,{
+                      state:{courseName:course.courseName}
+                    });
                   } else {
                     navigate(`/student-layout/learn/${course.id}`);
                   }

@@ -1,24 +1,42 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
 import "./Certificate.scss";
-import certificateImage from "../../../assets/LearnerCertificate/certificate.jpg";
+import certificateImage from "../../../assets/Learner/certificate.png";
 function Certificate() {
-  const navigate = useNavigate();
   const location = useLocation();
+  const {id}=useParams();
   const courseName =
-    location.state?.courseName || "SQL (Basic)";
+    location.state?.courseName||"Course";
+    const handleDownload=async()=>{
+      try {
+        const response=await fetch(
+          `https://localhost:8080/api/certificate/${id}`,
+          {
+            method:"GET",headers:{Accept:"application/pdf"},
+          }
+        );
+        if(!response.ok){
+          throw new Error("Certificate download failed");
+        }
+        const blob=await response.blob();
+        const url=window.URL.createObjectURL(blob);
+        const link=document.createElement("a");
+        link.href=url;
+        link.download=`${courseName}-certificate.pdf`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        console.error("Download Error:",error);
+        alert("Unable to download certificate")
+      }
+    };
   return (
     <div className="certificate-page">
       <div className="certificate-header">
-        <button
-          className="back-btn"
-          onClick={() => navigate("/learner-my-courses")}
-        >
-          <FaArrowLeft /> Back
-        </button>
         <div>
-          <p className="cert-sub">Certification Tests</p>
           <h2>{courseName} Certificate</h2>
         </div>
       </div>
@@ -31,32 +49,15 @@ function Certificate() {
           />
         </div>
         <div className="certificate-actions">
-          <h3>Share this Certificate</h3>
-          <input
-            readOnly
-            value="https://learnsphere.com/certificates/123456"
-          />
-          <h4>Iframe Link</h4>
-          <input
-            readOnly
-            value="https://learnsphere.com/certificates/embed/123456"
-          />
-          <a
-            href={certificateImage}
-            download={`${courseName}-certificate.png`}
-            className="download-btn"
-          >
-            ⬇ Download Certificate
-          </a>
-          <div className="cert-info">
-            <h4>{courseName}</h4>
-            <p>
-              This certificate verifies successful completion of the
-              assessment.
-            </p>
+          <div className="cert-meta">
+            <p><span>Course</span>{courseName}</p>
+            <p><span>Learner</span>Peter Parker</p>
+            <p><span>Issued</span>12 Feb 2026</p>
+            <p><span>Certificate</span>LS-2026-00125</p>
           </div>
+          <button className="download-btn" onClick={handleDownload}>Download PDF</button>
+          <button className="share-btn">Share on LinkedIn</button>
         </div>
-
       </div>
     </div>
   );

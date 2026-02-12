@@ -6,7 +6,6 @@
 .certificate-page {
   background: #f6f8fc;
   min-height: 100vh;
-  padding: 30px 40px;
 }
 
 .certificate-header {
@@ -14,28 +13,6 @@
   align-items: center;
   gap: 24px;
   margin-bottom: 30px;
-}
-
-.back-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: #4f46e5;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.back-btn:hover {
-  background: #eef2ff;
-}
-
-.cert-sub {
-  font-size: 14px;
-  color: #6b7280;
 }
 
 .certificate-header h2 {
@@ -96,7 +73,21 @@
   font-size: 13px;
   background: #f9fafb;
 }
-
+.cert-meta{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 18px;
+  p{
+    font-size: 14px;
+    color: #374151;
+    display: flex;
+    justify-content: space-between;
+  }
+  span{
+    color: #6b7280;
+  }
+}
 .download-btn {
   display: block;
   margin-top: 22px;
@@ -105,6 +96,7 @@
   background:#4f46e5;
   color: white;
   border-radius: 10px;
+  border: none;
   text-align: center;
   text-decoration: none;
   font-weight: 500;
@@ -113,13 +105,15 @@
 .download-btn:hover {
   background:  #4338ca;
 }
-
-.cert-info {
-  margin-top: 25px;
+.share-btn{
+  font-weight: 500;
+  width: 100%;
+  padding: 11px;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  cursor: pointer;
 }
 
-.cert-info p {
-  font-size: 13px;
-  color: #6b7280;
-  margin-top: 6px;
-}
+

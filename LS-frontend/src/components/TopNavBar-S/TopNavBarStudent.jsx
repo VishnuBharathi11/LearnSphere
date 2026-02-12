@@ -8,12 +8,20 @@ function TopNavBarStudent() {
   const pageMap = {
     "/student-layout/dashboard": "Dashboard",
     "/student-layout/my-courses": "My Courses",
+    "/student-layout/certificate": "Certificate",
     "/student-layout/progress": "Progress",
     "/student-layout/assessment": "Assessment",
+    "/student-layout/test": "Quiz",
     "/student-layout/profile": "My Profile",
   };
-
-  const pageTitle = pageMap[location.pathname] || "Dashboard";
+  const getNormalizedPath=(pathname)=>{
+    if(pathname.startsWith("/student-layout/certificate"))
+      return "/student-layout/certificate";
+    if(pathname.startsWith("/student-layout/test"))
+      return "/student-layout/test";
+    return pathname;
+  }
+  const pageTitle = pageMap[getNormalizedPath(location.pathname)] || "Dashboard";
 
   return (
     <div className="dashboard-header">
