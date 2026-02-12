@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Video, FileText, File, Clock, Trash2, Edit, Plus } from "lucide-react";
 import { useParams } from "react-router-dom";
 import "./UpdateLesson.scss";
-
 function UpdateLesson() {
   const { courseId } = useParams();
   const id = String(courseId);
@@ -56,10 +55,7 @@ function UpdateLesson() {
     <div className="upload-lesson-layout">
       <div className="upload-lessons-page">
         <div className="page-header">
-          <div>
-            <h1>Upload Lessons</h1>
             <p>Course ID: {id}</p>
-          </div>
         </div>
         <div className="lesson-card">
           {lessons.length === 0 ? (

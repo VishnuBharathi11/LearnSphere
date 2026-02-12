@@ -22,16 +22,15 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 
 .analytics-page {
   width: 100%;
-  padding: 24px;
+  padding: 20px;
   background: $bg;
   min-height: 100vh;
-}
 
-.analytics-title {
-  font-size: 26px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  color: $text-dark;
+  p{
+    font-size: 16px;
+    color: $text-muted;
+    margin-bottom: 20px;
+  }
 }
 
 .analytics-stats-grid {

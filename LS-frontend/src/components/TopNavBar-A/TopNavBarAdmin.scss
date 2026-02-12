@@ -13,18 +13,16 @@
       color: #111827;
     }
   }
+.sub-head{
+  font-size: 15px;
+  color:#636566;
+  font-weight: 400;
+}
 
-  .sub-head {
-    font-size: 15px;
-    color: #636566;
-    font-weight: 400;
-  }
-
-  .page-title {
-    display: flex;
-    flex-direction: column;
-  }
-
+.page-title{
+  display: flex;
+  flex-direction: column;
+}
   .header-right {
     display: flex;
     align-items: center;

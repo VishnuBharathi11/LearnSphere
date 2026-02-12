@@ -73,10 +73,6 @@ function Managecourse() {
     <div className="manage-course-layout">
       <div className="manage-courses-page">
         <div className="page-header">
-          <div>
-            <p>Manage and organize your courses</p>
-          </div>
-
           <button
             className="create-btn"
             onClick={() => navigate("/instructor-layout/create-course")}

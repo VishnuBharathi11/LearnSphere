@@ -55,11 +55,9 @@ function Login() {
       return;
     }
 
-    if (user.role === "learner") navigate("/student-layout", { replace: true });
-    else if (user.role === "instructor")
-      navigate("/instructor-dashboard", { replace: true });
-    else if (user.role === "admin")
-      navigate("/admin-dashboard", { replace: true });
+    if (user.role === "learner") navigate("/student-layout",{replace:true});
+    if (user.role === "instructor") navigate("/instructor-layout",{replace:true});
+    if (user.role === "admin") navigate("/admin-layout",{replace:true});
   };
 
   return (

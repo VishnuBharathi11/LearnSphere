@@ -21,7 +21,6 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useMemo } from "react";
-import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 const COLORS = ["#2563eb", "#7c3aed", "#10b981", "#f59e0b", "#6b7280"];
 function AdminDashboard() {
   const { users, courses, enrollments } = useMemo(
@@ -105,10 +104,7 @@ function AdminDashboard() {
   ];
   return (
     <div className="admin-dasboard-layout">
-      <SidebarAdmin />
       <div className="admin-dashboard">
-        <h2 className="page-title">System Overview</h2>
-        <p className="page-subtitle">Welcome back, Admin User!</p>
         <div className="status-grid">
           {stats.map((s, i) => (
             <div key={i} className="stat-card">

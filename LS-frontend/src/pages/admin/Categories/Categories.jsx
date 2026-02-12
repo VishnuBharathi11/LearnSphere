@@ -1,5 +1,4 @@
 import { useState } from "react";
-import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 import { Plus, Edit, BookOpen } from "lucide-react";
 import "./Categories.scss";
 
@@ -65,12 +64,8 @@ const Categories = () => {
 
   return (
     <div className="admin-layout">
-      <SidebarAdmin />
 
       <div className="categories-page">
-        <h2 className="page-title">Category Management</h2>
-        <p className="page-subtitle">Manage course categories</p>
-
         <div className="category-grid">
           {categories.map(cat => (
             <div key={cat.id} className="category-card">

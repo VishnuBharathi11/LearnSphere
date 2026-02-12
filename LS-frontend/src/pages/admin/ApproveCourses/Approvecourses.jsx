@@ -10,7 +10,6 @@ import {
   XCircle
 } from "lucide-react";
 import "./Approvecourses.scss";
-import SideBarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function ApproveCourses(){
   const navigate = useNavigate();
@@ -62,10 +61,7 @@ function ApproveCourses(){
 
   return (
     <div className="approve-courses-layout">
-      <SideBarAdmin />
       <div className="approve-course-content">
-      <h2 className="page-title">Approve / Reject Courses</h2>
-      <p className="page-subtitle">Review and approve course submissions</p>
       <div className="stats-grid">
         {stats.map((s, i) => (
           <div key={i} className={`stat-card ${s.type}`}>

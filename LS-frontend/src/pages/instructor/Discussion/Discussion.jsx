@@ -43,12 +43,6 @@ function Discussion() {
   return (
     <div className="discussion-layout">
       <div className="discussion-page">
-        <div className="discussion-header">
-          <div>
-            <h1>Discussion Moderation</h1>
-            <p>Manage and moderate course discussions</p>
-          </div>
-        </div>
         <div className="discussion-stats">
           <div className="discussion-stat-card blue">
             <div className="stat-icon">

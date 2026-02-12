@@ -21,26 +21,7 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
 .instructor-dashboard {
   flex: 1;
-  margin-left: 25px;
-  margin-top: 20px;
-}
-
-.i-dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding-left: 20px;
-
-   h1 {
-    font-size: 25px;
-    font-weight: 700;
-    color: $text-dark;
-    margin-left: -20px;
-  }
-  p{
-    color: $text-muted;
-    margin-left: -20px;
-  }
+  padding: 20px;
 }
 
 .status-grid {

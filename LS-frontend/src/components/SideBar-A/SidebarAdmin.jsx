@@ -6,56 +6,93 @@ import {
   BookOpen,
   CheckCircle,
   Layers,
-  BarChart2,
-  ShieldCheck,
   UserCog,
   Settings,
+  LogOut,
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import "./SidebarAdmin.scss";
+
 function SidebarAdmin() {
   const location = useLocation();
+
   const isActive = (path) => {
     return location.pathname === path ? "active" : "";
   };
+
   return (
     <nav className="admin-navbar">
       <div className="admin-logo">
         <img src={logo} alt="LearnSphere" />
         <span>LearnSphere</span>
       </div>
+
       <div className="admin-menu">
-        <Link to="/admin-dashboard" className={isActive("/admin-dashboard")}>
+
+        <Link
+          to="/admin-layout/dashboard"
+          className={isActive("/admin-layout/dashboard")}
+        >
           <LayoutDashboard size={18} />
           Dashboard
         </Link>
-        <Link to="/manage-users" className={isActive("/manage-users")}>
+
+        <Link
+          to="/admin-layout/users"
+          className={isActive("/admin-layout/users")}
+        >
           <Users size={18} />
           Manage Users
         </Link>
-        <Link to="/handle-courses" className={isActive("/handle-courses")}>
+
+        <Link
+          to="/admin-layout/courses"
+          className={isActive("/admin-layout/courses")}
+        >
           <BookOpen size={18} />
           Manage Courses
         </Link>
+
         <Link
-          to="/approve-courses"
-          className={isActive("/approve-courses")}
+          to="/admin-layout/approve-courses"
+          className={isActive("/admin-layout/approve-courses")}
         >
           <CheckCircle size={18} />
           Approve Courses
         </Link>
-        <Link to="/categories" className={isActive("/categories")}>
+
+        <Link
+          to="/admin-layout/categories"
+          className={isActive("/admin-layout/categories")}
+        >
           <Layers size={18} />
-          Categories{" "}
+          Categories
         </Link>
-        <Link to="/roles" className={isActive("/roles")}>
+
+        <Link
+          to="/admin-layout/roles"
+          className={isActive("/admin-layout/roles")}
+        >
           <UserCog size={18} />
           Role Management
         </Link>
-        <Link to="/settings" className={isActive("/settings")}>
+
+        <Link
+          to="/admin-layout/settings"
+          className={isActive("/admin-layout/settings")}
+        >
           <Settings size={18} />
           Settings
         </Link>
+
+        <Link
+          to="/login"
+          className="nav-item-logout"
+        >
+          <LogOut size={18} />
+          Logout
+        </Link>
+      
       </div>
     </nav>
   );

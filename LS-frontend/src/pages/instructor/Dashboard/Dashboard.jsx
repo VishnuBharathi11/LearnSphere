@@ -97,12 +97,6 @@ function Dashboard() {
   return (
     <div className="instructor-layout">
       <div className="instructor-dashboard">
-        <div className="i-dashboard-header">
-          <div>
-            <h1>Instructor Dashboard</h1>
-            <p>Welcome back, Instructor</p>
-          </div>
-        </div>
         <div className="status-grid">
           {stats.map((item, index) => {
             const Icon = item.icon;

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 import "./Settings.scss";
 
 function Settings(){
@@ -34,10 +33,7 @@ function Settings(){
 
   return (
     <div className="settings-layout">
-        <SidebarAdmin/>
     <div className="settings-wrapper">
-      <h1 className="page-title">System Settings</h1>
-      <p className="page-subtitle">Configure platform-wide settings</p>
       <div className="settings-card">
         <h3 className="card-title">🛡️ General Settings</h3>
 
@@ -59,7 +55,6 @@ function Settings(){
         </div>
       </div>
 
-      {/* Payment Settings */}
       <div className="settings-card">
         <h3 className="card-title">💲 Payment Settings</h3>
 
@@ -81,7 +76,6 @@ function Settings(){
         </div>
       </div>
 
-      {/* Featured Settings */}
       <div className="settings-card">
         <h3 className="card-title">⭐ Featured Settings</h3>
 

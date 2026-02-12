@@ -15,7 +15,7 @@ $progress-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
 .progress-container {
   background: $progress-bg-page;
   min-height: 100vh;
-  margin-top: -20px;
+  padding: 20px;
 
   p {
     font-size: 14px;
@@ -45,7 +45,6 @@ $progress-shadow-md: 0 6px 16px rgba(0, 0, 0, 0.06);
     h3 {
       font-size: 28px;
       font-weight: 700;
-      // color: $progress-accent-main;
       margin-bottom: 6px;
     }
 

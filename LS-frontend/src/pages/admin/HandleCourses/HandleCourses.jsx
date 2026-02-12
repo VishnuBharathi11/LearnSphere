@@ -7,7 +7,6 @@ import {
   Trash2
 } from "lucide-react";
 import "./HandleCourses.scss";
-import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function HandleCourses(){
   const [search, setSearch] = useState("");
@@ -56,10 +55,7 @@ function HandleCourses(){
 
   return (
     <div className="handle-courses-layout">
-        <SidebarAdmin/>
         <div className="manage-courses">
-      <h2 className="page-title">Manage Courses</h2>
-      <p className="page-subtitle">Oversee all courses in the platform</p>
       <div className="summ-status">
         <div className="summ-status-card">
           <p>Total Courses</p>
