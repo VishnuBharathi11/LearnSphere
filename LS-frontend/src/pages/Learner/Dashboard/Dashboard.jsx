@@ -1,3 +1,5 @@
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { courses } from "../../../data/courses";
 import LearnerImg from "../../../assets/learner/learner.jpg";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
@@ -26,6 +28,18 @@ function Dashboard() {
   "Software Engineering":
     "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
 };
+const navigate=useNavigate();
+const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+useEffect(() => {
+  if (!currentUser) {
+    navigate("/login");
+  }
+}, [currentUser, navigate]);
+useEffect(()=>{
+  if(!currentUser){
+    navigate("/login");
+  }
+},[currentUser,navigate]);
   const enrolledCourses =
     JSON.parse(localStorage.getItem("enrolledCourses")) || [];
   const continueCourses = enrolledCourses
@@ -50,11 +64,13 @@ function Dashboard() {
       <div className="welcome-row">
         <div className="welcome-card">
           <div>
-            <h2>Welcome Back, Tony!</h2>
-            <p>Keep Learning!</p>
-            <button className="primary-btn">
+            <h2>Welcome Back, {currentUser.username}</h2>
+            <p>Keep Learning and improve your skills.</p>
+            {continueCourses.length>0&&(
+              <button className="primary-btn" onClick={()=>navigate(`/student-layout/learn/${continueCourses[0].id}`)}>
               Continue Learning
             </button>
+            )}
           </div>
           <img
             src={LearnerImg}
@@ -71,7 +87,7 @@ function Dashboard() {
               <p>No courses in progress</p>
             ) : (
               continueCourses.map(course => (
-                <div className="course-card" key={course.id}>
+                <div className="course-card" key={course.id} onClick={()=>navigate(`/student-layout/learn/${course.id}`)} style={{cursor:"pointer"}}>
                   <div className="course-cont">
                     <img
                       src={CATEGORY_IMAGES[course.category]|| courseImg}
@@ -85,7 +101,7 @@ function Dashboard() {
                   </div>
                   <div className="course-footer">
                     <span className="link">
-                      Continue Learning
+                      Resume
                     </span>
                     <span>{course.progress}%</span>
                   </div>
@@ -112,6 +128,7 @@ function Dashboard() {
               <div
                 className="recommend-card"
                 key={course.id}
+                onClick={()=>navigate(`/course/${course.id}`)} style={{cursor:"pointer"}}
               >
                 <img
                   src={CATEGORY_IMAGES[course.category]|| courseImg}

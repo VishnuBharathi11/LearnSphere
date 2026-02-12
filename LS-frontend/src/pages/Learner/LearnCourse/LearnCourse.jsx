@@ -11,6 +11,11 @@ function LearnCourse() {
   const enrolledCourses=JSON.parse(localStorage.getItem("enrolledCourses")) || [];;
   const enrollment = enrolledCourses.find((c) => c.courseId === courseId);
   const isEnrolled = enrolledCourses.some((c) => c.courseId === courseId);
+    useEffect(() => {
+    if (!isEnrolled) {
+      navigate(`/course/${courseId}`);
+    }
+  }, [isEnrolled, courseId, navigate]);
   const curriculum = [
     {
       section: "Introduction to JavaScript",
@@ -44,31 +49,23 @@ function LearnCourse() {
     },
   ];
   const allLessons = curriculum.flatMap((s) => s.lessons);
-  const [activeLesson, setActiveLesson] = useState(() => {
-    if (enrollment?.lastLessonIndex != null) {
-      return allLessons[enrollment.lastLessonIndex];
-    }
-    return allLessons[0];
-  });
-  useEffect(() => {
-    if (!enrollment) return;
-
-    const lessonIndex = allLessons.findIndex(
-      (l) => l.title === activeLesson.title,
-    );
-    const updated = enrolledCourses.map((c) =>
-      c.courseId === courseId ? { ...c, lastLessonIndex: lessonIndex } : c,
-    );
-    localStorage.setItem("enrolledCourses", JSON.stringify(updated));
-  }, [activeLesson,courseId]);
-  useEffect(() => {
-    if (!isEnrolled) {
-      navigate(`/course/${courseId}`);
-    }
-  }, [isEnrolled, courseId, navigate]);
-  if (!course) {
-    return <p style={{ padding: "40px" }}>Course not found</p>;
+  const[activeIndex,setActiveIndex]=useState(enrollment?.lastLessonIndex??0);
+  const activeLesson=allLessons[activeIndex];
+  const markCompelete=()=>{
+    const updated=enrolledCourses.map((c)=>{
+      if(c.courseId!==courseId)
+        return c;
+      const completed=Math.max(c.completedLessons||0,activeIndex+1);
+      return{
+        ...c,completedLessons:completed,
+        totalLessons:allLessons.length,
+        lastLessonIndex:activeIndex,
+      };
+    });
+    localStorage.setItem("enrolledCourses",JSON.stringify(updated));
+    alert("Lesson marked as completed!");
   }
+   if (!course) return <p style={{ padding: 40 }}>Course not found</p>;
   return (
     <>
       <div className="learn-page">
@@ -78,19 +75,12 @@ function LearnCourse() {
             <div key={i} className="lesson-section">
               <p className="section-title">{section.section}</p>
               <ul>
-                {section.lessons.map((lesson, j) => (
-                  <li
-                    key={j}
-                    className={
-                      activeLesson.title === lesson.title
-                        ? "lesson active"
-                        : "lesson"
-                    }
-                    onClick={() => setActiveLesson(lesson)}
-                  >
-                    ▶ {lesson.title}
-                  </li>
-                ))}
+                {section.lessons.map((lesson, j) => {
+                  const idx=curriculum.slice(0,i).reduce((sum,s)=>sum+s.lessons.length,0)+j;
+                  return(
+                    <li key={j} className={activeIndex===idx?"lesson active":"lesson"} onClick={()=>setActiveIndex(idx)}>▶ {lesson.title}</li>
+                  )
+                })}
               </ul>
             </div>
           ))}
@@ -111,6 +101,10 @@ function LearnCourse() {
             )}
           </div>
           <p className="lesson-text">{activeLesson.content}</p>
+          <button className="complete-btn" onClick={markCompelete}>Mark Lesson as Complete</button>
+          {enrollment?.completedLessons>=allLessons.length&&(
+            <button className="primary-btn" onClick={()=>navigate(`/student-layout/assessment`)}>Take Assessment</button>
+          )}
         </div>
       </div>
     </>
