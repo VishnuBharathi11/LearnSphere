@@ -13,52 +13,73 @@ import "./SidebarInstructor.scss";
 
 function SidebarInstructor() {
   const location = useLocation();
+
   return (
     <nav className="I-navbar">
       <div className="logo-name">
         <img src={logo} className="logo" alt="LearnSphere" />
         <div className="page-name">LearnSphere</div>
       </div>
+
       <div className="I-sidebar">
         <Link
-          to="/instructor-dashboard"
+          to="/instructor-layout/dashboard"
           className={
-            location.pathname === "/instructor-dashboard" ? "active" : ""
+            location.pathname === "/instructor-layout/dashboard" ? "active" : ""
           }
         >
           <LayoutDashboard size={18} />
           Dashboard
         </Link>
+
         <Link
-          to="/create-course"
-          className={location.pathname === "/create-course" ? "active" : ""}
+          to="/instructor-layout/create-course"
+          className={
+            location.pathname === "/instructor-layout/create-course"
+              ? "active"
+              : ""
+          }
         >
           <PlusSquare size={18} />
           Create Course
         </Link>
+
         <Link
-          to="/manage-courses"
-          className= {location.pathname === "/manage-courses" ? "active" : ""}
+          to="/instructor-layout/manage-courses"
+          className={
+            location.pathname === "/instructor-layout/manage-courses"
+              ? "active"
+              : ""
+          }
         >
           <FolderKanban size={18} />
           Manage Courses
         </Link>
+
         <Link
-          to="/discussions"
-          className={location.pathname === "/discussions" ? "active" : ""}
+          to="/instructor-layout/discussions"
+          className={
+            location.pathname === "/instructor-layout/discussions"
+              ? "active"
+              : ""
+          }
         >
           <MessageSquare size={18} />
           Discussions
         </Link>
+
         <Link
-          to="/profile"
-          className={location.pathname === "/profile" ? "active" : ""}
+          to="/instructor-layout/profile"
+          className={
+            location.pathname === "/instructor-layout/profile" ? "active" : ""
+          }
         >
           <User size={18} />
           My Profile
         </Link>
-        <Link to="/login" className={`logout ${location.pathname==="/login"?"active":""}`}>
-        <LogOut size={20} />
+
+        <Link to="/login" className="logout">
+          <LogOut size={20} />
           Logout
         </Link>
       </div>

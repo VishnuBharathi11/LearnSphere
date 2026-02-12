@@ -68,7 +68,6 @@ function InstructorProfile() {
   };
   return (
     <div className="instructor-profile-layout">
-      <SidebarInstructor />
       <div className="instructor-profile-page">
         <div className="instructor-profile-header">
           <div>

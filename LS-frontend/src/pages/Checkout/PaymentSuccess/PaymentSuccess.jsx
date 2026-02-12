@@ -50,9 +50,9 @@ function PaymentSuccess() {
             <p>
               Instructor: <strong>{course.instructor}</strong>
             </p>
-            <div className="badge">
-              <Clock size={16} />
-              Lifetime Access
+            <div className="payment-badge">
+              <div><Clock size={16} /></div>
+              <p>Lifetime Access</p>
             </div>
           </div>
         </div>

@@ -101,7 +101,6 @@ function CourseAnalytics() {
       value: d.value * course.price,
     }));
 
-    // 🟢 Completion pie
     let completed = 0;
     let inProgress = 0;
     let notStarted = 0;
@@ -158,7 +157,6 @@ function CourseAnalytics() {
 
   return (
     <div className="analytics-layout">
-      <SidebarInstructor />
 
       <div className="analytics-page">
         <h1 className="analytics-title">Course Analytics</h1>
