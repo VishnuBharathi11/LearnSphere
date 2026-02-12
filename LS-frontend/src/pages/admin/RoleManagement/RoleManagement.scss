@@ -11,24 +11,6 @@
   flex-direction: column;
 }
 
-.admin-header {
-  background: white;
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.admin-header h1 {
-  font-size:27px;
-  font-weight: 700;
-}
-
-.admin-header p {
-  font-size: 13px;
-  color: #6b7280;
-}
-
 .menu-btn {
   background: none;
   border: none;
@@ -36,7 +18,7 @@
 }
 
 .role-container {
-  padding: 24px;
+  padding: 20px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 24px;

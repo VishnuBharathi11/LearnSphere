@@ -19,23 +19,8 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
 .instructor-profile-page {
   width: 100%;
-  padding: 24px;
+  padding: 20px;
   background: $bg;
-}
-
-.instructor-profile-header {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 20px;
-
-  h1 {
-    font-size: 25px;
-    font-weight: 700;
-    color: $text-dark;
-  }
-  p{
-    color: $text-muted;
-  }
 }
 
 .instructor-profile-stats {

@@ -19,18 +19,6 @@ $border: #e5e7eb;
   background: $bg;
 }
 
-.page-title {
-  font-size: 22px;
-  font-weight: 600;
-  color: $text-dark;
-}
-
-.page-subtitle {
-  font-size: 14px;
-  color: $text-muted;
-  margin-bottom: 24px;
-}
-
 .category-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));

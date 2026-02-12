@@ -9,7 +9,6 @@ import {
   Clock,
 } from "lucide-react";
 import "./StudentProgress.scss";
-import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 
 function StudentProgress() {
   const { courseId } = useParams();
@@ -69,10 +68,7 @@ function StudentProgress() {
     <div className="student-progress-layout">
       <div className="student-progress-page">
         <div className="sp-page-header">
-          <div>
-            <h1>Student Progress</h1>
             <p>Course ID: {courseId}</p>
-          </div>
           <button className="export-btn">
             <Download size={16} /> Export
           </button>

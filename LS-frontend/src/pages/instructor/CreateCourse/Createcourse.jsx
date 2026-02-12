@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Createcourse.scss";
-import "../../../components/SideBar-I/SidebarInstructor"
-import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 
 function CreateCourse() {
   const navigate = useNavigate();
@@ -100,7 +98,7 @@ function CreateCourse() {
   return (
     <div className="create-course-layout">
       <div className="create-course-container">
-      <h2>{isEditMode ? "Edit Course" : "Create New Course"}</h2>
+      <h2>{isEditMode ? "Edit Course" : ""}</h2>
 
       <form onSubmit={handleSubmit}>
         <label>Course Name</label>

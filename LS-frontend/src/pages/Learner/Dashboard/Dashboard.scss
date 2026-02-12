@@ -44,18 +44,10 @@ $dash-shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.08);
   font-family: $dash-font-primary;
 }
 
-.search-box {
-  width: 360px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  border: none;
-  outline: none;
-  background: $dash-white;
-  box-shadow: $dash-shadow-sm;
-  font-size: 14px;
-  margin-bottom: 15px;
+.dashboard-container{
+  padding: 20px;
+  min-height: 100vh;
 }
-
 .welcome-row {
   margin-bottom: 35px;
 }

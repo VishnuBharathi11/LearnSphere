@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Upload, User, Users, BookOpen, Star, DollarSign } from "lucide-react";
 import "./InstructorProfile.scss";
-import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
+
 const STORAGE_KEY = "instructorProfile";
 function InstructorProfile() {
   const [profileData, setProfileData] = useState(() => {
@@ -69,12 +69,6 @@ function InstructorProfile() {
   return (
     <div className="instructor-profile-layout">
       <div className="instructor-profile-page">
-        <div className="instructor-profile-header">
-          <div>
-            <h1>Instructor Profile</h1>
-            <p>Manage your public profile information</p>
-          </div>
-        </div>
         <div className="instructor-profile-stats">
           <div className="instructor-stat-card blue">
             <div className="instructor-stat-icon">

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Shield, Plus, Edit, Trash2, X } from "lucide-react";
 import "./RoleManagement.scss";
-import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function RoleManagement() {
   const [showModal, setShowModal] = useState(false);
@@ -117,18 +116,8 @@ function RoleManagement() {
 
   return (
     <div className="admin-layout">
-      <SidebarAdmin />
 
       <div className="admin-content">
-
-        <header className="admin-header">
-          <div>
-            <h1>Role Management</h1>
-            <p>Define system roles and permissions</p>
-          </div>
-        </header>
-
-
         <main className="role-container">
           {roles.map((role) => (
             <div className="role-card" key={role.id}>

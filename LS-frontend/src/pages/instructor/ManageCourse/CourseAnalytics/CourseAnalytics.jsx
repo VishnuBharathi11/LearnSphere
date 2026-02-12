@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import { PieChart, Pie, Cell } from "recharts";
 import { useParams } from "react-router-dom";
-import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 
 function CourseAnalytics() {
   const { courseId } = useParams();
@@ -77,7 +76,6 @@ function CourseAnalytics() {
 
     const reviewCount = courseRatings.length;
 
-    // 📊 Enrollment & revenue trend
     const monthMap = {};
 
     courseEnrollments.forEach((e) => {
@@ -118,7 +116,6 @@ function CourseAnalytics() {
       { name: "Not Started", value: notStarted },
     ];
 
-    // 📘 Lesson engagement
     const courseLessons = lessonMap[id] || [];
     const lessons = courseLessons.map((l) => ({
       name: l.title,
@@ -159,9 +156,7 @@ function CourseAnalytics() {
     <div className="analytics-layout">
 
       <div className="analytics-page">
-        <h1 className="analytics-title">Course Analytics</h1>
-
-        {/* STATS */}
+        <p>Course ID: {id}</p>
         <div className="analytics-stats-grid">
           <div className="analytics-stat-card revenue">
             <div className="stat-icon green">
@@ -196,7 +191,6 @@ function CourseAnalytics() {
           </div>
         </div>
 
-        {/* CHARTS */}
         <div className="analytics-grid">
           <div className="analytics-card">
             <h3>Enrollment Trend</h3>

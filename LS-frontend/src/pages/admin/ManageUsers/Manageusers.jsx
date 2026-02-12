@@ -3,7 +3,6 @@ import {
   Users, Search, Eye, Edit, Ban, UserCheck, MoreVertical
 } from "lucide-react";
 import "./Manageuser.scss";
-import SidebarAdmin from "../../../components/SideBar-A/SidebarAdmin";
 
 function Manageusers(){
   const [activeTab, setActiveTab] = useState("all");
@@ -26,10 +25,7 @@ function Manageusers(){
   });
   return (
     <div className="manage-users-layout">
-      <SidebarAdmin/>
       <div className="manage-users">
-      <h2 className="page-title">Manage Users</h2>
-      <p className="page-subtitle">Students, instructors and admins</p>
       <div className="tabs">
         {["all", "students", "instructors", "suspended"].map(tab => (
           <button

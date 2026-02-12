@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Plus, Trash2, CheckCircle } from "lucide-react";
 import "./CreateQuiz.scss";
-import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 
 function CreateQuiz() {
   const { courseId } = useParams();
@@ -71,7 +70,6 @@ function CreateQuiz() {
   return (
     <div className="create-quiz-layout">
       <div className="quiz-page">
-        <h1>Create Quiz</h1>
         <p className="course-ref">Course ID: {courseId}</p>
         <div className="quiz-card">
           <label>Quiz Title</label>
