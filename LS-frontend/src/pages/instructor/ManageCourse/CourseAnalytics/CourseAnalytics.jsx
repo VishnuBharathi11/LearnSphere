@@ -11,7 +11,6 @@ import {
 } from "recharts";
 import { PieChart, Pie, Cell } from "recharts";
 import { useParams } from "react-router-dom";
-import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 
 function CourseAnalytics() {
   const { courseId } = useParams();

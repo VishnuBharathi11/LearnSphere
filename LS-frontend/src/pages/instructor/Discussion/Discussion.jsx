@@ -11,7 +11,6 @@ import {
   Flag,
 } from "lucide-react";
 import "./Discussion.scss";
-import SidebarInstructor from "../../../components/SideBar-I/SidebarInstructor";
 function Discussion() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [search, setSearch] = useState("");

@@ -9,7 +9,6 @@ import {
   Clock,
 } from "lucide-react";
 import "./StudentProgress.scss";
-import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
 
 function StudentProgress() {
   const { courseId } = useParams();

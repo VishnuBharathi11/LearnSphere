@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Video, FileText, File, Clock, Trash2, Edit, Plus } from "lucide-react";
 import { useParams } from "react-router-dom";
 import "./UpdateLesson.scss";
-import SidebarInstructor from "../../../../components/SideBar-I/SidebarInstructor";
+
 function UpdateLesson() {
   const { courseId } = useParams();
   const id = String(courseId);
