@@ -22,22 +22,29 @@ function CreateQuiz() {
   });
   const [questions, setQuestions] = useState([]);
   const setCorrectOption = (index) => {
-    setCurrentQuestion({
-      ...currentQuestion,
-      options: currentQuestion.options.map((o, i) => ({
+    setCurrentQuestion((prev)=>({
+      ...prev,
+      options: prev.options.map((o, i) => ({
         ...o,
         isCorrect: i === index,
       })),
-    });
+    }));
   };
   const addQuestion = () => {
-    if (!currentQuestion.question) return;
-    setQuestions([
-      ...questions,
-      {
-        id: questions.length + 1,
-        ...currentQuestion,
-      },
+    if (!currentQuestion.question.trim()){ 
+      alert("Enter question text");
+      return;
+    }
+    if(currentQuestion.options.some((o)=>!o.text.trim())){
+      alert("All options must be filled");
+      return;
+    }
+    if(currentQuestion.options.some((o)=>!o.isCorrect)){
+      alert("Selec correct answer");
+      return;
+    }
+    setQuestions((prev)=>[
+      ...prev,{id:Date.now(),...currentQuestion},
     ]);
     setCurrentQuestion({
       question: "",
@@ -51,7 +58,14 @@ function CreateQuiz() {
     });
   };
   const saveQuiz = () => {
-    if (!quizTitle || questions.length === 0) return;
+    if (!quizTitle || questions.length === 0) {
+      alert("Quiz title required");
+      return
+    };
+    if(questions.length===0){
+      alert("Add at least one question");
+      return;
+    }
     const allQuizzes = JSON.parse(localStorage.getItem("courseQuizzes")) || {};
     const quizData = {
       courseId,
@@ -64,7 +78,8 @@ function CreateQuiz() {
     };
     allQuizzes[courseId] = quizData;
     localStorage.setItem("courseQuizzes", JSON.stringify(allQuizzes));
-    navigate("/manage-courses");
+    alert("Quiz saved successfully");
+    navigate("/instructor-layout/manage-courses");
   };
 
   return (
@@ -107,25 +122,26 @@ function CreateQuiz() {
             placeholder="Question"
             value={currentQuestion.question}
             onChange={(e) =>
-              setCurrentQuestion({
-                ...currentQuestion,
+              setCurrentQuestion((prev)=>({
+                ...prev,
                 question: e.target.value,
-              })
+              }))
             }
           />
           {currentQuestion.options.map((opt, i) => (
             <div key={i} className="option-row">
               <input
-                type="checkbox"
+                type="radio"
+                name="correct"
                 checked={opt.isCorrect}
                 onChange={() => setCorrectOption(i)}
               />
               <input
                 value={opt.text}
                 onChange={(e) => {
-                  const opts = [...currentQuestion.options];
-                  opts[i].text = e.target.value;
-                  setCurrentQuestion({ ...currentQuestion, options: opts });
+                  const updated = [...currentQuestion.options];
+                  updated[i].text = e.target.value;
+                  setCurrentQuestion((prev)=>({ ...prev, options: updated }));
                 }}
                 placeholder={`Option ${i + 1}`}
               />
@@ -150,7 +166,7 @@ function CreateQuiz() {
                 ))}
                 <button
                   onClick={() =>
-                    setQuestions(questions.filter((_, idx) => idx !== i))
+                    setQuestions((prev)=>prev.filter((item)=>item.id!==q.id))
                   }
                 >
                   <Trash2 size={14} /> Delete

@@ -15,23 +15,15 @@ import "./Managecourse.scss";
 import { useNavigate } from "react-router-dom";
 
 function Managecourse() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [filterStatus, setFilterStatus] = useState("all");
-
+  const navigate = useNavigate();
+  const currentUSer=JSON.parse(localStorage.getItem("currentUser"))||[];
   const [courses, setCourses] = useState(() => {
     const stored = JSON.parse(localStorage.getItem("courses")) || [];
-
-    return stored.map((c) => ({
-      id: c.id,
-      courseName: c.courseName || c.title || "Untitled Course",
-      category: c.category || "General",
-      status: c.status || "draft",
-      students: c.students || 0,
-      lessons: c.lessons || 0,
-      rating: c.rating || 0,
-      revenue: c.revenue || 0,
-    }));
+    return stored.filter((c)=>c.instructorId===currentUSer.id);
   });
+
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterStatus, setFilterStatus] = useState("all");
 
   const filteredCourses = courses.filter((course) => {
     const name = course.courseName ?? "";
@@ -48,26 +40,41 @@ function Managecourse() {
   });
 
   const togglePublish = (id) => {
-    const updated = courses.map((course) =>
-      course.id === id
-        ? {
-            ...course,
-            status: course.status === "published" ? "draft" : "published",
-          }
-        : course
+    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+    const updatedAll = allCourses.map((course) =>
+      course.id === id&&course.instructorId===currentUSer.id?{
+        ...course,status:course.status==="published"?"draft":"published"
+      }:course
     );
-
-    setCourses(updated);
-    localStorage.setItem("courses", JSON.stringify(updated));
+    localStorage.setItem("courses", JSON.stringify(updatedAll));
+    setCourses(updatedAll.filter((c)=>c.instructorId===currentUSer.id));
   };
 
   const deleteCourse = (id) => {
-    const updated = courses.filter((course) => course.id !== id);
-    setCourses(updated);
-    localStorage.setItem("courses", JSON.stringify(updated));
+    const confirmDelete=window.confirm("Delete this course? This cannot be undone.");
+    if(!confirmDelete)
+      return;
+    const allCourses=JSON.parse(localStorage.getItem("courses"))||[];
+    const updatedCourses=allCourses.filter((c)=>!(c.id===id&&c.instructorId===currentUSer.id));
+    localStorage.setItem("courses", JSON.stringify(updatedCourses));
+   const cleanMap=(key)=>{
+    const data=JSON.parse(localStorage.getItem(key))||{};
+    if(data[id])
+      delete data[id];
+    localStorage.setItem(key,JSON.stringify(data));
+   };
+   cleanMap("courseLessons");
+   cleanMap("courseQuizzes");
+   const cleanArray=(key)=>{
+    const arr=JSON.parse(localStorage.getItem(key))||[];
+    const filtered=arr.filter((item)=>item.courseId!==id);
+    localStorage.setItem(key,JSON.stringify(filtered));
+   };
+   cleanArray("enrolledCourses");
+   cleanArray("testResults");
+   cleanArray("courseRatings");
+   setCourses(updatedCourses.filter((c)=>c.instructorId===currentUSer.id));
   };
-
-  const navigate = useNavigate();
 
   return (
     <div className="manage-course-layout">
@@ -124,7 +131,7 @@ function Managecourse() {
                   </span>
                 </div>
 
-                <div className="course-stats">
+                {/* <div className="course-stats">
                   <div>
                     <span>Students</span>
                     <strong>{course.students}</strong>
@@ -141,7 +148,7 @@ function Managecourse() {
                     <span>Rating</span>
                     <strong>{course.rating} ⭐</strong>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="course-actions">
                   <button
@@ -151,7 +158,7 @@ function Managecourse() {
                       )
                     }
                   >
-                    <Upload size={14} /> Upload Lesson
+                    <Upload size={14} />Lessons
                   </button>
 
                   <button
@@ -161,7 +168,7 @@ function Managecourse() {
                       )
                     }
                   >
-                    <FileText size={14} /> Create Quiz
+                    <FileText size={14} />Quiz
                   </button>
 
                   <button

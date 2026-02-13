@@ -6,11 +6,9 @@ function CreateCourse() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const isEditMode = Boolean(courseId);
-  const instructor = {
-    id: 10,
-    name: "John Instructor",
-  };
+  const currentUSer = JSON.parse(localStorage.getItem("currentUser")) || {};
   const [form, setForm] = useState(() => {
+    const courses = JSON.parse(localStorage.getItem("courses")) || [];
     if (!courseId) {
       return {
         courseName: "",
@@ -21,15 +19,15 @@ function CreateCourse() {
         thumbnail: "",
       };
     }
-    const courses = JSON.parse(localStorage.getItem("courses")) || [];
-    const existingCourse = courses.find((c) => String(c.id) === courseId);
+    const existingCourse = courses.find(
+      (c) => String(c.id) === courseId && c.instructorId === c.currentUSer.id,
+    );
     return existingCourse
       ? {
           courseName: existingCourse.courseName,
           category: existingCourse.category,
           level: existingCourse.level,
           price: existingCourse.price,
-          lessons: existingCourse.lessons,
           thumbnail: existingCourse.thumbnail || "",
         }
       : {
@@ -37,7 +35,6 @@ function CreateCourse() {
           category: "",
           level: "",
           price: "",
-          lessons: "",
           thumbnail: "",
         };
   });
@@ -66,7 +63,7 @@ function CreateCourse() {
               ...course,
               ...form,
               price: Number(form.price),
-              lessons: Number(form.lessons),
+              updatedAt: new Date().toISOString(),
             }
           : course,
       );
@@ -79,85 +76,80 @@ function CreateCourse() {
         category: form.category,
         level: form.level,
         price: Number(form.price),
-        lessons: Number(form.lessons),
         thumbnail: form.thumbnail,
-        instructorId: instructor.id,
-        instructorName: instructor.name,
+        instructorId: currentUSer.id,
+        instructorName: currentUSer.name,
         rating: 0,
         students: 0,
         status: "draft",
         createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
 
       localStorage.setItem("courses", JSON.stringify([...courses, newCourse]));
     }
 
-    navigate("/instructor/manage-courses");
+    navigate("/instructor-layout/manage-courses");
   };
 
   return (
     <div className="create-course-layout">
       <div className="create-course-container">
-      <h2>{isEditMode ? "Edit Course" : ""}</h2>
+        <form onSubmit={handleSubmit}>
+          <label>Course Name</label>
+          <input
+            name="courseName"
+            value={form.courseName}
+            onChange={handleChange}
+            required
+          />
 
-      <form onSubmit={handleSubmit}>
-        <label>Course Name</label>
-        <input
-          name="courseName"
-          value={form.courseName}
-          onChange={handleChange}
-          required
-        />
+          <label>Category</label>
+          <input
+            name="category"
+            value={form.category}
+            onChange={handleChange}
+            required
+          />
 
-        <label>Category</label>
-        <input
-          name="category"
-          value={form.category}
-          onChange={handleChange}
-          required
-        />
+          <label>Level</label>
+          <select
+            name="level"
+            value={form.level}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+          </select>
 
-        <label>Level</label>
-        <select
-          name="level"
-          value={form.level}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Select</option>
-          <option value="Beginner">Beginner</option>
-          <option value="Intermediate">Intermediate</option>
-          <option value="Advanced">Advanced</option>
-        </select>
+          <label>Price (₹)</label>
+          <input
+            type="number"
+            name="price"
+            value={form.price}
+            onChange={handleChange}
+            required
+          />
 
-        <label>Price (₹)</label>
-        <input
-          type="number"
-          name="price"
-          value={form.price}
-          onChange={handleChange}
-          required
-        />
+          <label>Course Thumbnail</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleThumbnailUpload}
+          />
 
-        <label>Total Lessons</label>
-        <input
-          type="number"
-          name="lessons"
-          value={form.lessons}
-          onChange={handleChange}
-          required
-        />
+          {form.thumbnail && (
+            <img src={form.thumbnail} alt="Thumbnail preview" />
+          )}
 
-        <label>Course Thumbnail</label>
-        <input type="file" accept="image/*" onChange={handleThumbnailUpload} />
-
-        {form.thumbnail && <img src={form.thumbnail} alt="Thumbnail preview" />}
-
-        <button type="submit" className="primary-btn">
-          {isEditMode ? "Update Course" : "Create Course"}
-        </button>
-      </form>
-    </div>
+          <button type="submit" className="primary-btn">
+            {isEditMode ? "Update Course" : "Create Course"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
