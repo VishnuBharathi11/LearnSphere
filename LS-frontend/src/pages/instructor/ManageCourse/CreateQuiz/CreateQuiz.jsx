@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Plus, Trash2, CheckCircle } from "lucide-react";
 import "./CreateQuiz.scss";
@@ -6,6 +6,8 @@ import "./CreateQuiz.scss";
 function CreateQuiz() {
   const { courseId } = useParams();
   const navigate = useNavigate();
+
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const [quizTitle, setQuizTitle] = useState("");
   const [description, setDescription] = useState("");
   const [passingScore, setPassingScore] = useState(70);
@@ -21,6 +23,20 @@ function CreateQuiz() {
     ],
   });
   const [questions, setQuestions] = useState([]);
+
+  const course = useMemo(() => {
+    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+    if (!currentUser) return null;
+    return allCourses.find(
+      (c) =>
+        String(c.id) === String(courseId) &&
+        c.instructorId === currentUser.id
+    );
+  }, [courseId, currentUser]);
+  if (!course) {
+    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+  }
+  
   const setCorrectOption = (index) => {
     setCurrentQuestion((prev)=>({
       ...prev,
@@ -39,8 +55,9 @@ function CreateQuiz() {
       alert("All options must be filled");
       return;
     }
-    if(currentQuestion.options.some((o)=>!o.isCorrect)){
-      alert("Selec correct answer");
+    const correctCount=currentQuestion.options.filter((o)=>o.isCorrect).length;
+    if(correctCount!==1){
+      alert("Exactly one correct answer must be selected");
       return;
     }
     setQuestions((prev)=>[
@@ -58,7 +75,7 @@ function CreateQuiz() {
     });
   };
   const saveQuiz = () => {
-    if (!quizTitle || questions.length === 0) {
+    if (!quizTitle.trim()) {
       alert("Quiz title required");
       return
     };
@@ -68,13 +85,15 @@ function CreateQuiz() {
     }
     const allQuizzes = JSON.parse(localStorage.getItem("courseQuizzes")) || {};
     const quizData = {
-      courseId,
+      courseId:Number(courseId),
+      instructorId: currentUser.id,
       quizTitle,
       description,
       passingScore: Number(passingScore),
       timeLimit: Number(timeLimit),
       questions,
       createdAt: new Date().toISOString(),
+      updatedAt:new Date().toISOString(),
     };
     allQuizzes[courseId] = quizData;
     localStorage.setItem("courseQuizzes", JSON.stringify(allQuizzes));
@@ -85,7 +104,7 @@ function CreateQuiz() {
   return (
     <div className="create-quiz-layout">
       <div className="quiz-page">
-        <p className="course-ref">Course ID: {courseId}</p>
+        <h2>{course.courseName}-Create Quiz</h2>
         <div className="quiz-card">
           <label>Quiz Title</label>
           <input
@@ -154,10 +173,10 @@ function CreateQuiz() {
         {questions.length > 0 && (
           <div className="quiz-card">
             <h3>Questions</h3>
-            {questions.map((q, i) => (
-              <div key={i} className="question-preview">
+            {questions.map((q) => (
+              <div key={q.id} className="question-preview">
                 <strong>
-                  {i + 1}. {q.question}
+                  {q.question}
                 </strong>
                 {q.options.map((o, j) => (
                   <div key={j} className={o.isCorrect ? "correct" : ""}>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Createcourse.scss";
 
@@ -6,44 +6,86 @@ function CreateCourse() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const isEditMode = Boolean(courseId);
-  const currentUSer = JSON.parse(localStorage.getItem("currentUser")) || {};
-  const [form, setForm] = useState(() => {
+  const getCurrentUser = () => {
+    try {
+      return JSON.parse(localStorage.getItem("currentUser"));
+    } catch {
+      return null;
+    }
+  };
+  const currentUser = getCurrentUser();
+
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== "instructor") {
+      navigate("/login", { replace: true });
+    }
+  }, [currentUser, navigate]);
+
+  const getCourses = () => {
+    try {
+      return JSON.parse(localStorage.getItem("courses")) || [];
+    } catch {
+      return [];
+    }
+  };
+  const getInitialForm = () => {
+  try {
     const courses = JSON.parse(localStorage.getItem("courses")) || [];
-    if (!courseId) {
+
+    if (!isEditMode) {
       return {
         courseName: "",
         category: "",
         level: "",
         price: "",
-        lessons: "",
         thumbnail: "",
       };
     }
-    const existingCourse = courses.find(
-      (c) => String(c.id) === courseId && c.instructorId === c.currentUSer.id,
+
+    const existing = courses.find(
+      (c) => String(c.id) === courseId && c.instructorId === currentUser?.id
     );
-    return existingCourse
-      ? {
-          courseName: existingCourse.courseName,
-          category: existingCourse.category,
-          level: existingCourse.level,
-          price: existingCourse.price,
-          thumbnail: existingCourse.thumbnail || "",
-        }
-      : {
-          courseName: "",
-          category: "",
-          level: "",
-          price: "",
-          thumbnail: "",
-        };
-  });
+
+    if (!existing) {
+      return {
+        courseName: "",
+        category: "",
+        level: "",
+        price: "",
+        thumbnail: "",
+      };
+    }
+
+    return {
+      courseName: existing.courseName,
+      category: existing.category,
+      level: existing.level,
+      price: existing.price,
+      thumbnail: existing.thumbnail || "",
+    };
+  } catch {
+    return {
+      courseName: "",
+      category: "",
+      level: "",
+      price: "",
+      thumbnail: "",
+    };
+  }
+};
+
+const [form, setForm] = useState(getInitialForm);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
   const handleThumbnailUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Only image files allowed");
+      return;
+    }
     const reader = new FileReader();
     reader.onloadend = () => {
       setForm((prev) => ({
@@ -53,9 +95,28 @@ function CreateCourse() {
     };
     reader.readAsDataURL(file);
   };
+  const validateForm = () => {
+    if (!form.courseName.trim()) return "Course name required";
+    if (!form.category.trim()) return "Category required";
+    if (!form.level) return "Level required";
+    if (Number(form.price) < 0) return "Invalid price";
+    return null;
+  };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const courses = JSON.parse(localStorage.getItem("courses")) || [];
+    const error = validateForm();
+    if (error) {
+      alert(error);
+      return;
+    }
+    const courses = getCourses();
+    const duplicate=courses.find(
+      (c)=>c.courseName.toLowerCase()===form.courseName.toLowerCase()&&c.instructorId===currentUser.id&&(!isEditMode||String(c.id)!==courseId)
+    );
+    if (duplicate) {
+      alert("You already created a course with this name.");
+      return;
+    }
     if (isEditMode) {
       const updated = courses.map((course) =>
         String(course.id) === courseId
@@ -72,13 +133,13 @@ function CreateCourse() {
     } else {
       const newCourse = {
         id: Date.now(),
-        courseName: form.courseName,
-        category: form.category,
+        courseName: form.courseName.trim(),
+        category: form.category.trim(),
         level: form.level,
         price: Number(form.price),
         thumbnail: form.thumbnail,
-        instructorId: currentUSer.id,
-        instructorName: currentUSer.name,
+        instructorId: currentUser.id,
+        instructorName: currentUser.name,
         rating: 0,
         students: 0,
         status: "draft",
@@ -95,6 +156,7 @@ function CreateCourse() {
   return (
     <div className="create-course-layout">
       <div className="create-course-container">
+        <h2>{isEditMode ? "Edit Course" : "Create Course"}</h2>
         <form onSubmit={handleSubmit}>
           <label>Course Name</label>
           <input

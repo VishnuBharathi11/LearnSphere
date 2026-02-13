@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   Search,
   Plus,
@@ -16,12 +16,31 @@ import { useNavigate } from "react-router-dom";
 
 function Managecourse() {
   const navigate = useNavigate();
-  const currentUSer=JSON.parse(localStorage.getItem("currentUser"))||[];
-  const [courses, setCourses] = useState(() => {
-    const stored = JSON.parse(localStorage.getItem("courses")) || [];
-    return stored.filter((c)=>c.instructorId===currentUSer.id);
-  });
+  const getCurrentUser=()=>{
+    try{
+      return JSON.parse(localStorage.getItem("currentUser"));
+    }
+    catch{
+      return null;
+    }
+  }
+  const currentUser=getCurrentUser();
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== "instructor") {
+      navigate("/login", { replace: true });
+    }
+  }, [currentUser, navigate]);
 
+  const loadInstructorCourses=()=>{
+    try{
+      const stored = JSON.parse(localStorage.getItem("courses")) || [];
+    return stored.filter((c)=>c.instructorId===currentUser.id);
+    }
+    catch{
+      return [];
+    }
+  };
+  const[courses,setCourses]=useState(loadInstructorCourses);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
 
@@ -40,22 +59,25 @@ function Managecourse() {
   });
 
   const togglePublish = (id) => {
-    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+    try{const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
     const updatedAll = allCourses.map((course) =>
-      course.id === id&&course.instructorId===currentUSer.id?{
+      course.id === id&&course.instructorId===currentUser.id?{
         ...course,status:course.status==="published"?"draft":"published"
       }:course
     );
     localStorage.setItem("courses", JSON.stringify(updatedAll));
-    setCourses(updatedAll.filter((c)=>c.instructorId===currentUSer.id));
+    setCourses(updatedAll.filter((c)=>c.instructorId===currentUser.id));}
+    catch(err){
+      console.error("Publish toggle failed:",err);
+    }
   };
 
   const deleteCourse = (id) => {
     const confirmDelete=window.confirm("Delete this course? This cannot be undone.");
     if(!confirmDelete)
       return;
-    const allCourses=JSON.parse(localStorage.getItem("courses"))||[];
-    const updatedCourses=allCourses.filter((c)=>!(c.id===id&&c.instructorId===currentUSer.id));
+    try{const allCourses=JSON.parse(localStorage.getItem("courses"))||[];
+    const updatedCourses=allCourses.filter((c)=>!(c.id===id&&c.instructorId===currentUser.id));
     localStorage.setItem("courses", JSON.stringify(updatedCourses));
    const cleanMap=(key)=>{
     const data=JSON.parse(localStorage.getItem(key))||{};
@@ -73,7 +95,10 @@ function Managecourse() {
    cleanArray("enrolledCourses");
    cleanArray("testResults");
    cleanArray("courseRatings");
-   setCourses(updatedCourses.filter((c)=>c.instructorId===currentUSer.id));
+   setCourses(updatedCourses.filter((c)=>c.instructorId===currentUser.id));}
+   catch(err){
+    console.error("Delete failed:",err);
+   }
   };
 
   return (
@@ -168,7 +193,8 @@ function Managecourse() {
                       )
                     }
                   >
-                    <FileText size={14} />Quiz
+                    <FileText size={14} />
+                    Quiz
                   </button>
 
                   <button

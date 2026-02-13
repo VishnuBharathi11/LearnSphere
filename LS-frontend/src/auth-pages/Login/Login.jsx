@@ -20,7 +20,7 @@ function Login() {
       const adminUser = {
         id: 1,
         username: "Admin",
-        email: "admin@learnersphere.com",
+        email: "admin@learnsphere.com",
         phone: "",
         password: "admin123",
         role: "admin",

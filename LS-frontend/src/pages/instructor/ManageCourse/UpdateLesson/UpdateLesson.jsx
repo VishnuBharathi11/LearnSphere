@@ -13,16 +13,22 @@ import { useParams } from "react-router-dom";
 import "./UpdateLesson.scss";
 function UpdateLesson() {
   const { courseId } = useParams();
-  //const navigate=useNavigate();
   const id = String(courseId);
+  const safeParse = (key, fallback) => {
+    try {
+      return JSON.parse(localStorage.getItem(key)) || fallback;
+    } catch {
+      return fallback;
+    }
+  };
   const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
   const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
   const course = allCourses.find(
-    (c) => String(c.id) === id && c.instructorId === currentUser.id,
+    (c) => String(c.id) === id && c.instructorId === currentUser?.id,
   );
 
-  const storedLessons = JSON.parse(localStorage.getItem("courseLessons")) || {};
-  const [lessons, setLessons] = useState(storedLessons[id] || []);
+  const lessonMap=safeParse("courseLessons",{});
+  const [lessons, setLessons] = useState(lessonMap[id]||[]);
   const [showModal, setShowModal] = useState(false);
   const [editLessonId, setEditLessonId] = useState(null);
   const [form, setForm] = useState({
@@ -30,22 +36,47 @@ function UpdateLesson() {
     type: "video",
     file: null,
   });
-  const saveLessons = (updatedLessons) => {
-    const lessonMap = JSON.parse(localStorage.getItem("courseLessons")) || {};
-    lessonMap[id] = updatedLessons;
-    localStorage.setItem("courseLessons", JSON.stringify(lessonMap));
-    const updatedCourses = allCourses.map((c) =>
-      String(c.id) === id ? { ...c, lessons: updatedLessons.length } : c,
+
+  if (!currentUser || currentUser.role !== "instructor" || !course) {
+    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+  }
+
+  const persistLessons = (updatedLessons) => {
+    const updatedMap = safeParse("courseLessons", {});
+    updatedMap[id] = updatedLessons;
+    localStorage.setItem("courseLessons", JSON.stringify(updatedMap));
+    const updatedCourses = safeParse("courses", []).map((c) =>
+      String(c.id) === id ? { ...c, lessons: updatedLessons.length } : c
     );
     localStorage.setItem("courses", JSON.stringify(updatedCourses));
   };
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     setForm({ ...form, file });
   };
+
+  const validate = () => {
+    if (!form.title.trim()) return "Lesson title required";
+
+    const duplicate = lessons.find(
+      (l) =>
+        l.title.toLowerCase() === form.title.toLowerCase() &&
+        l.id !== editLessonId
+    );
+
+    if (duplicate) return "Lesson with same title already exists";
+
+    return null;
+  };
+
   const handleSubmit = () => {
-    if (!form.title) return;
+    const error = validate();
+    if (error) {
+      alert(error);
+      return;
+    }
     let updated;
     if (editLessonId) {
       updated = lessons.map((l) =>
@@ -64,11 +95,13 @@ function UpdateLesson() {
           form.type !== "video" && form.file
             ? `${(form.file.size / (1024 * 1024)).toFixed(1)}MB`
             : null,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
       };
       updated = [...lessons, newLesson];
     }
     setLessons(updated);
-    saveLessons(updated);
+    persistLessons(updated);
     setForm({ title: "", type: "video", file: null });
     setEditLessonId(null);
     setShowModal(false);
@@ -78,7 +111,7 @@ function UpdateLesson() {
       .filter((l) => l.id !== lessonId)
       .map((l, index) => ({ ...l, order: index }));
     setLessons(updated);
-    saveLessons(updated);
+    persistLessons(updated);
   };
   const openEdit = (lesson) => {
     setForm({ title: lesson.title, type: lesson.type, file: null });
@@ -90,10 +123,6 @@ function UpdateLesson() {
     if (type === "pdf") return <FileText size={22} />;
     return <File size={22} />;
   };
-
-  if (!course) {
-    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
-  }
   return (
     <div className="upload-lesson-layout">
       <div className="upload-lessons-page">

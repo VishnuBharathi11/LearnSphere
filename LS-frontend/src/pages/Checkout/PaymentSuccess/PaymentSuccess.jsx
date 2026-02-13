@@ -2,10 +2,6 @@ import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   CheckCircle,
-  Award,
-  Clock,
-  CreditCard,
-  Calendar,
   Play,
 } from "lucide-react";
 import {courses} from "../../../data/courses";
@@ -15,29 +11,35 @@ function PaymentSuccess() {
   const navigate = useNavigate();
   const { state } = useLocation();
   const courseId = state?.courseId;
+  const paymentId=state?.paymentId;
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const course = courses.find((c) => c.id === courseId);
   useEffect(() => {
-    if(!courseId) return;
-    const enrolledCourses = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-    const alreadyEnrolled=enrolledCourses.some(
-      (c)=>c.courseId===courseId
+    if(!courseId||!currentUser) return;
+    const enrolled = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+    const already=enrolled.some(
+      (e)=>e.courseId===courseId && e.studentId === currentUser.id
     );
-    if(!alreadyEnrolled){
-      enrolledCourses.push({
+    if(!already){
+      enrolled.push({
         courseId,
+        studentId: currentUser.id,
         progress:0,
         lastLessonIndex:0,
+        enrolledAt: new Date().toISOString(),
+        paymentId,
       });
-      localStorage.setItem("enrolledCourses",JSON.stringify(enrolledCourses));
+      localStorage.setItem("enrolledCourses",JSON.stringify(enrolled));
     }
-  }, [courseId]);
+  }, [courseId,currentUser,paymentId]);
+  if (!course) return <p>Invalid course</p>;
   return (
     <div className="success-page">
       <div className="success-container">
         <div className="success-header">
           <CheckCircle size={96} className="success-icon" />
           <h1>Payment Successful!</h1>
-          <p>You are now enrolled in this course</p>
+          <p>You are now enrolled in {course.courseName}</p>
 
           <div className="success-sub">
             <Award size={18} />
@@ -82,7 +84,7 @@ function PaymentSuccess() {
             className="ps-primary-btn"
             onClick={() => navigate(`/student-layout/learn/${course.id}`)}
           >
-            <Play size={20} />
+            <Play size={18} />
             Start Learning
           </button>
           <button

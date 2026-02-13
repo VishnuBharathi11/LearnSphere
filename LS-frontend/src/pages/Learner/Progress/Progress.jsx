@@ -3,11 +3,13 @@ import { courses } from "../../../data/courses";
 import "./Progress.scss";
 
 function Progress() {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
   const progressData = useMemo(() => {
+    if (!currentUser) return [];
     const enrolled =
       JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-
-    return enrolled
+    const myEnrollments=enrolled.filter((e)=>e.studentId===currentUser.id);
+    return myEnrollments
       .map(ec => {
         const course = courses.find(c => c.id === ec.courseId);
         if (!course) return null;
@@ -15,7 +17,7 @@ function Progress() {
         const completed = ec.completedLessons || 0;
         const total = ec.totalLessons || course.lessons;
 
-        const progress = Math.floor(
+        const progress =total===0?0: Math.floor(
           (completed / total) * 100
         );
 
@@ -34,7 +36,7 @@ function Progress() {
         };
       })
       .filter(Boolean);
-  }, []);
+  }, [currentUser]);
 
   const totalCourses = progressData.length;
   const inProgressCourses = progressData.filter(
