@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, {useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Search,
@@ -13,32 +13,50 @@ import "./StudentProgress.scss";
 function StudentProgress() {
   const { courseId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const { students, avgProgress, activeCount, completedCount } = useMemo(() => {
+  const { course,students, avgProgress, activeCount, completedCount } = useMemo(() => {
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+    const users = JSON.parse(localStorage.getItem("users")) || [];
     const enrolled = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
     const testResults = JSON.parse(localStorage.getItem("testResults")) || [];
+    const lessonMap = JSON.parse(localStorage.getItem("courseLessons")) || {};
+
+    const course=allCourses.find((c)=>String(c.id)===String(courseId)&&c.instructorId===currentUser?.id);
+    if (!course) {
+      return {
+        course: null,
+        students: [],
+        avgProgress: 0,
+        activeCount: 0,
+        completedCount: 0,
+      };
+    }
+
+    const totalLessons=(lessonMap[courseId]||[]).length;
     const courseEnrollments = enrolled.filter(
       (e) => String(e.courseId) === courseId,
     );
-    const studentDirectory = {
-      101: { name: "Rahul Sharma", email: "rahul@gmail.com" },
-      102: { name: "Priya Patel", email: "priya@gmail.com" },
-      103: { name: "Amit Kumar", email: "amit@gmail.com" },
-    };
+
     const students = courseEnrollments.map((e) => {
-      const progress = Math.floor((e.completedLessons / e.totalLessons) * 100);
+      const user=users.find((u)=>u.id===e.studentId);
+      const completed=e.completedLessons||0;
+      const progress =totalLessons===0?0: Math.floor((completed /totalLessons) * 100);
+
       const result = testResults.find(
-        (r) => String(r.courseId) === courseId && r.studentId === e.studentId,
+        (r) => String(r.courseId) === String(courseId) && r.studentId === e.studentId,
       );
-      let status = "active";
-      if (progress === 100) status = "completed";
-      if (progress === 0) status = "inactive";
+      let status = "inactive";
+      if(progress>0&&progress<100)
+        status="active";
+      if(progress===100)
+        status="completed"
       return {
         id: e.studentId,
-        name: studentDirectory[e.studentId]?.name || "Unknown Student",
-        email: studentDirectory[e.studentId]?.email || "N/A",
+        name: user?.name || "Unknown Student",
+        email: user?.email || "N/A",
         progress,
         quizScore: result ? `${result.score}/${result.total}` : "—",
-        timeSpent: `${e.completedLessons * 2}h`,
+        timeSpent: `${completed*10}min`,
         status,
       };
     });
@@ -53,12 +71,16 @@ function StudentProgress() {
       (s) => s.status === "completed",
     ).length;
     return {
+      course,
       students,
       avgProgress,
       activeCount,
       completedCount,
     };
   }, [courseId]);
+  if (!course) {
+    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+  }
   const filtered = students.filter(
     (s) =>
       s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -68,7 +90,7 @@ function StudentProgress() {
     <div className="student-progress-layout">
       <div className="student-progress-page">
         <div className="sp-page-header">
-            <p>Course ID: {courseId}</p>
+          <p>{course.courseName}</p>
           <button className="export-btn">
             <Download size={16} /> Export
           </button>

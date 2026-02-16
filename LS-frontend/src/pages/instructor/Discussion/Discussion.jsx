@@ -12,10 +12,16 @@ import {
 } from "lucide-react";
 import "./Discussion.scss";
 function Discussion() {
+  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
+  const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+  const instructorCourses = allCourses.filter((c) => c.instructorId === currentUser.id);
+  const instructorCourseIds=instructorCourses.map((c)=>c.id);
+
   const [activeFilter, setActiveFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [discussions, setDiscussions] = useState(() => {
-    return JSON.parse(localStorage.getItem("courseDiscussions")) || [];
+    const stored= JSON.parse(localStorage.getItem("courseDiscussions")) || [];
+    return stored.filter((d)=>instructorCourseIds.includes(d.courseId));
   });
   const stats = useMemo(() => {
     return {
@@ -34,52 +40,22 @@ function Discussion() {
     return matchFilter && matchSearch;
   });
   const updateStatus = (id, status) => {
-    const updated = discussions.map((d) =>
-      d.id === id ? { ...d, status } : d,
-    );
-    setDiscussions(updated);
-    localStorage.setItem("courseDiscussions", JSON.stringify(updated));
+    const all = JSON.parse(localStorage.getItem("courseDiscussions")) || [];
+    const updatedAll =all.map((d)=>d.id===id?{...d,status,updatedAt:new Date().toISOString()}:d);
+    localStorage.setItem("courseDiscussions", JSON.stringify(updatedAll));
+    setDiscussions(updatedAll.filter((d)=>instructorCourseIds.includes(d.courseId)));
   };
+  if(currentUser.role!=="instructor"){
+    return <p style={{ padding: 40 }}>Unauthorized access</p>;
+  }
   return (
     <div className="discussion-layout">
       <div className="discussion-page">
         <div className="discussion-stats">
-          <div className="discussion-stat-card blue">
-            <div className="stat-icon">
-              <MessageSquare />
-            </div>
-            <div className="stat-content">
-              <strong>{stats.total}</strong>
-              <span>Total Discussions</span>
-            </div>
-          </div>
-          <div className="discussion-stat-card yellow">
-            <div className="stat-icon">
-              <Clock />
-            </div>
-            <div className="stat-content">
-              <strong>{stats.pending}</strong>
-              <span>Pending Review</span>
-            </div>
-          </div>
-          <div className="discussion-stat-card red">
-            <div className="stat-icon">
-              <AlertTriangle />
-            </div>
-            <div className="stat-content">
-              <strong>{stats.flagged}</strong>
-              <span>Flagged</span>
-            </div>
-          </div>
-          <div className="discussion-stat-card green">
-            <div className="stat-icon">
-              <CheckCircle />
-            </div>
-            <div className="stat-content">
-              <strong>{stats.approved}</strong>
-              <span>Approved</span>
-            </div>
-          </div>
+          <Stat icon={MessageSquare} label="Total Discussions" value={stats.total} color="blue" />
+          <Stat icon={Clock} label="Pending Review" value={stats.pending} color="yellow" />
+          <Stat icon={AlertTriangle} label="Flagged" value={stats.flagged} color="red" />
+          <Stat icon={CheckCircle} label="Approved" value={stats.approved} color="green" />
         </div>
         <div className="discussion-controls">
           <div className="discussion-search-box">
@@ -115,7 +91,7 @@ function Discussion() {
                   </p>
                   <p className="message">{d.message}</p>
                   <p className="time">
-                    {new Date(d.createdAt).toLocaleString()} • {d.replies}{" "}
+                    {new Date(d.createdAt).toLocaleString()} • {d.replies||0}{" "}
                     replies
                   </p>
                 </div>
@@ -152,6 +128,20 @@ function Discussion() {
             ))
           )}
         </div>
+      </div>
+    </div>
+  );
+}
+function Stat({ icon, label, value, color }) {
+  const Icon=icon;
+  return (
+    <div className={`discussion-stat-card ${color}`}>
+      <div className="stat-icon">
+        <Icon />
+      </div>
+      <div className="stat-content">
+        <strong>{value}</strong>
+        <span>{label}</span>
       </div>
     </div>
   );
