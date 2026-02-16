@@ -42,9 +42,9 @@ import InstructorProfile from "./pages/instructor/Profile/InstructorProfile.jsx"
 /* ADMIN MODULE */
 import AdminLayout from "./pages/admin/AdminLayout/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/Dashboard/AdminDashboard.jsx";
-import ManageUsers from "./pages/admin/ManageUsers/ManageUsers.jsx";
+import ManageUsers from "./pages/admin/ManageUsers/Manageusers.jsx"
 import HandleCourses from "./pages/admin/HandleCourses/HandleCourses.jsx";
-import ApproveCourses from "./pages/admin/ApproveCourses/ApproveCourses.jsx";
+import ApproveCourses from "./pages/admin/ApproveCourses/Approvecourses.jsx";
 import Categories from "./pages/admin/Categories/Categories.jsx";
 import RoleManagement from "./pages/admin/RoleManagement/RoleManagement.jsx";
 import Settings from "./pages/admin/Settings/Settings.jsx";
