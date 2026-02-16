@@ -33,7 +33,6 @@ $course-bg-active: #eef2ff;
 
 .tabs {
   @include flex-row(20px);
-  margin: 15px 0 25px;
 
   button {
     padding: 6px 16px;
