@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -31,12 +32,11 @@ public class GlobalExceptionHandler {
 		ex.getBindingResult().getFieldErrors().forEach(err->errors.put(err.getField(),err.getDefaultMessage()));
 		return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
 	}
-	@ExceptionHandler(Exception.class)
-	public ResponseEntity<?> handleNotFound(Exception ex){
-		Map<String, Object> response=new HashMap<>();
-		response.put("status", 500);
-		response.put("error", "Internal Server Error");
-		return new ResponseEntity<>(response,HttpStatus.INTERNAL_SERVER_ERROR);
+	@ExceptionHandler(MissingServletRequestParameterException.class)
+	public ResponseEntity<?> handleMissingParams(MissingServletRequestParameterException ex){
+		 ex.printStackTrace();
+		
+		return ResponseEntity.badRequest().body(Map.of("error",ex.getMessage()));
 	}
 
 }
