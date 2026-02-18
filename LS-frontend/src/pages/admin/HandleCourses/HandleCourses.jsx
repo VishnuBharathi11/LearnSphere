@@ -1,148 +1,224 @@
-import { useState } from "react";
-import {
-  Search,
-  Star,
-  Eye,
-  Edit,
-  Trash2
-} from "lucide-react";
+import { useMemo, useState } from "react";
+import { Search, Star, Eye, Edit, Trash2 } from "lucide-react";
 import "./HandleCourses.scss";
+import { useNavigate } from "react-router-dom";
 
-function HandleCourses(){
+function HandleCourses() {
+  const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  const courses = [
-    {
-      id: 1,
-      title: "Modern Frontend Development with React",
-      date: "2024-12-15",
-      instructor: "Arun Prakash",
-      category: "Web Development",
-      students: 241,
-      revenue: "₹24,000",
-      rating: 4.8,
-      status: "published"
-    },
-    {
-      id: 2,
-      title: "Python for Data Science",
-      date: "2024-12-15",
-      instructor: "Arun Prakash",
-      category: "Data Science",
-      students: 241,
-      revenue: "₹24,000",
-      rating: 4.8,
-      status: "published"
-    },
-    {
-      id: 3,
-      title: "Mobile App Development",
-      date: "2024-12-15",
-      instructor: "Arun Prakash",
-      category: "Mobile Development",
-      students: 0,
-      revenue: "₹0",
-      rating: null,
-      status: "suspended"
-    }
-  ];
+  const { courses, enrollments, ratings } = useMemo(() => {
+    return {
+      courses: JSON.parse(localStorage.getItem("courses")) || [],
+      enrollments: JSON.parse(localStorage.getItem("enrolledCourses")) || [],
+      ratings: JSON.parse(localStorage.getItem("courseRatings")) || [],
+    };
+  }, []);
 
-  const filteredCourses = courses.filter(c => {
-    if (status !== "all" && c.status !== status) return false;
-    return c.title.toLowerCase().includes(search.toLowerCase());
+  const enrichedCourses = useMemo(() => {
+    return courses.map((course) => {
+      const courseEnrollments = enrollments.filter(
+        (e) => e.courseId === course.id,
+      );
+      const courseRatings = ratings.filter((r) => r.courseId === course.id);
+      const avgRating =
+        courseRatings.length === 0
+          ? null
+          : (
+              courseRatings.reduce((s, r) => s + r.rating, 0) /
+              courseRatings.length
+            ).toFixed(1);
+      return {
+        ...course,
+        learners: courseEnrollments.length,
+        revenue: courseEnrollments.length * (course.price || 0),
+        rating: avgRating,
+      };
+    });
+  }, [courses, enrollments, ratings]);
+  const filteredCourses = enrichedCourses.filter((c) => {
+    if (statusFilter !== "all" && c.status !== statusFilter) return false;
+    return c.courseName.toLowerCase().includes(search.toLowerCase());
   });
 
+  const summary = useMemo(() => {
+    const totalCourses = enrichedCourses.length;
+    const published = enrichedCourses.filter(
+      (c) => c.status === "published",
+    ).length;
+    const suspended = enrichedCourses.filter(
+      (c) => c.status === "suspended",
+    ).length;
+    const totalRevenue = enrichedCourses.reduce((sum, c) => sum + c.revenue, 0);
+    return { totalCourses, published, suspended, totalRevenue };
+  }, [enrichedCourses]);
+
+  const updatedCourseStatus = (id, newStatus) => {
+    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+    const updated = allCourses.map((c) =>
+      c.id === id ? { ...c, status: newStatus } : c,
+    );
+    localStorage.setItem("courses", JSON.stringify(updated));
+    window.location.reload();
+  };
+
+  const deleteCourse = (id) => {
+    if (!window.confirm("Delete this course permanently?")) return;
+    const updatedCourses = courses.filter((c) => c.id !== id);
+    localStorage.setItem("courses", JSON.stringify(updatedCourses));
+    const cleanArray = (key) => {
+      const arr = JSON.parse(localStorage.getItem(key)) || [];
+      const filtered = arr.filter((i) => i.courseId !== id);
+      localStorage.setItem(key, JSON.stringify(filtered));
+    };
+    const cleanMap = (key) => {
+      const map = JSON.parse(localStorage.getItem(key)) || {};
+      delete map[id];
+      localStorage.setItem(key, JSON.stringify(map));
+    };
+    cleanArray("enrolledCourses");
+    cleanArray("testResults");
+    cleanArray("courseRatings");
+    cleanMap("courseLessons");
+    cleanMap("courseQuizzes");
+    window.location.reload();
+  };
   return (
     <div className="handle-courses-layout">
-        <div className="manage-courses">
-      <div className="summ-status">
-        <div className="summ-status-card">
-          <p>Total Courses</p>
-          <h3>3</h3>
+      <div className="manage-courses">
+        <div className="summ-status">
+          <div className="summ-status-card">
+            <p>Total Courses</p>
+            <h3>{summary.totalCourses}</h3>
+          </div>
+          <div className="summ-status-card">
+            <p>Published</p>
+            <h3>{summary.published}</h3>
+          </div>
+          <div className="summ-status-card">
+            <p>Suspended</p>
+            <h3>{summary.suspended}</h3>
+          </div>
+          <div className="summ-status-card">
+            <p>Total Revenue</p>
+            <h3>{summary.totalRevenue.toLocaleString()}</h3>
+          </div>
         </div>
-        <div className="summ-status-card">
-          <p>Published</p>
-          <h3>2</h3>
+        <div className="filters">
+          <div className="search-box">
+            <Search size={16} />
+            <input
+              placeholder="Search by Courses..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <select
+            value={status}
+            onChange={(e) => setStatusFilter(e.target.value)}
+          >
+            <option value="all">All Status</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="suspended">Suspended</option>
+          </select>
         </div>
-        <div className="summ-status-card">
-          <p>Suspended</p>
-          <h3>1</h3>
-        </div>
-        <div className="summ-status-card">
-          <p>Total Revenue</p>
-          <h3>₹2.1L</h3>
-        </div>
-      </div>
-      <div className="filters">
-        <div className="search-box">
-          <Search size={16} />
-          <input
-            placeholder="Search by Courses..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-        <select value={status} onChange={e => setStatus(e.target.value)}>
-          <option value="all">All Status</option>
-          <option value="published">Published</option>
-          <option value="suspended">Suspended</option>
-        </select>
-      </div>
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>Courses</th>
-              <th>Instructor</th>
-              <th>Category</th>
-              <th>Students</th>
-              <th>Revenue</th>
-              <th>Rating</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredCourses.map(course => (
-              <tr key={course.id}>
-                <td>
-                  <div className="course-title">
-                    <strong>{course.title}</strong>
-                    <span>{course.date}</span>
-                  </div>
-                </td>
-                <td>{course.instructor}</td>
-                <td>{course.category}</td>
-                <td>{course.students}</td>
-                <td className="revenue">{course.revenue}</td>
-                <td>
-                  {course.rating ? (
-                    <span className="rating">
-                      <Star size={14} /> {course.rating}
-                    </span>
-                  ) : (
-                    <span className="na">N/A</span>
-                  )}
-                </td>
-                <td>
-                  <span className={`status ${course.status}`}>
-                    {course.status}
-                  </span>
-                </td>
-                <td className="actions">
-                  <Eye size={16} />
-                  <Edit size={16} />
-                  <Trash2 size={16} />
-                </td>
+        <div className="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Courses</th>
+                <th>Instructor</th>
+                <th>Category</th>
+                <th>Learner</th>
+                <th>Revenue</th>
+                <th>Rating</th>
+                <th>Status</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filteredCourses.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="empty">
+                    No courses found
+                  </td>
+                </tr>
+              ) : (
+                filteredCourses.map((course) => (
+                  <tr key={course.id}>
+                    <td>
+                      <div className="course-title">
+                        <strong>{course.courseName}</strong>
+                        <span>
+                          {" "}
+                          {new Date(course.createdAt).toDateString()}
+                        </span>
+                      </div>
+                    </td>
+                    <td>{course.instructorName}</td>
+                    <td>{course.category}</td>
+                    <td>{course.learners}</td>
+                    <td className="revenue">
+                      ₹{course.revenue.toLocaleString()}
+                    </td>
+                    <td>
+                      {course.rating ? (
+                        <span className="rating">
+                          <Star size={14} /> {course.rating}
+                        </span>
+                      ) : (
+                        <span className="na">N/A</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className={`status ${course.status}`}>
+                        {course.status}
+                      </span>
+                    </td>
+                    <td className="actions">
+                      <Eye
+                        size={16}
+                        onClick={() => navigate(`/course/${course.id}`)}
+                      />
+                      <Edit
+                        size={16}
+                        onClick={() =>
+                          navigate(`/admin/edit-course/${course.id}`)
+                        }
+                      />
+                      {course.status !== "suspended" ? (
+                        <button
+                          onClick={() =>
+                            updatedCourseStatus(course.id, "suspended")
+                          }
+                        >
+                          Suspend
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() =>
+                            updatedCourseStatus(course.id, "published")
+                          }
+                        >
+                          Publish
+                        </button>
+                      )}
+                      <Trash2
+                        size={16}
+                        onClick={() => deleteCourse(course.id)}
+                      />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
     </div>
   );
-};
+}
 
 export default HandleCourses;

@@ -23,15 +23,17 @@ import {
 import { useMemo } from "react";
 const COLORS = ["#2563eb", "#7c3aed", "#10b981", "#f59e0b", "#6b7280"];
 function AdminDashboard() {
-  const { users, courses, enrollments } = useMemo(
+  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const { users, courses, enrollments,discussions } = useMemo(
     () => ({
       users: JSON.parse(localStorage.getItem("users")) || [],
       courses: JSON.parse(localStorage.getItem("courses")) || [],
       enrollments: JSON.parse(localStorage.getItem("enrolledCourses")) || [],
+      discussions: JSON.parse(localStorage.getItem("courseDiscussions")) || [],
     }),
     [],
   );
-  const totalStudents = users.filter((u) => u.role === "student").length;
+  const totalLearners = users.filter((u) => u.role === "learner").length;
   const totalInstructors = users.filter((u) => u.role === "instructor").length;
   const activeCourses = courses.filter((c) => c.status === "published").length;
 
@@ -39,20 +41,15 @@ function AdminDashboard() {
     const course = courses.find((c) => c.id === e.courseId);
     return sum + (course?.price || 0);
   }, 0);
+  const pendingCourses = courses.filter((c) => c.status === "draft").length;
+  const flaggedDiscussions = discussions.filter((d) => d.status === "flagged").length;
   const stats = [
-    { label: "Total Students", value: totalStudents, icon: Users },
-    {
-      label: "Total Instructors",
-      value: totalInstructors,
-      icon: GraduationCap,
-    },
+    { label: "Total Learners", value: totalLearners, icon: Users },
+    {label: "Total Instructors",value: totalInstructors,icon: GraduationCap,},
     { label: "Active Courses", value: activeCourses, icon: BookOpen },
-    {
-      label: "Total Revenue",
-      value: `₹${(totalRevenue / 100000).toFixed(1)}L`,
-      icon: IndianRupee,
-    },
+    {label: "Total Revenue",value: `₹${(totalRevenue / 100000).toFixed(1)}L`,icon: IndianRupee,},
   ];
+
   const userGrowth = useMemo(() => {
     const map = {};
     users.forEach((u) => {
@@ -60,21 +57,23 @@ function AdminDashboard() {
       const month = new Date(u.createdAt).toLocaleString("default", {
         month: "short",
       });
-      if (!map[month]) map[month] = { month, students: 0, instructors: 0 };
-      if (u.role === "student") map[month].students++;
-      if (u.role === "instructor") map[month].instructors++;
+      if (!map[month]) 
+        map[month] = { month, learners: 0, instructors: 0 };
+      if (u.role === "learner") 
+        map[month].learners++;
+      if (u.role === "instructor") 
+        map[month].instructors++;
     });
     return Object.values(map);
   }, [users]);
+
   const revenueTrend = useMemo(() => {
     const map = {};
     enrollments.forEach((e) => {
       const course = courses.find((c) => c.id === e.courseId);
-      if (!course || !course.price || !e.enrolledAt) return;
-
-      const month = new Date(e.enrolledAt).toLocaleString("default", {
-        month: "short",
-      });
+      if (!course || !course.price || !e.enrolledAt) 
+        return;
+      const month = new Date(e.enrolledAt).toLocaleString("default", {month: "short",});
       map[month] = (map[month] || 0) + course.price;
     });
     return Object.entries(map).map(([month, revenue]) => ({
@@ -82,6 +81,7 @@ function AdminDashboard() {
       revenue,
     }));
   }, [enrollments, courses]);
+
   const categories = useMemo(() => {
     const map = {};
     courses.forEach((c) => {
@@ -94,14 +94,23 @@ function AdminDashboard() {
       color: COLORS[i % COLORS.length],
     }));
   }, [courses]);
+
+  const recentActivity=useMemo(()=>{
+    const activities=[];
+    courses.slice(-3).forEach((c)=>activities.push(`Course "${c.courseName}" created`));
+    enrollments.slice(-3).forEach((e)=>activities.push(`New enrollment in course ID ${e.courseId}`));
+    discussions.filter((d)=>d.status==="flagged").slice(-2).forEach(()=>activities.push("Discussion flagged learner"));
+    return activities.slice(-5).reverse();
+  },[courses,enrollments,discussions]);
+
   const tasks = [
-    {
-      text: `${courses.filter((c) => c.status === "pending").length} courses pending approval`,
-      priority: "high",
-    },
-    { text: "Instructor applications to review", priority: "medium" },
-    { text: "Flagged discussions reported", priority: "medium" },
+    {text: `${pendingCourses} courses pending approval`,priority: "high",},
+    { text: `${flaggedDiscussions} dicussions flagged`, priority: "medium" },
   ];
+
+  if(!currentUser||currentUser.role!=="admin"){
+    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+  }
   return (
     <div className="admin-dasboard-layout">
       <div className="admin-dashboard">
@@ -137,7 +146,7 @@ function AdminDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Line dataKey="students" stroke="#2563eb" />
+                <Line dataKey="learners" stroke="#2563eb" />
                 <Line dataKey="instructors" stroke="#7c3aed" />
               </LineChart>
             </ResponsiveContainer>
@@ -171,17 +180,15 @@ function AdminDashboard() {
         </div>
         <div className="activity-box">
           <h3>Recent Activity</h3>
-          <ul>
-            <li>
-              <Clock size={14} /> New course submitted
-            </li>
-            <li>
-              <Clock size={14} /> Discussion flagged
-            </li>
-            <li>
-              <Clock size={14} /> Backup completed
-            </li>
-          </ul>
+          {recentActivity.length===0?(
+            <p>No activity yet</p>
+          ):(
+            <ul>
+              {recentActivity.map((a,i)=>(
+                <li key={i}><Clock size={14}/> {a}</li>
+              ))}
+            </ul>
+          )}
         </div>
       </div>
     </div>

@@ -1,33 +1,60 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Users, Search, Eye, Edit, Ban, UserCheck, MoreVertical
 } from "lucide-react";
 import "./Manageuser.scss";
 
 function Manageusers(){
-  const [activeTab, setActiveTab] = useState("all");
+  const [users, setUsers] = useState(() => {
+    return JSON.parse(localStorage.getItem("users")) || [];
+  });
+  const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
-  const [roleFilter, setRoleFilter] = useState("all");
-  const users = [
-    { id: 1, name: "Rahul Sharma", email: "rahul@gmail.com", role: "student", status: "active", joined: "2024-12-25", lastActive: "2 hours ago" },
-    { id: 2, name: "Priya Patel", email: "priya@gmail.com", role: "instructor", status: "active", joined: "2024-12-25", lastActive: "1 day ago" },
-    { id: 3, name: "Sneha Reddy", email: "sneha@gmail.com", role: "instructor", status: "suspended", joined: "2024-12-25", lastActive: "2 weeks ago" }
-  ];
-  const filteredUsers = users.filter(u => {
-    if (activeTab === "students" && u.role !== "student") return false;
-    if (activeTab === "instructors" && u.role !== "instructor") return false;
-    if (activeTab === "suspended" && u.status !== "suspended") return false;
-    if (roleFilter !== "all" && u.role !== roleFilter) return false;
+  const [roleFilter, setRoleFilter] = useState("All");
+   const [viewUser, setViewUser] = useState(null);
+  const [editUser, setEditUser] = useState(null);
+
+  const filteredUsers =useMemo(()=>{
+  return users.filter(u => {
+    if (activeTab === "Learners" && u.role !== "learner") return false;
+    if (activeTab === "Instructors" && u.role !== "instructor") return false;
+    if (activeTab === "Suspended" && u.status !== "suspended") return false;
+    if (roleFilter !== "All" && u.role !== roleFilter) return false;
+
+    const term=search.toLowerCase();
     return (
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase())
+      u.name?.toLowerCase().includes(term) ||
+      u.email?.toLowerCase().includes(term)
     );
   });
+  },[users,activeTab,search,roleFilter]);
+const updateStorage = (updated) => {
+    setUsers(updated);
+    localStorage.setItem("users", JSON.stringify(updated));
+  };
+  const toggleUserStatus=(id)=>{
+    const updated=users.map((u)=>u.id===id?{...u.status==="active"?"suspended":"active"}:u);
+    updateStorage(updated);
+    //localStorage.setItem("users",JSON.stringify(updated));
+  };
+  const deleteUser = (id) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    const updated = users.filter((u) => u.id !== id);
+    updateStorage(updated);
+  };
+  const changeRole = (newRole) => {
+    const updated = users.map((u) =>
+      u.id === editUser.id ? { ...u, role: newRole } : u
+    );
+    updateStorage(updated);
+    setEditUser(null);
+  };
   return (
     <div className="manage-users-layout">
       <div className="manage-users">
       <div className="tabs">
-        {["all", "students", "instructors", "suspended"].map(tab => (
+        {["All", "Learners", "Instructors", "Suspended"].map(tab => (
           <button
             key={tab}
             className={activeTab === tab ? "tab active" : "tab"}
@@ -37,6 +64,7 @@ function Manageusers(){
           </button>
         ))}
       </div>
+
       <div className="filters">
         <div className="search-box">
           <Search size={16} />
@@ -48,11 +76,12 @@ function Manageusers(){
         </div>
         <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
           <option value="all">All roles</option>
-          <option value="student">Student</option>
+          <option value="learner">Learner</option>
           <option value="instructor">Instructor</option>
           <option value="admin">Admin</option>
         </select>
       </div>
+
       <div className="table-wrapper">
         <table>
           <thead>
@@ -62,7 +91,7 @@ function Manageusers(){
               <th>Status</th>
               <th>Joined</th>
               <th>Last Active</th>
-              <th></th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -78,7 +107,7 @@ function Manageusers(){
                 <tr key={u.id}>
                   <td>
                     <div className="user-cell">
-                      <div className="avatar">{u.name[0]}</div>
+                      <div className="avatar">{u.name?.[0]?.toUpperCase()||"U"}</div>
                       <div>
                         <p>{u.name}</p>
                         <span>{u.email}</span>
@@ -87,13 +116,13 @@ function Manageusers(){
                   </td>
                   <td>{u.role}</td>
                   <td className={u.status}>{u.status}</td>
-                  <td>{u.joined}</td>
+                  <td>{u.createdAt?new Date(u.createdAt).toLocaleDateString():"-"}</td>
                   <td>{u.lastActive}</td>
                   <td className="actions">
-                    <Eye size={16} />
-                    <Edit size={16} />
-                    {u.status === "active" ? <Ban size={16} /> : <UserCheck size={16} />}
-                    <MoreVertical size={16} />
+                    <Eye size={16} onClick={() => setViewUser(u)}/>
+                    <Edit size={16} onClick={() => setEditUser(u)}/>
+                    {u.status === "active" ? (<Ban size={16} onClick={()=>toggleUserStatus(u.id)}/>) : (<UserCheck size={16} onClick={()=>toggleUserStatus(u.id)}/>)}
+                    <MoreVertical size={16} onClick={() => deleteUser(u.id)}/>
                   </td>
                 </tr>
               ))
@@ -102,6 +131,47 @@ function Manageusers(){
         </table>
       </div>
     </div>
+    {viewUser && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <button className="close" onClick={() => setViewUser(null)}>
+              <X size={18} />
+            </button>
+
+            <h3>User Details</h3>
+            <p><b>Name:</b> {viewUser.name}</p>
+            <p><b>Email:</b> {viewUser.email}</p>
+            <p><b>Role:</b> {viewUser.role}</p>
+            <p><b>Status:</b> {viewUser.status}</p>
+            <p>
+              <b>Joined:</b>{" "}
+              {viewUser.createdAt
+                ? new Date(viewUser.createdAt).toLocaleString()
+                : "-"}
+            </p>
+          </div>
+        </div>
+      )}
+{editUser && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <button className="close" onClick={() => setEditUser(null)}>
+              <X size={18} />
+            </button>
+
+            <h3>Edit User Role</h3>
+
+            <select
+              defaultValue={editUser.role}
+              onChange={(e) => changeRole(e.target.value)}
+            >
+              <option value="learner">Learner</option>
+              <option value="instructor">Instructor</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

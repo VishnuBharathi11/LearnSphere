@@ -1,7 +1,7 @@
 import React from "react";
 import "./ResultPage.scss";
 import { useLocation, useNavigate } from "react-router-dom";
-function AssessmentResult() {
+function AssesmentResult() {
   const navigate = useNavigate();
   const location = useLocation();
   const {
@@ -68,4 +68,4 @@ function AssessmentResult() {
   );
 }
 
-export default AssessmentResult;
+export default AssesmentResult;
