@@ -36,7 +36,7 @@ public class CourseController {
 		return courseService.publishCourse(id);
 	}
 	@GetMapping("/published")
-	public Page<Course> published(@RequestParam int page,@RequestParam int size){
+	public Page<Course> published(@RequestParam(defaultValue = "0") int page,@RequestParam(defaultValue = "10") int size){
 		return courseService.getPublished(page, size);
 	}
 }

@@ -33,8 +33,8 @@ public class AuthServiceImpl implements AuthService {
                 .role(request.getRole())
                 .build();
 
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-
         return "User registered successfully";
     }
 
