@@ -3,6 +3,8 @@ package com.learnsphere.auth.controller;
 import com.learnsphere.auth.dto.LoginRequest;
 import com.learnsphere.auth.dto.LoginResponse;
 import com.learnsphere.auth.dto.RegisterRequest;
+import com.learnsphere.auth.dto.ForgotPasswordRequest;
+import com.learnsphere.auth.dto.ResetPasswordRequest;
 import com.learnsphere.auth.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -21,5 +23,15 @@ public class AuthController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @PostMapping("/forgot-password")
+    public String forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        return authService.sendForgotPasswordOtp(request);
+    }
+
+    @PostMapping("/reset-password")
+    public String resetPassword(@RequestBody ResetPasswordRequest request) {
+        return authService.resetPassword(request);
     }
 }

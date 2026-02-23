@@ -10,8 +10,10 @@ import com.learnsphere.enrollment.client.CourseClient;
 import com.learnsphere.enrollment.config.RazorpayConfig;
 import com.learnsphere.enrollment.dto.*;
 import com.learnsphere.enrollment.repository.*;
-import com.learnsphere.enrollment.entity.*;
+import com.learnsphere.enrollment.entity.Enrollment;
 import com.learnsphere.enrollment.entity.Payment;
+import com.learnsphere.enrollment.enums.EnrollmentStatus;
+import com.learnsphere.enrollment.enums.PaymentStatus;
 import com.learnsphere.enrollment.service.EnrollmentService;
 import com.razorpay.*;
 

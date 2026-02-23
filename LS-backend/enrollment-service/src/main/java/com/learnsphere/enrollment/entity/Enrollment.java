@@ -4,6 +4,7 @@ import java.time.Instant;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.learnsphere.enrollment.enums.EnrollmentStatus;
 
 @Entity
 @Table(name = "enrollments")

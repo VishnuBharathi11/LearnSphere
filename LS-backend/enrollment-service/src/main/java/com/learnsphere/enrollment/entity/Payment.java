@@ -3,6 +3,7 @@ package com.learnsphere.enrollment.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
+import com.learnsphere.enrollment.enums.PaymentStatus;
 
 @Entity
 @Table(name = "payments")

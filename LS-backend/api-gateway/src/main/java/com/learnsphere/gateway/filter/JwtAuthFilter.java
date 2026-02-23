@@ -24,7 +24,10 @@ public class JwtAuthFilter implements GlobalFilter {
 
         // Allow auth endpoints
         if (path.contains("/auth/login") ||
-            path.contains("/auth/register")) {
+            path.contains("/auth/register") ||
+            path.contains("/api/auth/forgot-password")||
+            path.contains("/api/auth/reset-password")||
+            path.contains("/api/auth/refresh")) {
             return chain.filter(exchange);
         }
 

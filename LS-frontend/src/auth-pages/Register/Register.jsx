@@ -1,63 +1,67 @@
-import React,{useState} from "react";
+import React, { useState } from "react";
 import "./Register.scss";
 import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
+import { normalizeApiError, registerUser } from "../../services/authApi";
 
 function Register() {
-  const navigate=useNavigate();
-  const[form,setForm]=useState({
-    username:"",
-    email:"",
-    phone:"",
-    password:"",
-    confirmPassword:"",
-    role:"learner",
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    username: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    role: "learner",
   });
-  const[error,setError]=useState("");
-  const handleChange=(e)=>{
-    setForm({...form,[e.target.name]:e.target.value});
-  }
-  const handleRegister=(e)=>{
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async (e) => {
     e.preventDefault();
-    if(!form.username||!form.email||!form.password){
-      setError("Please fill all required feilds");
+    setError("");
+
+    if (!form.username || !form.email || !form.password) {
+      setError("Please fill all required fields");
       return;
     }
+
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-    const users=JSON.parse(localStorage.getItem("users"))||[];
-    if(users.some((u)=>u.email===form.email)){
-      setError("Email already registered");
-      return;
+
+    try {
+      await registerUser({
+        name: form.username,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      });
+
+      navigate("/login");
+    } catch (apiError) {
+      setError(normalizeApiError(apiError, "Registration failed"));
     }
-    const newUser={
-      id:Date.now(),
-      username:form.username,
-      email:form.email,
-      phone:form.phone,
-      password:form.password,
-      role:form.role,
-    };
-    localStorage.setItem("users",JSON.stringify([...users,newUser]));
-    alert("Registration successful!");
-    navigate("/login");
-  }
+  };
+
   return (
     <>
-    <NavBar/>
-    <div className="reg-form">
-      <div className="reg-form-card">
-        <div className="reg-page-name">LearnSphere</div>
-        <div className="reg-form-welcome">
-          Create Account
-          <p>Join LearnSphere today</p>
-        </div>
-        {error&&<p className="error">{error}</p>}
-        <form onSubmit={handleRegister} autoComplete="off">
-          <div className="reg-form-input">
+      <NavBar />
+      <div className="reg-form">
+        <div className="reg-form-card">
+          <div className="reg-page-name">LearnSphere</div>
+          <div className="reg-form-welcome">
+            Create Account
+            <p>Join LearnSphere today</p>
+          </div>
+          {error && <p className="error">{error}</p>}
+          <form onSubmit={handleRegister} autoComplete="off">
+            <div className="reg-form-input">
               <input
                 name="username"
                 type="text"
@@ -110,16 +114,16 @@ function Register() {
             <button type="submit" className="reg-form-btn">
               Register
             </button>
-        </form>
-        <div className="reg-form-login">
-          Already have an account?
-          <Link to="/login" className="reg-text">
-            Login
-          </Link>
+          </form>
+          <div className="reg-form-login">
+            Already have an account?
+            <Link to="/login" className="reg-text">
+              Login
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
-    <Footer/>
+      <Footer />
     </>
   );
 }

@@ -46,7 +46,9 @@ public class SecurityConfig {
                         		"/v3/api-docs/**",
                         		"/api/auth/register",
                         		"/api/auth/login",
-                        		"/api/auth/refresh").permitAll()
+                        		"/api/auth/refresh",
+                                "/api/auth/forgot-password",
+                                "/api/auth/reset-password").permitAll()
 
                         // ✅ PROTECTED ENDPOINTS
                         .anyRequest().authenticated()
