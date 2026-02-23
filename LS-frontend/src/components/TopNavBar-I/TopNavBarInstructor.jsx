@@ -34,6 +34,27 @@ function TopNavBarInstructor() {
       </div>
     ),
 
+    "/instructor-layout/forum": (
+      <div className="page-title">
+        <div>Discussion</div>
+        <span className="sub-head">Interact with students</span>
+      </div>
+    ),
+
+    "/courses/forum": (
+      <div className="page-title">
+        <div>Discussion</div>
+        <span className="sub-head">Interact with students</span>
+      </div>
+    ),
+
+    "/forum/topic": (
+      <div className="page-title">
+        <div>Discussion</div>
+        <span className="sub-head">Interact with students</span>
+      </div>
+    ),
+
     "/instructor-layout/profile": (
       <div className="page-title">
         <div>My Profile</div>
@@ -42,9 +63,16 @@ function TopNavBarInstructor() {
     ),
   };
 
-  let pageTitle = pageMap[location.pathname];
+  const normalizedPath =
+    location.pathname.startsWith("/courses/") && location.pathname.endsWith("/forum")
+      ? "/courses/forum"
+      : location.pathname.startsWith("/instructor-layout/forum/topic/")
+        ? "/forum/topic"
+      : location.pathname.startsWith("/forum/topic/")
+        ? "/forum/topic"
+        : location.pathname;
 
-  // 🔥 NEW LOGIC FOR MANAGE COURSE INNER PAGES
+  let pageTitle = pageMap[normalizedPath];
 
   if (location.pathname.includes("/manage-courses/") && location.pathname.includes("/lessons")) {
     pageTitle = (
@@ -53,27 +81,30 @@ function TopNavBarInstructor() {
         <span className="sub-head">Add or update course lessons</span>
       </div>
     );
-  }
-
-  else if (location.pathname.includes("/manage-courses/") && location.pathname.includes("/quiz")) {
+  } else if (
+    location.pathname.includes("/manage-courses/") &&
+    location.pathname.includes("/quiz")
+  ) {
     pageTitle = (
       <div className="page-title">
         <div>Create Quiz</div>
         <span className="sub-head">Add quizzes to your course</span>
       </div>
     );
-  }
-
-  else if (location.pathname.includes("/manage-courses/") && location.pathname.includes("/students")) {
+  } else if (
+    location.pathname.includes("/manage-courses/") &&
+    location.pathname.includes("/students")
+  ) {
     pageTitle = (
       <div className="page-title">
         <div>Students</div>
         <span className="sub-head">View enrolled students</span>
       </div>
     );
-  }
-
-  else if (location.pathname.includes("/manage-courses/") && location.pathname.includes("/analytics")) {
+  } else if (
+    location.pathname.includes("/manage-courses/") &&
+    location.pathname.includes("/analytics")
+  ) {
     pageTitle = (
       <div className="page-title">
         <div>Analytics</div>
@@ -82,7 +113,6 @@ function TopNavBarInstructor() {
     );
   }
 
-  // Default fallback
   if (!pageTitle) {
     pageTitle = (
       <div className="page-title">

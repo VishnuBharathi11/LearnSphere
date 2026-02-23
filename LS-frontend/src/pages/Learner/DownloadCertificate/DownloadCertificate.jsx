@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./Certificate.scss";
+import "./DownloadCertificate.scss";
 import certificateImage from "../../../assets/Learner/certificate.png";
-function Certificate() {
+function DownloadCertificate() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { eligible, courseName, learnerName, issuedDate } = useMemo(() => {
@@ -124,4 +124,4 @@ function Certificate() {
   );
 }
 
-export default Certificate;
+export default DownloadCertificate;

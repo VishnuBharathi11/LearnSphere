@@ -13,14 +13,35 @@ function TopNavBarStudent() {
     "/student-layout/assessment": "Assessment",
     "/student-layout/test": "Quiz",
     "/student-layout/profile": "My Profile",
+    "/student-layout/forum": "Discussion",
+    "/courses/forum": "Discussion",
+    "/forum/topic": "Discussion",
   };
-  const getNormalizedPath=(pathname)=>{
-    if(pathname.startsWith("/student-layout/certificate"))
+
+  const getNormalizedPath = (pathname) => {
+    if (pathname.startsWith("/student-layout/certificate")) {
       return "/student-layout/certificate";
-    if(pathname.startsWith("/student-layout/test"))
+    }
+
+    if (pathname.startsWith("/student-layout/test")) {
       return "/student-layout/test";
+    }
+
+    if (pathname.startsWith("/courses/") && pathname.endsWith("/forum")) {
+      return "/courses/forum";
+    }
+
+    if (pathname.startsWith("/student-layout/forum/topic/")) {
+      return "/forum/topic";
+    }
+
+    if (pathname.startsWith("/forum/topic/")) {
+      return "/forum/topic";
+    }
+
     return pathname;
-  }
+  };
+
   const pageTitle = pageMap[getNormalizedPath(location.pathname)] || "Dashboard";
 
   return (

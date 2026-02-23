@@ -13,6 +13,12 @@ import "./SidebarInstructor.scss";
 
 function SidebarInstructor() {
   const location = useLocation();
+  const isDiscussionActive =
+    location.pathname.startsWith("/instructor-layout/forum") ||
+    location.pathname.startsWith("/instructor-layout/forum/topic/") ||
+    (location.pathname.startsWith("/courses/") && location.pathname.endsWith("/forum")) ||
+    location.pathname.startsWith("/forum/topic/") ||
+    location.pathname.startsWith("/instructor-layout/discussions");
 
   return (
     <nav className="I-navbar">
@@ -57,15 +63,11 @@ function SidebarInstructor() {
         </Link>
 
         <Link
-          to="/instructor-layout/discussions"
-          className={
-            location.pathname === "/instructor-layout/discussions"
-              ? "active"
-              : ""
-          }
+          to="/instructor-layout/forum"
+          className={isDiscussionActive ? "active" : ""}
         >
           <MessageSquare size={18} />
-          Discussions
+          Discussion
         </Link>
 
         <Link

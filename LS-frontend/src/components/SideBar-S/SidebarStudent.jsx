@@ -1,7 +1,8 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   BookOpen,
+  MessageSquare,
   BarChart3,
   ClipboardList,
   User,
@@ -12,6 +13,13 @@ import logo from "../../assets/Logo/logo.png";
 import "./SidebarStudent.scss";
 
 function SidebarStudent() {
+  const location = useLocation();
+  const isDiscussionActive =
+    location.pathname.startsWith("/student-layout/forum") ||
+    (location.pathname.startsWith("/courses/") &&
+      location.pathname.endsWith("/forum")) ||
+    location.pathname.startsWith("/forum/topic/");
+
   return (
     <nav className="L-navbar">
       <div className="logo-name">
@@ -20,27 +28,37 @@ function SidebarStudent() {
       </div>
 
       <div className="L-sidebar">
-        <NavLink to="dashboard" className="nav-item">
+        <NavLink to="/student-layout/dashboard" className="nav-item">
           <LayoutDashboard size={20} />
           <span>Dashboard</span>
         </NavLink>
 
-        <NavLink to="my-courses" className="nav-item">
+        <NavLink to="/student-layout/my-courses" className="nav-item">
           <BookOpen size={20} />
           <span>My Courses</span>
         </NavLink>
 
-        <NavLink to="progress" className="nav-item">
+        <NavLink
+          to="/courses/general/forum"
+          className={({ isActive }) =>
+            isActive || isDiscussionActive ? "nav-item active" : "nav-item"
+          }
+        >
+          <MessageSquare size={20} />
+          <span>Discussion</span>
+        </NavLink>
+
+        <NavLink to="/student-layout/progress" className="nav-item">
           <BarChart3 size={20} />
           <span>Progress</span>
         </NavLink>
 
-        <NavLink to="assessment" className="nav-item">
+        <NavLink to="/student-layout/assessment" className="nav-item">
           <ClipboardList size={20} />
           <span>Assessment</span>
         </NavLink>
 
-        <NavLink to="profile" className="nav-item">
+        <NavLink to="/student-layout/profile" className="nav-item">
           <User size={20} />
           <span>My Profile</span>
         </NavLink>

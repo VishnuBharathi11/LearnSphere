@@ -25,7 +25,7 @@ import StudentProfile from "./pages/Learner/Profile/Profile.jsx";
 // Course Pages
 import LearnCourse from "./pages/Learner/LearnCourse/LearnCourse.jsx";
 import TestTaking from "./pages/Learner/TestTaking/TestTaking.jsx";
-import Certificate from "./pages/Learner/Certificate/Certificate.jsx";
+import DownloadCertificate from "./pages/Learner/DownloadCertificate/DownloadCertificate.jsx";
 // Instructor Pages
 import InstructorLayout from "./pages/instructor/InstructorLayout/InstructorLayout.jsx";
 import InstructorDashboard from "./pages/instructor/Dashboard/Dashboard.jsx";
@@ -35,8 +35,10 @@ import UploadLesson from "./pages/instructor/ManageCourse/UpdateLesson/UpdateLes
 import CreateQuiz from "./pages/instructor/ManageCourse/CreateQuiz/CreateQuiz.jsx";
 import StudentProgress from "./pages/instructor/ManageCourse/StudentProgress/StudentProgress.jsx";
 import CourseAnalytics from "./pages/instructor/ManageCourse/CourseAnalytics/CourseAnalytics.jsx";
-import Discussion from "./pages/instructor/Discussion/Discussion.jsx";
 import InstructorProfile from "./pages/instructor/Profile/InstructorProfile.jsx";
+import ForumPage from "./forum/pages/ForumPage.jsx";
+import TopicPage from "./forum/pages/TopicPage.jsx";
+import ForumRoleLayout from "./forum/pages/ForumRoleLayout.jsx";
 // Admin Pages
 import AdminLayout from "./pages/admin/AdminLayout/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/Dashboard/AdminDashboard.jsx";
@@ -59,6 +61,10 @@ function App() {
       <Route path="/free-courses" element={<GetStarted />} />
       <Route path="/courses" element={<BrowseCourses />} />
       <Route path="/course/:id" element={<CourseDetail />} />
+      <Route element={<ForumRoleLayout />}>
+        <Route path="/courses/:courseId/forum" element={<ForumPage />} />
+        <Route path="/forum/topic/:topicId" element={<TopicPage />} />
+      </Route>
 
       {/* -------- AUTH ROUTES -------- */}
       <Route path="/login" element={<Login />} />
@@ -78,6 +84,8 @@ function App() {
         <Route path="progress" element={<Progress />} />
         <Route path="assessment" element={<Assessment />} />
         <Route path="profile" element={<StudentProfile />} />
+        <Route path="forum" element={<ForumPage />} />
+        <Route path="forum/topic/:topicId" element={<TopicPage />} />
 
         {/*----LEARN COURSE PAGE----- */}
         <Route path="learn/:id" element={<LearnCourse />} />
@@ -86,7 +94,7 @@ function App() {
         <Route path="test/:courseId" element={<TestTaking />} />
 
         {/*------CERTIFICATE PAGE-----*/}
-        <Route path="certificate/:id" element={<Certificate />} />
+        <Route path="certificate/:id" element={<DownloadCertificate />} />
 
       </Route>
 
@@ -106,7 +114,9 @@ function App() {
         <Route path="manage-courses/:courseId/students" element={<StudentProgress />}/>
         <Route path="manage-courses/:courseId/analytics" element={<CourseAnalytics />}/>
 
-        <Route path="discussions" element={<Discussion />} />
+        <Route path="discussions" element={<ForumPage />} />
+        <Route path="forum" element={<ForumPage />} />
+        <Route path="forum/topic/:topicId" element={<TopicPage />} />
         <Route path="profile" element={<InstructorProfile />} />
 
       </Route>
@@ -122,6 +132,8 @@ function App() {
         <Route path="categories" element={<Categories />} />
         <Route path="roles" element={<RoleManagement />} />
         <Route path="settings" element={<Settings />} />
+        <Route path="forum" element={<ForumPage />} />
+        <Route path="forum/topic/:topicId" element={<TopicPage />} />
 
       </Route>
 
