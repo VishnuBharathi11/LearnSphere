@@ -1,12 +1,12 @@
 import axios from "axios";
 
-const AUTH_API_BASE_URL =
-  import.meta.env.VITE_AUTH_API_BASE_URL || "/api/auth";
+const AUTH_API_BASE_URL = "/api/auth";
 
-export async function registerUser({ name, email, password, role }) {
+export async function registerUser({ name, email, phone, password, role }) {
   const payload = {
     name,
     email: email.trim().toLowerCase(),
+    phone: phone?.trim() || null,
     password,
     role,
   };
@@ -21,6 +21,25 @@ export async function loginUser({ email, password }) {
   };
 
   const response = await axios.post(`${AUTH_API_BASE_URL}/login`, payload);
+  return response.data;
+}
+
+function authHeader() {
+  const token = window.appStore.getItem("authToken");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function getMyProfile() {
+  const response = await axios.get(`${AUTH_API_BASE_URL}/profile`, {
+    headers: authHeader(),
+  });
+  return response.data;
+}
+
+export async function updateMyProfile(profilePayload) {
+  const response = await axios.put(`${AUTH_API_BASE_URL}/profile`, profilePayload, {
+    headers: authHeader(),
+  });
   return response.data;
 }
 

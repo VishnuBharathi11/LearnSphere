@@ -9,4 +9,5 @@ public class CreateOrderRequest {
 	private String userId;
 	@NotBlank
 	private String courseId;
+	private Integer amount;
 }

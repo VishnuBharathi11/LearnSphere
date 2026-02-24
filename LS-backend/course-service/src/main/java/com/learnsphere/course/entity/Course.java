@@ -15,6 +15,7 @@ public class Course {
 	private String id;
 	private String title;
 	private String description;
+	private String thumbnail;
 	private Double price;
 	private String categoryId;
 	private String instructorId;

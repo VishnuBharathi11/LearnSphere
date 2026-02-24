@@ -19,10 +19,11 @@ $secondary-text: #374151;
  
 }
 .create-course-container {
-  min-height: 100vh;
   background-color: $bg;
   padding: 20px;
   width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
 .create-course-container h2 {
@@ -32,12 +33,19 @@ $secondary-text: #374151;
   margin-bottom: 6px;
 }
 
+.create-course-head p {
+  margin: 0 0 18px;
+  color: $text-muted;
+  font-size: 14px;
+}
+
 .create-course-container form {
   background-color: $white;
   border: 1px solid $border;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 24px;
-  max-width: 900px;
+  max-width: 100%;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
 }
 
 .create-course-container label {
@@ -49,11 +57,12 @@ $secondary-text: #374151;
 }
 
 .create-course-container input,
-.create-course-container select {
+.create-course-container select,
+.create-course-container textarea {
   width: 100%;
   padding: 10px 12px;
   border: 1px solid $border-input;
-  border-radius: 6px;
+  border-radius: 8px;
   font-size: 14px;
   margin-bottom: 18px;
   outline: none;
@@ -69,6 +78,11 @@ $secondary-text: #374151;
   cursor: pointer;
 }
 
+.create-course-container textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
 .create-course-container img {
   width: 100%;
   max-height: 200px;
@@ -78,14 +92,70 @@ $secondary-text: #374151;
   margin-top: 10px;
 }
 
+.cc-thumbnail-preview {
+  margin-bottom: 16px;
+}
+
 .primary-btn {
   background-color: $primary;
   color: $white;
-  padding: 10px 20px;
+  padding: 11px 18px;
   border: none;
-  border-radius: 6px;
+  border-radius: 10px;
   font-size: 14px;
   cursor: pointer;
+  font-weight: 600;
+}
+
+.primary-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.cc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.cc-helper {
+  display: block;
+  margin-top: -10px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: $text-muted;
+}
+
+.cc-checkbox {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 20px;
+  color: $text-muted;
+}
+
+.cc-checkbox input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.cc-error {
+  color: $danger;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+.cc-success {
+  color: #16a34a;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .cc-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .primary-btn:hover {

@@ -29,6 +29,7 @@
   .L-sidebar {
     display: flex;
     flex-direction: column;
+    flex: 1;
     gap: 6px;
 
     .nav-item {

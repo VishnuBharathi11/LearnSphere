@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Navigate, Routes, Route } from "react-router-dom";
 import "./App.scss";
 // Public pages
 import Home from "./pages/Public/Home/Home.jsx";
@@ -26,6 +26,7 @@ import StudentProfile from "./pages/Learner/Profile/Profile.jsx";
 import LearnCourse from "./pages/Learner/LearnCourse/LearnCourse.jsx";
 import TestTaking from "./pages/Learner/TestTaking/TestTaking.jsx";
 import Certificate from "./pages/Learner/Certificate/Certificate.jsx";
+import AssesmentResult from "./pages/Learner/ResultPage/AssesmentResult.jsx";
 // Instructor Pages
 import InstructorLayout from "./pages/instructor/InstructorLayout/InstructorLayout.jsx";
 import InstructorDashboard from "./pages/instructor/Dashboard/Dashboard.jsx";
@@ -72,7 +73,7 @@ function App() {
       {/* -------- STUDENT ROUTES -------- */}
       <Route path="/student-layout" element={<StudentLayout />}>
 
-        <Route index element={<StudentDashboard />} />
+        <Route index element={<Navigate to="dashboard" replace />} />
         <Route path="dashboard" element={<StudentDashboard />} />
         <Route path="my-courses" element={<MyCourses />} />
         <Route path="progress" element={<Progress />} />
@@ -86,7 +87,9 @@ function App() {
         <Route path="test/:courseId" element={<TestTaking />} />
 
         {/*------CERTIFICATE PAGE-----*/}
+        <Route path="certificate" element={<Certificate />} />
         <Route path="certificate/:id" element={<Certificate />} />
+        <Route path="result" element={<AssesmentResult />} />
 
       </Route>
 

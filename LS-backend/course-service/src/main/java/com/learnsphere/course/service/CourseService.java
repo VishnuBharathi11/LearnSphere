@@ -6,6 +6,8 @@ import com.learnsphere.course.entity.Course;
 
 public interface CourseService {
 	Course createCourse(Course course);
+	Course updateCourse(String id, Course course);
+	Course getById(String id);
 	Course submitForReview(String id);
 	Course publishCourse(String id);
 	Course archiveCourse(String id);

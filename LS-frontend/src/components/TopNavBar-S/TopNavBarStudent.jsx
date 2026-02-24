@@ -1,9 +1,16 @@
+import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { FiBell } from "react-icons/fi";
+import {
+  getCurrentUser,
+  getLearnerProfile,
+  onProfileUpdated,
+} from "../../services/userProfileStore";
 import "./TopNavBarStudent.scss";
 
 function TopNavBarStudent() {
   const location = useLocation();
+  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
 
   const pageMap = {
     "/student-layout/dashboard": "Dashboard",
@@ -12,6 +19,7 @@ function TopNavBarStudent() {
     "/student-layout/progress": "Progress",
     "/student-layout/assessment": "Assessment",
     "/student-layout/test": "Quiz",
+    "/student-layout/result": "Assessment Result",
     "/student-layout/profile": "My Profile",
   };
   const getNormalizedPath=(pathname)=>{
@@ -19,9 +27,45 @@ function TopNavBarStudent() {
       return "/student-layout/certificate";
     if(pathname.startsWith("/student-layout/test"))
       return "/student-layout/test";
+    if(pathname.startsWith("/student-layout/result"))
+      return "/student-layout/result";
     return pathname;
   }
   const pageTitle = pageMap[getNormalizedPath(location.pathname)] || "Dashboard";
+
+  useEffect(() => {
+    const syncUser = () => {
+      const user = getCurrentUser();
+      if (!user?.id) {
+        setCurrentUser(user);
+        return;
+      }
+      const profile = getLearnerProfile(user.id);
+      setCurrentUser({
+        ...user,
+        name: profile?.name || user.name,
+        username: profile?.name || user.username,
+        email: profile?.email || user.email,
+        image: profile?.image || user.image || null,
+      });
+    };
+
+    syncUser();
+    return onProfileUpdated(syncUser);
+  }, []);
+
+  const displayName = currentUser?.name || currentUser?.username || "Learner";
+  const displayEmail = currentUser?.email || "learner@learnsphere.com";
+  const initials = useMemo(
+    () =>
+      displayName
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+    [displayName]
+  );
 
   return (
     <div className="dashboard-header">
@@ -36,10 +80,12 @@ function TopNavBarStudent() {
         </div>
 
         <div className="profile">
-          <div className="avatar">PM</div>
+          <div className="avatar">
+            {currentUser?.image ? <img src={currentUser.image} alt={displayName} /> : initials}
+          </div>
           <div className="profile-info">
-            <span className="name">Peter Parker</span>
-            <span className="email">peter@gmail.com</span>
+            <span className="name">{displayName}</span>
+            <span className="email">{displayEmail}</span>
           </div>
         </div>
       </div>

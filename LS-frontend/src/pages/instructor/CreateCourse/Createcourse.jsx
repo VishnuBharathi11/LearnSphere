@@ -1,214 +1,242 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Createcourse.scss";
+import {
+  createCourse,
+  getCategories,
+  getCourseById,
+  submitCourseForReview,
+  updateCourse,
+} from "../../../services/courseApi";
 
 function CreateCourse() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const isEditMode = Boolean(courseId);
-  const getCurrentUser = () => {
+
+  const currentUser = useMemo(() => {
     try {
-      return JSON.parse(localStorage.getItem("currentUser"));
+      return JSON.parse(window.appStore.getItem("currentUser"));
     } catch {
       return null;
     }
-  };
-  const currentUser = getCurrentUser();
+  }, []);
+
+  const [categories, setCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState("");
+
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    price: "",
+    categoryId: "",
+    thumbnail: "",
+  });
 
   useEffect(() => {
-    if (!currentUser || currentUser.role !== "instructor") {
+    const role = String(currentUser?.role || "").toLowerCase();
+    if (!currentUser || role !== "instructor") {
       navigate("/login", { replace: true });
+      return;
     }
+
+    let active = true;
+    getCategories()
+      .then((data) => {
+        if (!active) return;
+        setCategories(data.filter((c) => c.active !== false));
+      })
+      .catch(() => {
+        if (!active) return;
+        setError("Failed to load categories");
+      })
+      .finally(() => {
+        if (!active) return;
+        setLoadingCategories(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, [currentUser, navigate]);
 
-  const getCourses = () => {
-    try {
-      return JSON.parse(localStorage.getItem("courses")) || [];
-    } catch {
-      return [];
+  useEffect(() => {
+    if (!isEditMode || !currentUser?.id) return;
+    let active = true;
+    async function loadCourse() {
+      try {
+        const existing = await getCourseById(courseId);
+        if (!active) return;
+        if (String(existing?.instructorId) !== String(currentUser.id)) {
+          setError("You are not allowed to edit this course");
+          return;
+        }
+        setForm({
+          title: existing?.title || "",
+          description: existing?.description || "",
+          price: String(existing?.price ?? ""),
+          categoryId: existing?.categoryId || "",
+          thumbnail: existing?.thumbnail || "",
+        });
+      } catch {
+        if (!active) return;
+        setError("Failed to load course details");
+      }
     }
-  };
-  const getInitialForm = () => {
-  try {
-    const courses = JSON.parse(localStorage.getItem("courses")) || [];
-
-    if (!isEditMode) {
-      return {
-        courseName: "",
-        category: "",
-        level: "",
-        price: "",
-        thumbnail: "",
-      };
-    }
-
-    const existing = courses.find(
-      (c) => String(c.id) === courseId && c.instructorId === currentUser?.id
-    );
-
-    if (!existing) {
-      return {
-        courseName: "",
-        category: "",
-        level: "",
-        price: "",
-        thumbnail: "",
-      };
-    }
-
-    return {
-      courseName: existing.courseName,
-      category: existing.category,
-      level: existing.level,
-      price: existing.price,
-      thumbnail: existing.thumbnail || "",
+    loadCourse();
+    return () => {
+      active = false;
     };
-  } catch {
-    return {
-      courseName: "",
-      category: "",
-      level: "",
-      price: "",
-      thumbnail: "",
-    };
-  }
-};
-
-const [form, setForm] = useState(getInitialForm);
+  }, [isEditMode, courseId, currentUser?.id]);
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
+
   const handleThumbnailUpload = (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
-      alert("Only image files allowed");
+      setError("Please upload an image file");
       return;
     }
     const reader = new FileReader();
     reader.onloadend = () => {
-      setForm((prev) => ({
-        ...prev,
-        thumbnail: reader.result,
-      }));
+      setForm((prev) => ({ ...prev, thumbnail: String(reader.result || "") }));
     };
     reader.readAsDataURL(file);
   };
+
   const validateForm = () => {
-    if (!form.courseName.trim()) return "Course name required";
-    if (!form.category.trim()) return "Category required";
-    if (!form.level) return "Level required";
-    if (Number(form.price) < 0) return "Invalid price";
+    if (!form.title.trim()) return "Course title is required";
+    if (!form.description.trim()) return "Course description is required";
+    if (!form.categoryId) return "Please choose a category";
+    if (form.description.trim().length < 30) {
+      return "Description should be at least 30 characters";
+    }
+    if (!form.thumbnail) return "Course thumbnail is required";
+    if (Number(form.price) < 0) return "Invalid course price";
     return null;
   };
-  const handleSubmit = (e) => {
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const error = validateForm();
-    if (error) {
-      alert(error);
+    setError("");
+
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
       return;
     }
-    const courses = getCourses();
-    const duplicate=courses.find(
-      (c)=>c.courseName.toLowerCase()===form.courseName.toLowerCase()&&c.instructorId===currentUser.id&&(!isEditMode||String(c.id)!==courseId)
-    );
-    if (duplicate) {
-      alert("You already created a course with this name.");
-      return;
+
+    setSaving(true);
+    try {
+      if (isEditMode) {
+        await updateCourse(courseId, {
+          title: form.title.trim(),
+          description: form.description.trim(),
+          thumbnail: form.thumbnail,
+          price: Number(form.price || 0),
+          categoryId: form.categoryId,
+          instructorId: currentUser.id,
+        });
+      } else {
+        const created = await createCourse({
+          title: form.title.trim(),
+          description: form.description.trim(),
+          thumbnail: form.thumbnail,
+          price: Number(form.price || 0),
+          categoryId: form.categoryId,
+          instructorId: currentUser.id,
+        });
+        await submitCourseForReview(created.id);
+      }
+
+      navigate("/instructor-layout/manage-courses", { replace: true });
+    } catch (apiError) {
+      const message =
+        apiError?.response?.data?.message ||
+        apiError?.response?.data?.error ||
+        apiError?.message ||
+        "Failed to create course";
+      setError(message);
+    } finally {
+      setSaving(false);
     }
-    if (isEditMode) {
-      const updated = courses.map((course) =>
-        String(course.id) === courseId
-          ? {
-              ...course,
-              ...form,
-              price: Number(form.price),
-              updatedAt: new Date().toISOString(),
-            }
-          : course,
-      );
-
-      localStorage.setItem("courses", JSON.stringify(updated));
-    } else {
-      const newCourse = {
-        id: Date.now(),
-        courseName: form.courseName.trim(),
-        category: form.category.trim(),
-        level: form.level,
-        price: Number(form.price),
-        thumbnail: form.thumbnail,
-        instructorId: currentUser.id,
-        instructorName: currentUser.name,
-        rating: 0,
-        students: 0,
-        status: "draft",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-
-      localStorage.setItem("courses", JSON.stringify([...courses, newCourse]));
-    }
-
-    navigate("/instructor-layout/manage-courses");
   };
 
   return (
     <div className="create-course-layout">
       <div className="create-course-container">
-        <h2>{isEditMode ? "Edit Course" : "Create Course"}</h2>
+        {error && <p className="cc-error">{error}</p>}
+
         <form onSubmit={handleSubmit}>
-          <label>Course Name</label>
+          <label>Course Title</label>
           <input
-            name="courseName"
-            value={form.courseName}
+            name="title"
+            value={form.title}
             onChange={handleChange}
+            placeholder="Example: React Fundamentals Bootcamp"
+            required
+          />
+
+          <label>Description</label>
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            placeholder="Write what students will learn, prerequisites and outcomes..."
+            rows={5}
             required
           />
 
           <label>Category</label>
-          <input
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            required
-          />
-
-          <label>Level</label>
           <select
-            name="level"
-            value={form.level}
+            name="categoryId"
+            value={form.categoryId}
             onChange={handleChange}
-            required
+            disabled={loadingCategories}
           >
-            <option value="">Select</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
+            <option value="">Select existing category</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
           </select>
+          <small className="cc-helper">
+            Categories are managed by admin. Contact admin if a category is missing.
+          </small>
 
-          <label>Price (₹)</label>
+          <label>Price (INR)</label>
           <input
             type="number"
             name="price"
             value={form.price}
             onChange={handleChange}
+            min="0"
+            step="1"
             required
           />
 
           <label>Course Thumbnail</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleThumbnailUpload}
-          />
-
+          <input type="file" accept="image/*" onChange={handleThumbnailUpload} />
           {form.thumbnail && (
-            <img src={form.thumbnail} alt="Thumbnail preview" />
+            <img
+              className="cc-thumbnail-preview"
+              src={form.thumbnail}
+              alt="Course thumbnail preview"
+            />
           )}
 
-          <button type="submit" className="primary-btn">
-            {isEditMode ? "Update Course" : "Create Course"}
+          <button type="submit" className="primary-btn" disabled={saving}>
+            {saving ? "Saving..." : isEditMode ? "Update Course" : "Create Course"}
           </button>
         </form>
       </div>

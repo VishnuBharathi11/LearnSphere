@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Video,
   FileText,
@@ -11,44 +11,69 @@ import {
 } from "lucide-react";
 import { useParams } from "react-router-dom";
 import "./UpdateLesson.scss";
+import { getCourseById } from "../../../../services/courseApi";
 function UpdateLesson() {
   const { courseId } = useParams();
   const id = String(courseId);
   const safeParse = (key, fallback) => {
     try {
-      return JSON.parse(localStorage.getItem(key)) || fallback;
+      return JSON.parse(window.appStore.getItem(key)) || fallback;
     } catch {
       return fallback;
     }
   };
-  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-  const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
-  const course = allCourses.find(
-    (c) => String(c.id) === id && c.instructorId === currentUser?.id,
-  );
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser")) || {};
+  const currentRole = String(currentUser?.role || "").toLowerCase();
+  const [course, setCourse] = useState(null);
+  const [loadingCourse, setLoadingCourse] = useState(true);
+  const lessonKey = `${currentUser?.id || "guest"}_${id}`;
 
   const lessonMap=safeParse("courseLessons",{});
-  const [lessons, setLessons] = useState(lessonMap[id]||[]);
+  const [lessons, setLessons] = useState(lessonMap[lessonKey]||[]);
   const [showModal, setShowModal] = useState(false);
   const [editLessonId, setEditLessonId] = useState(null);
+  const [message, setMessage] = useState({ type: "", text: "" });
   const [form, setForm] = useState({
     title: "",
     type: "video",
     file: null,
   });
 
-  if (!currentUser || currentUser.role !== "instructor" || !course) {
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        const fetched = await getCourseById(id);
+        if (String(fetched?.instructorId) === String(currentUser?.id)) {
+          setCourse(fetched);
+        } else {
+          setCourse(null);
+        }
+      } catch {
+        setCourse(null);
+      } finally {
+        setLoadingCourse(false);
+      }
+    }
+    loadCourse();
+  }, [id, currentUser?.id]);
+
+  useEffect(() => {
+    const map = safeParse("courseLessons", {});
+    setLessons(map[lessonKey] || []);
+  }, [lessonKey]);
+
+  if (loadingCourse) {
+    return <p style={{ padding: 40 }}>Loading course...</p>;
+  }
+
+  if (!currentUser || currentRole !== "instructor" || !course) {
     return <p style={{ padding: 40 }}>Unauthorized access.</p>;
   }
 
   const persistLessons = (updatedLessons) => {
     const updatedMap = safeParse("courseLessons", {});
-    updatedMap[id] = updatedLessons;
-    localStorage.setItem("courseLessons", JSON.stringify(updatedMap));
-    const updatedCourses = safeParse("courses", []).map((c) =>
-      String(c.id) === id ? { ...c, lessons: updatedLessons.length } : c
-    );
-    localStorage.setItem("courses", JSON.stringify(updatedCourses));
+    updatedMap[lessonKey] = updatedLessons;
+    window.appStore.setItem("courseLessons", JSON.stringify(updatedMap));
   };
 
   const handleFileChange = (e) => {
@@ -72,9 +97,10 @@ function UpdateLesson() {
   };
 
   const handleSubmit = () => {
+    setMessage({ type: "", text: "" });
     const error = validate();
     if (error) {
-      alert(error);
+      setMessage({ type: "error", text: error });
       return;
     }
     let updated;
@@ -105,6 +131,10 @@ function UpdateLesson() {
     setForm({ title: "", type: "video", file: null });
     setEditLessonId(null);
     setShowModal(false);
+    setMessage({
+      type: "success",
+      text: editLessonId ? "Lesson updated successfully." : "Lesson added successfully.",
+    });
   };
   const deleteLesson = (lessonId) => {
     const updated = lessons
@@ -129,6 +159,7 @@ function UpdateLesson() {
         <div className="page-header">
           <p>{course.courseName}</p>
         </div>
+        {message.text && <p className={`lesson-message ${message.type}`}>{message.text}</p>}
         <div className="lesson-card">
           {lessons.length === 0 ? (
             <p>No lessons added yet</p>

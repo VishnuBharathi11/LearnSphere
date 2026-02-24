@@ -7,6 +7,9 @@
   flex-direction: column;
   padding: 20px 16px;
   font-family: "Poppins", sans-serif;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
 
   .logo-name {
     display: flex;
@@ -30,6 +33,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    flex: 1;
 
     a {
       position: relative;
@@ -77,7 +81,6 @@
     }
 
     .logout {
-      margin-top: auto !important;
       color: #ef4444 !important;
 
       svg {
@@ -98,5 +101,34 @@
         }
       }
     }
+  }
+}
+
+@media (max-width: 900px) {
+  .I-navbar {
+    padding: 14px 10px;
+  }
+
+  .I-navbar .logo-name .page-name {
+    display: none;
+  }
+
+  .I-navbar .logo-name {
+    justify-content: center;
+  }
+
+  .I-navbar .I-sidebar a {
+    justify-content: center;
+    padding: 12px 0;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .I-navbar .I-sidebar a svg {
+    margin: 0;
+  }
+
+  .I-navbar .I-sidebar a.active::before {
+    left: -10px;
   }
 }

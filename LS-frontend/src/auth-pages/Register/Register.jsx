@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import { normalizeApiError, registerUser } from "../../services/authApi";
+import { saveRegistrationSeed } from "../../services/userProfileStore";
 
 function Register() {
   const navigate = useNavigate();
@@ -39,7 +40,14 @@ function Register() {
       await registerUser({
         name: form.username,
         email: form.email,
+        phone: form.phone,
         password: form.password,
+        role: form.role,
+      });
+      saveRegistrationSeed({
+        name: form.username,
+        email: form.email,
+        phone: form.phone,
         role: form.role,
       });
 

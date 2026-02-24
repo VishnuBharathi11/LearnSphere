@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class JwtUtil {
@@ -23,8 +25,16 @@ public class JwtUtil {
     }
 
     public String generateToken(String username) {
+        return generateToken(username, null);
+    }
 
+    public String generateToken(String username, String role) {
+        Map<String, Object> claims = new HashMap<>();
+        if (role != null && !role.isBlank()) {
+            claims.put("role", role.toUpperCase());
+        }
         return Jwts.builder()
+                .setClaims(claims)
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))

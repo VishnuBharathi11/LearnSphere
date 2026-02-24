@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Search,
   Plus,
@@ -7,99 +7,78 @@ import {
   BarChart3,
   Users,
   Edit,
-  Trash2,
-  Eye,
-  EyeOff,
 } from "lucide-react";
 import "./Managecourse.scss";
 import { useNavigate } from "react-router-dom";
+import { getInstructorCourses, submitCourseForReview } from "../../../services/courseApi";
 
 function Managecourse() {
   const navigate = useNavigate();
-  const getCurrentUser=()=>{
-    try{
-      return JSON.parse(localStorage.getItem("currentUser"));
-    }
-    catch{
-      return null;
-    }
-  }
-  const currentUser=getCurrentUser();
-  useEffect(() => {
-    if (!currentUser || currentUser.role !== "instructor") {
-      navigate("/login", { replace: true });
-    }
-  }, [currentUser, navigate]);
-
-  const loadInstructorCourses=()=>{
-    try{
-      const stored = JSON.parse(localStorage.getItem("courses")) || [];
-    return stored.filter((c)=>c.instructorId===currentUser.id);
-    }
-    catch{
-      return [];
-    }
-  };
-  const[courses,setCourses]=useState(loadInstructorCourses);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
+  const [submittingId, setSubmittingId] = useState(null);
 
-  const filteredCourses = courses.filter((course) => {
-    const name = course.courseName ?? "";
-    const category = course.category ?? "";
+  let currentUser = null;
+  try {
+    currentUser = JSON.parse(window.appStore.getItem("currentUser"));
+  } catch {
+    currentUser = null;
+  }
 
-    const matchesSearch =
-      name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      category.toLowerCase().includes(searchQuery.toLowerCase());
+  useEffect(() => {
+    const role = String(currentUser?.role || "").toLowerCase();
+    if (!currentUser || role !== "instructor") {
+      navigate("/login", { replace: true });
+      return;
+    }
 
-    const matchesStatus =
-      filterStatus === "all" || course.status === filterStatus;
+    async function loadCourses() {
+      try {
+        const response = await getInstructorCourses(String(currentUser.id), 0, 200);
+        setCourses(response || []);
+      } catch {
+        setCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    }
 
-    return matchesSearch && matchesStatus;
-  });
+    loadCourses();
+  }, [currentUser, navigate]);
 
-  const togglePublish = (id) => {
-    try{const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
-    const updatedAll = allCourses.map((course) =>
-      course.id === id&&course.instructorId===currentUser.id?{
-        ...course,status:course.status==="published"?"draft":"published"
-      }:course
-    );
-    localStorage.setItem("courses", JSON.stringify(updatedAll));
-    setCourses(updatedAll.filter((c)=>c.instructorId===currentUser.id));}
-    catch(err){
-      console.error("Publish toggle failed:",err);
+  const filteredCourses = useMemo(() => {
+    return courses.filter((course) => {
+      const name = (course.courseName || "").toLowerCase();
+      const category = (course.category || "").toLowerCase();
+      const q = searchQuery.toLowerCase();
+      const matchesSearch = name.includes(q) || category.includes(q);
+      const normalizedStatus = (course.status || "").toLowerCase();
+      const matchesStatus = filterStatus === "all" || normalizedStatus === filterStatus;
+      return matchesSearch && matchesStatus;
+    });
+  }, [courses, searchQuery, filterStatus]);
+
+  const onSubmitForReview = async (courseId) => {
+    setSubmittingId(courseId);
+    try {
+      const updated = await submitCourseForReview(courseId);
+      setCourses((prev) =>
+        prev.map((course) =>
+          String(course.id) === String(courseId)
+            ? { ...course, status: updated?.status || "REVIEW" }
+            : course
+        )
+      );
+    } finally {
+      setSubmittingId(null);
     }
   };
 
-  const deleteCourse = (id) => {
-    const confirmDelete=window.confirm("Delete this course? This cannot be undone.");
-    if(!confirmDelete)
-      return;
-    try{const allCourses=JSON.parse(localStorage.getItem("courses"))||[];
-    const updatedCourses=allCourses.filter((c)=>!(c.id===id&&c.instructorId===currentUser.id));
-    localStorage.setItem("courses", JSON.stringify(updatedCourses));
-   const cleanMap=(key)=>{
-    const data=JSON.parse(localStorage.getItem(key))||{};
-    if(data[id])
-      delete data[id];
-    localStorage.setItem(key,JSON.stringify(data));
-   };
-   cleanMap("courseLessons");
-   cleanMap("courseQuizzes");
-   const cleanArray=(key)=>{
-    const arr=JSON.parse(localStorage.getItem(key))||[];
-    const filtered=arr.filter((item)=>item.courseId!==id);
-    localStorage.setItem(key,JSON.stringify(filtered));
-   };
-   cleanArray("enrolledCourses");
-   cleanArray("testResults");
-   cleanArray("courseRatings");
-   setCourses(updatedCourses.filter((c)=>c.instructorId===currentUser.id));}
-   catch(err){
-    console.error("Delete failed:",err);
-   }
-  };
+  if (loading) {
+    return <p style={{ padding: 40 }}>Loading courses...</p>;
+  }
 
   return (
     <div className="manage-course-layout">
@@ -133,6 +112,7 @@ function Managecourse() {
               >
                 <option value="all">All Courses</option>
                 <option value="published">Published</option>
+                <option value="review">In Review</option>
                 <option value="draft">Draft</option>
               </select>
             </div>
@@ -151,46 +131,23 @@ function Managecourse() {
                     <p>{course.category}</p>
                   </div>
 
-                  <span className={`status ${course.status}`}>
+                  <span className={`status ${(course.status || "").toLowerCase()}`}>
                     {course.status}
                   </span>
                 </div>
 
-                {/* <div className="course-stats">
-                  <div>
-                    <span>Students</span>
-                    <strong>{course.students}</strong>
-                  </div>
-                  <div>
-                    <span>Lessons</span>
-                    <strong>{course.lessons}</strong>
-                  </div>
-                  <div>
-                    <span>Revenue</span>
-                    <strong>₹{(course.revenue ?? 0).toLocaleString()}</strong>
-                  </div>
-                  <div>
-                    <span>Rating</span>
-                    <strong>{course.rating} ⭐</strong>
-                  </div>
-                </div> */}
-
                 <div className="course-actions">
                   <button
                     onClick={() =>
-                      navigate(
-                        `/instructor-layout/manage-courses/${course.id}/lessons`
-                      )
+                      navigate(`/instructor-layout/manage-courses/${course.id}/lessons`)
                     }
                   >
-                    <Upload size={14} />Lessons
+                    <Upload size={14} /> Lessons
                   </button>
 
                   <button
                     onClick={() =>
-                      navigate(
-                        `/instructor-layout/manage-courses/${course.id}/quiz`
-                      )
+                      navigate(`/instructor-layout/manage-courses/${course.id}/quiz`)
                     }
                   >
                     <FileText size={14} />
@@ -199,9 +156,7 @@ function Managecourse() {
 
                   <button
                     onClick={() =>
-                      navigate(
-                        `/instructor-layout/manage-courses/${course.id}/students`
-                      )
+                      navigate(`/instructor-layout/manage-courses/${course.id}/students`)
                     }
                   >
                     <Users size={14} /> Students
@@ -209,41 +164,29 @@ function Managecourse() {
 
                   <button
                     onClick={() =>
-                      navigate(
-                        `/instructor-layout/manage-courses/${course.id}/analytics`
-                      )
+                      navigate(`/instructor-layout/manage-courses/${course.id}/analytics`)
                     }
                   >
                     <BarChart3 size={14} /> Analytics
                   </button>
+
+                  {String(course.status || "").toUpperCase() === "DRAFT" && (
+                    <button
+                      className="submit-review"
+                      disabled={submittingId === course.id}
+                      onClick={() => onSubmitForReview(course.id)}
+                    >
+                      {submittingId === course.id ? "Submitting..." : "Submit Review"}
+                    </button>
+                  )}
                 </div>
               </div>
 
               <div className="manage-actions">
-                <button onClick={() => togglePublish(course.id)}>
-                  {course.status === "published" ? (
-                    <EyeOff size={14} />
-                  ) : (
-                    <Eye size={14} />
-                  )}
-                  {course.status === "published" ? "Unpublish" : "Publish"}
-                </button>
-
                 <button
-                  onClick={() =>
-                    navigate(
-                      `/instructor-layout/edit-course/${course.id}`
-                    )
-                  }
+                  onClick={() => navigate(`/instructor-layout/edit-course/${course.id}`)}
                 >
                   <Edit size={14} /> Edit
-                </button>
-
-                <button
-                  onClick={() => deleteCourse(course.id)}
-                  className="danger"
-                >
-                  <Trash2 size={14} /> Delete
                 </button>
               </div>
             </div>

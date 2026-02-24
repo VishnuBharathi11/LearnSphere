@@ -1,6 +1,7 @@
 package com.learnsphere.enrollment.service.impl;
 
 import java.time.Instant;
+import java.util.List;
 
 
 import org.json.JSONObject;
@@ -32,7 +33,15 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 	@Override
 	public String createOrder(CreateOrderRequest request) {
 		try {
-			Integer price=courseClient.getCoursePrice(request.getCourseId());
+			Integer price = null;
+			try {
+				price = courseClient.getCoursePrice(request.getCourseId());
+			} catch (Exception ignored) {
+				price = request.getAmount();
+			}
+			if (price == null || price <= 0) {
+				throw new RuntimeException("Invalid course price for payment");
+			}
 			JSONObject orderReq= new JSONObject();
 			orderReq.put("amount", price*100);
 			orderReq.put("currency", "INR");
@@ -52,7 +61,7 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			return order.get("id");
 			
 		} catch (Exception e) {
-			throw new RuntimeException("Failed to create razorpay order");
+			throw new RuntimeException("Failed to create razorpay order: " + e.getMessage());
 		}
 	}
 	@Override
@@ -71,13 +80,19 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			payment.setStatus(PaymentStatus.SUCCESS);
 			payment.setRazorpaymentId(request.getRazorpayPaymentId());
 			paymentRepository.save(payment);
-			
-			Enrollment enrollment=Enrollment.builder()
-					.userId(payment.getUserId())
-					.courseId(request.getCourseId())
-					.status(EnrollmentStatus.ACTIVE)
-					.enrolledAt(Instant.now())
-					.build();
+
+			Enrollment enrollment = enrollmentRepository
+					.findByUserIdAndCourseId(payment.getUserId(), request.getCourseId())
+					.orElseGet(() -> Enrollment.builder()
+							.userId(payment.getUserId())
+							.courseId(request.getCourseId())
+							.status(EnrollmentStatus.ACTIVE)
+							.enrolledAt(Instant.now())
+							.build());
+			enrollment.setStatus(EnrollmentStatus.ACTIVE);
+			if (enrollment.getEnrolledAt() == null) {
+				enrollment.setEnrolledAt(Instant.now());
+			}
 			enrollmentRepository.save(enrollment);
 			return EnrollmentResponse.builder()
 					.message("Enrollment Successful")
@@ -87,12 +102,67 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			throw new RuntimeException("Payment verification failed");
 		}
 	}
+
+	@Override
+	public EnrollmentResponse enrollFree(FreeEnrollRequest request) {
+		Enrollment existing = enrollmentRepository
+				.findByUserIdAndCourseId(request.getUserId(), request.getCourseId())
+				.orElse(null);
+		if (existing != null && existing.getStatus() == EnrollmentStatus.ACTIVE) {
+			return EnrollmentResponse.builder()
+					.message("Already enrolled")
+					.enrollmentId(existing.getId())
+					.build();
+		}
+
+		Enrollment enrollment = existing != null ? existing : Enrollment.builder()
+				.userId(request.getUserId())
+				.courseId(request.getCourseId())
+				.enrolledAt(Instant.now())
+				.build();
+		enrollment.setStatus(EnrollmentStatus.ACTIVE);
+		if (enrollment.getEnrolledAt() == null) {
+			enrollment.setEnrolledAt(Instant.now());
+		}
+		enrollmentRepository.save(enrollment);
+
+		return EnrollmentResponse.builder()
+				.message("Enrollment Successful")
+				.enrollmentId(enrollment.getId())
+				.build();
+	}
+
+	@Override
+	public boolean isEnrolled(String userId, String courseId) {
+		return enrollmentRepository
+				.findByUserIdAndCourseId(userId, courseId)
+				.map(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
+				.orElse(false);
+	}
+
+	@Override
+	public List<Enrollment> getByCourseId(String courseId) {
+		return enrollmentRepository.findByCourseId(courseId);
+	}
+
+	@Override
+	public List<Enrollment> getByCourseIds(List<String> courseIds) {
+		if (courseIds == null || courseIds.isEmpty()) {
+			return List.of();
+		}
+		return enrollmentRepository.findByCourseIdIn(courseIds);
+	}
+
 	private String hmacSHA256(String data,String secret) throws Exception{
 		javax.crypto.Mac mac=javax.crypto.Mac.getInstance("HmacSHA256");
 		javax.crypto.spec.SecretKeySpec secretKey=
-				new javax.crypto.spec.SecretKeySpec(secret.getBytes(),"HmacSH256");
+				new javax.crypto.spec.SecretKeySpec(secret.getBytes(),"HmacSHA256");
 		mac.init(secretKey);
 		byte[] hash=mac.doFinal(data.getBytes());
-		return java.util.Base64.getEncoder().encodeToString(hash);
+		StringBuilder hexString = new StringBuilder();
+		for (byte b : hash) {
+			hexString.append(String.format("%02x", b));
+		}
+		return hexString.toString();
 	}
 }

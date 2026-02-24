@@ -1,66 +1,267 @@
-import { useNavigate, useParams} from "react-router-dom";
-import {useState} from "react";
+﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
-import {courses} from "../../../data/courses.js";
+import { getCourseById } from "../../../services/courseApi.js";
+import {
+  checkEnrollmentStatus,
+  createEnrollmentOrder,
+  enrollInFreeCourse,
+  getRazorpayPublicKey,
+  verifyEnrollmentPayment,
+} from "../../../services/enrollmentApi.js";
 import "./CourseDetail.scss";
+
+const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
 function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const course = courses.find((c) => c.id === Number(id));
- const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  const [previewVideo,setPreviewVideo]=useState(null);
-  if (!course) return <p style={{ padding: "40px" }}>Course not found</p>;
-  const enrolledCourses=JSON.parse(localStorage.getItem("enrolledCourses"))||[];
-  const isEnrolled = enrolledCourses.some(
-    (e) => e.courseId === course.id && e.studentId === currentUser?.id
-  );
-  const enrollFreeCourse=()=>{
-    if(!currentUser){
-      navigate("/login",{state:{from:`/course/${course.id}`}});
+
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [previewVideo, setPreviewVideo] = useState(null);
+  const [isEnrolled, setIsEnrolled] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
+  const paymentOpeningRef = useRef(false);
+
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const resolvedUserId = currentUser?.id || currentUser?.userId || "";
+  const coursePrice = Number(course?.price || 0);
+  const formattedPrice = new Intl.NumberFormat("en-IN").format(coursePrice);
+
+  useEffect(() => {
+    let active = true;
+    setLoading(true);
+    setError("");
+
+    getCourseById(String(id))
+      .then((data) => {
+        if (!active) return;
+        setCourse(data);
+      })
+      .catch(() => {
+        if (!active) return;
+        setError("Course not found");
+      })
+      .finally(() => {
+        if (!active) return;
+        setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id]);
+
+  useEffect(() => {
+    if (!resolvedUserId) {
+      setIsEnrolled(false);
       return;
     }
-    const already=enrolledCourses.some((e)=>e.courseId===course.id&&e.studentId===currentUser.id);
-    if(already){
-      alert("Already enrolled");
-      return;
-    }
-    enrolledCourses.push({
-      courseId:course.id,studentId:currentUser.id,progress:0,lastLessonIndex:0,enrolledAt:new Date().toISOString(),paymentId:null,
+
+    let active = true;
+    checkEnrollmentStatus(String(resolvedUserId), String(id))
+      .then((value) => {
+        if (!active) return;
+        setIsEnrolled(Boolean(value));
+      })
+      .catch(() => {
+        if (!active) return;
+        setIsEnrolled(false);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id, resolvedUserId]);
+
+  const curriculum = useMemo(() => {
+    const lessonCount = Math.max(1, Number(course?.lessons || 0));
+    const groupOne = Math.min(3, lessonCount);
+    const groupTwo = Math.min(3, Math.max(lessonCount - groupOne, 0));
+    const groupThree = Math.min(3, Math.max(lessonCount - groupOne - groupTwo, 0));
+
+    const makeLesson = (index, preview = false) => ({
+      title: `Lesson ${index + 1}`,
+      duration: `${12 + (index % 4) * 3} min`,
+      preview,
+      youtubeId: preview ? "YrOkVD_YUro" : undefined,
     });
-    localStorage.setItem("enrolledCourses", JSON.stringify(enrolledCourses));
-    alert("Enrolled successfully");
+
+    let cursor = 0;
+    return [
+      {
+        section: "Introduction",
+        lessons: Array.from({ length: groupOne }).map((_, i) => {
+          const lesson = makeLesson(cursor, i === 0);
+          cursor += 1;
+          return lesson;
+        }),
+      },
+      {
+        section: "Core Concepts",
+        lessons: Array.from({ length: groupTwo }).map((_, i) => {
+          const lesson = makeLesson(cursor, i === 0 && groupOne === 0);
+          cursor += 1;
+          return lesson;
+        }),
+      },
+      {
+        section: "Practical Application",
+        lessons: Array.from({ length: groupThree }).map((_, i) => {
+          const lesson = makeLesson(cursor, i === 0 && groupOne === 0 && groupTwo === 0);
+          cursor += 1;
+          return lesson;
+        }),
+      },
+    ].filter((section) => section.lessons.length > 0);
+  }, [course?.lessons]);
+
+  const enrollFreeCourse = async () => {
+    if (!currentUser) {
+      navigate("/login", { state: { from: `/course/${id}` } });
+      return;
+    }
+
+    setActionLoading(true);
+    setMessage({ type: "", text: "" });
+    try {
+      await enrollInFreeCourse(String(resolvedUserId), String(id));
+      setIsEnrolled(true);
+      setMessage({ type: "success", text: "Enrolled successfully" });
+    } catch (apiError) {
+      const msg =
+        apiError?.response?.data?.message ||
+        apiError?.response?.data?.error ||
+        "Enrollment failed";
+      setMessage({ type: "error", text: msg });
+    } finally {
+      setActionLoading(false);
+    }
   };
+
+  const ensureRazorpayScript = () =>
+    new Promise((resolve) => {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = RAZORPAY_SCRIPT;
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+
+  const handlePaidEnrollment = async () => {
+    if (!course || !resolvedUserId) return;
+    if (paymentOpeningRef.current) return;
+
+    paymentOpeningRef.current = true;
+    setActionLoading(true);
+    setMessage({ type: "", text: "" });
+
+    try {
+      const [scriptLoaded, key, orderId] = await Promise.all([
+        ensureRazorpayScript(),
+        getRazorpayPublicKey(),
+        createEnrollmentOrder(String(resolvedUserId), String(id), coursePrice),
+      ]);
+
+      if (!scriptLoaded) {
+        throw new Error("Unable to load Razorpay checkout.");
+      }
+
+      if (!key) {
+        throw new Error("Unable to fetch Razorpay key.");
+      }
+
+      const rzp = new window.Razorpay({
+        key,
+        amount: Math.round(Number(course.price || 0) * 100),
+        currency: "INR",
+        name: "LearnSphere",
+        description: course.courseName,
+        order_id: orderId,
+        prefill: {
+          name: currentUser.name || currentUser.username || "",
+          email: currentUser.email || "",
+          contact: currentUser.phone || "",
+        },
+        notes: {
+          courseId: String(id),
+          userId: String(resolvedUserId),
+        },
+        theme: { color: "#2563eb" },
+        handler: async (response) => {
+          try {
+            await verifyEnrollmentPayment({
+              razorpayOrderId: response.razorpay_order_id,
+              razorpayPaymentId: response.razorpay_payment_id,
+              razorpaySignature: response.razorpay_signature,
+              userId: String(resolvedUserId),
+              courseId: String(id),
+            });
+
+            navigate("/payment-success", {
+              replace: true,
+              state: {
+                courseId: String(id),
+                paymentId: response.razorpay_payment_id,
+              },
+            });
+          } catch {
+            setMessage({
+              type: "error",
+              text: "Payment succeeded but enrollment verification failed.",
+            });
+            setActionLoading(false);
+            paymentOpeningRef.current = false;
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            setActionLoading(false);
+            paymentOpeningRef.current = false;
+          },
+        },
+      });
+
+      rzp.open();
+    } catch (apiError) {
+      const msg =
+        apiError?.response?.data?.message ||
+        apiError?.response?.data?.error ||
+        apiError?.message ||
+        "Unable to start Razorpay checkout.";
+      setMessage({ type: "error", text: msg });
+      setActionLoading(false);
+      paymentOpeningRef.current = false;
+    }
+  };
+
   const handlePrimaryAction = () => {
-    if (course.price === 0) enrollFreeCourse();
-    else navigate(`/buy/${course.id}`);
+    if (!course) return;
+    if (coursePrice === 0) {
+      enrollFreeCourse();
+      return;
+    }
+
+    if (!currentUser || !resolvedUserId) {
+      navigate("/login", { state: { from: `/course/${id}` } });
+      return;
+    }
+
+    handlePaidEnrollment();
   };
-  //   const curriculum = [
-  //   {
-  //     section: "Introduction to JavaScript",
-  //     lessons: [
-  //       { title: "What is JavaScript?", duration: "12 min", preview: true,youtubeId:"YrOkVD_YUro" },
-  //       { title: "Setting up environment", duration: "15 min" },
-  //       { title: "Your first JavaScript program", duration: "20 min" },
-  //     ],
-  //   },
-  //   {
-  //     section: "Control Flow & Functions",
-  //     lessons: [
-  //       { title: "If / Else statements", duration: "18 min" },
-  //       { title: "Loops & Iterations", duration: "22 min" },
-  //     ],
-  //   },
-  //   {
-  //     section: "DOM Manipulation",
-  //     lessons: [
-  //       { title: "DOM Basics", duration: "20 min" },
-  //       { title: "Events & Handlers", duration: "25 min" },
-  //     ],
-  //   },
-  // ];
-  
- 
+
+  if (loading) return <p style={{ padding: "40px" }}>Loading course...</p>;
+  if (!course) return <p style={{ padding: "40px" }}>{error || "Course not found"}</p>;
+
   return (
     <>
       <NavBar />
@@ -68,18 +269,21 @@ function CourseDetail() {
       <div className="course-detail">
         <div className="course-hero">
           <h1 className="cd-course-title">{course.courseName}</h1>
+          <p className="hero-desc">{course.description || "Course description coming soon."}</p>
           <div className="hero-meta">
-            ⭐ {course.rating} • {course.lessons} lessons • {course.level}
+            Rating {course.rating} • {course.lessons} lessons • {course.level}
           </div>
+          <p className="hero-instructor">Instructor: {course.instructor || "Instructor"}</p>
         </div>
 
         <div className="course-detail-grid">
           <div className="course-main">
-            {/* preview modal */}
             {previewVideo && (
               <div className="preview-overlay">
                 <div className="preview-modal">
-                  <button onClick={() => setPreviewVideo(null)}>✕</button>
+                  <button className="close-btn" onClick={() => setPreviewVideo(null)}>
+                    x
+                  </button>
                   <iframe
                     src={`https://www.youtube.com/embed/${previewVideo}`}
                     title="Preview"
@@ -88,29 +292,82 @@ function CourseDetail() {
                 </div>
               </div>
             )}
+
+            <div className="card">
+              <h3>Course Overview</h3>
+              <p>{course.description || "No detailed description available."}</p>
+            </div>
+
+            <div className="card">
+              <h3>What You Will Learn</h3>
+              <ul className="learn-list">
+                <li>Understand key concepts with practical examples</li>
+                <li>Build confidence through guided lessons</li>
+                <li>Apply knowledge to real-world scenarios</li>
+                <li>Track your progress lesson by lesson</li>
+              </ul>
+            </div>
+
+            <div className="card">
+              <h3>Curriculum</h3>
+              {curriculum.map((section) => (
+                <details className="accordion" key={section.section} open>
+                  <summary>
+                    {section.section}
+                    <span>{section.lessons.length} lessons</span>
+                  </summary>
+                  <ul>
+                    {section.lessons.map((lesson, index) => (
+                      <li key={`${section.section}-${index}`}>
+                        <span>{lesson.title}</span>
+                        <span className="lesson-meta">
+                          {lesson.duration}
+                          {lesson.preview && (
+                            <button
+                              type="button"
+                              className="preview"
+                              onClick={() => setPreviewVideo(lesson.youtubeId)}
+                            >
+                              Preview
+                            </button>
+                          )}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </details>
+              ))}
+            </div>
           </div>
 
-          {/* RIGHT SIDEBAR */}
           <div className="course-sidebar">
             {isEnrolled ? (
               <div className="price-card enrolled-card">
-                <h3>You’re enrolled 🎉</h3>
+                <h3>You are enrolled</h3>
                 <button
                   className="cd-primary-btn"
-                  onClick={() =>
-                    navigate(`/student-layout/learn/${course.id}`)
-                  }
+                  onClick={() => navigate(`/student-layout/learn/${course.id}`)}
                 >
                   Start Learning
                 </button>
               </div>
             ) : (
               <div className="price-card">
-                <h2>{course.price === 0 ? "Free" : `₹${course.price}`}</h2>
+                <h2 className="price-value">{coursePrice === 0 ? "Free" : `INR ${formattedPrice}`}</h2>
 
-                <button className="cd-primary-btn" onClick={handlePrimaryAction}>
-                  {course.price === 0 ? "Enroll for Free" : "Buy Now"}
+                <button className="cd-primary-btn" onClick={handlePrimaryAction} disabled={actionLoading}>
+                  {coursePrice === 0
+                    ? actionLoading
+                      ? "Enrolling..."
+                      : "Enroll for Free"
+                    : actionLoading
+                      ? "Opening Payment..."
+                      : "Buy Now"}
                 </button>
+
+                <p className="guarantee">Secure enrollment and lifetime access</p>
+
+                {message.text && <p className={`cd-message ${message.type}`}>{message.text}</p>}
               </div>
             )}
           </div>
@@ -121,3 +378,4 @@ function CourseDetail() {
 }
 
 export default CourseDetail;
+

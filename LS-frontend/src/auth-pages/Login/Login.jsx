@@ -4,6 +4,12 @@ import "./Login.scss";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
 import { loginUser, normalizeApiError } from "../../services/authApi";
+import {
+  getLearnerProfile,
+  getRegistrationSeedByEmail,
+  getInstructorProfile,
+  setCurrentUser,
+} from "../../services/userProfileStore";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -20,31 +26,43 @@ function Login() {
 
     try {
       const data = await loginUser({ email, password });
+      const normalizedRole = (data.role || "").toLowerCase();
+      const registrationSeed = getRegistrationSeedByEmail(data.email);
       const fallbackName = data.email?.split("@")[0] || "User";
+      const resolvedName = data.name || registrationSeed?.name || fallbackName;
+      const profile =
+        data.userId && normalizedRole === "instructor"
+          ? getInstructorProfile(data.userId)
+          : data.userId
+            ? getLearnerProfile(data.userId)
+            : null;
+
       const currentUser = {
         id: data.userId,
         userId: data.userId,
         email: data.email,
-        role: data.role,
-        name: fallbackName,
-        username: fallbackName,
+        role: normalizedRole,
+        name: profile?.fullName || resolvedName,
+        username: profile?.fullName || resolvedName,
+        phone: registrationSeed?.phone || "",
+        image: profile?.image || null,
       };
 
-      localStorage.setItem("currentUser", JSON.stringify(currentUser));
-      localStorage.setItem("isLoggedIn", "true");
-      localStorage.setItem("authToken", data.token || "");
+      setCurrentUser(currentUser);
+      window.appStore.setItem("isLoggedIn", "true");
+      window.appStore.setItem("authToken", data.token || "");
 
       if (redirectTo) {
         navigate(redirectTo, { replace: true });
         return;
       }
 
-      switch (data.role) {
+      switch (normalizedRole) {
         case "learner":
-          navigate("/student-layout", { replace: true });
+          navigate("/student-layout/dashboard", { replace: true });
           break;
         case "instructor":
-          navigate("/instructor-layout", { replace: true });
+          navigate("/instructor-layout/dashboard", { replace: true });
           break;
         case "admin":
           navigate("/admin-layout", { replace: true });

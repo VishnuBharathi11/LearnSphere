@@ -23,13 +23,13 @@ import {
 import { useMemo } from "react";
 const COLORS = ["#2563eb", "#7c3aed", "#10b981", "#f59e0b", "#6b7280"];
 function AdminDashboard() {
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser"));
   const { users, courses, enrollments,discussions } = useMemo(
     () => ({
-      users: JSON.parse(localStorage.getItem("users")) || [],
-      courses: JSON.parse(localStorage.getItem("courses")) || [],
-      enrollments: JSON.parse(localStorage.getItem("enrolledCourses")) || [],
-      discussions: JSON.parse(localStorage.getItem("courseDiscussions")) || [],
+      users: JSON.parse(window.appStore.getItem("users")) || [],
+      courses: JSON.parse(window.appStore.getItem("courses")) || [],
+      enrollments: JSON.parse(window.appStore.getItem("enrolledCourses")) || [],
+      discussions: JSON.parse(window.appStore.getItem("courseDiscussions")) || [],
     }),
     [],
   );

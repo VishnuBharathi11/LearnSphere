@@ -44,6 +44,8 @@
 
     .notification {
       position: relative;
+      border: none;
+      background: transparent;
       font-size: 20px;
       color: #374151;
       cursor: pointer;
@@ -76,6 +78,13 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
       }
 
       .profile-info {

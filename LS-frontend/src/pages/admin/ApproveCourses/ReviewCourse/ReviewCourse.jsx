@@ -6,7 +6,7 @@ function ReviewCourse() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [courses, setCourses] = useState(() => {
-    return JSON.parse((localStorage.getItem *= "courses")) || [];
+    return JSON.parse(window.appStore.getItem("courses")) || [];
   });
   const course = useMemo(
     () => courses.find((c) => String(c.id) === id),
@@ -24,7 +24,7 @@ function ReviewCourse() {
         ? { ...c, status: "published", updatedAt: new Date().toISOString() }
         : c,
     );
-    localStorage.setItem("courses", JSON.stringify(updated));
+    window.appStore.setItem("courses", JSON.stringify(updated));
     setCourses(updated);
     navigate("/admin/approve-courses");
   };
@@ -34,7 +34,7 @@ function ReviewCourse() {
       alert("Rejection reason is required.");
       return;
     }
-    const updated = course.map((c) =>
+    const updated = courses.map((c) =>
       c.id === course.id
         ? {
             ...c,
@@ -44,7 +44,7 @@ function ReviewCourse() {
           }
         : c,
     );
-    localStorage.setItem("courses", JSON.stringify(updated));
+    window.appStore.setItem("courses", JSON.stringify(updated));
     setCourses(updated);
     navigate("/admin/approve-courses");
   };

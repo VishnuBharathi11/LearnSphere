@@ -22,12 +22,8 @@ public class JwtAuthFilter implements GlobalFilter {
 
         String path = exchange.getRequest().getURI().getPath();
 
-        // Allow auth endpoints
-        if (path.contains("/auth/login") ||
-            path.contains("/auth/register") ||
-            path.contains("/api/auth/forgot-password")||
-            path.contains("/api/auth/reset-password")||
-            path.contains("/api/auth/refresh")) {
+        // Allow public auth endpoints without JWT
+        if (isPublicPath(path)) {
             return chain.filter(exchange);
         }
 
@@ -43,20 +39,21 @@ public class JwtAuthFilter implements GlobalFilter {
         String token = authHeader.substring(7);
 
         try {
-
             Claims claims = jwtUtil.validateToken(token);
             String role = claims.get("role", String.class);
+            String normalizedRole = role == null ? "" : role.trim().toUpperCase();
 
-            // 🔥 ROLE ACCESS CONTROL
-            if (path.startsWith("/admin") && !"ADMIN".equals(role)) {
+            // Role access control
+            if (path.startsWith("/admin") && !"ADMIN".equals(normalizedRole)) {
                 exchange.getResponse()
                         .setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
 
-            if (path.startsWith("/payments") &&
-                    !(role.equals("STUDENT") || role.equals("ADMIN"))) {
-
+            if (path.startsWith("/payments")
+                    && !("STUDENT".equals(normalizedRole)
+                         || "LEARNER".equals(normalizedRole)
+                         || "ADMIN".equals(normalizedRole))) {
                 exchange.getResponse()
                         .setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
@@ -69,5 +66,13 @@ public class JwtAuthFilter implements GlobalFilter {
         }
 
         return chain.filter(exchange);
+    }
+
+    private boolean isPublicPath(String path) {
+        return path.startsWith("/api/auth/login")
+                || path.startsWith("/api/auth/register")
+                || path.startsWith("/api/auth/forgot-password")
+                || path.startsWith("/api/auth/reset-password")
+                || path.startsWith("/api/auth/refresh");
     }
 }

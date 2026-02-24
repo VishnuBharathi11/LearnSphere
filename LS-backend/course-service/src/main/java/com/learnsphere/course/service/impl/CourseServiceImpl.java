@@ -39,7 +39,29 @@ public class CourseServiceImpl implements CourseService{
 		course.setCreatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
+
+	@Override
+	public Course updateCourse(String id, Course request) {
+		Course course = getCourse(id);
+		if (!categoryRepository.existsById(request.getCategoryId())) {
+			throw new BadRequestException("Invalid category");
+		}
+		if (request.getInstructorId() == null || !request.getInstructorId().equals(course.getInstructorId())) {
+			throw new BadRequestException("Instructor mismatch");
+		}
+		course.setTitle(request.getTitle());
+		course.setDescription(request.getDescription());
+		course.setThumbnail(request.getThumbnail());
+		course.setPrice(request.getPrice());
+		course.setCategoryId(request.getCategoryId());
+		return courseRepository.save(course);
+	}
 	
+	@Override
+	public Course getById(String id) {
+		return getCourse(id);
+	}
+
 	@Override
 	public void deleteCourse(String id) {
 		if(!courseRepository.existsById(id)) {

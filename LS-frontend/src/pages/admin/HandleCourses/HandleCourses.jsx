@@ -10,9 +10,9 @@ function HandleCourses() {
 
   const { courses, enrollments, ratings } = useMemo(() => {
     return {
-      courses: JSON.parse(localStorage.getItem("courses")) || [],
-      enrollments: JSON.parse(localStorage.getItem("enrolledCourses")) || [],
-      ratings: JSON.parse(localStorage.getItem("courseRatings")) || [],
+      courses: JSON.parse(window.appStore.getItem("courses")) || [],
+      enrollments: JSON.parse(window.appStore.getItem("enrolledCourses")) || [],
+      ratings: JSON.parse(window.appStore.getItem("courseRatings")) || [],
     };
   }, []);
 
@@ -55,27 +55,27 @@ function HandleCourses() {
   }, [enrichedCourses]);
 
   const updatedCourseStatus = (id, newStatus) => {
-    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
+    const allCourses = JSON.parse(window.appStore.getItem("courses")) || [];
     const updated = allCourses.map((c) =>
       c.id === id ? { ...c, status: newStatus } : c,
     );
-    localStorage.setItem("courses", JSON.stringify(updated));
+    window.appStore.setItem("courses", JSON.stringify(updated));
     window.location.reload();
   };
 
   const deleteCourse = (id) => {
     if (!window.confirm("Delete this course permanently?")) return;
     const updatedCourses = courses.filter((c) => c.id !== id);
-    localStorage.setItem("courses", JSON.stringify(updatedCourses));
+    window.appStore.setItem("courses", JSON.stringify(updatedCourses));
     const cleanArray = (key) => {
-      const arr = JSON.parse(localStorage.getItem(key)) || [];
+      const arr = JSON.parse(window.appStore.getItem(key)) || [];
       const filtered = arr.filter((i) => i.courseId !== id);
-      localStorage.setItem(key, JSON.stringify(filtered));
+      window.appStore.setItem(key, JSON.stringify(filtered));
     };
     const cleanMap = (key) => {
-      const map = JSON.parse(localStorage.getItem(key)) || {};
+      const map = JSON.parse(window.appStore.getItem(key)) || {};
       delete map[id];
-      localStorage.setItem(key, JSON.stringify(map));
+      window.appStore.setItem(key, JSON.stringify(map));
     };
     cleanArray("enrolledCourses");
     cleanArray("testResults");

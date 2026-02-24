@@ -1,4 +1,4 @@
-import React, {useMemo, useState } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Search,
@@ -9,20 +9,42 @@ import {
   Clock,
 } from "lucide-react";
 import "./StudentProgress.scss";
+import { getCourseById } from "../../../../services/courseApi";
+import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
 
 function StudentProgress() {
   const { courseId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
-  const { course,students, avgProgress, activeCount, completedCount } = useMemo(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const enrolled = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-    const testResults = JSON.parse(localStorage.getItem("testResults")) || [];
-    const lessonMap = JSON.parse(localStorage.getItem("courseLessons")) || {};
+  const [selectedCourse, setSelectedCourse] = useState(null);
+  const [loadingCourse, setLoadingCourse] = useState(true);
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null") || null;
+  const currentRole = String(currentUser?.role || "").toLowerCase();
+  const [enrollments, setEnrollments] = useState([]);
 
-    const course=allCourses.find((c)=>String(c.id)===String(courseId)&&c.instructorId===currentUser?.id);
-    if (!course) {
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        const fetched = await getCourseById(String(courseId));
+        if (String(fetched?.instructorId) === String(currentUser?.id)) {
+          setSelectedCourse(fetched);
+          const list = await getEnrollmentsByCourse(String(courseId));
+          setEnrollments(Array.isArray(list) ? list : []);
+        } else {
+          setSelectedCourse(null);
+          setEnrollments([]);
+        }
+      } catch {
+        setSelectedCourse(null);
+        setEnrollments([]);
+      } finally {
+        setLoadingCourse(false);
+      }
+    }
+    loadCourse();
+  }, [courseId, currentUser?.id]);
+
+  const { course, students, avgProgress, activeCount, completedCount } = useMemo(() => {
+    if (!selectedCourse) {
       return {
         course: null,
         students: [],
@@ -32,60 +54,53 @@ function StudentProgress() {
       };
     }
 
-    const totalLessons=(lessonMap[courseId]||[]).length;
-    const courseEnrollments = enrolled.filter(
-      (e) => String(e.courseId) === courseId,
-    );
-
-    const students = courseEnrollments.map((e) => {
-      const user=users.find((u)=>u.id===e.studentId);
-      const completed=e.completedLessons||0;
-      const progress =totalLessons===0?0: Math.floor((completed /totalLessons) * 100);
-
-      const result = testResults.find(
-        (r) => String(r.courseId) === String(courseId) && r.studentId === e.studentId,
-      );
-      let status = "inactive";
-      if(progress>0&&progress<100)
-        status="active";
-      if(progress===100)
-        status="completed"
+    const students = enrollments.map((e) => {
+      const normalizedStatus = String(e.status || "").toUpperCase();
+      const status =
+        normalizedStatus === "COMPLETED"
+          ? "completed"
+          : normalizedStatus === "ACTIVE"
+            ? "active"
+            : "inactive";
       return {
-        id: e.studentId,
-        name: user?.name || "Unknown Student",
-        email: user?.email || "N/A",
-        progress,
-        quizScore: result ? `${result.score}/${result.total}` : "—",
-        timeSpent: `${completed*10}min`,
+        id: e.id,
+        name: `Learner #${e.userId}`,
+        email: e.userId,
+        progress: status === "completed" ? 100 : status === "active" ? 35 : 0,
+        quizScore: "-",
+        timeSpent: e.enrolledAt ? new Date(e.enrolledAt).toLocaleDateString() : "-",
         status,
       };
     });
+
     const avgProgress =
       students.length === 0
         ? 0
-        : Math.round(
-            students.reduce((sum, s) => sum + s.progress, 0) / students.length,
-          );
-    const activeCount = students.filter((s) => s.status === "active").length;
-    const completedCount = students.filter(
-      (s) => s.status === "completed",
-    ).length;
+        : Math.round(students.reduce((sum, student) => sum + student.progress, 0) / students.length);
+
     return {
-      course,
+      course: selectedCourse,
       students,
       avgProgress,
-      activeCount,
-      completedCount,
+      activeCount: students.filter((student) => student.status === "active").length,
+      completedCount: students.filter((student) => student.status === "completed").length,
     };
-  }, [courseId]);
-  if (!course) {
+  }, [selectedCourse, enrollments]);
+
+  if (loadingCourse) {
+    return <p style={{ padding: 40 }}>Loading course...</p>;
+  }
+
+  if (currentRole !== "instructor" || !course) {
     return <p style={{ padding: 40 }}>Unauthorized access.</p>;
   }
+
   const filtered = students.filter(
-    (s) =>
-      s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      s.email.toLowerCase().includes(searchQuery.toLowerCase()),
+    (student) =>
+      student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      String(student.email).toLowerCase().includes(searchQuery.toLowerCase())
   );
+
   return (
     <div className="student-progress-layout">
       <div className="student-progress-page">
@@ -95,6 +110,7 @@ function StudentProgress() {
             <Download size={16} /> Export
           </button>
         </div>
+
         <div className="sp-stats-grid">
           <div className="sp-stat-card">
             <TrendingUp />
@@ -112,6 +128,7 @@ function StudentProgress() {
             <strong>{completedCount}</strong>
           </div>
         </div>
+
         <div className="sp-search-box">
           <Search size={16} />
           <input
@@ -120,6 +137,7 @@ function StudentProgress() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
+
         <div className="table-card">
           <table>
             <thead>
@@ -137,22 +155,20 @@ function StudentProgress() {
                   <td colSpan="5">No students found</td>
                 </tr>
               ) : (
-                filtered.map((s) => (
-                  <tr key={s.id}>
+                filtered.map((student) => (
+                  <tr key={student.id}>
                     <td>
-                      <strong>{s.name}</strong>
+                      <strong>{student.name}</strong>
                       <br />
-                      <small>{s.email}</small>
+                      <small>{student.email}</small>
                     </td>
-                    <td>{s.progress}%</td>
-                    <td>{s.quizScore}</td>
+                    <td>{student.progress}%</td>
+                    <td>{student.quizScore}</td>
                     <td>
-                      <Clock size={14} /> {s.timeSpent}
+                      <Clock size={14} /> {student.timeSpent}
                     </td>
                     <td>
-                      <span className={`sp-status ${s.status}`}>
-                        {s.status}
-                      </span>
+                      <span className={`sp-status ${student.status}`}>{student.status}</span>
                     </td>
                   </tr>
                 ))

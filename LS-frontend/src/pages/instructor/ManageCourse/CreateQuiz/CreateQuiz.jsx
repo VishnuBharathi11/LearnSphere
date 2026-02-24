@@ -1,13 +1,17 @@
-import React, { useState,useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Plus, Trash2, CheckCircle } from "lucide-react";
 import "./CreateQuiz.scss";
+import { getCourseById } from "../../../../services/courseApi";
 
 function CreateQuiz() {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser"));
+  const currentRole = String(currentUser?.role || "").toLowerCase();
+  const [course, setCourse] = useState(null);
+  const [loadingCourse, setLoadingCourse] = useState(true);
   const [quizTitle, setQuizTitle] = useState("");
   const [description, setDescription] = useState("");
   const [passingScore, setPassingScore] = useState(70);
@@ -23,17 +27,43 @@ function CreateQuiz() {
     ],
   });
   const [questions, setQuestions] = useState([]);
+  const quizKey = `${currentUser?.id || "guest"}_${courseId}`;
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  const course = useMemo(() => {
-    const allCourses = JSON.parse(localStorage.getItem("courses")) || [];
-    if (!currentUser) return null;
-    return allCourses.find(
-      (c) =>
-        String(c.id) === String(courseId) &&
-        c.instructorId === currentUser.id
-    );
-  }, [courseId, currentUser]);
-  if (!course) {
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        const fetched = await getCourseById(String(courseId));
+        if (String(fetched?.instructorId) === String(currentUser?.id)) {
+          setCourse(fetched);
+        } else {
+          setCourse(null);
+        }
+      } catch {
+        setCourse(null);
+      } finally {
+        setLoadingCourse(false);
+      }
+    }
+    loadCourse();
+  }, [courseId, currentUser?.id]);
+
+  useEffect(() => {
+    const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
+    const existing = allQuizzes[quizKey];
+    if (!existing) return;
+    setQuizTitle(existing.quizTitle || "");
+    setDescription(existing.description || "");
+    setPassingScore(existing.passingScore || 70);
+    setTimeLimit(existing.timeLimit || 30);
+    setQuestions(Array.isArray(existing.questions) ? existing.questions : []);
+  }, [quizKey]);
+
+  if (loadingCourse) {
+    return <p style={{ padding: 40 }}>Loading course...</p>;
+  }
+
+  if (currentRole !== "instructor" || !course) {
     return <p style={{ padding: 40 }}>Unauthorized access.</p>;
   }
   
@@ -47,17 +77,18 @@ function CreateQuiz() {
     }));
   };
   const addQuestion = () => {
+    setMessage({ type: "", text: "" });
     if (!currentQuestion.question.trim()){ 
-      alert("Enter question text");
+      setMessage({ type: "error", text: "Enter question text." });
       return;
     }
     if(currentQuestion.options.some((o)=>!o.text.trim())){
-      alert("All options must be filled");
+      setMessage({ type: "error", text: "All options must be filled." });
       return;
     }
     const correctCount=currentQuestion.options.filter((o)=>o.isCorrect).length;
     if(correctCount!==1){
-      alert("Exactly one correct answer must be selected");
+      setMessage({ type: "error", text: "Exactly one correct answer must be selected." });
       return;
     }
     setQuestions((prev)=>[
@@ -75,15 +106,16 @@ function CreateQuiz() {
     });
   };
   const saveQuiz = () => {
+    setMessage({ type: "", text: "" });
     if (!quizTitle.trim()) {
-      alert("Quiz title required");
+      setMessage({ type: "error", text: "Quiz title is required." });
       return
     };
     if(questions.length===0){
-      alert("Add at least one question");
+      setMessage({ type: "error", text: "Add at least one question." });
       return;
     }
-    const allQuizzes = JSON.parse(localStorage.getItem("courseQuizzes")) || {};
+    const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
     const quizData = {
       courseId:Number(courseId),
       instructorId: currentUser.id,
@@ -95,16 +127,17 @@ function CreateQuiz() {
       createdAt: new Date().toISOString(),
       updatedAt:new Date().toISOString(),
     };
-    allQuizzes[courseId] = quizData;
-    localStorage.setItem("courseQuizzes", JSON.stringify(allQuizzes));
-    alert("Quiz saved successfully");
-    navigate("/instructor-layout/manage-courses");
+    allQuizzes[quizKey] = quizData;
+    window.appStore.setItem("courseQuizzes", JSON.stringify(allQuizzes));
+    setMessage({ type: "success", text: "Quiz saved successfully." });
+    setTimeout(() => navigate("/instructor-layout/manage-courses"), 500);
   };
 
   return (
     <div className="create-quiz-layout">
       <div className="quiz-page">
         <h2>{course.courseName}-Create Quiz</h2>
+        {message.text && <p className={`quiz-message ${message.type}`}>{message.text}</p>}
         <div className="quiz-card">
           <label>Quiz Title</label>
           <input

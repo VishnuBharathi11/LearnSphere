@@ -15,7 +15,7 @@ import { useMemo, useState } from "react";
 function ApproveCourses() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState(() => {
-    return JSON.parse(localStorage.getItem("courses")) || [];
+    return JSON.parse(window.appStore.getItem("courses")) || [];
   });
   const pendingCourses = courses.filter((c) => c.status === "pending");
   const stats = useMemo(() => {
@@ -57,7 +57,7 @@ function ApproveCourses() {
         ? { ...c, status: "published", updatedAt: new Date().toISOString() }
         : c,
     );
-    localStorage.setItem("courses", JSON.stringify(updated));
+    window.appStore.setItem("courses", JSON.stringify(updated));
     setCourses(updated);
   };
   const rejectCourse = (id) => {
@@ -66,7 +66,7 @@ function ApproveCourses() {
         ? { ...c, status: "rejected", updatedAt: new Date().toISOString() }
         : c,
     );
-    localStorage.setItem("courses", JSON.stringify(updated));
+    window.appStore.setItem("courses", JSON.stringify(updated));
     setCourses(updated);
   };
 

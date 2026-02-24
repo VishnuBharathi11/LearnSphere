@@ -24,7 +24,8 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   width: 100%;
   padding: 20px;
   background: $bg;
-  min-height: 100vh;
+  max-width: 1180px;
+  margin: 0 auto;
 
   p{
     font-size: 16px;
@@ -48,6 +49,7 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   border-radius: 14px;
   padding: 18px;
   box-shadow: $shadow;
+  border: 1px solid #e9edf5;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -102,6 +104,7 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   border-radius: 14px;
   padding: 20px;
   box-shadow: $shadow;
+  border: 1px solid #e9edf5;
 
   h3 {
     font-size: 16px;
@@ -197,7 +200,10 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   margin-bottom: 12px;
 
   span {
-    width: 90px;
+    width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   small {
@@ -217,4 +223,24 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   height: 100%;
   background: #320bf5;
   border-radius: 6px;
+}
+
+@media (max-width: 1080px) {
+  .analytics-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .analytics-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .lesson-row span {
+    width: 120px;
+  }
 }

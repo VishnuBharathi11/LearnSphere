@@ -14,8 +14,8 @@ import com.learnsphere.enrollment.enums.PaymentStatus;
 @Builder
 public class Payment {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long idLong;
+	@Column(name = "id")
+	private Long id;
 	@Column(nullable = false)
 	private String userId;
 	@Column(nullable = false)
@@ -32,4 +32,14 @@ public class Payment {
 	private PaymentStatus status;
 	@Column(nullable = false)
 	private Instant createdAt;
+
+	@PrePersist
+	private void beforePersist() {
+		if (id == null) {
+			id = Math.abs(java.util.UUID.randomUUID().getMostSignificantBits());
+		}
+		if (createdAt == null) {
+			createdAt = Instant.now();
+		}
+	}
 }

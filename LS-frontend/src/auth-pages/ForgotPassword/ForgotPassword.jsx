@@ -17,6 +17,21 @@ function ForgotPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [resendSeconds, setResendSeconds] = useState(0);
+  const [resendLoading, setResendLoading] = useState(false);
+
+  const startResendCooldown = () => {
+    setResendSeconds(30);
+    const timer = setInterval(() => {
+      setResendSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+  };
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -27,8 +42,25 @@ function ForgotPassword() {
       const message = await sendForgotPasswordOtp(email);
       setSuccess(message || "OTP sent successfully");
       setStep("reset-password");
+      startResendCooldown();
     } catch (apiError) {
       setError(normalizeApiError(apiError, "Failed to send OTP"));
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (resendSeconds > 0) return;
+    setError("");
+    setSuccess("");
+    setResendLoading(true);
+    try {
+      const message = await sendForgotPasswordOtp(email);
+      setSuccess(message || "OTP resent successfully");
+      startResendCooldown();
+    } catch (apiError) {
+      setError(normalizeApiError(apiError, "Failed to resend OTP"));
+    } finally {
+      setResendLoading(false);
     }
   };
 
@@ -130,6 +162,19 @@ function ForgotPassword() {
 
               <button type="submit" className="forgot-form-btn">
                 Reset Password
+              </button>
+
+              <button
+                type="button"
+                className="forgot-resend-btn"
+                onClick={handleResendOtp}
+                disabled={resendLoading || resendSeconds > 0}
+              >
+                {resendLoading
+                  ? "Resending..."
+                  : resendSeconds > 0
+                  ? `Resend OTP in ${resendSeconds}s`
+                  : "Resend OTP"}
               </button>
             </form>
           )}

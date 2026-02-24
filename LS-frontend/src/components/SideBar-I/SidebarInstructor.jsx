@@ -13,6 +13,14 @@ import "./SidebarInstructor.scss";
 
 function SidebarInstructor() {
   const location = useLocation();
+  const isActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+  const handleLogout = () => {
+    window.appStore.removeItem("currentUser");
+    window.appStore.removeItem("isLoggedIn");
+    window.appStore.removeItem("authToken");
+  };
 
   return (
     <nav className="I-navbar">
@@ -24,9 +32,7 @@ function SidebarInstructor() {
       <div className="I-sidebar">
         <Link
           to="/instructor-layout/dashboard"
-          className={
-            location.pathname === "/instructor-layout/dashboard" ? "active" : ""
-          }
+          className={isActive("/instructor-layout/dashboard") ? "active" : ""}
         >
           <LayoutDashboard size={18} />
           Dashboard
@@ -34,11 +40,7 @@ function SidebarInstructor() {
 
         <Link
           to="/instructor-layout/create-course"
-          className={
-            location.pathname === "/instructor-layout/create-course"
-              ? "active"
-              : ""
-          }
+          className={isActive("/instructor-layout/create-course") ? "active" : ""}
         >
           <PlusSquare size={18} />
           Create Course
@@ -46,11 +48,7 @@ function SidebarInstructor() {
 
         <Link
           to="/instructor-layout/manage-courses"
-          className={
-            location.pathname === "/instructor-layout/manage-courses"
-              ? "active"
-              : ""
-          }
+          className={isActive("/instructor-layout/manage-courses") ? "active" : ""}
         >
           <FolderKanban size={18} />
           Manage Courses
@@ -58,11 +56,7 @@ function SidebarInstructor() {
 
         <Link
           to="/instructor-layout/discussions"
-          className={
-            location.pathname === "/instructor-layout/discussions"
-              ? "active"
-              : ""
-          }
+          className={isActive("/instructor-layout/discussions") ? "active" : ""}
         >
           <MessageSquare size={18} />
           Discussions
@@ -70,15 +64,13 @@ function SidebarInstructor() {
 
         <Link
           to="/instructor-layout/profile"
-          className={
-            location.pathname === "/instructor-layout/profile" ? "active" : ""
-          }
+          className={isActive("/instructor-layout/profile") ? "active" : ""}
         >
           <User size={18} />
           My Profile
         </Link>
 
-        <Link to="/login" className="logout">
+        <Link to="/login" className="logout" onClick={handleLogout}>
           <LogOut size={20} />
           Logout
         </Link>

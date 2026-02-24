@@ -1,5 +1,6 @@
 package com.learnsphere.enrollment.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -7,20 +8,25 @@ import org.springframework.web.client.RestTemplate;
 public class CourseClient {
 
 	private final RestTemplate restTemplate=new RestTemplate();
+	@Value("${course.service.base-url:http://localhost:9091}")
+	private String courseServiceBaseUrl;
 	 
 	static class CourseResponse{
-		private Integer price;
-		public Integer getPrice() {
+		private Double price;
+		public Double getPrice() {
 			return price;
 		}
-		public void setPrice(Integer price) {
+		public void setPrice(Double price) {
 			this.price = price;
 		}
 		
 	}
 	public Integer getCoursePrice(String courseId) {
-		 String url="https://localhost:9091/api/course/"+courseId;
+		 String url=courseServiceBaseUrl+"/api/courses/"+courseId;
 		 CourseResponse response=restTemplate.getForObject(url,CourseResponse.class);
-		 return response.getPrice();
+		 if (response == null || response.getPrice() == null) {
+			 throw new RuntimeException("Course price not found");
+		 }
+		 return (int)Math.round(response.getPrice());
 	 }
 }

@@ -7,17 +7,17 @@ function LearnCourse() {
   const navigate = useNavigate();
 
   const courseId = Number(id);
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser"));
 
   const enrolledCourses =
-    JSON.parse(localStorage.getItem("enrolledCourses")) || [];
+    JSON.parse(window.appStore.getItem("enrolledCourses")) || [];
 
   const enrollment = enrolledCourses.find(
     (e) => e.courseId === courseId && e.studentId === currentUser?.id
   );
 
   const lessonsMap =
-    JSON.parse(localStorage.getItem("courseLessons")) || {};
+    JSON.parse(window.appStore.getItem("courseLessons")) || {};
 
   const lessons = lessonsMap[courseId] || [];
 
@@ -52,7 +52,7 @@ function LearnCourse() {
       };
     });
 
-    localStorage.setItem("enrolledCourses", JSON.stringify(updated));
+    window.appStore.setItem("enrolledCourses", JSON.stringify(updated));
   }, [currentIndex, lessons.length]);
 
   if (!lessons.length) return <p>No lessons available.</p>;

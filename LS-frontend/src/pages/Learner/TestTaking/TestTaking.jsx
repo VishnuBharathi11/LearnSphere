@@ -4,8 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 function TestTaking() {
   const navigate = useNavigate();
   const { courseId } = useParams();
-  const currentUser = JSON.parse(localStorage.getItem("currentUser"));
-  const allQuizzes = JSON.parse(localStorage.getItem("courseQuizzes")) || {};
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser"));
+  const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes")) || {};
   const quiz = allQuizzes[courseId];
 
   const questions = quiz.questions;
@@ -41,7 +41,7 @@ if (!quiz) {
     });
     const total = questions.length;
     const passed = score >= Math.ceil((quiz.passingScore / 100) * total);
-    const storedResults = JSON.parse(localStorage.getItem("testResults")) || [];
+    const storedResults = JSON.parse(window.appStore.getItem("testResults")) || [];
     const UpdateResults = [
       ...storedResults.filter((r) => !(r.courseId===Number(courseId)&&r.studentId===currentUser.id)),
       {
@@ -53,8 +53,10 @@ if (!quiz) {
         submittedAt: new Date().toISOString(),
       },
     ];
-    localStorage.setItem("testResults", JSON.stringify(UpdateResults));
-    navigate("/student-layout/result",{state:{courseId:Number(courseId),score,total,passed,},});
+    window.appStore.setItem("testResults", JSON.stringify(UpdateResults));
+    navigate("/student-layout/result", {
+      state: { courseId: Number(courseId), correct: score, total, passed },
+    });
   };
   return (
     <div className="test-container">

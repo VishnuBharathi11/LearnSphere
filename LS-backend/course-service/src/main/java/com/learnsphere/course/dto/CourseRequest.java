@@ -1,6 +1,8 @@
 package com.learnsphere.course.dto;
 
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
@@ -9,8 +11,9 @@ public class CourseRequest {
 	private String title;
 	@NotBlank(message="Description is required")
 	private String description;
+	@NotBlank(message="Thumbnail is required")
+	private String thumbnail;
 	@NotNull(message="Price is required")
-	@Positive(message = "Price must be greater than 0")
 	@Min(0)
 	private double price;
 	@NotBlank(message = "Category ID is required")

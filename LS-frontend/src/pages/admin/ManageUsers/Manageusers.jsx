@@ -6,7 +6,7 @@ import "./Manageuser.scss";
 
 function Manageusers(){
   const [users, setUsers] = useState(() => {
-    return JSON.parse(localStorage.getItem("users")) || [];
+    return JSON.parse(window.appStore.getItem("users")) || [];
   });
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
@@ -30,12 +30,12 @@ function Manageusers(){
   },[users,activeTab,search,roleFilter]);
 const updateStorage = (updated) => {
     setUsers(updated);
-    localStorage.setItem("users", JSON.stringify(updated));
+    window.appStore.setItem("users", JSON.stringify(updated));
   };
   const toggleUserStatus=(id)=>{
     const updated=users.map((u)=>u.id===id?{...u.status==="active"?"suspended":"active"}:u);
     updateStorage(updated);
-    //localStorage.setItem("users",JSON.stringify(updated));
+    //window.appStore.setItem("users",JSON.stringify(updated));
   };
   const deleteUser = (id) => {
     if (!window.confirm("Are you sure you want to delete this user?")) return;

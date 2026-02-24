@@ -18,7 +18,28 @@ public class User {
     @Column(unique = true)
     private String email;
 
+    private String name;
+
+    private String phone;
+
     private String password;
 
     private String role;
+
+    @Column(length = 2000)
+    private String bio;
+
+    private String expertise;
+
+    private String experience;
+
+    private String linkedin;
+
+    private String portfolio;
+
+    private String professionalWebsite;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String profileImage;
 }

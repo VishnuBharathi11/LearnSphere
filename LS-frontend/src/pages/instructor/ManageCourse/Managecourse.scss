@@ -19,32 +19,32 @@ $danger-text: #b91c1c;
 
 .manage-courses-page {
   width: 100%;
-  min-height: 100vh;
   padding: 24px;
   background-color: $bg;
+  max-width: 1280px;
+  margin: 0 auto;
 }
 
 .page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
-  
+  margin-bottom: 20px;
+
   .create-btn {
-  background-color: $primary;
-  color: white;
-  border: none;
-  padding: 16px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  width: 150px;
-  margin-left: auto;
-}
+    background-color: $primary;
+    color: white;
+    border: none;
+    padding: 11px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: auto;
+    margin-left: auto;
+    font-weight: 600;
+  }
 }
 
 .manage-course-meta {
@@ -56,10 +56,10 @@ $danger-text: #b91c1c;
 .filter-card {
   background-color: $white;
   border: 1px solid $border;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px;
   display: flex;
-  gap: 24px;
+  gap: 12px;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -69,8 +69,8 @@ $danger-text: #b91c1c;
   align-items: center;
   gap: 8px;
   border: 1px solid $border;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 8px 10px;
   width: 100%;
 
   input {
@@ -84,29 +84,28 @@ $danger-text: #b91c1c;
 .filter-select {
   display: flex;
   gap: 10px;
-  width: 100%;
+  width: 220px;
   border: 1px solid $border;
-  border-radius: 6px;
- 
+  border-radius: 8px;
 
   select {
     width: 100%;
-    padding: 6px 10px;
+    padding: 8px 10px;
     border: none;
     outline: none;
+    background: transparent;
   }
 }
-
-
 
 .manage-course-card {
   background-color: $white;
   border: 1px solid $border;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 16px;
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
+  align-items: flex-start;
 }
 
 .course-info {
@@ -117,15 +116,18 @@ $danger-text: #b91c1c;
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+  gap: 8px;
 
   h3 {
     font-size: 16px;
     color: $text-dark;
+    margin: 0;
   }
 
   p {
     font-size: 13px;
     color: $text-muted;
+    margin: 2px 0 0;
   }
 }
 
@@ -144,46 +146,47 @@ $danger-text: #b91c1c;
     background-color: $warning-bg;
     color: $warning-text;
   }
-}
 
-.course-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  margin-bottom: 10px;
-
-  span {
-    font-size: 12px;
-    color: $text-muted;
-  }
-
-  strong {
-    display: block;
-    font-size: 14px;
-    color: $text-dark;
+  &.review {
+    background-color: #e0e7ff;
+    color: #3730a3;
   }
 }
 
 .course-actions,
 .manage-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
   button {
     border: none;
     background-color: #f3f4f6;
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-size: 13px;
     cursor: pointer;
-
     display: inline-flex;
     align-items: center;
     gap: 4px;
-
-    margin-right: 6px;
+    margin-right: 0;
   }
+}
+
+.course-actions .submit-review {
+  background: #e0e7ff;
+  color: #3730a3;
+  font-weight: 600;
+}
+
+.course-actions .submit-review:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 .manage-actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 6px;
 
   .danger {
@@ -197,5 +200,26 @@ $danger-text: #b91c1c;
   padding: 40px;
   background-color: $white;
   border: 1px dashed #d1d5db;
-  border-radius: 8px;
+  border-radius: 12px;
+}
+
+@media (max-width: 900px) {
+  .filter-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-select {
+    width: 100%;
+  }
+
+  .manage-course-card {
+    flex-direction: column;
+  }
+
+  .course-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
 }

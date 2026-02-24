@@ -26,6 +26,9 @@ public class AdminUserSeeder implements CommandLineRunner {
     @Value("${app.admin.seed.password:admin123}")
     private String adminPassword;
 
+    @Value("${app.admin.seed.force-update-password:false}")
+    private boolean forceUpdatePassword;
+
     @Override
     public void run(String... args) {
         if (!adminSeedEnabled) {
@@ -33,7 +36,14 @@ public class AdminUserSeeder implements CommandLineRunner {
         }
 
         String normalizedAdminEmail = adminEmail.trim().toLowerCase();
-        if (userRepository.findByEmail(normalizedAdminEmail).isPresent()) {
+        User existingAdmin = userRepository.findByEmail(normalizedAdminEmail).orElse(null);
+        if (existingAdmin != null) {
+            if (forceUpdatePassword) {
+                existingAdmin.setPassword(passwordEncoder.encode(adminPassword));
+                existingAdmin.setRole("admin");
+                userRepository.save(existingAdmin);
+                log.info("Updated seeded admin credentials: {}", normalizedAdminEmail);
+            }
             return;
         }
 

@@ -2,6 +2,7 @@ package com.learnsphere.course.controller;
 
 import java.util.List;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import com.learnsphere.course.entity.Category;
@@ -15,6 +16,7 @@ public class CategoryController {
 		this.categoryService=categoryService;
 	}
 	@PostMapping
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Category> create(@RequestBody Category category){
 		return ResponseEntity.ok(categoryService.createCategory(category));
 	}
@@ -27,6 +29,7 @@ public class CategoryController {
 		return ResponseEntity.ok(categoryService.getCategoryById(id));
 	}
 	@DeleteMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<Void> delete(@PathVariable String id){
 		categoryService.deleteCategory(id);
 		return ResponseEntity.noContent().build();

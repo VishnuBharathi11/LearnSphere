@@ -23,11 +23,15 @@ function CourseCard({ course }) {
   "https://images.unsplash.com/photo-1621761191319-c6fb62004040",
   "Software Engineering":
     "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
+  "Backend Development":
+    "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg",
+  "Advanced Programming":
+    "https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg",
 };
   return (
     <div className="browse-course-card">
         <div className="course-card-image">
-            <img src={CATEGORY_IMAGES[course.category] || "/fallback.png"}/>
+            <img src={course.thumbnail || CATEGORY_IMAGES[course.category] || "/fallback.png"} alt={course.courseName}/>
         </div>
       <div className="course-card-body">
         <div className="course-card-title">{course.courseName}</div>

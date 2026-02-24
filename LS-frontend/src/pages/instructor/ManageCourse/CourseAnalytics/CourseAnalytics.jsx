@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+﻿import React, { useEffect, useMemo, useState } from "react";
 import "./CourseAnalytics.scss";
 import { DollarSign, Users, Star, MessageSquare } from "lucide-react";
 import {
@@ -13,53 +13,90 @@ import {
   Cell,
 } from "recharts";
 import { useParams } from "react-router-dom";
+import { getCourseById, getInstructorCourses } from "../../../../services/courseApi";
+import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
+import { getCourseDiscussions } from "../../../../services/discussionApi";
 
 function CourseAnalytics() {
   const { courseId } = useParams();
   const id = String(courseId);
+  const [course, setCourse] = useState(null);
+  const [loadingCourse, setLoadingCourse] = useState(true);
+  const [enrollments, setEnrollments] = useState([]);
+  const [discussionCount, setDiscussionCount] = useState(0);
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null") || {};
+  const userId = currentUser?.id || currentUser?.userId || "";
+  const currentRole = String(currentUser?.role || "").toLowerCase();
+  const isInstructorRole = currentRole.includes("instructor");
+
+  useEffect(() => {
+    async function loadCourse() {
+      try {
+        let selectedCourse = null;
+
+        if (userId) {
+          let myCourses = [];
+          try {
+            myCourses = await getInstructorCourses(String(userId), 0, 300);
+          } catch {
+            myCourses = [];
+          }
+          selectedCourse =
+            (Array.isArray(myCourses) ? myCourses : []).find(
+              (courseItem) => String(courseItem.id) === id
+            ) || null;
+        }
+
+        if (!selectedCourse) {
+          selectedCourse = await getCourseById(id);
+        }
+
+        setCourse(selectedCourse || null);
+
+        const list = await getEnrollmentsByCourse(id);
+        setEnrollments(Array.isArray(list) ? list : []);
+        const posts = await getCourseDiscussions(id);
+        const topLevel = Array.isArray(posts) ? posts.filter((p) => p.parentId == null).length : 0;
+        setDiscussionCount(topLevel);
+      } catch {
+        setCourse(null);
+        setEnrollments([]);
+        setDiscussionCount(0);
+      } finally {
+        setLoadingCourse(false);
+      }
+    }
+    loadCourse();
+  }, [id, userId]);
 
   const {
     totalRevenue,
     totalEnrollments,
     avgRating,
-    reviewCount,
     enrollmentData,
     revenueData,
     completionData,
     lessons,
-    unauthorized,
   } = useMemo(() => {
-    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {};
-    const courses = JSON.parse(localStorage.getItem("courses")) || [];
-    const enrolled = JSON.parse(localStorage.getItem("enrolledCourses")) || [];
-    const ratings = JSON.parse(localStorage.getItem("courseRatings")) || [];
-    const lessonMap = JSON.parse(localStorage.getItem("courseLessons")) || {};
-
-    const course = courses.find(
-      (c) => String(c.id) === id && c.instructorId === currentUser.id,
-    );
-
     if (!course) {
-      return { unauthorized: true };
+      return {
+        totalRevenue: 0,
+        totalEnrollments: 0,
+        avgRating: "0.0",
+        enrollmentData: [],
+        revenueData: [],
+        completionData: [],
+        lessons: [],
+      };
     }
 
-    const courseEnrollments = enrolled.filter((e) => String(e.courseId) === id);
+    const courseEnrollments = enrollments.filter((e) => String(e.courseId) === id);
 
     const totalEnrollments = courseEnrollments.length;
     const price = Number(course.price) || 0;
     const totalRevenue = totalEnrollments * price;
 
-    const courseRatings = ratings.filter((r) => String(r.courseId) === id);
-
-    const avgRating =
-      courseRatings.length === 0
-        ? 0
-        : (
-            courseRatings.reduce((s, r) => s + (Number(r.rating) || 0), 0) /
-            courseRatings.length
-          ).toFixed(1);
-    const reviewCount = courseRatings.length;
-
+    const avgRating = Number(course.rating || 0).toFixed(1);
     const monthMap = {};
     courseEnrollments.forEach((e) => {
       if (!e.enrolledAt) return;
@@ -83,11 +120,14 @@ function CourseAnalytics() {
     let notStarted = 0;
 
     courseEnrollments.forEach((e) => {
-      const done = Number(e.completedLessons) || 0;
-      const total = Number(e.totalLessons) || 0;
-      if (total === 0 || done === 0) notStarted++;
-      else if (done >= total) completed++;
-      else inProgress++;
+      const normalized = String(e.status || "").toUpperCase();
+      if (normalized === "COMPLETED") {
+        completed++;
+      } else if (normalized === "ACTIVE") {
+        inProgress++;
+      } else {
+        notStarted++;
+      }
     });
 
     const completionData = [
@@ -96,42 +136,28 @@ function CourseAnalytics() {
       { name: "Not Started", value: notStarted },
     ];
 
-    const courseLessons = lessonMap[id] || [];
-    const lessons =
-      courseLessons.length === 0
-        ? []
-        : courseLessons.map((l) => {
-            const totalProgress = courseEnrollments.reduce((sum, e) => {
-              const done = Number(e.completedLessons) || 0;
-              return sum + Math.min(done, courseLessons.length);
-            }, 0);
-            const percentage =
-              totalEnrollments === 0
-                ? 0
-                : Math.floor(
-                    (totalProgress /
-                      (totalEnrollments * courseLessons.length)) *
-                      100,
-                  );
-            return { name: l.title, value: percentage };
-          });
+    const lessons = [];
 
     return {
       totalRevenue,
       totalEnrollments,
       avgRating,
-      reviewCount,
       enrollmentData,
       revenueData,
       completionData,
       lessons,
-      unauthorized: false,
     };
-  }, [id]);
+  }, [id, course, enrollments]);
 
   const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
-  if (unauthorized) {
+  if (loadingCourse) {
+    return <p style={{ padding: 40 }}>Loading analytics...</p>;
+  }
+  if (!isInstructorRole) {
     return <p style={{ padding: 40 }}>Unauthorized access to analytics.</p>;
+  }
+  if (!course) {
+    return <p style={{ padding: 40 }}>Unable to load analytics for this course right now.</p>;
   }
   return (
     <div className="analytics-layout">
@@ -143,7 +169,7 @@ function CourseAnalytics() {
               <DollarSign size={22} />
             </div>
             <p>Total Revenue</p>
-            <h2>₹{totalRevenue.toLocaleString()}</h2>
+            <h2>Rs {totalRevenue.toLocaleString()}</h2>
           </div>
 
           <div className="analytics-stat-card enroll">
@@ -166,8 +192,8 @@ function CourseAnalytics() {
             <div className="stat-icon purple">
               <MessageSquare size={22} />
             </div>
-            <p>Total Reviews</p>
-            <h2>{reviewCount}</h2>
+            <p>Discussions</p>
+            <h2>{discussionCount}</h2>
           </div>
         </div>
 
@@ -250,3 +276,4 @@ function CourseAnalytics() {
 }
 
 export default CourseAnalytics;
+
