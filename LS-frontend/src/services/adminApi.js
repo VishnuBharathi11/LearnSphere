@@ -1,9 +1,10 @@
 import axios from "axios";
+import { appStore } from "./appStore";
 
 const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || "/api/admin";
 
 function getAuthHeaders() {
-  const token = window.appStore.getItem("authToken");
+  const token = appStore.getItem("authToken");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -90,4 +91,3 @@ export async function getCourseMetrics(courseIds = []) {
   });
   return Array.isArray(response.data) ? response.data : [];
 }
-

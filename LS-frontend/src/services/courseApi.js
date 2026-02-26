@@ -1,4 +1,5 @@
 import axios from "axios";
+import { appStore } from "./appStore";
 
 const COURSES_API_BASE_URL =
   import.meta.env.VITE_COURSE_API_BASE_URL || "/api/courses";
@@ -10,7 +11,7 @@ const DEFAULT_LEVEL = "Beginner";
 const DEFAULT_INSTRUCTOR = "Instructor";
 
 function getAuthHeaders() {
-  const token = window.appStore.getItem("authToken");
+  const token = appStore.getItem("authToken");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -64,7 +65,7 @@ function mapCourse(course, categoryMap) {
 
 export async function getCategoryMap() {
   try {
-    const response = await axios.get(CATEGORIES_API_BASE_URL);
+    const response = await axios.get(CATEGORIES_API_BASE_URL, { timeout: 12000 });
     const categories = Array.isArray(response.data) ? response.data : [];
     return new Map(categories.map((c) => [c.id, c.name]));
   } catch {
@@ -87,6 +88,7 @@ export async function getPublishedCourses(page = 0, size = 100) {
   const categoryMap = await getCategoryMap();
   const response = await axios.get(`${COURSES_API_BASE_URL}/published`, {
     params: { page, size },
+    timeout: 12000,
   });
   const coursePage = response.data || {};
   const items = Array.isArray(coursePage.content) ? coursePage.content : [];

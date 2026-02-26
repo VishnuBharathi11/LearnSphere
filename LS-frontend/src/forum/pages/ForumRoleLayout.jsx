@@ -2,15 +2,7 @@ import { Navigate } from "react-router-dom";
 import StudentLayout from "../../pages/Learner/StudentLayout/StudentLayout.jsx";
 import InstructorLayout from "../../pages/instructor/InstructorLayout/InstructorLayout.jsx";
 import AdminLayout from "../../pages/admin/AdminLayout/AdminLayout.jsx";
-
-const getCurrentUser = () => {
-  try {
-    const raw = window.appStore.getItem("currentUser");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
+import { getCurrentUser } from "../../services/userProfileStore.js";
 
 const resolveLayoutByRole = (rawRole) => {
   const role = String(rawRole || "").trim().toLowerCase();
@@ -38,3 +30,4 @@ const ForumRoleLayout = () => {
 };
 
 export default ForumRoleLayout;
+

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./PaymentPage.scss";
 import { getCourseById } from "../../../services/courseApi";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 import {
   createEnrollmentOrder,
   getRazorpayPublicKey,
@@ -14,7 +15,7 @@ function PaymentPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -202,3 +203,4 @@ function PaymentPage() {
 }
 
 export default PaymentPage;
+

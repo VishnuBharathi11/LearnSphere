@@ -5,7 +5,7 @@ function AssesmentResult() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { total = 0, correct = 0, passed = false, courseId } = location.state || {};
+  const { total = 0, correct = 0, passed = false, courseId, mode = "final" } = location.state || {};
   const percentage = total ? Math.round((correct / total) * 100) : 0;
 
   const handleRetry = () => {
@@ -60,7 +60,7 @@ function AssesmentResult() {
           <button className="primary" onClick={handleContinue}>
             Go to My Courses
           </button>
-          {passed && (
+          {passed && mode !== "lesson" && (
             <button className="certificate" onClick={handleCertificate}>
               View Certificate
             </button>

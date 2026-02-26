@@ -1,22 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MessageSquareText, Send } from "lucide-react";
 import "./ForumPage.scss";
-
-const FORUM_STORAGE_KEY = "forumThreads";
-
-const readThreads = () => {
-  try {
-    const raw = localStorage.getItem(FORUM_STORAGE_KEY);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-};
-
-const saveThreads = (threads) => {
-  localStorage.setItem(FORUM_STORAGE_KEY, JSON.stringify(threads));
-};
+import { getCurrentUser } from "../../services/userProfileStore.js";
+import { createReply, createThread, listThreads } from "../../services/discussionApi";
 
 const getDisplayName = (user) => {
   return (
@@ -29,11 +15,42 @@ const getDisplayName = (user) => {
 };
 
 function ForumPage() {
-  const currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
-  const [threads, setThreads] = useState(readThreads);
+  const currentUser = getCurrentUser();
+  const [threads, setThreads] = useState([]);
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [replyDrafts, setReplyDrafts] = useState({});
+  const legacyCourseId = "general";
+
+  useEffect(() => {
+    let active = true;
+    async function loadThreads() {
+      try {
+        const data = await listThreads(legacyCourseId, { page: 0, size: 100 });
+        if (!active) return;
+        const normalized = Array.isArray(data?.items)
+          ? data.items.map((item) => ({
+              id: item.id,
+              title: item.title,
+              message: item.content,
+              authorId: item.authorId,
+              authorName: item.author,
+              authorRole: item.authorRole,
+              createdAt: item.createdAt,
+              replies: Array.isArray(item.replies) ? item.replies : [],
+            }))
+          : [];
+        setThreads(normalized);
+      } catch {
+        if (!active) return;
+        setThreads([]);
+      }
+    }
+    loadThreads();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const sortedThreads = useMemo(() => {
     return [...threads].sort(
@@ -45,52 +62,52 @@ function ForumPage() {
     return <p className="forum-unauthorized">Please login to use the discussion forum.</p>;
   }
 
-  const handleCreateThread = (e) => {
+  const handleCreateThread = async (e) => {
     e.preventDefault();
     const cleanTitle = title.trim();
     const cleanMessage = message.trim();
 
     if (!cleanTitle || !cleanMessage) return;
 
-    const nextThread = {
-      id: Date.now(),
+    const created = await createThread(legacyCourseId, {
       title: cleanTitle,
-      message: cleanMessage,
+      content: cleanMessage,
+    });
+    const nextThread = {
+      id: created?.id || Date.now(),
+      title: created?.title || cleanTitle,
+      message: created?.content || cleanMessage,
       authorId: currentUser.id,
-      authorName: getDisplayName(currentUser),
-      authorRole: currentUser.role || "learner",
-      createdAt: new Date().toISOString(),
+      authorName: created?.author || getDisplayName(currentUser),
+      authorRole: created?.authorRole || currentUser.role || "learner",
+      createdAt: created?.createdAt || new Date().toISOString(),
       replies: [],
     };
-
-    const updated = [nextThread, ...threads];
-    setThreads(updated);
-    saveThreads(updated);
+    setThreads((prev) => [nextThread, ...prev]);
     setTitle("");
     setMessage("");
   };
 
-  const handleReply = (threadId, e) => {
+  const handleReply = async (threadId, e) => {
     e.preventDefault();
     const draft = (replyDrafts[threadId] || "").trim();
     if (!draft) return;
-
-    const updated = threads.map((thread) => {
-      if (thread.id !== threadId) return thread;
-      const nextReply = {
-        id: Date.now(),
-        message: draft,
-        authorId: currentUser.id,
-        authorName: getDisplayName(currentUser),
-        authorRole: currentUser.role || "learner",
-        createdAt: new Date().toISOString(),
-      };
-      const safeReplies = Array.isArray(thread.replies) ? thread.replies : [];
-      return { ...thread, replies: [...safeReplies, nextReply] };
-    });
-
-    setThreads(updated);
-    saveThreads(updated);
+    const created = await createReply(threadId, { content: draft });
+    const nextReply = {
+      id: created?.id || Date.now(),
+      message: created?.content || draft,
+      authorId: currentUser.id,
+      authorName: created?.author || getDisplayName(currentUser),
+      authorRole: created?.authorRole || currentUser.role || "learner",
+      createdAt: created?.createdAt || new Date().toISOString(),
+    };
+    setThreads((prev) =>
+      prev.map((thread) => {
+        if (thread.id !== threadId) return thread;
+        const safeReplies = Array.isArray(thread.replies) ? thread.replies : [];
+        return { ...thread, replies: [...safeReplies, nextReply] };
+      })
+    );
     setReplyDrafts((prev) => ({ ...prev, [threadId]: "" }));
   };
 
@@ -185,3 +202,4 @@ function ForumPage() {
 }
 
 export default ForumPage;
+

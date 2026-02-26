@@ -28,6 +28,10 @@ export default defineConfig({
         target: "http://localhost:9092",
         changeOrigin: true,
       },
+      "/api/progress": {
+        target: "http://localhost:9093",
+        changeOrigin: true,
+      },
       "/api/admin": {
         target: "http://localhost:9095",
         changeOrigin: true,

@@ -1,29 +1,12 @@
-﻿import { NavLink, useLocation } from "react-router-dom";
-import {
-  LayoutDashboard,
-  BookOpen,
-  MessageSquare,
-  BarChart3,
-  ClipboardList,
-  Award,
-  User,
-  LogOut,
-} from "lucide-react";
+import { NavLink } from "react-router-dom";
+import { LayoutDashboard, BookOpen, BarChart3, Award, User, LogOut } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
+import { logoutUser } from "../../services/userProfileStore";
 import "./SidebarStudent.scss";
 
 function SidebarStudent() {
-  const location = useLocation();
-
-  const isDiscussionActive =
-    location.pathname.startsWith("/student-layout/forum") ||
-    (location.pathname.startsWith("/courses/") && location.pathname.endsWith("/forum")) ||
-    location.pathname.startsWith("/forum/topic/");
-
   const handleLogout = () => {
-    window.appStore.removeItem("currentUser");
-    window.appStore.removeItem("isLoggedIn");
-    window.appStore.removeItem("authToken");
+    logoutUser();
   };
 
   return (
@@ -44,22 +27,9 @@ function SidebarStudent() {
           <span>My Courses</span>
         </NavLink>
 
-        <NavLink
-          to="/student-layout/forum"
-          className={({ isActive }) => (isActive || isDiscussionActive ? "nav-item active" : "nav-item")}
-        >
-          <MessageSquare size={20} />
-          <span>Discussion</span>
-        </NavLink>
-
         <NavLink to="/student-layout/progress" className="nav-item">
           <BarChart3 size={20} />
           <span>Progress</span>
-        </NavLink>
-
-        <NavLink to="/student-layout/assessment" className="nav-item">
-          <ClipboardList size={20} />
-          <span>Assessment</span>
         </NavLink>
 
         <NavLink to="/student-layout/certificate" className="nav-item">

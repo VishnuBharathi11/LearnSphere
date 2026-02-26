@@ -41,11 +41,24 @@ function Settings() {
 
   const handleSave = async () => {
     try {
+      const minPrice = Number(settings.minCoursePrice || 0);
+      const maxPrice = Number(settings.maxCoursePrice || 0);
+      if (minPrice < 0 || maxPrice < 0) {
+        setError("Min and max course price must be non-negative.");
+        setSuccess("");
+        return;
+      }
+      if (minPrice > maxPrice) {
+        setError("Minimum course price cannot be greater than maximum course price.");
+        setSuccess("");
+        return;
+      }
+
       const payload = {
         ...settings,
         platformFeePercent: Number(settings.platformFeePercent || 0),
-        minCoursePrice: Number(settings.minCoursePrice || 0),
-        maxCoursePrice: Number(settings.maxCoursePrice || 0),
+        minCoursePrice: minPrice,
+        maxCoursePrice: maxPrice,
       };
       const saved = await saveAdminSettings(payload);
       setSettings((prev) => ({ ...prev, ...(saved || {}) }));
@@ -152,4 +165,3 @@ function Settings() {
 }
 
 export default Settings;
-

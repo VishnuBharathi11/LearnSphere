@@ -5,6 +5,7 @@ import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import { normalizeApiError, registerUser } from "../../services/authApi";
 import { saveRegistrationSeed } from "../../services/userProfileStore";
+import { getAdminSettings } from "../../services/adminApi";
 
 function Register() {
   const navigate = useNavigate();
@@ -17,6 +18,25 @@ function Register() {
     role: "learner",
   });
   const [error, setError] = useState("");
+  const [registrationEnabled, setRegistrationEnabled] = useState(true);
+
+  React.useEffect(() => {
+    let active = true;
+    async function loadSettings() {
+      try {
+        const settings = await getAdminSettings();
+        if (!active) return;
+        setRegistrationEnabled(Boolean(settings?.userRegistration ?? true));
+      } catch {
+        if (!active) return;
+        setRegistrationEnabled(true);
+      }
+    }
+    loadSettings();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -25,6 +45,11 @@ function Register() {
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
+
+    if (!registrationEnabled) {
+      setError("User registration is currently disabled by admin.");
+      return;
+    }
 
     if (!form.username || !form.email || !form.password) {
       setError("Please fill all required fields");
@@ -68,6 +93,7 @@ function Register() {
             <p>Join LearnSphere today</p>
           </div>
           {error && <p className="error">{error}</p>}
+          {!registrationEnabled && <p className="error">Registrations are temporarily disabled.</p>}
           <form onSubmit={handleRegister} autoComplete="off">
             <div className="reg-form-input">
               <input
@@ -76,6 +102,7 @@ function Register() {
                 placeholder="Username"
                 onChange={handleChange}
                 required
+                disabled={!registrationEnabled}
               />
             </div>
             <div className="reg-form-input">
@@ -85,6 +112,7 @@ function Register() {
                 placeholder="Email"
                 onChange={handleChange}
                 required
+                disabled={!registrationEnabled}
               />
             </div>
             <div className="reg-form-input">
@@ -93,10 +121,11 @@ function Register() {
                 type="text"
                 placeholder="Phone Number"
                 onChange={handleChange}
+                disabled={!registrationEnabled}
               />
             </div>
             <div className="reg-form-input">
-              <select name="role" onChange={handleChange}>
+              <select name="role" onChange={handleChange} disabled={!registrationEnabled}>
                 <option value="learner">Learner</option>
                 <option value="instructor">Instructor</option>
               </select>
@@ -108,6 +137,7 @@ function Register() {
                 placeholder="Password"
                 onChange={handleChange}
                 required
+                disabled={!registrationEnabled}
               />
             </div>
             <div className="reg-form-input">
@@ -117,9 +147,10 @@ function Register() {
                 placeholder="Confirm Password"
                 onChange={handleChange}
                 required
+                disabled={!registrationEnabled}
               />
             </div>
-            <button type="submit" className="reg-form-btn">
+            <button type="submit" className="reg-form-btn" disabled={!registrationEnabled}>
               Register
             </button>
           </form>

@@ -57,4 +57,9 @@ public class EnrollmentController {
 	public List<Enrollment> byCourses(@RequestParam List<String> courseIds) {
 		return enrollmentService.getByCourseIds(courseIds);
 	}
+
+	@GetMapping("/user/{userId}")
+	public List<Enrollment> byUser(@PathVariable String userId) {
+		return enrollmentService.getByUserId(userId);
+	}
 }

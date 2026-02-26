@@ -4,17 +4,10 @@ import { ArrowLeft, Lock, LockOpen, Trash2 } from "lucide-react";
 import ReplyItem from "../components/ReplyItem";
 import ReplyBox from "../components/ReplyBox";
 import useForum from "../hooks/useForum";
+import { getAdminSettings } from "../../services/adminApi";
 import { getForumRoleLabel, normalizeForumRole } from "../utils/role";
 import "../styles/forum.scss";
-
-const getCurrentUser = () => {
-  try {
-    const raw = window.appStore.getItem("currentUser");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
+import { getCurrentUser } from "../../services/userProfileStore.js";
 
 const TopicPage = () => {
   const { topicId } = useParams();
@@ -44,7 +37,26 @@ const TopicPage = () => {
   } = useForum(undefined, currentUser);
 
   const [actionError, setActionError] = useState("");
+  const [discussionEnabled, setDiscussionEnabled] = useState(true);
   const replyBottomRef = useRef(null);
+
+  useEffect(() => {
+    let active = true;
+    async function loadFeatureSettings() {
+      try {
+        const settings = await getAdminSettings();
+        if (!active) return;
+        setDiscussionEnabled(Boolean(settings?.discussions ?? true));
+      } catch {
+        if (!active) return;
+        setDiscussionEnabled(true);
+      }
+    }
+    loadFeatureSettings();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     fetchThreadById(topicId, 0, false);
@@ -119,6 +131,13 @@ const TopicPage = () => {
     return (
       <section className="forum-page-shell">
         <div className="forum-empty-state">Topic not found.</div>
+      </section>
+    );
+  }
+  if (!discussionEnabled) {
+    return (
+      <section className="forum-page-shell">
+        <div className="forum-empty-state">Discussions are disabled by platform settings.</div>
       </section>
     );
   }
@@ -241,3 +260,4 @@ const TopicPage = () => {
 };
 
 export default TopicPage;
+

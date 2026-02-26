@@ -9,6 +9,7 @@ import {
   getRegistrationSeedByEmail,
   getInstructorProfile,
   setCurrentUser,
+  setAuthToken,
 } from "../../services/userProfileStore";
 
 function Login() {
@@ -49,8 +50,7 @@ function Login() {
       };
 
       setCurrentUser(currentUser);
-      window.appStore.setItem("isLoggedIn", "true");
-      window.appStore.setItem("authToken", data.token || "");
+      setAuthToken(data.token || "");
 
       if (redirectTo) {
         navigate(redirectTo, { replace: true });

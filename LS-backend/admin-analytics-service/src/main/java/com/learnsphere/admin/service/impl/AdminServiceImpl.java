@@ -151,6 +151,8 @@ public class AdminServiceImpl implements AdminService {
     @Override
     @Transactional
     public AdminSettingResponse saveSettings(AdminSettingRequest request) {
+        validateSettings(request);
+
         AdminSetting setting = getOrCreateSettings();
         setting.setSiteName(defaultString(request.getSiteName(), setting.getSiteName()));
         setting.setSiteEmail(defaultString(request.getSiteEmail(), setting.getSiteEmail()));
@@ -168,6 +170,28 @@ public class AdminServiceImpl implements AdminService {
         setting.setMaintenanceMode(booleanOrDefault(request.getMaintenanceMode(), setting.getMaintenanceMode()));
         setting.setUpdatedAt(Instant.now());
         return toSettingResponse(settingRepo.save(setting));
+    }
+
+    private void validateSettings(AdminSettingRequest request) {
+        if (request.getPlatformFeePercent() != null) {
+            double fee = request.getPlatformFeePercent();
+            if (fee < 0 || fee > 100) {
+                throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Platform fee must be between 0 and 100.");
+            }
+        }
+
+        Integer minPrice = request.getMinCoursePrice();
+        Integer maxPrice = request.getMaxCoursePrice();
+
+        if (minPrice != null && minPrice < 0) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Minimum course price cannot be negative.");
+        }
+        if (maxPrice != null && maxPrice < 0) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Maximum course price cannot be negative.");
+        }
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Minimum course price cannot be greater than maximum course price.");
+        }
     }
 
     @Override

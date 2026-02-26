@@ -1,8 +1,17 @@
 const memory = new Map();
+const SESSION_KEYS = new Set(["currentUser", "isLoggedIn", "authToken"]);
 
 const hasLocalStorage = (() => {
   try {
     return typeof window !== "undefined" && !!window.localStorage;
+  } catch {
+    return false;
+  }
+})();
+
+const hasSessionStorage = (() => {
+  try {
+    return typeof window !== "undefined" && !!window.sessionStorage;
   } catch {
     return false;
   }
@@ -58,6 +67,9 @@ export function cleanupDeprecatedStoreKeys() {
 
 export const appStore = {
   getItem(key) {
+    if (SESSION_KEYS.has(String(key || "")) && hasSessionStorage) {
+      return window.sessionStorage.getItem(key);
+    }
     if (hasLocalStorage) return window.localStorage.getItem(key);
     if (!memory.has(key)) return null;
     return memory.get(key);
@@ -68,6 +80,10 @@ export const appStore = {
     }
 
     const normalized = normalize(value);
+    if (SESSION_KEYS.has(String(key || "")) && hasSessionStorage) {
+      window.sessionStorage.setItem(key, normalized);
+      return;
+    }
     if (hasLocalStorage) {
       window.localStorage.setItem(key, normalized);
       return;
@@ -75,6 +91,10 @@ export const appStore = {
     memory.set(key, normalized);
   },
   removeItem(key) {
+    if (SESSION_KEYS.has(String(key || "")) && hasSessionStorage) {
+      window.sessionStorage.removeItem(key);
+      return;
+    }
     if (hasLocalStorage) {
       window.localStorage.removeItem(key);
       return;
@@ -82,6 +102,9 @@ export const appStore = {
     memory.delete(key);
   },
   clear() {
+    if (hasSessionStorage) {
+      window.sessionStorage.clear();
+    }
     if (hasLocalStorage) {
       window.localStorage.clear();
       return;

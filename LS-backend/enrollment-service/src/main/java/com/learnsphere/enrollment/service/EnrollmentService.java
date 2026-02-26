@@ -15,4 +15,5 @@ public interface EnrollmentService {
 	boolean isEnrolled(String userId,String courseId);
 	List<Enrollment> getByCourseId(String courseId);
 	List<Enrollment> getByCourseIds(List<String> courseIds);
+	List<Enrollment> getByUserId(String userId);
 }

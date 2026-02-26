@@ -3,10 +3,12 @@ com\learnsphere\progress\client\CourseClient.class
 com\learnsphere\progress\service\ProgressService.class
 com\learnsphere\progress\repository\QuizRepository.class
 com\learnsphere\progress\controller\ProgressController.class
+com\learnsphere\progress\entity\Question$Option.class
 com\learnsphere\progress\exception\GlobalExceptionHandler.class
 com\learnsphere\progress\service\impl\AssessmentServiceImpl.class
 com\learnsphere\progress\config\OpenApiConfig.class
 com\learnsphere\progress\client\EnrollmentClient.class
+com\learnsphere\progress\service\AssessmentService.class
 com\learnsphere\progress\LearnProgressServiceApplication.class
 com\learnsphere\progress\dto\CertificateResponse.class
 com\learnsphere\progress\config\SecurityConfig.class
@@ -15,6 +17,8 @@ com\learnsphere\progress\entity\CourseProgress.class
 com\learnsphere\progress\dto\LessonProgressResponse.class
 com\learnsphere\progress\repository\VideoProgressRepository.class
 com\learnsphere\progress\service\impl\ProgressServiceImpl.class
+com\learnsphere\progress\entity\Question$Option$OptionBuilder.class
+com\learnsphere\progress\entity\Quiz$QuizBuilder.class
 com\learnsphere\progress\entity\VideoProgress.class
 com\learnsphere\progress\entity\Question.class
 com\learnsphere\progress\entity\Quiz.class
@@ -22,6 +26,7 @@ com\learnsphere\progress\repository\CourseProgressRepository.class
 com\learnsphere\progress\config\RestConfig.class
 com\learnsphere\progress\controller\AssessmentController.class
 com\learnsphere\progress\dto\CourseProgressResponse.class
+com\learnsphere\progress\entity\Question$QuestionBuilder.class
 com\learnsphere\progress\entity\QuizAttempt.class
 com\learnsphere\progress\repository\LessonProgressRepository.class
 com\learnsphere\progress\dto\LessonProgressRequest.class

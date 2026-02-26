@@ -16,6 +16,8 @@ public class NotificationResponse {
     private String userId;
     private String title;
     private String message;
+    private String courseId;
+    private String threadId;
     private boolean read;
     private Instant createdAt;
 }

@@ -70,6 +70,21 @@ public class DiscussionServiceImpl implements DiscussionService {
             .build();
 
         ThreadDocument saved = threadRepository.save(thread);
+
+        courseClient.getCourseById(courseId, null)
+            .map(course -> course.getInstructorId())
+            .filter(instructorId -> instructorId != null && !instructorId.isBlank())
+            .filter(instructorId -> !Objects.equals(instructorId, actor.getActorId()))
+            .ifPresent(instructorId ->
+                notificationService.createNotification(
+                    instructorId,
+                    "New learner question",
+                    actor.getActorId() + " posted a new discussion: " + saved.getTitle(),
+                    courseId,
+                    saved.getId()
+                )
+            );
+
         return toThreadSummary(saved, actor.getActorId());
     }
 
@@ -158,7 +173,9 @@ public class DiscussionServiceImpl implements DiscussionService {
             notificationService.createNotification(
                 thread.getAuthorId(),
                 "New reply on your thread",
-                actor.getActorId() + " replied to: " + thread.getTitle()
+                actor.getActorId() + " replied to: " + thread.getTitle(),
+                thread.getCourseId(),
+                thread.getId()
             );
         }
 

@@ -156,3 +156,98 @@ $learn-text-white: #ffffff;
     cursor: pointer;
   }
 }
+
+.learn-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+
+  button {
+    border: 1px solid $learn-border;
+    background: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    &.active {
+      background: $learn-bg-active;
+      color: #fff;
+      border-color: $learn-bg-active;
+    }
+  }
+}
+
+.lesson-check {
+  margin-left: 8px;
+  font-size: 12px;
+  opacity: 0.9;
+}
+
+.lesson-actions-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+
+  button {
+    border: none;
+    background: $learn-bg-active;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+  }
+}
+
+.lesson-assessment-card {
+  border: 1px solid $learn-border;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 17px;
+  }
+
+  p {
+    margin: 0 0 10px;
+  }
+
+  button {
+    border: none;
+    background: $learn-bg-active;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.learn-discussion-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  button {
+    border: none;
+    background: $learn-bg-active;
+    color: #fff;
+    border-radius: 8px;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+}
+
+.topic-inline-link {
+  border: none;
+  background: transparent;
+  text-align: left;
+  padding: 0;
+  cursor: pointer;
+}

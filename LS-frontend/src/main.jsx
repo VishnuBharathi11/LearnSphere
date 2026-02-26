@@ -3,11 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import "./index.scss";
-import { appStore, cleanupDeprecatedStoreKeys } from "./services/appStore";
-
-if (!window.appStore) {
-  window.appStore = appStore;
-}
+import { cleanupDeprecatedStoreKeys } from "./services/appStore";
 
 cleanupDeprecatedStoreKeys();
 

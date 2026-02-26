@@ -1,14 +1,28 @@
-﻿import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { FiBell } from "react-icons/fi";
-import axios from "axios";
-import { getInstructorCourses } from "../../services/courseApi";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
+import { getNotifications, markNotificationRead } from "../../services/discussionApi";
 import {
   getCurrentUser,
   getInstructorProfile,
   onProfileUpdated,
 } from "../../services/userProfileStore";
 import "./TopNavBarInstructor.scss";
+
+function formatRelativeTime(dateValue) {
+  if (!dateValue) return "just now";
+  const now = Date.now();
+  const then = new Date(dateValue).getTime();
+  if (Number.isNaN(then)) return "just now";
+  const diffSec = Math.max(1, Math.floor((now - then) / 1000));
+  if (diffSec < 60) return `${diffSec} secs ago`;
+  const min = Math.floor(diffSec / 60);
+  if (min < 60) return `${min} mins ago`;
+  const hrs = Math.floor(min / 60);
+  if (hrs < 24) return `${hrs} hours ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} days ago`;
+}
 
 const PAGE_MAP = {
   "/instructor-layout/dashboard": {
@@ -23,14 +37,6 @@ const PAGE_MAP = {
     title: "Manage Courses",
     subtitle: "Track course status, updates, and performance",
   },
-  "/instructor-layout/discussions": {
-    title: "Discussions",
-    subtitle: "Respond to learner questions and feedback",
-  },
-  "/instructor-layout/forum": {
-    title: "Discussions",
-    subtitle: "Respond to learner questions and feedback",
-  },
   "/instructor-layout/profile": {
     title: "My Profile",
     subtitle: "Update your public instructor profile",
@@ -42,7 +48,7 @@ function resolvePageMeta(pathname) {
     return { title: "Upload Lesson", subtitle: "Add and organize course lessons" };
   }
   if (pathname.includes("/manage-courses/") && pathname.includes("/quiz")) {
-    return { title: "Create Quiz", subtitle: "Create assessment for this course" };
+    return { title: "Create Quiz", subtitle: "Create lesson-wise and final assessments" };
   }
   if (pathname.includes("/manage-courses/") && pathname.includes("/students")) {
     return { title: "Students", subtitle: "View enrolled learners and progress" };
@@ -53,8 +59,8 @@ function resolvePageMeta(pathname) {
   if (pathname.includes("/edit-course/")) {
     return { title: "Edit Course", subtitle: "Update course details before review/publishing" };
   }
-  if (pathname.includes("/forum/topic/") || pathname.includes("/courses/") && pathname.endsWith("/forum")) {
-    return { title: "Discussions", subtitle: "Respond to learner questions and feedback" };
+  if (pathname.includes("/forum/topic/") || (pathname.includes("/courses/") && pathname.endsWith("/forum"))) {
+    return { title: "Course Discussion", subtitle: "Answer learner questions in your course forum" };
   }
   return (
     PAGE_MAP[pathname] || {
@@ -66,6 +72,8 @@ function resolvePageMeta(pathname) {
 
 function TopNavBarInstructor() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const panelRef = useRef(null);
   const pageMeta = resolvePageMeta(location.pathname);
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
@@ -106,36 +114,23 @@ function TopNavBarInstructor() {
       if (!userId) return;
 
       try {
-        const token = window.appStore.getItem("authToken");
-        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const discussionList = await getNotifications(userId);
 
-        const [discussionRes, courseStatuses] = await Promise.all([
-          axios.get(`/notifications/${userId}`, { headers }),
-          getInstructorCourses(userId),
-        ]);
-
-        const discussionNotifications = (discussionRes.data || []).map((item) => ({
+        const discussionNotifications = (discussionList || []).map((item) => ({
           id: `d-${item.id}`,
+          sourceId: item.id,
           title: item.title || "New discussion update",
-          message: item.message || "A learner posted in your discussion thread.",
-          rank: Number(item.id) || 0,
+          message: item.message || "A learner posted in your course discussion.",
+          rank: item.createdAt ? new Date(item.createdAt).getTime() : Number(item.id) || 0,
+          courseId: item.courseId || "",
+          threadId: item.threadId || "",
+          read: Boolean(item.read),
+          createdAt: item.createdAt,
         }));
 
-        const courseNotifications = (courseStatuses || [])
-          .filter((course) => course.status === "PUBLISHED" || course.status === "REVIEW")
-          .map((course) => ({
-            id: `c-${course.id}-${course.status}`,
-            title: course.status === "PUBLISHED" ? "Course Approved" : "Course In Review",
-            message:
-              course.status === "PUBLISHED"
-                ? `"${course.courseName}" is approved and now visible to learners.`
-                : `"${course.courseName}" has been submitted and is waiting for admin review.`,
-            rank: course.createdAt ? new Date(course.createdAt).getTime() : 0,
-          }));
-
-        const merged = [...courseNotifications, ...discussionNotifications]
+        const merged = [...discussionNotifications]
           .sort((a, b) => b.rank - a.rank)
-          .slice(0, 8);
+          .slice(0, 10);
 
         setNotifications(merged);
       } catch {
@@ -150,6 +145,28 @@ function TopNavBarInstructor() {
     const timer = setInterval(fetchNotifications, 15000);
     return () => clearInterval(timer);
   }, [fetchNotifications]);
+
+  useEffect(() => {
+    const onDocClick = (event) => {
+      if (!panelRef.current) return;
+      if (panelRef.current.contains(event.target)) return;
+      setOpenNotifications(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  const markAllAsRead = async () => {
+    const unread = notifications.filter((item) => !item.read && item.sourceId);
+    if (!unread.length) return;
+
+    await Promise.all(
+      unread.map((item) =>
+        markNotificationRead(String(item.sourceId), userId).catch(() => null)
+      )
+    );
+    setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
+  };
 
   return (
     <header className="dashboard-header">
@@ -168,24 +185,59 @@ function TopNavBarInstructor() {
           onClick={() => setOpenNotifications((prev) => !prev)}
         >
           <FiBell />
-          {notifications.length > 0 && <span className="badge">{Math.min(notifications.length, 9)}</span>}
+          {notifications.filter((item) => !item.read).length > 0 && (
+            <span className="badge">{Math.min(notifications.filter((item) => !item.read).length, 9)}</span>
+          )}
         </button>
 
         {openNotifications && (
-          <div className="notification-panel">
-            <div className="notification-head">Notifications</div>
+          <div className="notification-panel" ref={panelRef}>
+            <div className="notification-head">
+              <span>Notifications</span>
+              <div className="head-actions">
+                <button type="button" onClick={(event) => { event.stopPropagation(); markAllAsRead(); }}><FiCheck /></button>
+                <button type="button" onClick={(event) => { event.stopPropagation(); setOpenNotifications(false); }}><FiX /></button>
+              </div>
+            </div>
             {notifications.length === 0 ? (
               <p className="notification-empty">No new updates</p>
             ) : (
               <div className="notification-list">
                 {notifications.map((item) => (
-                  <div key={item.id} className="notification-item">
-                    <p className="n-title">{item.title}</p>
-                    <p className="n-message">{item.message}</p>
+                  <div key={item.id} className={`notification-item ${item.read ? "read" : "unread"}`}>
+                    <p className="n-title"><FiEdit3 size={14} />{item.title}</p>
+                    <p className="n-time">{formatRelativeTime(item.createdAt)}</p>
+                    <button
+                      type="button"
+                      className="n-link"
+                      onClick={async () => {
+                        if (item.sourceId) {
+                          try {
+                            await markNotificationRead(item.sourceId, userId);
+                          } catch {
+                            // ignore read errors
+                          }
+                        }
+
+                        setOpenNotifications(false);
+
+                        if (item.threadId) {
+                          navigate(`/forum/topic/${item.threadId}`);
+                          return;
+                        }
+
+                        if (item.courseId) {
+                          navigate(`/courses/${item.courseId}/forum`);
+                        }
+                      }}
+                    >
+                      View full notification
+                    </button>
                   </div>
                 ))}
               </div>
             )}
+            <button type="button" className="notification-see-all">See all</button>
           </div>
         )}
 

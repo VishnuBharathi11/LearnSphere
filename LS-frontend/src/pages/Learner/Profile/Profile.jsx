@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
 import { normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { getPublishedCourses } from "../../../services/courseApi";
-import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
+import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
+import { buildCourseLearningState } from "../../../services/learnerProgressStore";
 import {
   buildDefaultLearnerProfile,
   getCurrentUser,
@@ -13,12 +15,17 @@ import {
 import "./Profile.scss";
 
 function Profile() {
+  const [searchParams] = useSearchParams();
   const infoRef = useRef(null);
   const summaryRef = useRef(null);
   const fileInputRef = useRef(null);
 
   const user = getCurrentUser();
-  const userId = user?.id || user?.userId || "";
+  const isAdminPreview = searchParams.get("adminPreview") === "true";
+  const previewUserId = searchParams.get("adminUserId") || "";
+  const previewUserName = searchParams.get("adminUserName") || "";
+  const previewUserEmail = searchParams.get("adminUserEmail") || "";
+  const userId = isAdminPreview ? previewUserId : user?.id || user?.userId || "";
   const registrationSeed = useMemo(() => getRegistrationSeedByEmail(user?.email), [user?.email]);
 
   const [isEditing, setIsEditing] = useState(false);
@@ -27,8 +34,20 @@ function Profile() {
 
   const initialProfile = useMemo(() => {
     const stored = getLearnerProfile(userId);
+    if (isAdminPreview) {
+      return {
+        name: previewUserName || stored?.name || "Learner",
+        email: previewUserEmail || stored?.email || "-",
+        phone: stored?.phone || "",
+        bio: stored?.bio || "",
+        image: stored?.image || null,
+      };
+    }
     return stored || buildDefaultLearnerProfile(user, registrationSeed);
   }, [
+    isAdminPreview,
+    previewUserName,
+    previewUserEmail,
     userId,
     user?.name,
     user?.username,
@@ -70,8 +89,7 @@ function Profile() {
         const safeCourses = Array.isArray(published) ? published : [];
         setCourses(safeCourses);
 
-        const ids = safeCourses.map((course) => String(course.id));
-        const list = await getEnrollmentsByCourses(ids);
+        const list = await getEnrollmentsByUser(String(userId));
         if (!active) return;
         setEnrollments(Array.isArray(list) ? list : []);
       } catch {
@@ -105,15 +123,15 @@ function Profile() {
       .filter(Boolean);
 
     const completedCourses = withCourse.filter(({ course }) => {
-      const record = myEnrollments.find((entry) => String(entry.courseId) === String(course.id));
-      const progress = Number(record?.progressPercentage || 0);
-      return progress >= 100;
+      const state = buildCourseLearningState(userId, course.id);
+      return state.progressPercentage >= 100;
     });
 
     const certificatesCount = completedCourses.length;
-    const learningHours = Math.floor(
-      myEnrollments.reduce((sum, entry) => sum + Number(entry.completedLessons || 0) * 0.5, 0)
-    );
+    const learningHours = Math.floor(withCourse.reduce((sum, { course }) => {
+      const state = buildCourseLearningState(userId, course.id);
+      return sum + Number(state.completedLessons || 0) * 0.5;
+    }, 0));
 
     const achievements = completedCourses.slice(0, 4).map(({ course }) => ({
       title: course.courseName,
@@ -145,6 +163,7 @@ function Profile() {
   );
 
   const persistProfile = async (payload) => {
+    if (isAdminPreview) return;
     try {
       await updateMyProfile({
         name: payload.name || "",
@@ -159,6 +178,7 @@ function Profile() {
   };
 
   const handleEdit = () => {
+    if (isAdminPreview) return;
     setFormData(profile);
     setIsEditing(true);
     requestAnimationFrame(() => {
@@ -167,6 +187,7 @@ function Profile() {
   };
 
   const handleSave = async () => {
+    if (isAdminPreview) return;
     const normalized = {
       ...formData,
       name: String(formData.name || "").trim(),
@@ -189,10 +210,12 @@ function Profile() {
   };
 
   const handleImageClick = () => {
+    if (isAdminPreview) return;
     fileInputRef.current?.click();
   };
 
   const handleImageChange = (e) => {
+    if (isAdminPreview) return;
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
@@ -240,7 +263,7 @@ function Profile() {
           </div>
 
           <button className="edit-profile-btn" onClick={handleEdit}>
-            Edit Profile
+            {isAdminPreview ? "Read Only View" : "Edit Profile"}
           </button>
         </div>
 
@@ -281,7 +304,7 @@ function Profile() {
           <label>Bio</label>
           <textarea rows="4" name="bio" value={formData.bio || ""} disabled={!isEditing} onChange={handleChange} />
 
-          {isEditing && (
+          {isEditing && !isAdminPreview && (
             <button className="save-btn" onClick={handleSave}>
               Save Changes
             </button>

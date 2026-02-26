@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
   Search,
@@ -11,13 +11,14 @@ import {
 import "./StudentProgress.scss";
 import { getCourseById } from "../../../../services/courseApi";
 import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
+import { getCurrentUser } from "../../../../services/userProfileStore.js";
 
 function StudentProgress() {
   const { courseId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [loadingCourse, setLoadingCourse] = useState(true);
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null") || null;
+  const currentUser = getCurrentUser() || null;
   const currentRole = String(currentUser?.role || "").toLowerCase();
   const [enrollments, setEnrollments] = useState([]);
 
@@ -186,3 +187,4 @@ function StudentProgress() {
 }
 
 export default StudentProgress;
+

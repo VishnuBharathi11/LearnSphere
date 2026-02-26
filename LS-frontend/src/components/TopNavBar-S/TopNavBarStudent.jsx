@@ -1,13 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiBell } from "react-icons/fi";
+import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
 import {
   getCurrentUser,
   getLearnerProfile,
   onProfileUpdated,
 } from "../../services/userProfileStore";
-import forumService from "../../forum/services/forumService";
+import { getNotifications, markNotificationRead } from "../../services/discussionApi";
 import "./TopNavBarStudent.scss";
+
+function formatRelativeTime(dateValue) {
+  if (!dateValue) return "just now";
+  const now = Date.now();
+  const then = new Date(dateValue).getTime();
+  if (Number.isNaN(then)) return "just now";
+  const diffSec = Math.max(1, Math.floor((now - then) / 1000));
+  if (diffSec < 60) return `${diffSec} secs ago`;
+  const min = Math.floor(diffSec / 60);
+  if (min < 60) return `${min} mins ago`;
+  const hrs = Math.floor(min / 60);
+  if (hrs < 24) return `${hrs} hours ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days} days ago`;
+}
 
 function TopNavBarStudent() {
   const navigate = useNavigate();
@@ -23,11 +38,9 @@ function TopNavBarStudent() {
     "/student-layout/certificate": "Certificates",
     "/student-layout/download-certificate": "Certificate",
     "/student-layout/progress": "Progress",
-    "/student-layout/assessment": "Assessment",
     "/student-layout/test": "Quiz",
     "/student-layout/result": "Assessment Result",
     "/student-layout/learn": "Continue Learning",
-    "/student-layout/forum": "Discussion",
     "/student-layout/profile": "My Profile",
   };
 
@@ -37,7 +50,6 @@ function TopNavBarStudent() {
     if (pathname.startsWith("/student-layout/test")) return "/student-layout/test";
     if (pathname.startsWith("/student-layout/result")) return "/student-layout/result";
     if (pathname.startsWith("/student-layout/learn")) return "/student-layout/learn";
-    if (pathname.startsWith("/student-layout/forum")) return "/student-layout/forum";
     return pathname;
   };
 
@@ -73,17 +85,29 @@ function TopNavBarStudent() {
       return;
     }
 
-    const load = () => {
-      const list = forumService
-        .getNotifications(String(userId))
-        .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-        .slice(0, 8);
-      setNotifications(list);
+    let active = true;
+
+    const load = async () => {
+      try {
+        const list = await getNotifications(String(userId));
+        if (!active) return;
+        setNotifications(
+          (Array.isArray(list) ? list : [])
+            .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
+            .slice(0, 8)
+        );
+      } catch {
+        if (!active) return;
+        setNotifications([]);
+      }
     };
 
     load();
     const timer = setInterval(load, 12000);
-    return () => clearInterval(timer);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
   }, [currentUser?.id, currentUser?.userId]);
 
   useEffect(() => {
@@ -111,23 +135,44 @@ function TopNavBarStudent() {
   );
   const unreadCount = notifications.filter((item) => !item.read).length;
 
-  const handleNotificationClick = (item) => {
+  const handleNotificationClick = async (item) => {
     const userId = currentUser?.id || currentUser?.userId;
-    if (userId) {
-      forumService.markNotificationsRead(String(userId), item?.topicId || null);
-      const refreshed = forumService
-        .getNotifications(String(userId))
-        .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-        .slice(0, 8);
-      setNotifications(refreshed);
+    if (userId && item?.id) {
+      try {
+        await markNotificationRead(String(item.id), String(userId));
+      } catch {
+        // Ignore marking failures and continue navigation
+      }
+      setNotifications((prev) =>
+        prev.map((entry) => (String(entry.id) === String(item.id) ? { ...entry, read: true } : entry))
+      );
     }
 
     setOpenNotifications(false);
-    if (item?.topicId) {
-      navigate(`/student-layout/forum/topic/${item.topicId}`);
+
+    if (item?.courseId) {
+      const query = new URLSearchParams();
+      query.set("tab", "discussion");
+      if (item?.threadId) query.set("threadId", String(item.threadId));
+      navigate(`/student-layout/learn/${item.courseId}?${query.toString()}`);
       return;
     }
-    navigate("/student-layout/forum");
+
+    navigate("/student-layout/my-courses");
+  };
+
+  const markAllAsRead = async () => {
+    const userId = currentUser?.id || currentUser?.userId;
+    if (!userId) return;
+    const unread = notifications.filter((item) => !item.read);
+    if (!unread.length) return;
+
+    await Promise.all(
+      unread.map((item) =>
+        markNotificationRead(String(item.id), String(userId)).catch(() => null)
+      )
+    );
+    setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
 
   return (
@@ -149,24 +194,34 @@ function TopNavBarStudent() {
 
         {openNotifications && (
           <div className="notification-panel" ref={panelRef}>
-            <div className="notification-head">Notifications</div>
+            <div className="notification-head">
+              <span>Notifications</span>
+              <div className="head-actions">
+                <button type="button" onClick={(event) => { event.stopPropagation(); markAllAsRead(); }}><FiCheck /></button>
+                <button type="button" onClick={(event) => { event.stopPropagation(); setOpenNotifications(false); }}><FiX /></button>
+              </div>
+            </div>
             {notifications.length === 0 ? (
               <p className="notification-empty">No new updates</p>
             ) : (
               <div className="notification-list">
                 {notifications.map((item) => (
-                  <button
+                  <div
                     key={item.id}
-                    className={`notification-item ${item.read ? "read" : ""}`}
-                    type="button"
-                    onClick={() => handleNotificationClick(item)}
+                    className={`notification-item ${item.read ? "read" : "unread"}`}
                   >
-                    <p className="n-title">{item.type === "reply" ? "New Reply" : "New Update"}</p>
-                    <p className="n-message">{item.message || "You have a new discussion update."}</p>
-                  </button>
+                    <p className="n-title"><FiEdit3 size={14} />{item.title || "New Update"}</p>
+                    <p className="n-time">{formatRelativeTime(item.createdAt)}</p>
+                    <button type="button" className="n-link" onClick={() => handleNotificationClick(item)}>
+                      View full notification
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
+            <button type="button" className="notification-see-all">
+              See all
+            </button>
           </div>
         )}
 

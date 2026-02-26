@@ -1,10 +1,12 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getPublishedCourses } from "../../../services/courseApi";
-import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
+import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
+import { buildCourseLearningState } from "../../../services/learnerProgressStore";
 import "./Progress.scss";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function Progress() {
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
 
   const [courses, setCourses] = useState([]);
@@ -16,15 +18,10 @@ function Progress() {
     let active = true;
     async function load() {
       try {
-        const published = await getPublishedCourses(0, 300);
+        const [published, mine] = await Promise.all([getPublishedCourses(0, 300), getEnrollmentsByUser(String(userId))]);
         if (!active) return;
-        const safeCourses = Array.isArray(published) ? published : [];
-        setCourses(safeCourses);
-
-        const ids = safeCourses.map((course) => String(course.id));
-        const list = await getEnrollmentsByCourses(ids);
-        if (!active) return;
-        setEnrollments(Array.isArray(list) ? list : []);
+        setCourses(Array.isArray(published) ? published : []);
+        setEnrollments(Array.isArray(mine) ? mine : []);
       } catch {
         if (!active) return;
         setCourses([]);
@@ -41,47 +38,25 @@ function Progress() {
   const progressData = useMemo(() => {
     if (!userId) return [];
 
-    const localProgress = JSON.parse(window.appStore.getItem("enrolledCourses") || "[]");
-
-    const backendActive = enrollments.filter(
-      (item) =>
-        String(item.userId) === String(userId) &&
-        String(item.status || "").toUpperCase() === "ACTIVE"
-    );
-
-    const myActive =
-      backendActive.length > 0
-        ? backendActive
-        : localProgress
-            .filter((item) => String(item.studentId || item.userId) === String(userId))
-            .map((item) => ({ courseId: String(item.courseId), status: "ACTIVE" }));
-
-    return myActive
+    return enrollments
+      .filter((item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE")
       .map((entry) => {
         const course = courses.find((c) => String(c.id) === String(entry.courseId));
         if (!course) return null;
 
-        const local = localProgress.find(
-          (item) =>
-            String(item.courseId) === String(course.id) &&
-            String(item.studentId || item.userId) === String(userId)
-        );
-
-        const completed = Number(local?.completedLessons || 0);
-        const total = Number(local?.totalLessons || course.lessons || 0);
-        const progress = Number(local?.progress || (total === 0 ? 0 : Math.floor((completed / total) * 100)));
+        const state = buildCourseLearningState(userId, course.id);
 
         let status = "Pending";
-        if (progress > 0 && progress < 100) status = "In Progress";
-        if (progress >= 100) status = "Completed";
+        if (state.progressPercentage > 0 && state.progressPercentage < 100) status = "In Progress";
+        if (state.progressPercentage >= 100) status = "Completed";
 
         return {
           id: course.id,
           courseName: course.courseName,
           instructor: course.instructor || "Instructor",
-          completedLessons: completed,
-          totalLessons: total,
-          progress,
+          completedLessons: state.completedLessons,
+          totalLessons: state.totalLessons,
+          progress: state.progressPercentage,
           status,
         };
       })
@@ -91,10 +66,7 @@ function Progress() {
   const totalCourses = progressData.length;
   const inProgressCourses = progressData.filter((item) => item.status === "In Progress").length;
   const completedCourses = progressData.filter((item) => item.status === "Completed").length;
-  const avgProgress =
-    totalCourses === 0
-      ? 0
-      : Math.floor(progressData.reduce((sum, item) => sum + item.progress, 0) / totalCourses);
+  const avgProgress = totalCourses === 0 ? 0 : Math.floor(progressData.reduce((sum, item) => sum + item.progress, 0) / totalCourses);
 
   return (
     <div className="progress-container">
@@ -138,9 +110,7 @@ function Progress() {
                 </span>
               </div>
 
-              <div className={`status-tag ${course.status.toLowerCase().replace(" ", "-")}`}>
-                {course.status}
-              </div>
+              <div className={`status-tag ${course.status.toLowerCase().replace(" ", "-")}`}>{course.status}</div>
             </div>
           ))
         )}
@@ -150,3 +120,4 @@ function Progress() {
 }
 
 export default Progress;
+

@@ -12,29 +12,27 @@ import {
 import { useParams } from "react-router-dom";
 import "./UpdateLesson.scss";
 import { getCourseById } from "../../../../services/courseApi";
+import { getCurrentUser } from "../../../../services/userProfileStore.js";
+import {
+  getScopedLessonsForCourse,
+  saveScopedLessonsForCourse,
+} from "../../../../services/learnerProgressStore";
 function UpdateLesson() {
   const { courseId } = useParams();
   const id = String(courseId);
-  const safeParse = (key, fallback) => {
-    try {
-      return JSON.parse(window.appStore.getItem(key)) || fallback;
-    } catch {
-      return fallback;
-    }
-  };
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser")) || {};
+  const currentUser = getCurrentUser() || {};
   const currentRole = String(currentUser?.role || "").toLowerCase();
   const [course, setCourse] = useState(null);
   const [loadingCourse, setLoadingCourse] = useState(true);
-  const lessonKey = `${currentUser?.id || "guest"}_${id}`;
-
-  const lessonMap=safeParse("courseLessons",{});
-  const [lessons, setLessons] = useState(lessonMap[lessonKey]||[]);
+  const [lessons, setLessons] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editLessonId, setEditLessonId] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [form, setForm] = useState({
     title: "",
+    heading: "",
+    subheading: "",
+    description: "",
     type: "video",
     file: null,
     fileUrl: "",
@@ -61,9 +59,8 @@ function UpdateLesson() {
   }, [id, currentUser?.id]);
 
   useEffect(() => {
-    const map = safeParse("courseLessons", {});
-    setLessons(map[lessonKey] || []);
-  }, [lessonKey]);
+    setLessons(getScopedLessonsForCourse(currentUser?.id, id));
+  }, [currentUser?.id, id]);
 
   if (loadingCourse) {
     return <p style={{ padding: 40 }}>Loading course...</p>;
@@ -78,9 +75,7 @@ function UpdateLesson() {
   }
 
   const persistLessons = (updatedLessons) => {
-    const updatedMap = safeParse("courseLessons", {});
-    updatedMap[lessonKey] = updatedLessons;
-    window.appStore.setItem("courseLessons", JSON.stringify(updatedMap));
+    saveScopedLessonsForCourse(currentUser?.id, id, updatedLessons);
   };
 
   const handleFileChange = (e) => {
@@ -101,6 +96,9 @@ function UpdateLesson() {
 
   const validate = () => {
     if (!form.title.trim()) return "Lesson title required";
+    if (!form.heading.trim()) return "Heading is required";
+    if (!form.subheading.trim()) return "Subheading is required";
+    if (!form.description.trim() && !form.fileUrl) return "Add theory content or attach a file";
 
     const duplicate = lessons.find(
       (l) =>
@@ -127,6 +125,9 @@ function UpdateLesson() {
           ? {
               ...l,
               title: form.title,
+              heading: form.heading,
+              subheading: form.subheading,
+              description: form.description,
               type: form.type,
               fileUrl: form.fileUrl || l.fileUrl || "",
               fileName: form.fileName || l.fileName || "",
@@ -138,6 +139,9 @@ function UpdateLesson() {
       const newLesson = {
         id: Date.now(),
         title: form.title,
+        heading: form.heading,
+        subheading: form.subheading,
+        description: form.description,
         type: form.type,
         order: lessons.length,
         duration: form.type === "video" ? "00:00" : null,
@@ -155,7 +159,17 @@ function UpdateLesson() {
     }
     setLessons(updated);
     persistLessons(updated);
-    setForm({ title: "", type: "video", file: null, fileUrl: "", fileName: "", mimeType: "" });
+    setForm({
+      title: "",
+      heading: "",
+      subheading: "",
+      description: "",
+      type: "video",
+      file: null,
+      fileUrl: "",
+      fileName: "",
+      mimeType: "",
+    });
     setEditLessonId(null);
     setShowModal(false);
     setMessage({
@@ -173,6 +187,9 @@ function UpdateLesson() {
   const openEdit = (lesson) => {
     setForm({
       title: lesson.title,
+      heading: lesson.heading || "",
+      subheading: lesson.subheading || "",
+      description: lesson.description || "",
       type: lesson.type,
       file: null,
       fileUrl: lesson.fileUrl || "",
@@ -208,6 +225,8 @@ function UpdateLesson() {
                     <span className={`tag ${lesson.type}`}>
                       {lesson.type.toUpperCase()}
                     </span>
+                    {lesson.heading ? <span>{lesson.heading}</span> : null}
+                    {lesson.subheading ? <span>{lesson.subheading}</span> : null}
                     {lesson.duration && (
                       <span>
                         <Clock size={14} /> {lesson.duration}
@@ -247,6 +266,27 @@ function UpdateLesson() {
                 />
               </div>
               <div className="form-group">
+                <input
+                  placeholder="Heading"
+                  value={form.heading}
+                  onChange={(e) => setForm({ ...form, heading: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <input
+                  placeholder="Subheading"
+                  value={form.subheading}
+                  onChange={(e) => setForm({ ...form, subheading: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <textarea
+                  placeholder="Theory content"
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
                 <select
                   value={form.type}
                   onChange={(e) =>
@@ -256,6 +296,7 @@ function UpdateLesson() {
                     })
                   }
                 >
+                  <option value="theory">Theory</option>
                   <option value="video">Video</option>
                   <option value="pdf">PDF</option>
                   <option value="document">Document</option>
@@ -286,3 +327,4 @@ function UpdateLesson() {
   );
 }
 export default UpdateLesson;
+

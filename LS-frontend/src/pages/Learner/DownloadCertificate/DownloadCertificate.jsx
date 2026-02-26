@@ -1,46 +1,51 @@
-﻿import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./DownloadCertificate.scss";
 import certificateImage from "../../../assets/Learner/certificate.png";
+import { buildCourseLearningState } from "../../../services/learnerProgressStore";
+import { getCourseById } from "../../../services/courseApi";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function DownloadCertificate() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
+  const [courseName, setCourseName] = useState("");
+
+  useEffect(() => {
+    let active = true;
+    async function loadCourse() {
+      if (!id) return;
+      try {
+        const course = await getCourseById(String(id));
+        if (!active) return;
+        setCourseName(course?.courseName || "");
+      } catch {
+        if (!active) return;
+        setCourseName("");
+      }
+    }
+    loadCourse();
+    return () => {
+      active = false;
+    };
+  }, [id]);
 
   const certificate = useMemo(() => {
     if (!userId || !id) return null;
 
-    const results = JSON.parse(window.appStore.getItem("testResults") || "[]");
-    const enrolled = JSON.parse(window.appStore.getItem("enrolledCourses") || "[]");
-    const courses = JSON.parse(window.appStore.getItem("courses") || "[]");
-
-    const result = results.find(
-      (item) =>
-        String(item.courseId) === String(id) &&
-        String(item.studentId) === String(userId) &&
-        item.passed
-    );
-
-    const enrollment = enrolled.find(
-      (item) =>
-        String(item.courseId) === String(id) &&
-        String(item.studentId || item.userId) === String(userId)
-    );
-
-    if (!result || Number(enrollment?.progress || 0) < 100) return null;
-
-    const course = courses.find((item) => String(item.id) === String(id));
+    const state = buildCourseLearningState(userId, id);
+    if (!state.certificateUnlocked) return null;
 
     return {
-      courseName: course?.courseName || `Course #${id}`,
+      courseName: courseName || `Course #${id}`,
       learnerName: currentUser?.name || currentUser?.username || "Learner",
-      issuedDate: new Date(result.submittedAt || Date.now()).toDateString(),
+      issuedDate: new Date(state.progress.finalAssessment?.submittedAt || Date.now()).toDateString(),
       certificateId: `LS-${id}-${String(userId)}`,
     };
-  }, [currentUser?.name, currentUser?.username, id, userId]);
+  }, [courseName, currentUser?.name, currentUser?.username, id, userId]);
 
   const handleDownload = () => {
     if (!certificate) return;
@@ -77,7 +82,7 @@ function DownloadCertificate() {
     return (
       <div style={{ padding: 40 }}>
         <h2>Certificate Locked</h2>
-        <p>You must complete the course and pass assessment.</p>
+        <p>You must complete 100% lessons and pass final assessment.</p>
         <button onClick={() => navigate("/student-layout/my-courses")}>Go to My Courses</button>
       </div>
     );
@@ -137,3 +142,4 @@ function DownloadCertificate() {
 }
 
 export default DownloadCertificate;
+

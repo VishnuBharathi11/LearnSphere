@@ -1,18 +1,21 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import "./Assesment.scss";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
+import { getCourseQuizzesByCourseId } from "../../../services/progressApi";
+import { getLearnerCourseProgress } from "../../../services/learnerProgressStore";
 
 function Assessment() {
   const navigate = useNavigate();
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
-  const userEmail = String(currentUser?.email || "").trim().toLowerCase();
 
   const [selectedResultCourse, setSelectedResultCourse] = useState(null);
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [quizzesByCourseId, setQuizzesByCourseId] = useState({});
 
   useEffect(() => {
     if (!userId) return;
@@ -43,88 +46,44 @@ function Assessment() {
   }, [userId]);
 
   useEffect(() => {
-    if (!userId || courses.length === 0) return;
-
-    const backendEnrollments = enrollments.filter(
+    if (!userId) return;
+    const activeEnrollments = enrollments.filter(
       (entry) =>
         String(entry.userId) === String(userId) &&
         String(entry.status || "").toUpperCase() === "ACTIVE"
     );
-    const activeEnrollments = backendEnrollments.map((item) => ({ courseId: String(item.courseId) }));
+    if (!activeEnrollments.length) {
+      setQuizzesByCourseId({});
+      return;
+    }
 
-    if (activeEnrollments.length === 0) return;
-
-    const quizStore = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
-    let modified = false;
-
-    const ensureQuizForCourse = (course) => {
-      const key = String(course.id);
-      if (quizStore[key]) return;
-
-      const isSpringBootCourse = String(course.courseName || "")
-        .trim()
-        .toLowerCase() === "spring boot apis 2";
-
-      quizStore[key] = {
-        quizTitle: `${course.courseName} - Module Assessment`,
-        timeLimit: 20,
-        passingScore: 60,
-        questions: isSpringBootCourse
-          ? [
-              {
-                question: "What does @RestController combine in Spring Boot?",
-                options: [
-                  { text: "@Controller + @ResponseBody", isCorrect: true },
-                  { text: "@Service + @Component", isCorrect: false },
-                  { text: "@Entity + @Repository", isCorrect: false },
-                  { text: "@Bean + @Configuration", isCorrect: false },
-                ],
-              },
-              {
-                question: "Which HTTP method is typically used to create a resource?",
-                options: [
-                  { text: "GET", isCorrect: false },
-                  { text: "POST", isCorrect: true },
-                  { text: "DELETE", isCorrect: false },
-                  { text: "PATCH", isCorrect: false },
-                ],
-              },
-            ]
-          : [
-              {
-                question: `What is a key concept covered in ${course.courseName}?`,
-                options: [
-                  { text: "Core fundamentals and practical usage", isCorrect: true },
-                  { text: "Irrelevant external topic", isCorrect: false },
-                  { text: "Only historical background", isCorrect: false },
-                  { text: "None of the above", isCorrect: false },
-                ],
-              },
-            ],
-      };
-      modified = true;
-    };
-
-    activeEnrollments.forEach((entry) => {
-      const course = courses.find((item) => String(item.id) === String(entry.courseId));
-      if (course) ensureQuizForCourse(course);
-    });
-
-    if (userEmail === "717823s129@kce.ac.in") {
-      const springBootCourse = courses.find(
-        (course) => String(course.courseName || "").trim().toLowerCase() === "spring boot apis 2"
+    let active = true;
+    async function loadQuizzes() {
+      const pairs = await Promise.all(
+        activeEnrollments.map(async (entry) => {
+          const courseId = String(entry.courseId);
+          try {
+            const quizzes = await getCourseQuizzesByCourseId(courseId);
+            const finalQuiz =
+              (Array.isArray(quizzes) ? quizzes : []).find(
+                (item) => String(item.assessmentType || "FINAL").toUpperCase() === "FINAL"
+              ) || null;
+            return [courseId, finalQuiz];
+          } catch {
+            return [courseId, null];
+          }
+        })
       );
-      if (springBootCourse) ensureQuizForCourse(springBootCourse);
+      if (!active) return;
+      setQuizzesByCourseId(Object.fromEntries(pairs));
     }
-
-    if (modified) {
-      window.appStore.setItem("courseQuizzes", JSON.stringify(quizStore));
-    }
-  }, [courses, enrollments, userEmail, userId]);
+    loadQuizzes();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
 
   const { assessmentCourses, totalAssessments, completed, pending, avgScore } = useMemo(() => {
-    const testResults = JSON.parse(window.appStore.getItem("testResults") || "[]");
-    const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
     const backendEnrollments = enrollments.filter(
       (entry) =>
         String(entry.userId) === String(userId) &&
@@ -137,14 +96,10 @@ function Assessment() {
         const course = courses.find((item) => String(item.id) === String(entry.courseId));
         if (!course) return null;
 
-        const quiz = allQuizzes[String(course.id)] || allQuizzes[course.id];
+        const quiz = quizzesByCourseId[String(course.id)];
         if (!quiz) return null;
 
-        const result = testResults.find(
-          (item) =>
-            String(item.courseId) === String(course.id) &&
-            String(item.studentId) === String(userId)
-        );
+        const result = getLearnerCourseProgress(userId, course.id).finalAssessment;
 
         const status = result ? "Completed" : "Pending";
 
@@ -177,21 +132,14 @@ function Assessment() {
       pending,
       avgScore,
     };
-  }, [courses, enrollments, userId]);
+  }, [courses, enrollments, quizzesByCourseId, userId]);
 
   const selectedResultData = useMemo(() => {
     if (!selectedResultCourse) return null;
 
-    const testResults = JSON.parse(window.appStore.getItem("testResults") || "[]");
-    const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
-
     const course = courses.find((item) => String(item.id) === String(selectedResultCourse));
-    const result = testResults.find(
-      (item) =>
-        String(item.courseId) === String(selectedResultCourse) &&
-        String(item.studentId) === String(userId)
-    );
-    const quiz = allQuizzes[String(selectedResultCourse)] || allQuizzes[selectedResultCourse];
+    const result = getLearnerCourseProgress(userId, selectedResultCourse).finalAssessment;
+    const quiz = quizzesByCourseId[String(selectedResultCourse)];
 
     if (!result || !course || !quiz) return null;
 
@@ -204,7 +152,7 @@ function Assessment() {
       passed: result.passed,
       passingScore: quiz.passingScore,
     };
-  }, [selectedResultCourse, courses, userId]);
+  }, [selectedResultCourse, courses, quizzesByCourseId, userId]);
 
   return (
     <div className="assessment-container">
@@ -309,3 +257,4 @@ function Assessment() {
 }
 
 export default Assessment;
+

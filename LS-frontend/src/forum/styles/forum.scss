@@ -232,6 +232,8 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   font-size: 14px;
   line-height: 1.55;
   overflow-wrap: anywhere;
+  direction: ltr;
+  unicode-bidi: plaintext;
 }
 
 .forum-meta-row {
@@ -449,6 +451,8 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   color: $text-strong;
   line-height: 1.5;
   outline: none;
+  direction: ltr;
+  unicode-bidi: plaintext;
 }
 
 .forum-rich-input:empty::before {

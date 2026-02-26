@@ -1,12 +1,15 @@
 import axios from "axios";
+import { appStore } from "./appStore";
 
 const ENROLLMENT_API_BASE_URL =
   import.meta.env.VITE_ENROLLMENT_API_BASE_URL || "/api/enrollments";
 const FALLBACK_RAZORPAY_KEY =
   import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_SIf0T7lHEketYm";
+const ENROLLMENT_CACHE_TTL_MS = 10000;
+const enrollmentByUserCache = new Map();
 
 function getAuthHeaders() {
-  const token = window.appStore.getItem("authToken");
+  const token = appStore.getItem("authToken");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
@@ -32,6 +35,30 @@ export async function getEnrollmentsByCourse(courseId) {
     headers: getAuthHeaders(),
   });
   return Array.isArray(response.data) ? response.data : [];
+}
+
+export async function getEnrollmentsByUser(userId) {
+  if (!userId) return [];
+  const normalizedUserId = encodeURIComponent(String(userId));
+  const now = Date.now();
+  const cached = enrollmentByUserCache.get(normalizedUserId);
+  if (cached && now - cached.at < ENROLLMENT_CACHE_TTL_MS) {
+    return cached.promise;
+  }
+
+  const promise = axios
+    .get(`${ENROLLMENT_API_BASE_URL}/user/${normalizedUserId}`, {
+      headers: getAuthHeaders(),
+      timeout: 12000,
+    })
+    .then((response) => (Array.isArray(response.data) ? response.data : []))
+    .catch((error) => {
+      enrollmentByUserCache.delete(normalizedUserId);
+      throw error;
+    });
+
+  enrollmentByUserCache.set(normalizedUserId, { at: now, promise });
+  return promise;
 }
 
 export async function getEnrollmentsByCourses(courseIds = []) {

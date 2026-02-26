@@ -19,6 +19,7 @@ D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\jav
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\repository\QuizRepository.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\client\CourseClient.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\service\impl\ProgressServiceImpl.java
+D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\service\AssessmentService.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\entity\LessonProgress.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\service\impl\AssessmentServiceImpl.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\config\JwtConfig.java

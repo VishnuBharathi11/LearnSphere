@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   MessageSquare,
   Clock,
@@ -11,9 +11,10 @@ import {
 import "./Discussion.scss";
 import { getInstructorCourses } from "../../../services/courseApi";
 import { createDiscussionPost, getCourseDiscussions } from "../../../services/discussionApi";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function Discussion() {
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null") || {};
+  const currentUser = getCurrentUser() || {};
   const currentRole = String(currentUser?.role || "").toLowerCase();
 
   const [activeFilter, setActiveFilter] = useState("all");
@@ -24,20 +25,8 @@ function Discussion() {
   const [loading, setLoading] = useState(true);
   const [metaById, setMetaById] = useState({});
 
-  const metaKey = `instructorDiscussionMeta_${currentUser?.id || "guest"}`;
-
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(window.appStore.getItem(metaKey) || "{}");
-      setMetaById(saved && typeof saved === "object" ? saved : {});
-    } catch {
-      setMetaById({});
-    }
-  }, [metaKey]);
-
   const persistMeta = (next) => {
     setMetaById(next);
-    window.appStore.setItem(metaKey, JSON.stringify(next));
   };
 
   const deriveStatus = (thread) => {
@@ -343,3 +332,4 @@ function Stat({ icon, label, value, color }) {
 }
 
 export default Discussion;
+

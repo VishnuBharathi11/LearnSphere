@@ -1,17 +1,18 @@
 import axios from "axios";
+import { appStore } from "./appStore";
 
 const DISCUSSION_API_BASE = import.meta.env.VITE_DISCUSSION_API_BASE_URL || "/api";
 
 function getCurrentUser() {
   try {
-    return JSON.parse(window.appStore.getItem("currentUser") || "null");
+    return JSON.parse(appStore.getItem("currentUser") || "null");
   } catch {
     return null;
   }
 }
 
 function getAuthHeaders() {
-  const token = window.appStore.getItem("authToken");
+  const token = appStore.getItem("authToken");
   const currentUser = getCurrentUser();
 
   const headers = {};
@@ -92,6 +93,20 @@ export async function deleteReply(replyId) {
 export async function lockThread(threadId, locked) {
   await axios.put(`${DISCUSSION_API_BASE}/threads/${threadId}/lock`, null, {
     params: { locked },
+    headers: getAuthHeaders(),
+  });
+}
+
+export async function getNotifications(userId) {
+  const response = await axios.get(`/notifications/${encodeURIComponent(String(userId))}`, {
+    headers: getAuthHeaders(),
+  });
+  return Array.isArray(response.data) ? response.data : [];
+}
+
+export async function markNotificationRead(notificationId, userId) {
+  await axios.patch(`/notifications/${encodeURIComponent(String(notificationId))}/read`, null, {
+    params: { userId: String(userId) },
     headers: getAuthHeaders(),
   });
 }

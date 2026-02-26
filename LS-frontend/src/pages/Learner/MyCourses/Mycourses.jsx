@@ -1,22 +1,11 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
 import { getPublishedCourses } from "../../../services/courseApi";
-import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
+import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
+import { buildCourseLearningState } from "../../../services/learnerProgressStore";
 import "./MyCourses.scss";
-
-const CATEGORY_IMAGES = {
-  "Web Development": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
-  "UI/UX Design": "https://images.unsplash.com/photo-1545235617-9465d2a55698",
-  "Data Science": "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
-  "Mobile Development": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
-  "Artificial Intelligence": "https://images.unsplash.com/photo-1531746790731-6c087fecd65a",
-  Cybersecurity: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
-  "Cloud Computing": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8",
-  DevOps: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-  Blockchain: "https://images.unsplash.com/photo-1621761191319-c6fb62004040",
-  "Software Engineering": "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-};
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function MyCourses() {
   const navigate = useNavigate();
@@ -24,23 +13,27 @@ function MyCourses() {
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
 
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
 
   useEffect(() => {
+    if (!userId) {
+      setCourses([]);
+      setEnrollments([]);
+      return;
+    }
+
     let active = true;
 
     async function load() {
       try {
-        const published = await getPublishedCourses(0, 200);
+        const [published, mine] = await Promise.all([
+          getPublishedCourses(0, 250),
+          getEnrollmentsByUser(String(userId)),
+        ]);
         if (!active) return;
-        const safeCourses = Array.isArray(published) ? published : [];
-        setCourses(safeCourses);
-
-        const ids = safeCourses.map((course) => String(course.id));
-        const allEnrollments = await getEnrollmentsByCourses(ids);
-        if (!active) return;
-        setEnrollments(Array.isArray(allEnrollments) ? allEnrollments : []);
+        setCourses(Array.isArray(published) ? published : []);
+        setEnrollments(Array.isArray(mine) ? mine : []);
       } catch {
         if (!active) return;
         setCourses([]);
@@ -52,7 +45,7 @@ function MyCourses() {
     return () => {
       active = false;
     };
-  }, []);
+  }, [userId]);
 
   const myCourses = useMemo(() => {
     const backendActive = enrollments.filter(
@@ -61,18 +54,18 @@ function MyCourses() {
         String(enrollment.status || "").toUpperCase() === "ACTIVE"
     );
 
-    const baseEnrollments = backendActive;
-
-    return baseEnrollments
+    return backendActive
       .map((enrollment) => {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
 
+        const state = buildCourseLearningState(userId, course.id);
         return {
           ...course,
-          completedLessons: Number(enrollment.completedLessons || 0),
-          totalLessons: Number(enrollment.totalLessons || course.lessons || 0),
-          progress: Number(enrollment.progressPercentage || 0),
+          completedLessons: state.completedLessons,
+          totalLessons: state.totalLessons,
+          progress: state.progressPercentage,
+          certificateUnlocked: state.certificateUnlocked,
         };
       })
       .filter(Boolean);
@@ -105,9 +98,11 @@ function MyCourses() {
           coursesToShow.map((course) => (
             <div className="mycourse-card" key={course.id}>
               <img
-                src={course.thumbnail || CATEGORY_IMAGES[course.category] || courseImg}
+                src={course.thumbnail || courseImg}
                 alt={course.courseName}
                 className="mycourse-img"
+                loading="lazy"
+                decoding="async"
               />
               <div className="mycourse-title">{course.courseName}</div>
               <div className="mycourse-instructor">{course.instructor || "Instructor"}</div>
@@ -118,14 +113,14 @@ function MyCourses() {
               <button
                 className="mycourse-btn"
                 onClick={() => {
-                  if (course.progress === 100) {
+                  if (course.certificateUnlocked) {
                     navigate(`/student-layout/download-certificate/${course.id}`);
                   } else {
                     navigate(`/student-layout/learn/${course.id}`);
                   }
                 }}
               >
-                {course.progress === 100 ? "Download Certificate" : "Continue Learning"}
+                {course.certificateUnlocked ? "Download Certificate" : "Continue Learning"}
               </button>
             </div>
           ))
@@ -136,3 +131,4 @@ function MyCourses() {
 }
 
 export default MyCourses;
+

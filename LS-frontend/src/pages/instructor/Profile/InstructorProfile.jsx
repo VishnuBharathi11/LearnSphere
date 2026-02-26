@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Upload, User, BookOpen, Users, CheckCircle, Clock } from "lucide-react";
 import "./InstructorProfile.scss";
 import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
@@ -13,12 +14,31 @@ import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import { getCourseDiscussions } from "../../../services/discussionApi";
 
 function InstructorProfile() {
+  const [searchParams] = useSearchParams();
   const currentUser = getCurrentUser();
-  const userId = currentUser?.id;
+  const isAdminPreview = searchParams.get("adminPreview") === "true";
+  const previewUserId = searchParams.get("adminUserId") || "";
+  const previewUserName = searchParams.get("adminUserName") || "";
+  const previewUserEmail = searchParams.get("adminUserEmail") || "";
+  const userId = isAdminPreview ? previewUserId : currentUser?.id;
   const registrationSeed = getRegistrationSeedByEmail(currentUser?.email || "");
   const initialProfile = useMemo(
-    () => buildDefaultInstructorProfile(currentUser, registrationSeed),
-    [currentUser?.id, currentUser?.name, currentUser?.email, currentUser?.phone]
+    () =>
+      isAdminPreview
+        ? {
+            fullName: previewUserName || "Instructor",
+            email: previewUserEmail || "",
+            phone: "",
+            bio: "",
+            expertise: "",
+            experience: "",
+            linkedin: "",
+            portfolio: "",
+            professionalWebsite: "",
+            image: null,
+          }
+        : buildDefaultInstructorProfile(currentUser, registrationSeed),
+    [isAdminPreview, previewUserName, previewUserEmail, currentUser?.id, currentUser?.name, currentUser?.email, currentUser?.phone]
   );
   const loadedProfileUserIdRef = useRef(null);
 
@@ -36,6 +56,7 @@ function InstructorProfile() {
 
   useEffect(() => {
     if (!userId) return;
+    if (isAdminPreview) return;
     if (loadedProfileUserIdRef.current === userId) return;
     loadedProfileUserIdRef.current = userId;
 
@@ -75,7 +96,7 @@ function InstructorProfile() {
     return () => {
       isMounted = false;
     };
-  }, [userId, initialProfile]);
+  }, [userId, initialProfile, isAdminPreview]);
 
   useEffect(() => {
     if (!userId) return;
@@ -127,18 +148,21 @@ function InstructorProfile() {
   }, [userId]);
 
   const handleEdit = () => {
+    if (isAdminPreview) return;
     setDraftData(profileData);
     setIsEditing(true);
     setError("");
   };
 
   const handleCancel = () => {
+    if (isAdminPreview) return;
     setDraftData(profileData);
     setIsEditing(false);
     setError("");
   };
 
   const handleSave = async () => {
+    if (isAdminPreview) return;
     if (!userId) return;
     setError("");
     setIsSaving(true);
@@ -189,6 +213,7 @@ function InstructorProfile() {
   };
 
   const handleChange = (e) => {
+    if (isAdminPreview) return;
     if (!isEditing) return;
     const { name, value } = e.target;
     setDraftData((prev) => ({
@@ -198,6 +223,7 @@ function InstructorProfile() {
   };
 
   const handleProfilePictureChange = (e) => {
+    if (isAdminPreview) return;
     if (!isEditing) return;
     const file = e.target.files?.[0];
     if (!file) return;
@@ -248,9 +274,9 @@ function InstructorProfile() {
                   type="button"
                   className="profile-edit-btn"
                   onClick={handleEdit}
-                  disabled={isEditing}
+                  disabled={isEditing || isAdminPreview}
                 >
-                  {isEditing ? "Editing" : "Edit Profile"}
+                  {isAdminPreview ? "Read Only View" : isEditing ? "Editing" : "Edit Profile"}
                 </button>
                 {isEditing && (
                   <>

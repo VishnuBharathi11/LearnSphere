@@ -1,4 +1,8 @@
+import { appStore } from "./appStore";
+
 const CURRENT_USER_KEY = "currentUser";
+const AUTH_TOKEN_KEY = "authToken";
+const IS_LOGGED_IN_KEY = "isLoggedIn";
 const PROFILE_UPDATED_EVENT = "learnsphere-profile-updated";
 
 function parseJson(value, fallback = null) {
@@ -37,20 +41,36 @@ export function saveRegistrationSeed({ name, email, phone, role }) {
     role: role || "",
   };
 
-  window.appStore.setItem(registrationKey(normalizedEmail), JSON.stringify(seed));
+  appStore.setItem(registrationKey(normalizedEmail), JSON.stringify(seed));
 }
 
 export function getRegistrationSeedByEmail(email) {
-  return parseJson(window.appStore.getItem(registrationKey(email)), null);
+  return parseJson(appStore.getItem(registrationKey(email)), null);
 }
 
 export function getCurrentUser() {
-  return parseJson(window.appStore.getItem(CURRENT_USER_KEY), null);
+  return parseJson(appStore.getItem(CURRENT_USER_KEY), null);
 }
 
 export function setCurrentUser(user) {
-  window.appStore.setItem(CURRENT_USER_KEY, JSON.stringify(user));
+  appStore.setItem(CURRENT_USER_KEY, JSON.stringify(user));
   window.dispatchEvent(new Event(PROFILE_UPDATED_EVENT));
+}
+
+export function setAuthToken(token) {
+  appStore.setItem(AUTH_TOKEN_KEY, token || "");
+  appStore.setItem(IS_LOGGED_IN_KEY, "true");
+}
+
+export function clearAuthSession() {
+  appStore.removeItem(CURRENT_USER_KEY);
+  appStore.removeItem(AUTH_TOKEN_KEY);
+  appStore.removeItem(IS_LOGGED_IN_KEY);
+  window.dispatchEvent(new Event(PROFILE_UPDATED_EVENT));
+}
+
+export function logoutUser() {
+  clearAuthSession();
 }
 
 export function onProfileUpdated(handler) {
@@ -65,7 +85,7 @@ export function onProfileUpdated(handler) {
 
 export function getInstructorProfile(userId) {
   if (!userId) return null;
-  return parseJson(window.appStore.getItem(instructorProfileKey(userId)), null);
+  return parseJson(appStore.getItem(instructorProfileKey(userId)), null);
 }
 
 export function buildDefaultInstructorProfile(user, registrationSeed) {
@@ -96,7 +116,7 @@ export function buildDefaultLearnerProfile(user, registrationSeed) {
 export function saveInstructorProfile(userId, profileData) {
   if (!userId) return;
 
-  window.appStore.setItem(
+  appStore.setItem(
     instructorProfileKey(userId),
     JSON.stringify(profileData)
   );
@@ -117,13 +137,13 @@ export function saveInstructorProfile(userId, profileData) {
 
 export function getLearnerProfile(userId) {
   if (!userId) return null;
-  return parseJson(window.appStore.getItem(learnerProfileKey(userId)), null);
+  return parseJson(appStore.getItem(learnerProfileKey(userId)), null);
 }
 
 export function saveLearnerProfile(userId, profileData) {
   if (!userId) return;
 
-  window.appStore.setItem(learnerProfileKey(userId), JSON.stringify(profileData));
+  appStore.setItem(learnerProfileKey(userId), JSON.stringify(profileData));
 
   const currentUser = getCurrentUser();
   if (!currentUser) return;

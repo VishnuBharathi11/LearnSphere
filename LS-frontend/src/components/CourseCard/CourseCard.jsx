@@ -1,37 +1,18 @@
 import React from "react";
 import "./CourseCard.scss";
 import { useNavigate } from "react-router-dom";
+import courseImg from "../../assets/Featured Courses/1.jpg";
 function CourseCard({ course }) {
   const navigate = useNavigate();
-  const CATEGORY_IMAGES = {
-  "Web Development":
-    "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
-  "UI/UX Design":
-    "https://images.unsplash.com/photo-1545235617-9465d2a55698",
-  "Data Science": "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
-  "Mobile Development":
-    "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
-  "Artificial Intelligence":
-    "https://images.unsplash.com/photo-1531746790731-6c087fecd65a",
-  "Cybersecurity": 
-  "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
-  "Cloud Computing":
-    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8",
-  "DevOps": 
-  "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-  "Blockchain": 
-  "https://images.unsplash.com/photo-1621761191319-c6fb62004040",
-  "Software Engineering":
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-  "Backend Development":
-    "https://images.pexels.com/photos/11035380/pexels-photo-11035380.jpeg",
-  "Advanced Programming":
-    "https://images.pexels.com/photos/574071/pexels-photo-574071.jpeg",
-};
   return (
     <div className="browse-course-card">
         <div className="course-card-image">
-            <img src={course.thumbnail || CATEGORY_IMAGES[course.category] || "/fallback.png"} alt={course.courseName}/>
+            <img
+              src={course.thumbnail || courseImg}
+              alt={course.courseName}
+              loading="lazy"
+              decoding="async"
+            />
         </div>
       <div className="course-card-body">
         <div className="course-card-title">{course.courseName}</div>

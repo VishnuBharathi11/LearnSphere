@@ -1,4 +1,4 @@
-ï»¿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
 import { getCourseById } from "../../../services/courseApi.js";
@@ -10,6 +10,7 @@ import {
   verifyEnrollmentPayment,
 } from "../../../services/enrollmentApi.js";
 import "./CourseDetail.scss";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
@@ -26,7 +27,7 @@ function CourseDetail() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const paymentOpeningRef = useRef(false);
 
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
   const resolvedUserId = currentUser?.id || currentUser?.userId || "";
   const coursePrice = Number(course?.price || 0);
   const formattedPrice = new Intl.NumberFormat("en-IN").format(coursePrice);
@@ -271,7 +272,7 @@ function CourseDetail() {
           <h1 className="cd-course-title">{course.courseName}</h1>
           <p className="hero-desc">{course.description || "Course description coming soon."}</p>
           <div className="hero-meta">
-            Rating {course.rating} â€¢ {course.lessons} lessons â€¢ {course.level}
+            Rating {course.rating} • {course.lessons} lessons • {course.level}
           </div>
           <p className="hero-instructor">Instructor: {course.instructor || "Instructor"}</p>
         </div>
@@ -378,4 +379,5 @@ function CourseDetail() {
 }
 
 export default CourseDetail;
+
 

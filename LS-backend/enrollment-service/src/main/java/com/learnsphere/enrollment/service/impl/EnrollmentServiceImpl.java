@@ -153,6 +153,14 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		return enrollmentRepository.findByCourseIdIn(courseIds);
 	}
 
+	@Override
+	public List<Enrollment> getByUserId(String userId) {
+		if (userId == null || userId.isBlank()) {
+			return List.of();
+		}
+		return enrollmentRepository.findByUserId(userId.trim());
+	}
+
 	private String hmacSHA256(String data,String secret) throws Exception{
 		javax.crypto.Mac mac=javax.crypto.Mac.getInstance("HmacSHA256");
 		javax.crypto.spec.SecretKeySpec secretKey=

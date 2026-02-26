@@ -12,6 +12,8 @@ import com.learnsphere.course.entity.Course;
 import com.learnsphere.course.entity.CourseStatus;
 import com.learnsphere.course.exception.BadRequestException;
 import com.learnsphere.course.exception.ResourseNotFoundException;
+import com.learnsphere.course.client.AdminSettingsClient;
+import com.learnsphere.course.client.AdminSettingsSnapshot;
 import com.learnsphere.course.repository.CategoryRepository;
 import com.learnsphere.course.repository.CourseRepository;
 import com.learnsphere.course.service.CourseService;
@@ -23,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class CourseServiceImpl implements CourseService{
 	private final CourseRepository courseRepository;
 	private final CategoryRepository categoryRepository;
+	private final AdminSettingsClient adminSettingsClient;
 	
 //	public CourseServiceImpl(CourseRepository courseRepository,CategoryRepository categoryRepository) {
 //		this.courseRepository=courseRepository;
@@ -37,6 +40,7 @@ public class CourseServiceImpl implements CourseService{
 		 if (!categoryRepository.existsById(course.getCategoryId())) {
 		        throw new BadRequestException("Invalid category");
 		    }
+		validateCoursePrice(course.getPrice());
 		course.setStatus(CourseStatus.DRAFT);
 		course.setCreatedAt(Instant.now());
 		course.setUpdatedAt(Instant.now());
@@ -53,6 +57,7 @@ public class CourseServiceImpl implements CourseService{
 		if (request.getInstructorId() == null || !request.getInstructorId().equals(course.getInstructorId())) {
 			throw new BadRequestException("Instructor mismatch");
 		}
+		validateCoursePrice(request.getPrice());
 		course.setTitle(request.getTitle());
 		course.setDescription(request.getDescription());
 		course.setThumbnail(request.getThumbnail());
@@ -60,6 +65,28 @@ public class CourseServiceImpl implements CourseService{
 		course.setCategoryId(request.getCategoryId());
 		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
+	}
+
+	private void validateCoursePrice(Double price) {
+		double safePrice = price == null ? 0.0 : price;
+		if (safePrice < 0) {
+			throw new BadRequestException("Course price cannot be negative");
+		}
+
+		AdminSettingsSnapshot settings = adminSettingsClient.getSettings().orElse(null);
+		if (settings == null) {
+			return;
+		}
+
+		Integer minPrice = settings.getMinCoursePrice();
+		Integer maxPrice = settings.getMaxCoursePrice();
+
+		if (minPrice != null && safePrice < minPrice) {
+			throw new BadRequestException("Course price must be at least INR " + minPrice);
+		}
+		if (maxPrice != null && safePrice > maxPrice) {
+			throw new BadRequestException("Course price must be at most INR " + maxPrice);
+		}
 	}
 	
 	@Override

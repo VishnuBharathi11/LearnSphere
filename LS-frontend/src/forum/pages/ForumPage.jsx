@@ -5,17 +5,10 @@ import TopicCard from "../components/TopicCard";
 import CreateTopicModal from "../components/CreateTopicModal";
 import useForum from "../hooks/useForum";
 import { getInstructorCourses, getPublishedCourses } from "../../services/courseApi";
+import { getAdminSettings } from "../../services/adminApi";
 import { normalizeForumRole } from "../utils/role";
 import "../styles/forum.scss";
-
-const getCurrentUser = () => {
-  try {
-    const raw = window.appStore.getItem("currentUser");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
+import { getCurrentUser } from "../../services/userProfileStore.js";
 
 const ForumPage = () => {
   const { courseId } = useParams();
@@ -29,6 +22,7 @@ const ForumPage = () => {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("latest");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [discussionEnabled, setDiscussionEnabled] = useState(true);
 
   const isInstructor = location.pathname.startsWith("/instructor-layout/") || currentRole === "instructor";
   const isAdmin = location.pathname.startsWith("/admin-layout/") || currentRole === "admin";
@@ -47,6 +41,24 @@ const ForumPage = () => {
     threadMeta,
     countReplies,
   } = useForum(activeCourseId, currentUser);
+
+  useEffect(() => {
+    let active = true;
+    async function loadFeatureSettings() {
+      try {
+        const settings = await getAdminSettings();
+        if (!active) return;
+        setDiscussionEnabled(Boolean(settings?.discussions ?? true));
+      } catch {
+        if (!active) return;
+        setDiscussionEnabled(true);
+      }
+    }
+    loadFeatureSettings();
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -122,6 +134,14 @@ const ForumPage = () => {
     await deleteTopic(topicId);
     await refresh();
   };
+
+  if (!discussionEnabled) {
+    return (
+      <section className="forum-page-shell">
+        <div className="forum-empty-state">Discussions are disabled by platform settings.</div>
+      </section>
+    );
+  }
 
   return (
     <section className="forum-page-shell">
@@ -223,3 +243,4 @@ const ForumPage = () => {
 };
 
 export default ForumPage;
+

@@ -11,6 +11,7 @@ import {
 import "./Managecourse.scss";
 import { useNavigate } from "react-router-dom";
 import { getInstructorCourses, submitCourseForReview } from "../../../services/courseApi";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function Managecourse() {
   const navigate = useNavigate();
@@ -22,7 +23,7 @@ function Managecourse() {
 
   let currentUser = null;
   try {
-    currentUser = JSON.parse(window.appStore.getItem("currentUser"));
+    currentUser = getCurrentUser();
   } catch {
     currentUser = null;
   }
@@ -198,3 +199,4 @@ function Managecourse() {
 }
 
 export default Managecourse;
+

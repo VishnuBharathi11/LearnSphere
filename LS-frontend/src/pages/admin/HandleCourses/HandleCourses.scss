@@ -150,6 +150,38 @@ th {
 
 .actions {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
+}
+
+.row-clickable {
   cursor: pointer;
+}
+
+.row-clickable:hover {
+  background: #f8fbff;
+}
+
+.icon-action {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-action.suspend {
+  color: #92400e;
+}
+
+.icon-action.activate {
+  color: #166534;
+}
+
+.icon-action.delete {
+  color: #b91c1c;
 }

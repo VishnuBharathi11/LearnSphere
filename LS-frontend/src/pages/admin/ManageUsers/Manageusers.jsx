@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Users, Search, Eye, Edit, Ban, UserCheck, Trash2, X } from "lucide-react";
+import { Users, Search, Ban, UserCheck, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import {
   deleteAdminUser,
   getAdminUsers,
   suspendAdminUser,
-  updateAdminUserRole,
 } from "../../../services/adminApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./Manageuser.scss";
@@ -14,9 +14,8 @@ function Manageusers() {
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
-  const [viewUser, setViewUser] = useState(null);
-  const [editUser, setEditUser] = useState(null);
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const loadUsers = async () => {
     try {
@@ -67,15 +66,21 @@ function Manageusers() {
     }
   };
 
-  const changeRole = async (newRole) => {
-    if (!editUser) return;
-    try {
-      await updateAdminUserRole(editUser.id, newRole);
-      setEditUser(null);
-      await loadUsers();
-    } catch (apiError) {
-      setError(getFriendlyErrorMessage(apiError, "Failed to update user role"));
+  const openUserPortal = (user) => {
+    const role = String(user.role || "").toLowerCase();
+    const params = new URLSearchParams({
+      adminPreview: "true",
+      adminUserId: String(user.id || ""),
+      adminUserName: String(user.name || ""),
+      adminUserEmail: String(user.email || ""),
+      adminUserRole: role,
+    });
+
+    if (role === "instructor") {
+      navigate(`/instructor-layout/profile?${params.toString()}`);
+      return;
     }
+    navigate(`/student-layout/profile?${params.toString()}`);
   };
 
   return (
@@ -134,7 +139,7 @@ function Manageusers() {
                 </tr>
               ) : (
                 filteredUsers.map((user) => (
-                  <tr key={user.id}>
+                  <tr key={user.id} className="row-clickable" onClick={() => openUserPortal(user)}>
                     <td>
                       <div className="user-cell">
                         <div className="avatar">{user.name?.[0]?.toUpperCase() || "U"}</div>
@@ -149,14 +154,42 @@ function Manageusers() {
                     <td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}</td>
                     <td>{user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : "-"}</td>
                     <td className="actions">
-                      <Eye size={16} onClick={() => setViewUser(user)} />
-                      <Edit size={16} onClick={() => setEditUser(user)} />
                       {String(user.status).toLowerCase() === "suspended" ? (
-                        <UserCheck size={16} onClick={() => toggleUserStatus(user)} />
+                        <button
+                          type="button"
+                          className="icon-action activate"
+                          title="Activate user"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleUserStatus(user);
+                          }}
+                        >
+                          <UserCheck size={16} />
+                        </button>
                       ) : (
-                        <Ban size={16} onClick={() => toggleUserStatus(user)} />
+                        <button
+                          type="button"
+                          className="icon-action suspend"
+                          title="Suspend user"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleUserStatus(user);
+                          }}
+                        >
+                          <Ban size={16} />
+                        </button>
                       )}
-                      <Trash2 size={16} onClick={() => deleteUser(user.id)} />
+                      <button
+                        type="button"
+                        className="icon-action delete"
+                        title="Delete user"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deleteUser(user.id);
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -165,54 +198,8 @@ function Manageusers() {
           </table>
         </div>
       </div>
-
-      {viewUser && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <button className="close" onClick={() => setViewUser(null)}>
-              <X size={18} />
-            </button>
-
-            <h3>User Details</h3>
-            <p>
-              <b>Name:</b> {viewUser.name}
-            </p>
-            <p>
-              <b>Email:</b> {viewUser.email}
-            </p>
-            <p>
-              <b>Role:</b> {viewUser.role}
-            </p>
-            <p>
-              <b>Status:</b> {viewUser.status}
-            </p>
-            <p>
-              <b>Joined:</b> {viewUser.createdAt ? new Date(viewUser.createdAt).toLocaleString() : "-"}
-            </p>
-          </div>
-        </div>
-      )}
-
-      {editUser && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <button className="close" onClick={() => setEditUser(null)}>
-              <X size={18} />
-            </button>
-
-            <h3>Edit User Role</h3>
-
-            <select defaultValue={editUser.role} onChange={(e) => changeRole(e.target.value)}>
-              <option value="learner">Learner</option>
-              <option value="instructor">Instructor</option>
-              <option value="admin">Admin</option>
-            </select>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
 export default Manageusers;
-

@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./Createcourse.scss";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 import {
   createCourse,
   getCategories,
@@ -16,7 +17,7 @@ function CreateCourse() {
 
   const currentUser = useMemo(() => {
     try {
-      return JSON.parse(window.appStore.getItem("currentUser"));
+      return getCurrentUser();
     } catch {
       return null;
     }
@@ -245,3 +246,4 @@ function CreateCourse() {
 }
 
 export default CreateCourse;
+

@@ -5,13 +5,25 @@ import {
   Star,
   DollarSign,
   TrendingUp,
-  BarChart3,
-  ArrowUpRight,
-  ArrowDownRight,
+  Activity,
 } from "lucide-react";
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  BarChart,
+  Bar,
+  RadialBarChart,
+  RadialBar,
+} from "recharts";
 import "./Dashboard.scss";
 import { getInstructorCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function Dashboard() {
   const [courses, setCourses] = useState([]);
@@ -20,7 +32,7 @@ function Dashboard() {
 
   const currentUser = useMemo(() => {
     try {
-      return JSON.parse(window.appStore.getItem("currentUser"));
+      return getCurrentUser();
     } catch {
       return null;
     }
@@ -62,39 +74,27 @@ function Dashboard() {
     };
   }, [userId, currentUser?.role]);
 
-  const { stats, enrollmentData, coursePerformance, recentActivities, maxStudentsInMonth } =
-    useMemo(() => {
+  const { stats, trendData, coursePerformance, recentActivities } = useMemo(() => {
     const totalCourses = courses.length;
     const courseIdSet = new Set(courses.map((c) => String(c.id)));
     const scopedEnrollments = enrollments.filter((e) => courseIdSet.has(String(e.courseId)));
     const totalStudents = scopedEnrollments.length;
+
     const avgRatingRaw =
       courses.length === 0
         ? 0
-        :
-            courses.reduce((sum, c) => sum + (Number(c.rating) || 0), 0) /
-            courses.length;
+        : courses.reduce((sum, c) => sum + (Number(c.rating) || 0), 0) / courses.length;
+
     const totalRevenue = scopedEnrollments.reduce((sum, e) => {
       const course = courses.find((c) => String(c.id) === String(e.courseId));
-      if (!course) return sum;
-      return sum + (Number(course.price) || 0);
+      return sum + (Number(course?.price) || 0);
     }, 0);
 
     const stats = [
       { title: "Total Courses", value: totalCourses, icon: BookOpen, color: "blue" },
       { title: "Total Students", value: totalStudents, icon: Users, color: "yellow" },
-      {
-        title: "Avg. Rating",
-        value: totalCourses === 0 ? "0.0" : avgRatingRaw.toFixed(1),
-        icon: Star,
-        color: "green",
-      },
-      {
-        title: "Revenue",
-        value: `Rs ${Math.round(totalRevenue).toLocaleString()}`,
-        icon: DollarSign,
-        color: "red",
-      },
+      { title: "Avg Rating", value: totalCourses === 0 ? "0.0" : avgRatingRaw.toFixed(1), icon: Star, color: "green" },
+      { title: "Revenue", value: `Rs ${Math.round(totalRevenue).toLocaleString()}`, icon: DollarSign, color: "red" },
     ];
 
     const monthMap = {};
@@ -107,20 +107,24 @@ function Dashboard() {
     });
 
     const now = new Date();
-    const enrollmentData = Array.from({ length: 4 }).map((_, idx) => {
-      const date = new Date(now.getFullYear(), now.getMonth() - (3 - idx), 1);
+    const trendData = Array.from({ length: 6 }).map((_, idx) => {
+      const date = new Date(now.getFullYear(), now.getMonth() - (5 - idx), 1);
       const key = `${date.getFullYear()}-${date.getMonth()}`;
-      const label = date.toLocaleString("default", { month: "short" });
+      const enroll = monthMap[key] || 0;
       return {
-        month: label,
-        students: monthMap[key] || 0,
+        month: date.toLocaleString("default", { month: "short" }),
+        students: enroll,
+        revenue: enroll * Math.max(1, Math.round(totalRevenue / Math.max(totalStudents, 1))),
       };
     });
-    const maxStudentsInMonth = Math.max(...enrollmentData.map((d) => d.students), 1);
 
-    const coursePerformance = courses.slice(0, 8).map((course) => {
-      const completion = Math.max(10, Math.min(98, Math.round((Number(course.rating) || 0) * 20)));
-      return { course: course.courseName, completion };
+    const coursePerformance = courses.slice(0, 7).map((course) => {
+      const enrollmentCount = scopedEnrollments.filter((e) => String(e.courseId) === String(course.id)).length;
+      const score = Math.min(100, Math.max(8, Math.round((Number(course.rating) || 0) * 14 + enrollmentCount * 2)));
+      return {
+        course: course.courseName,
+        score,
+      };
     });
 
     const recentActivities = [...courses]
@@ -131,25 +135,14 @@ function Dashboard() {
         time: course.createdAt ? new Date(course.createdAt).toLocaleDateString() : "-",
       }));
 
-    return { stats, enrollmentData, coursePerformance, recentActivities, maxStudentsInMonth };
+    return { stats, trendData, coursePerformance, recentActivities };
   }, [courses, enrollments]);
 
-  const enrollmentInsight = useMemo(() => {
-    const total = enrollmentData.reduce((sum, item) => sum + item.students, 0);
-    const firstHalf = enrollmentData.slice(0, 2).reduce((sum, item) => sum + item.students, 0);
-    const secondHalf = enrollmentData.slice(2).reduce((sum, item) => sum + item.students, 0);
-    const growth =
-      firstHalf === 0
-        ? secondHalf > 0
-          ? 100
-          : 0
-        : Math.round(((secondHalf - firstHalf) / firstHalf) * 100);
-    return {
-      total,
-      growth,
-      up: growth >= 0,
-    };
-  }, [enrollmentData]);
+  const averagePerformance = useMemo(() => {
+    if (!coursePerformance.length) return 0;
+    const total = coursePerformance.reduce((sum, item) => sum + (Number(item.score) || 0), 0);
+    return Math.round(total / coursePerformance.length);
+  }, [coursePerformance]);
 
   if (loading) {
     return <p style={{ padding: 40 }}>Loading dashboard...</p>;
@@ -166,7 +159,6 @@ function Dashboard() {
                 <div className="status-icon">
                   <Icon size={22} />
                 </div>
-
                 <div className="status-content">
                   <strong>{item.value}</strong>
                   <span>{item.title}</span>
@@ -175,66 +167,76 @@ function Dashboard() {
             );
           })}
         </div>
+
         <div className="chart-grid">
           <div className="chart-card">
             <div className="chart-header">
               <div className="chart-title">
                 <TrendingUp size={20} />
-                <h3>Student Enrollment (Last 4 Months)</h3>
-              </div>
-              <div className={`trend-chip ${enrollmentInsight.up ? "up" : "down"}`}>
-                {enrollmentInsight.up ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} />}
-                <span>{Math.abs(enrollmentInsight.growth)}%</span>
+                <h3>Enrollment Growth</h3>
               </div>
             </div>
-            <div className="bar-chart-summary">
-              <strong>{enrollmentInsight.total}</strong>
-              <span>Total learners enrolled in the last 4 months</span>
-            </div>
-            <div className="bar-chart">
-              {enrollmentData.map((data, index) => (
-                <div className="bar-item" key={index}>
-                  <div className="bar-track">
-                    <div
-                      className="bar"
-                      style={{
-                        height: `${data.students === 0 ? 8 : Math.round((data.students / maxStudentsInMonth) * 100)}%`,
-                      }}
-                    ></div>
-                  </div>
-                  <span className="bar-value">{data.students}</span>
-                  <span className="bar-label">{data.month}</span>
-                </div>
-              ))}
-            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <AreaChart data={trendData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="enrollFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" />
+                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
+                <Tooltip />
+                <Area type="monotone" dataKey="students" stroke="#1d4ed8" fill="url(#enrollFill)" strokeWidth={2.5} />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
+
           <div className="chart-card">
             <div className="chart-header">
               <div className="chart-title">
-                <BarChart3 size={20} />
-                <h3>Course Completion Rate</h3>
+                <Activity size={20} />
+                <h3>Course Performance Index</h3>
               </div>
             </div>
-            {coursePerformance.length === 0 ? (
-              <p>No course data</p>
+            {coursePerformance.length <= 1 ? (
+              <div className="single-performance-wrap">
+                <ResponsiveContainer width="100%" height={250}>
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="55%"
+                    outerRadius="92%"
+                    startAngle={210}
+                    endAngle={-30}
+                    data={[
+                      { name: "score", value: averagePerformance, fill: "#0ea5e9" },
+                      { name: "remaining", value: 100 - averagePerformance, fill: "#e5eef8" },
+                    ]}
+                  >
+                    <RadialBar dataKey="value" cornerRadius={12} />
+                    <Tooltip />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <p className="single-performance-label">
+                  {coursePerformance[0]?.course || "No course yet"}: {averagePerformance}/100
+                </p>
+              </div>
             ) : (
-              coursePerformance.map((course, index) => (
-                <div className="progress-row" key={index}>
-                  <div className="progress-info">
-                    <span>{course.course}</span>
-                    <span>{course.completion}%</span>
-                  </div>
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: `${course.completion}%` }}
-                    ></div>
-                  </div>
-                </div>
-              ))
+              <ResponsiveContainer width="100%" height={280}>
+                <BarChart data={coursePerformance} layout="vertical" margin={{ left: 10, right: 12, top: 8, bottom: 8 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#edf2f7" />
+                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} />
+                  <YAxis type="category" dataKey="course" width={150} tick={{ fontSize: 11 }} />
+                  <Tooltip />
+                  <Bar dataKey="score" radius={[0, 8, 8, 0]} fill="#0ea5e9" />
+                </BarChart>
+              </ResponsiveContainer>
             )}
           </div>
         </div>
+
         <div className="activity-card">
           <h3>Recent Activity</h3>
           {recentActivities.length === 0 ? (
@@ -257,3 +259,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

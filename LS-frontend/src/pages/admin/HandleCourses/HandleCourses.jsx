@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search, Eye, Trash2 } from "lucide-react";
+import { Search, Ban, UserCheck, Trash2 } from "lucide-react";
 import "./HandleCourses.scss";
 import { useNavigate } from "react-router-dom";
 import {
@@ -171,7 +171,11 @@ function HandleCourses() {
                 </tr>
               ) : (
                 filteredCourses.map((course) => (
-                  <tr key={course.id}>
+                  <tr
+                    key={course.id}
+                    className="row-clickable"
+                    onClick={() => navigate(`/student-layout/learn/${course.id}?adminPreview=true`)}
+                  >
                     <td>
                       <div className="course-title">
                         <strong>{course.courseName}</strong>
@@ -189,13 +193,42 @@ function HandleCourses() {
                       </span>
                     </td>
                     <td className="actions">
-                      <Eye size={16} onClick={() => navigate(`/course/${course.id}`)} />
                       {String(course.status || "").toUpperCase() === "ARCHIVED" ? (
-                        <button onClick={() => updateCourseStatus(course.id, "activate")}>Activate</button>
+                        <button
+                          type="button"
+                          className="icon-action activate"
+                          title="Activate course"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            updateCourseStatus(course.id, "activate");
+                          }}
+                        >
+                          <UserCheck size={16} />
+                        </button>
                       ) : (
-                        <button onClick={() => updateCourseStatus(course.id, "suspend")}>Suspend</button>
+                        <button
+                          type="button"
+                          className="icon-action suspend"
+                          title="Suspend course"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            updateCourseStatus(course.id, "suspend");
+                          }}
+                        >
+                          <Ban size={16} />
+                        </button>
                       )}
-                      <Trash2 size={16} onClick={() => deleteCourse(course.id)} />
+                      <button
+                        type="button"
+                        className="icon-action delete"
+                        title="Delete course"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deleteCourse(course.id);
+                        }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -209,4 +242,3 @@ function HandleCourses() {
 }
 
 export default HandleCourses;
-

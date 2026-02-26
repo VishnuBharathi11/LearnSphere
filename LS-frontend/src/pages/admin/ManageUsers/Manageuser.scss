@@ -9,13 +9,12 @@ $success: #16a34a;
 $danger: #dc2626;
 
 .manage-users-layout {
-
   display: flex;
   font-family: $font;
 }
 
 .manage-users {
-    width: 100%;
+  width: 100%;
   padding: 20px;
   background: $bg;
 }
@@ -33,15 +32,10 @@ $danger: #dc2626;
   background: $white;
   font-size: 14px;
   cursor: pointer;
-  transition: 0.2s ease;
-
-  &:hover {
-    background: #f3f4f6;
-  }
 
   &.active {
     background: $primary;
-    color: white;
+    color: #fff;
     border-color: $primary;
   }
 }
@@ -50,17 +44,16 @@ $danger: #dc2626;
   display: flex;
   gap: 12px;
   margin-bottom: 20px;
-  background: $white;
+}
 
-  select{
-    width:30%;
-    height: 30%;
-    border: 1px solid $border;
-    padding: 8px 12px;
-    border-radius: 8px;
-    outline: none;
-    
-  }
+.filters select {
+  width: 220px;
+  border: 1px solid $border;
+  padding: 8px 12px;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+}
 
 .search-box {
   display: flex;
@@ -69,15 +62,16 @@ $danger: #dc2626;
   border: 1px solid $border;
   padding: 8px 12px;
   border-radius: 8px;
-
-  input {
-    border: none;
-    outline: none;
-    width: 100%;
-    font-size: 14px;
-    background: transparent;
-  }
+  background: $white;
+  flex: 1;
 }
+
+.search-box input {
+  border: none;
+  outline: none;
+  width: 100%;
+  font-size: 14px;
+  background: transparent;
 }
 
 .table-wrapper {
@@ -110,6 +104,14 @@ th {
   color: #374151;
 }
 
+.row-clickable {
+  cursor: pointer;
+}
+
+.row-clickable:hover {
+  background: #f8fbff;
+}
+
 .user-cell {
   display: flex;
   align-items: center;
@@ -121,7 +123,7 @@ th {
   height: 32px;
   border-radius: 50%;
   background: $primary;
-  color: white;
+  color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,21 +131,44 @@ th {
   font-weight: 600;
 }
 
-  .actions td{
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-  background-color: #111827;
-  cursor: pointer;
-}
 .active {
   color: $success;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .suspended {
   color: $danger;
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-action {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  border: 1px solid $border;
+  background: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-action.suspend {
+  color: #92400e;
+}
+
+.icon-action.activate {
+  color: #166534;
+}
+
+.icon-action.delete {
+  color: #b91c1c;
 }
 
 .empty {

@@ -44,7 +44,6 @@ function Contact() {
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
       alert("User logged in successfully");
-      window.appStore.setItem("user", JSON.stringify(form));
       setForm({ name: "", email: "", role: "", subject: "", message: "" });
     } else {
       setErrors(validationErrors);

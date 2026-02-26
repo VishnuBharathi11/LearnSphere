@@ -26,6 +26,8 @@ public class NotificationDocument {
 
     private String title;
     private String message;
+    private String courseId;
+    private String threadId;
 
     @Builder.Default
     private boolean isRead = false;

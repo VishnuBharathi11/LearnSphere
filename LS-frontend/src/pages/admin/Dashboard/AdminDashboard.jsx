@@ -15,9 +15,10 @@ import { useEffect, useMemo, useState } from "react";
 import { getAdminDashboard } from "../../../services/adminApi";
 import { getAdminCourses } from "../../../services/courseApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function AdminDashboard() {
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = getCurrentUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [dashboard, setDashboard] = useState(null);
@@ -42,8 +43,9 @@ function AdminDashboard() {
         if (!active) return;
         setError(getFriendlyErrorMessage(apiError, "Failed to load dashboard analytics"));
       } finally {
-        if (!active) return;
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
@@ -71,6 +73,23 @@ function AdminDashboard() {
     });
     return Object.entries(map).map(([name, count]) => ({ name, count }));
   }, [courses]);
+
+  const courseNameMap = useMemo(
+    () =>
+      new Map(
+        courses.map((course) => [String(course.id), course.courseName || course.title || String(course.id)])
+      ),
+    [courses]
+  );
+
+  const prettifyActivityMessage = (rawMessage) => {
+    let message = String(rawMessage || "");
+    courseNameMap.forEach((courseName, courseId) => {
+      if (!courseId) return;
+      message = message.split(courseId).join(courseName);
+    });
+    return message;
+  };
 
   const stats = useMemo(
     () => [
@@ -191,7 +210,7 @@ function AdminDashboard() {
               {dashboard.recentActivity.map((activity, idx) => (
                 <li key={`${activity.type}-${idx}`}>
                   <Clock size={14} />
-                  {activity.message}
+                  {prettifyActivityMessage(activity.message)}
                 </li>
               ))}
             </ul>

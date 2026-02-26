@@ -1,16 +1,17 @@
 $font: "Inter", sans-serif;
-$bg: #f5f7fb;
+$bg: #eef2f7;
 $white: #ffffff;
-$text-dark: #111827;
-$text-muted: #6b7280;
-$green: #22c55e;
-$blue: #3b82f6;
-$yellow: #facc15;
-$purple: #a855f7;
+$text-dark: #0f172a;
+$text-muted: #64748b;
+$green: #16a34a;
+$blue: #2563eb;
+$amber: #d97706;
+$indigo: #4f46e5;
 $danger: #ef4444;
 $warning: #f59e0b;
-$border: #e5e7eb;
-$shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+$border: #dbe3ee;
+$shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+
 * {
   box-sizing: border-box;
   font-family: $font;
@@ -24,19 +25,19 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   width: 100%;
   padding: 20px;
   background: $bg;
-  max-width: 1180px;
+  max-width: 1240px;
   margin: 0 auto;
 
-  p{
-    font-size: 16px;
+  p {
+    font-size: 14px;
     color: $text-muted;
-    margin-bottom: 20px;
+    margin-bottom: 14px;
   }
 }
 
 .analytics-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -44,22 +45,21 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 .analytics-stat-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   background: $white;
   border-radius: 14px;
-  padding: 18px;
+  padding: 16px;
   box-shadow: $shadow;
-  border: 1px solid #e9edf5;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  border: 1px solid $border;
+
   p {
-    font-size: 14px;
+    font-size: 13px;
     color: $text-muted;
     margin: 10px 0 4px;
   }
 
   h2 {
+    margin: 0;
     font-size: 26px;
     font-weight: 700;
     color: $text-dark;
@@ -67,8 +67,8 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
 .stat-icon {
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -84,115 +84,49 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   }
 
   &.yellow {
-    background: $yellow;
-    color: #111;
+    background: $amber;
   }
 
   &.purple {
-    background: $purple;
+    background: $indigo;
   }
 }
 
 .analytics-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 20px;
 }
 
 .analytics-card {
   background: $white;
   border-radius: 14px;
-  padding: 20px;
+  padding: 18px;
   box-shadow: $shadow;
-  border: 1px solid #e9edf5;
+  border: 1px solid $border;
 
   h3 {
     font-size: 16px;
-    font-weight: 600;
-    margin-bottom: 14px;
+    font-weight: 700;
+    margin-bottom: 10px;
     color: $text-dark;
   }
 
   .recharts-responsive-container {
-    //max-width: 50px;
     min-height: 260px;
   }
 }
-.recharts-tooltip-label {
-  font-size: 13px;
-  font-weight: 500;
-}
 
+.recharts-tooltip-label,
 .recharts-tooltip-item {
-  font-size: 13px;
+  font-size: 12px;
 }
 
-.recharts-cartesian-axis-tick {
-  text {
-    font-size: 12px;
-    fill: $text-muted;
-  }
+.recharts-cartesian-axis-tick text {
+  font-size: 12px;
+  fill: $text-muted;
 }
 
-.completion-card {
-  position: relative;
-  text-align: center;
-}
-
-.completion-center {
-  position: absolute;
-  top: 52%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-
-  h2 {
-    font-size: 34px;
-    font-weight: 700;
-    margin: 0;
-    color: $text-dark;
-  }
-
-  p {
-    font-size: 14px;
-    margin-top: 4px;
-    color: $text-muted;
-  }
-}
-
-.legend {
-  display: flex;
-  justify-content: center;
-  gap: 22px;
-  margin-top: 12px;
-  font-size: 14px;
-  color: #374151;
-
-  span {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 4px;
-  margin-right: 6px;
-  display: inline-block;
-
-  &.green {
-    background: $green;
-  }
-
-  &.yellow {
-    background: $warning;
-  }
-
-  &.red {
-    background: $danger;
-  }
-}
 .lesson-row {
   display: flex;
   align-items: center;
@@ -204,24 +138,29 @@ $shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    color: #334155;
+    font-size: 13px;
   }
 
   small {
     width: 40px;
     text-align: right;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
   }
 }
 
 .analytics-progress {
   flex: 1;
   height: 10px;
-  background: $border;
+  background: #e2e8f0;
   border-radius: 6px;
 }
 
 .analytics-progress-fill {
   height: 100%;
-  background: #320bf5;
+  background: linear-gradient(90deg, #1d4ed8, #2563eb);
   border-radius: 6px;
 }
 

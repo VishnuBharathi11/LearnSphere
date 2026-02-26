@@ -1,54 +1,52 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LearnerImg from "../../../assets/learner/learner.jpg";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
 import { getPublishedCourses } from "../../../services/courseApi";
-import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
+import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
+import { buildCourseLearningState } from "../../../services/learnerProgressStore";
 import "./Dashboard.scss";
+import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function Dashboard() {
-  const CATEGORY_IMAGES = {
-    "Web Development": "https://images.unsplash.com/photo-1517694712202-14dd9538aa97",
-    "UI/UX Design": "https://images.unsplash.com/photo-1545235617-9465d2a55698",
-    "Data Science": "https://images.unsplash.com/photo-1551288049-bebda4e38f71",
-    "Mobile Development": "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9",
-    "Artificial Intelligence": "https://images.unsplash.com/photo-1531746790731-6c087fecd65a",
-    "Cybersecurity": "https://images.unsplash.com/photo-1550751827-4bd374c3f58b",
-    "Cloud Computing": "https://images.unsplash.com/photo-1544197150-b99a580bb7a8",
-    DevOps: "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-    Blockchain: "https://images.unsplash.com/photo-1621761191319-c6fb62004040",
-    "Software Engineering": "https://images.unsplash.com/photo-1519389950473-47ba0277781c",
-  };
-
   const navigate = useNavigate();
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const currentUser = useMemo(() => {
+    try {
+      return getCurrentUser();
+    } catch {
+      return null;
+    }
+  }, []);
   const userId = currentUser?.id || currentUser?.userId || "";
 
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!userId) {
       navigate("/login", { replace: true });
       return;
     }
 
     let active = true;
     async function load() {
+      setLoading(true);
       try {
-        const published = await getPublishedCourses(0, 200);
-        if (!active) return;
-        const safeCourses = Array.isArray(published) ? published : [];
-        setCourses(safeCourses);
+        const [myEnrollments, published] = await Promise.all([
+          getEnrollmentsByUser(String(userId)),
+          getPublishedCourses(0, 120),
+        ]);
 
-        const ids = safeCourses.map((course) => String(course.id));
-        const list = await getEnrollmentsByCourses(ids);
         if (!active) return;
-        setEnrollments(Array.isArray(list) ? list : []);
+        setEnrollments(Array.isArray(myEnrollments) ? myEnrollments : []);
+        setCourses(Array.isArray(published) ? published : []);
       } catch {
         if (!active) return;
-        setCourses([]);
         setEnrollments([]);
+        setCourses([]);
+      } finally {
+        if (active) setLoading(false);
       }
     }
 
@@ -56,17 +54,17 @@ function Dashboard() {
     return () => {
       active = false;
     };
-  }, [currentUser, navigate]);
+  }, [navigate, userId]);
 
-  const myActiveEnrollments = useMemo(() => {
-    const backendActive = enrollments.filter(
-      (enrollment) =>
-        String(enrollment.userId) === String(userId) &&
-        String(enrollment.status || "").toUpperCase() === "ACTIVE"
-    );
-
-    return backendActive;
-  }, [enrollments, userId]);
+  const myActiveEnrollments = useMemo(
+    () =>
+      enrollments.filter(
+        (enrollment) =>
+          String(enrollment.userId) === String(userId) &&
+          String(enrollment.status || "").toUpperCase() === "ACTIVE"
+      ),
+    [enrollments, userId]
+  );
 
   const continueCourses = useMemo(() => {
     return myActiveEnrollments
@@ -74,13 +72,14 @@ function Dashboard() {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
 
+        const state = buildCourseLearningState(userId, course.id);
         return {
           ...course,
-          progress: Number(enrollment.progressPercentage || 0),
+          progress: state.progressPercentage,
         };
       })
       .filter(Boolean);
-  }, [myActiveEnrollments, courses]);
+  }, [courses, myActiveEnrollments, userId]);
 
   const recommendedCourses = useMemo(() => {
     const myCourseIds = new Set(myActiveEnrollments.map((enrollment) => String(enrollment.courseId)));
@@ -94,16 +93,13 @@ function Dashboard() {
           <div>
             <h2>Welcome Back, {currentUser?.username || currentUser?.name || "Learner"}</h2>
             <p>
-              Keep learning and improve your skills. {" "}
+              Keep learning and improve your skills.{" "}
               {continueCourses.length > 0
                 ? `You are enrolled in ${continueCourses.length} course(s).`
                 : "No enrolled courses yet."}
             </p>
             {continueCourses.length > 0 ? (
-              <button
-                className="primary-btn"
-                onClick={() => navigate(`/student-layout/learn/${continueCourses[0].id}`)}
-              >
+              <button className="primary-btn" onClick={() => navigate(`/student-layout/learn/${continueCourses[0].id}`)}>
                 Continue Learning
               </button>
             ) : (
@@ -120,7 +116,9 @@ function Dashboard() {
         <div className="continue-section">
           <h3>Continue Learning</h3>
           <div className="course-grid">
-            {continueCourses.length === 0 ? (
+            {loading ? (
+              <p>Loading courses...</p>
+            ) : continueCourses.length === 0 ? (
               <p>No courses in progress</p>
             ) : (
               continueCourses.map((course) => (
@@ -132,9 +130,11 @@ function Dashboard() {
                 >
                   <div className="course-cont">
                     <img
-                      src={CATEGORY_IMAGES[course.category] || courseImg}
+                      src={course.thumbnail || courseImg}
                       alt={course.courseName}
                       className="cont-learn-img"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div>
                       <h4>{course.courseName}</h4>
@@ -157,7 +157,9 @@ function Dashboard() {
         <div className="recommended-section">
           <h3>Recommended Courses</h3>
 
-          {recommendedCourses.length === 0 ? (
+          {loading ? (
+            <p>Loading recommendations...</p>
+          ) : recommendedCourses.length === 0 ? (
             <p>No recommendations available</p>
           ) : (
             recommendedCourses.map((course) => (
@@ -167,7 +169,12 @@ function Dashboard() {
                 onClick={() => navigate(`/course/${course.id}`)}
                 style={{ cursor: "pointer" }}
               >
-                <img src={CATEGORY_IMAGES[course.category] || courseImg} alt={course.title} />
+                <img
+                  src={course.thumbnail || courseImg}
+                  alt={course.title}
+                  loading="lazy"
+                  decoding="async"
+                />
                 <div>
                   <h4>{course.courseName}</h4>
                   <p>Rating {course.rating}</p>
@@ -183,3 +190,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

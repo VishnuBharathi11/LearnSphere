@@ -2,6 +2,7 @@ package com.learnsphere.discussion.service.impl;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,17 @@ public class NotificationServiceImpl implements NotificationService {
 
     @Override
     public void createNotification(String userId, String title, String message) {
+        createNotification(userId, title, message, null, null);
+    }
+
+    @Override
+    public void createNotification(String userId, String title, String message, String courseId, String threadId) {
         NotificationDocument notification = NotificationDocument.builder()
             .userId(userId)
             .title(title)
             .message(message)
+            .courseId(courseId)
+            .threadId(threadId)
             .isRead(false)
             .createdAt(Instant.now())
             .build();
@@ -40,9 +48,25 @@ public class NotificationServiceImpl implements NotificationService {
                 .userId(item.getUserId())
                 .title(item.getTitle())
                 .message(item.getMessage())
+                .courseId(item.getCourseId())
+                .threadId(item.getThreadId())
                 .read(item.isRead())
                 .createdAt(item.getCreatedAt())
                 .build())
             .toList();
+    }
+
+    @Override
+    public void markNotificationRead(String notificationId, String userId) {
+        notificationRepository.findById(notificationId).ifPresent(item -> {
+            if (!Objects.equals(item.getUserId(), userId)) {
+                return;
+            }
+            if (item.isRead()) {
+                return;
+            }
+            item.setRead(true);
+            notificationRepository.save(item);
+        });
     }
 }

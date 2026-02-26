@@ -16,7 +16,6 @@ import StudentLayout from "./pages/Learner/StudentLayout/StudentLayout.jsx";
 import StudentDashboard from "./pages/Learner/Dashboard/Dashboard.jsx";
 import MyCourses from "./pages/Learner/MyCourses/Mycourses.jsx";
 import Progress from "./pages/Learner/Progress/Progress.jsx";
-import Assessment from "./pages/Learner/Assesment/Assesment.jsx";
 import StudentProfile from "./pages/Learner/Profile/Profile.jsx";
 import LearnCourse from "./pages/Learner/LearnCourse/LearnCourse.jsx";
 import TestTaking from "./pages/Learner/TestTaking/TestTaking.jsx";
@@ -72,10 +71,7 @@ function App() {
         <Route path="dashboard" element={<StudentDashboard />} />
         <Route path="my-courses" element={<MyCourses />} />
         <Route path="progress" element={<Progress />} />
-        <Route path="assessment" element={<Assessment />} />
         <Route path="profile" element={<StudentProfile />} />
-        <Route path="forum" element={<ForumPage />} />
-        <Route path="forum/topic/:topicId" element={<TopicPage />} />
         <Route path="learn/:id" element={<LearnCourse />} />
         <Route path="test/:courseId" element={<TestTaking />} />
         <Route path="result" element={<AssesmentResult />} />
@@ -93,9 +89,6 @@ function App() {
         <Route path="manage-courses/:courseId/quiz" element={<CreateQuiz />} />
         <Route path="manage-courses/:courseId/students" element={<StudentProgress />} />
         <Route path="manage-courses/:courseId/analytics" element={<CourseAnalytics />} />
-        <Route path="discussions" element={<ForumPage />} />
-        <Route path="forum" element={<ForumPage />} />
-        <Route path="forum/topic/:topicId" element={<TopicPage />} />
         <Route path="profile" element={<InstructorProfile />} />
       </Route>
 

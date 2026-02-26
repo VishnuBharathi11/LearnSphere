@@ -3,11 +3,11 @@ import {
   LayoutDashboard,
   PlusSquare,
   FolderKanban,
-  MessageSquare,
   User,
   LogOut,
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
+import { logoutUser } from "../../services/userProfileStore";
 import "./SidebarInstructor.scss";
 
 function SidebarInstructor() {
@@ -16,17 +16,8 @@ function SidebarInstructor() {
   const isActive = (path) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
 
-  const isDiscussionActive =
-    location.pathname.startsWith("/instructor-layout/forum") ||
-    location.pathname.startsWith("/instructor-layout/forum/topic/") ||
-    location.pathname.startsWith("/instructor-layout/discussions") ||
-    (location.pathname.startsWith("/courses/") && location.pathname.endsWith("/forum")) ||
-    location.pathname.startsWith("/forum/topic/");
-
   const handleLogout = () => {
-    window.appStore.removeItem("currentUser");
-    window.appStore.removeItem("isLoggedIn");
-    window.appStore.removeItem("authToken");
+    logoutUser();
   };
 
   return (
@@ -59,11 +50,6 @@ function SidebarInstructor() {
         >
           <FolderKanban size={18} />
           Manage Courses
-        </Link>
-
-        <Link to="/instructor-layout/forum" className={isDiscussionActive ? "active" : ""}>
-          <MessageSquare size={18} />
-          Discussion
         </Link>
 
         <Link

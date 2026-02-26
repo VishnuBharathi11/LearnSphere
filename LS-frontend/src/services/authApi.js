@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getFriendlyErrorMessage } from "./apiError";
+import { appStore } from "./appStore";
 
 const AUTH_API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL || "/api/auth";
 
@@ -27,7 +28,7 @@ export async function loginUser({ email, password }) {
 }
 
 function authHeader() {
-  const token = window.appStore.getItem("authToken");
+  const token = appStore.getItem("authToken");
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 

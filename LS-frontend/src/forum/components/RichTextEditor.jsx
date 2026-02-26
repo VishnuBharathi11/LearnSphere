@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bold, Italic, List } from "lucide-react";
 
 const sanitizeEditor = (value) =>
@@ -10,7 +10,16 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type here..." }) => {
   const editorRef = useRef(null);
   const [focused, setFocused] = useState(false);
 
-  const normalized = useMemo(() => sanitizeEditor(value), [value]);
+  useEffect(() => {
+    const editor = editorRef.current;
+    if (!editor) return;
+    if (focused) return;
+
+    const normalized = sanitizeEditor(value);
+    if (editor.innerHTML !== normalized) {
+      editor.innerHTML = normalized;
+    }
+  }, [focused, value]);
 
   const exec = (command) => {
     document.execCommand(command, false);
@@ -45,7 +54,6 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type here..." }) => {
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}
         data-placeholder={placeholder}
-        dangerouslySetInnerHTML={{ __html: normalized }}
       />
     </div>
   );
