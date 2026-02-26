@@ -1,6 +1,6 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
-import profileImage from "../../../assets/Learner/learner-profile.jpeg";
+import { normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import {
@@ -19,7 +19,7 @@ function Profile() {
 
   const user = getCurrentUser();
   const userId = user?.id || user?.userId || "";
-  const registrationSeed = getRegistrationSeedByEmail(user?.email);
+  const registrationSeed = useMemo(() => getRegistrationSeedByEmail(user?.email), [user?.email]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [courses, setCourses] = useState([]);
@@ -28,14 +28,35 @@ function Profile() {
   const initialProfile = useMemo(() => {
     const stored = getLearnerProfile(userId);
     return stored || buildDefaultLearnerProfile(user, registrationSeed);
-  }, [userId, user, registrationSeed]);
+  }, [
+    userId,
+    user?.name,
+    user?.username,
+    user?.email,
+    user?.phone,
+    user?.image,
+    registrationSeed?.name,
+    registrationSeed?.email,
+    registrationSeed?.phone,
+  ]);
 
   const [profile, setProfile] = useState(initialProfile);
   const [formData, setFormData] = useState(initialProfile);
 
   useEffect(() => {
-    setProfile(initialProfile);
-    setFormData(initialProfile);
+    setProfile((prev) => {
+      const prevProfile = JSON.stringify(prev || {});
+      const nextProfile = JSON.stringify(initialProfile || {});
+      if (prevProfile === nextProfile) return prev;
+      return initialProfile;
+    });
+
+    setFormData((prev) => {
+      const prevForm = JSON.stringify(prev || {});
+      const nextForm = JSON.stringify(initialProfile || {});
+      if (prevForm === nextForm) return prev;
+      return initialProfile;
+    });
   }, [initialProfile]);
 
   useEffect(() => {
@@ -68,9 +89,7 @@ function Profile() {
 
   const { enrolledCount, completedCount, certificatesCount, learningHours, achievements } = useMemo(() => {
     const myEnrollments = enrollments.filter(
-      (item) =>
-        String(item.userId) === String(userId) &&
-        String(item.status || "").toUpperCase() === "ACTIVE"
+      (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
     );
 
     const withCourse = myEnrollments
@@ -85,25 +104,15 @@ function Profile() {
       })
       .filter(Boolean);
 
-    const localProgress = JSON.parse(window.appStore.getItem("enrolledCourses") || "[]");
-    const testResults = JSON.parse(window.appStore.getItem("testResults") || "[]");
-
     const completedCourses = withCourse.filter(({ course }) => {
-      const record = localProgress.find(
-        (entry) =>
-          String(entry.courseId) === String(course.id) &&
-          String(entry.studentId || entry.userId) === String(userId)
-      );
-      const progress = Number(record?.progress || 0);
+      const record = myEnrollments.find((entry) => String(entry.courseId) === String(course.id));
+      const progress = Number(record?.progressPercentage || 0);
       return progress >= 100;
     });
 
-    const certificatesCount = testResults.filter(
-      (result) => String(result.studentId) === String(userId) && result.passed
-    ).length;
-
+    const certificatesCount = completedCourses.length;
     const learningHours = Math.floor(
-      withCourse.reduce((sum, { course }) => sum + Number(course.lessons || 0) * 0.5, 0)
+      myEnrollments.reduce((sum, entry) => sum + Number(entry.completedLessons || 0) * 0.5, 0)
     );
 
     const achievements = completedCourses.slice(0, 4).map(({ course }) => ({
@@ -124,6 +133,31 @@ function Profile() {
     };
   }, [courses, enrollments, userId]);
 
+  const initials = useMemo(
+    () =>
+      String(profile?.name || user?.name || "Learner")
+        .split(" ")
+        .map((part) => part[0])
+        .join("")
+        .slice(0, 2)
+        .toUpperCase(),
+    [profile?.name, user?.name]
+  );
+
+  const persistProfile = async (payload) => {
+    try {
+      await updateMyProfile({
+        name: payload.name || "",
+        email: payload.email || "",
+        phone: payload.phone || "",
+        image: payload.image || null,
+        bio: payload.bio || "",
+      });
+    } catch (error) {
+      console.warn(normalizeApiError(error, "Failed to sync profile to backend"));
+    }
+  };
+
   const handleEdit = () => {
     setFormData(profile);
     setIsEditing(true);
@@ -132,7 +166,7 @@ function Profile() {
     });
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const normalized = {
       ...formData,
       name: String(formData.name || "").trim(),
@@ -143,6 +177,7 @@ function Profile() {
 
     setProfile(normalized);
     saveLearnerProfile(userId, normalized);
+    await persistProfile(normalized);
     setIsEditing(false);
     requestAnimationFrame(() => {
       summaryRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -161,11 +196,14 @@ function Profile() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onload = async () => {
       const image = String(reader.result || "");
-      setProfile((prev) => ({ ...prev, image }));
-      setFormData((prev) => ({ ...prev, image }));
-      saveLearnerProfile(userId, { ...formData, image });
+      const nextProfile = { ...(profile || {}), image };
+      const nextFormData = { ...(formData || {}), image };
+      setProfile(nextProfile);
+      setFormData(nextFormData);
+      saveLearnerProfile(userId, nextFormData);
+      await persistProfile(nextFormData);
     };
     reader.readAsDataURL(file);
   };
@@ -176,7 +214,11 @@ function Profile() {
         <div className="summary-top">
           <div className="summary-left">
             <div className="profile-image-wrapper" onClick={handleImageClick}>
-              <img src={profile.image || profileImage} alt="profile" />
+              {profile.image ? (
+                <img src={profile.image} alt="profile" />
+              ) : (
+                <div className="profile-image-fallback">{initials || "LE"}</div>
+              )}
               <div className="edit-icon">
                 <FaRegEdit />
               </div>

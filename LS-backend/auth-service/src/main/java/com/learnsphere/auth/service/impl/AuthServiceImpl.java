@@ -80,6 +80,9 @@ public class AuthServiceImpl implements AuthService {
                 .phone(request.getPhone() == null ? null : request.getPhone().trim())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(role)
+                .active(true)
+                .suspended(false)
+                .createdAt(Instant.now())
                 .build();
 
         userRepository.save(user);
@@ -94,12 +97,23 @@ public class AuthServiceImpl implements AuthService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials"));
 
+        if (Boolean.FALSE.equals(user.getActive()) || user.getDeletedAt() != null) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account is deactivated. Please contact support.");
+        }
+
+        if (Boolean.TRUE.equals(user.getSuspended())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your account is suspended. Please contact support.");
+        }
+
         String password = request.getPassword() == null ? "" : request.getPassword();
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole());
+
+        user.setLastLoginAt(Instant.now());
+        userRepository.save(user);
 
         return LoginResponse.builder()
                 .userId(user.getId())

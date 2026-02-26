@@ -1,6 +1,7 @@
 import axios from "axios";
+import { getFriendlyErrorMessage } from "./apiError";
 
-const AUTH_API_BASE_URL = "/api/auth";
+const AUTH_API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL || "/api/auth";
 
 export async function registerUser({ name, email, phone, password, role }) {
   const payload = {
@@ -11,7 +12,8 @@ export async function registerUser({ name, email, phone, password, role }) {
     role,
   };
 
-  return axios.post(`${AUTH_API_BASE_URL}/register`, payload);
+  const response = await axios.post(`${AUTH_API_BASE_URL}/register`, payload);
+  return response;
 }
 
 export async function loginUser({ email, password }) {
@@ -48,10 +50,7 @@ export async function sendForgotPasswordOtp(email) {
     email: email.trim().toLowerCase(),
   };
 
-  const response = await axios.post(
-    `${AUTH_API_BASE_URL}/forgot-password`,
-    payload
-  );
+  const response = await axios.post(`${AUTH_API_BASE_URL}/forgot-password`, payload);
   return response.data;
 }
 
@@ -62,18 +61,10 @@ export async function resetPassword({ email, otp, newPassword }) {
     newPassword,
   };
 
-  const response = await axios.post(
-    `${AUTH_API_BASE_URL}/reset-password`,
-    payload
-  );
+  const response = await axios.post(`${AUTH_API_BASE_URL}/reset-password`, payload);
   return response.data;
 }
 
 export function normalizeApiError(error, fallbackMessage) {
-  const message =
-    error?.response?.data?.message ||
-    error?.response?.data?.error ||
-    error?.message;
-
-  return message || fallbackMessage;
+  return getFriendlyErrorMessage(error, fallbackMessage);
 }

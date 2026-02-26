@@ -37,6 +37,9 @@ function UpdateLesson() {
     title: "",
     type: "video",
     file: null,
+    fileUrl: "",
+    fileName: "",
+    mimeType: "",
   });
 
   useEffect(() => {
@@ -67,7 +70,11 @@ function UpdateLesson() {
   }
 
   if (!currentUser || currentRole !== "instructor" || !course) {
-    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+    return (
+      <p style={{ padding: 40 }}>
+        Access denied. You can upload lessons only for your own instructor courses.
+      </p>
+    );
   }
 
   const persistLessons = (updatedLessons) => {
@@ -79,7 +86,17 @@ function UpdateLesson() {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setForm({ ...form, file });
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((prev) => ({
+        ...prev,
+        file,
+        fileUrl: String(reader.result || ""),
+        fileName: file.name,
+        mimeType: file.type || "",
+      }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const validate = () => {
@@ -107,7 +124,14 @@ function UpdateLesson() {
     if (editLessonId) {
       updated = lessons.map((l) =>
         l.id === editLessonId
-          ? { ...l, title: form.title, type: form.type }
+          ? {
+              ...l,
+              title: form.title,
+              type: form.type,
+              fileUrl: form.fileUrl || l.fileUrl || "",
+              fileName: form.fileName || l.fileName || "",
+              mimeType: form.mimeType || l.mimeType || "",
+            }
           : l,
       );
     } else {
@@ -121,6 +145,9 @@ function UpdateLesson() {
           form.type !== "video" && form.file
             ? `${(form.file.size / (1024 * 1024)).toFixed(1)}MB`
             : null,
+        fileUrl: form.fileUrl || "",
+        fileName: form.fileName || "",
+        mimeType: form.mimeType || "",
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
@@ -128,7 +155,7 @@ function UpdateLesson() {
     }
     setLessons(updated);
     persistLessons(updated);
-    setForm({ title: "", type: "video", file: null });
+    setForm({ title: "", type: "video", file: null, fileUrl: "", fileName: "", mimeType: "" });
     setEditLessonId(null);
     setShowModal(false);
     setMessage({
@@ -144,7 +171,14 @@ function UpdateLesson() {
     persistLessons(updated);
   };
   const openEdit = (lesson) => {
-    setForm({ title: lesson.title, type: lesson.type, file: null });
+    setForm({
+      title: lesson.title,
+      type: lesson.type,
+      file: null,
+      fileUrl: lesson.fileUrl || "",
+      fileName: lesson.fileName || "",
+      mimeType: lesson.mimeType || "",
+    });
     setEditLessonId(lesson.id);
     setShowModal(true);
   };

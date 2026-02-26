@@ -1,5 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import courseImg from "../../../assets/Featured Courses/1.jpg";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import "./MyCourses.scss";
@@ -28,6 +29,7 @@ function MyCourses() {
 
   useEffect(() => {
     let active = true;
+
     async function load() {
       try {
         const published = await getPublishedCourses(0, 200);
@@ -53,29 +55,24 @@ function MyCourses() {
   }, []);
 
   const myCourses = useMemo(() => {
-    const activeEnrollments = enrollments.filter(
+    const backendActive = enrollments.filter(
       (enrollment) =>
         String(enrollment.userId) === String(userId) &&
         String(enrollment.status || "").toUpperCase() === "ACTIVE"
     );
 
-    return activeEnrollments
+    const baseEnrollments = backendActive;
+
+    return baseEnrollments
       .map((enrollment) => {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
 
-        const localProgress = JSON.parse(window.appStore.getItem("enrolledCourses") || "[]");
-        const local = localProgress.find(
-          (entry) =>
-            String(entry.courseId) === String(course.id) &&
-            String(entry.studentId || entry.userId) === String(userId)
-        );
-
         return {
           ...course,
-          completedLessons: Number(local?.completedLessons || 0),
-          totalLessons: Number(local?.totalLessons || course.lessons || 0),
-          progress: Number(local?.progress || 0),
+          completedLessons: Number(enrollment.completedLessons || 0),
+          totalLessons: Number(enrollment.totalLessons || course.lessons || 0),
+          progress: Number(enrollment.progressPercentage || 0),
         };
       })
       .filter(Boolean);
@@ -91,18 +88,12 @@ function MyCourses() {
     <div className="mycourses-container">
       <div className="tabs">
         <button className={activeTab === "all" ? "active" : ""} onClick={() => setActiveTab("all")}>
-          All Courses
+          All
         </button>
-        <button
-          className={activeTab === "pending" ? "active" : ""}
-          onClick={() => setActiveTab("pending")}
-        >
+        <button className={activeTab === "pending" ? "active" : ""} onClick={() => setActiveTab("pending")}>
           Pending
         </button>
-        <button
-          className={activeTab === "completed" ? "active" : ""}
-          onClick={() => setActiveTab("completed")}
-        >
+        <button className={activeTab === "completed" ? "active" : ""} onClick={() => setActiveTab("completed")}>
           Completed
         </button>
       </div>
@@ -114,7 +105,7 @@ function MyCourses() {
           coursesToShow.map((course) => (
             <div className="mycourse-card" key={course.id}>
               <img
-                src={CATEGORY_IMAGES[course.category] || CATEGORY_IMAGES.default}
+                src={course.thumbnail || CATEGORY_IMAGES[course.category] || courseImg}
                 alt={course.courseName}
                 className="mycourse-img"
               />
@@ -128,9 +119,7 @@ function MyCourses() {
                 className="mycourse-btn"
                 onClick={() => {
                   if (course.progress === 100) {
-                    navigate(`/student-layout/certificate/${course.id}`, {
-                      state: { courseName: course.courseName },
-                    });
+                    navigate(`/student-layout/download-certificate/${course.id}`);
                   } else {
                     navigate(`/student-layout/learn/${course.id}`);
                   }

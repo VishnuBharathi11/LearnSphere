@@ -36,10 +36,24 @@ export async function getEnrollmentsByCourse(courseId) {
 
 export async function getEnrollmentsByCourses(courseIds = []) {
   if (!Array.isArray(courseIds) || courseIds.length === 0) return [];
+
+  const filteredIds = Array.from(
+    new Set(courseIds.map((id) => String(id || "").trim()).filter(Boolean))
+  );
+
+  if (filteredIds.length === 0) return [];
+
   const response = await axios.get(`${ENROLLMENT_API_BASE_URL}/courses`, {
-    params: { courseIds },
+    params: { courseIds: filteredIds },
+    paramsSerializer: {
+      serialize: (params) => {
+        const values = Array.isArray(params?.courseIds) ? params.courseIds : [];
+        return values.map((value) => `courseIds=${encodeURIComponent(value)}`).join("&");
+      },
+    },
     headers: getAuthHeaders(),
   });
+
   return Array.isArray(response.data) ? response.data : [];
 }
 

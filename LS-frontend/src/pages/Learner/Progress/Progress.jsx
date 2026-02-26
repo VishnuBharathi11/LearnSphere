@@ -43,11 +43,18 @@ function Progress() {
 
     const localProgress = JSON.parse(window.appStore.getItem("enrolledCourses") || "[]");
 
-    const myActive = enrollments.filter(
+    const backendActive = enrollments.filter(
       (item) =>
         String(item.userId) === String(userId) &&
         String(item.status || "").toUpperCase() === "ACTIVE"
     );
+
+    const myActive =
+      backendActive.length > 0
+        ? backendActive
+        : localProgress
+            .filter((item) => String(item.studentId || item.userId) === String(userId))
+            .map((item) => ({ courseId: String(item.courseId), status: "ACTIVE" }));
 
     return myActive
       .map((entry) => {

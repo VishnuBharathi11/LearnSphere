@@ -59,11 +59,13 @@ function Dashboard() {
   }, [currentUser, navigate]);
 
   const myActiveEnrollments = useMemo(() => {
-    return enrollments.filter(
+    const backendActive = enrollments.filter(
       (enrollment) =>
         String(enrollment.userId) === String(userId) &&
         String(enrollment.status || "").toUpperCase() === "ACTIVE"
     );
+
+    return backendActive;
   }, [enrollments, userId]);
 
   const continueCourses = useMemo(() => {
@@ -71,9 +73,10 @@ function Dashboard() {
       .map((enrollment) => {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
+
         return {
           ...course,
-          progress: 10,
+          progress: Number(enrollment.progressPercentage || 0),
         };
       })
       .filter(Boolean);
@@ -91,21 +94,19 @@ function Dashboard() {
           <div>
             <h2>Welcome Back, {currentUser?.username || currentUser?.name || "Learner"}</h2>
             <p>
-              Keep learning and improve your skills.
-              {" "}
+              Keep learning and improve your skills. {" "}
               {continueCourses.length > 0
                 ? `You are enrolled in ${continueCourses.length} course(s).`
                 : "No enrolled courses yet."}
             </p>
-            {continueCourses.length > 0 && (
+            {continueCourses.length > 0 ? (
               <button
                 className="primary-btn"
                 onClick={() => navigate(`/student-layout/learn/${continueCourses[0].id}`)}
               >
                 Continue Learning
               </button>
-            )}
-            {continueCourses.length === 0 && (
+            ) : (
               <button className="primary-btn" onClick={() => navigate("/courses")}>
                 Browse Courses
               </button>

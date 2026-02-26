@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { FiBell } from "react-icons/fi";
 import axios from "axios";
@@ -27,6 +27,10 @@ const PAGE_MAP = {
     title: "Discussions",
     subtitle: "Respond to learner questions and feedback",
   },
+  "/instructor-layout/forum": {
+    title: "Discussions",
+    subtitle: "Respond to learner questions and feedback",
+  },
   "/instructor-layout/profile": {
     title: "My Profile",
     subtitle: "Update your public instructor profile",
@@ -48,6 +52,9 @@ function resolvePageMeta(pathname) {
   }
   if (pathname.includes("/edit-course/")) {
     return { title: "Edit Course", subtitle: "Update course details before review/publishing" };
+  }
+  if (pathname.includes("/forum/topic/") || pathname.includes("/courses/") && pathname.endsWith("/forum")) {
+    return { title: "Discussions", subtitle: "Respond to learner questions and feedback" };
   }
   return (
     PAGE_MAP[pathname] || {
@@ -84,8 +91,7 @@ function TopNavBarInstructor() {
     return onProfileUpdated(syncUser);
   }, []);
 
-  const displayName =
-    currentUser?.name || currentUser?.username || "Instructor";
+  const displayName = currentUser?.name || currentUser?.username || "Instructor";
   const displayEmail = currentUser?.email || "instructor@learnsphere.com";
   const userId = currentUser?.id ? String(currentUser.id) : "";
   const initials = displayName
@@ -108,25 +114,23 @@ function TopNavBarInstructor() {
           getInstructorCourses(userId),
         ]);
 
-        const discussionNotifications = (discussionRes.data || []).map((n) => ({
-          id: `d-${n.id}`,
-          title: n.title || "New discussion update",
-          message: n.message || "A learner posted in your discussion thread.",
-          kind: "discussion",
-          rank: Number(n.id) || 0,
+        const discussionNotifications = (discussionRes.data || []).map((item) => ({
+          id: `d-${item.id}`,
+          title: item.title || "New discussion update",
+          message: item.message || "A learner posted in your discussion thread.",
+          rank: Number(item.id) || 0,
         }));
 
-        const courseNotifications = courseStatuses
-          .filter((c) => c.status === "PUBLISHED" || c.status === "REVIEW")
-          .map((c) => ({
-            id: `c-${c.id}-${c.status}`,
-            title: c.status === "PUBLISHED" ? "Course Approved" : "Course In Review",
+        const courseNotifications = (courseStatuses || [])
+          .filter((course) => course.status === "PUBLISHED" || course.status === "REVIEW")
+          .map((course) => ({
+            id: `c-${course.id}-${course.status}`,
+            title: course.status === "PUBLISHED" ? "Course Approved" : "Course In Review",
             message:
-              c.status === "PUBLISHED"
-                ? `"${c.courseName}" is approved and now visible to learners.`
-                : `"${c.courseName}" has been submitted and is waiting for admin review.`,
-            kind: "course",
-            rank: c.createdAt ? new Date(c.createdAt).getTime() : 0,
+              course.status === "PUBLISHED"
+                ? `"${course.courseName}" is approved and now visible to learners.`
+                : `"${course.courseName}" has been submitted and is waiting for admin review.`,
+            rank: course.createdAt ? new Date(course.createdAt).getTime() : 0,
           }));
 
         const merged = [...courseNotifications, ...discussionNotifications]
@@ -164,9 +168,7 @@ function TopNavBarInstructor() {
           onClick={() => setOpenNotifications((prev) => !prev)}
         >
           <FiBell />
-          {notifications.length > 0 && (
-            <span className="badge">{Math.min(notifications.length, 9)}</span>
-          )}
+          {notifications.length > 0 && <span className="badge">{Math.min(notifications.length, 9)}</span>}
         </button>
 
         {openNotifications && (
@@ -176,10 +178,10 @@ function TopNavBarInstructor() {
               <p className="notification-empty">No new updates</p>
             ) : (
               <div className="notification-list">
-                {notifications.map((n) => (
-                  <div key={n.id} className="notification-item">
-                    <p className="n-title">{n.title}</p>
-                    <p className="n-message">{n.message}</p>
+                {notifications.map((item) => (
+                  <div key={item.id} className="notification-item">
+                    <p className="n-title">{item.title}</p>
+                    <p className="n-message">{item.message}</p>
                   </div>
                 ))}
               </div>
@@ -189,11 +191,7 @@ function TopNavBarInstructor() {
 
         <div className="profile">
           <div className="avatar">
-            {currentUser?.image ? (
-              <img src={currentUser.image} alt={displayName} />
-            ) : (
-              initials || "IN"
-            )}
+            {currentUser?.image ? <img src={currentUser.image} alt={displayName} /> : initials || "IN"}
           </div>
           <div className="profile-info">
             <span className="name">{displayName}</span>

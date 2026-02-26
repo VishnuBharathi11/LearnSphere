@@ -1,27 +1,36 @@
 package com.learnsphere.discussion.controller;
 
-import com.learnsphere.discussion.dto.NotificationRequest;
-import com.learnsphere.discussion.entity.Notification;
-import com.learnsphere.discussion.service.NotificationService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.learnsphere.discussion.dto.NotificationRequest;
+import com.learnsphere.discussion.dto.response.NotificationResponse;
+import com.learnsphere.discussion.service.NotificationService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
 
-    private final NotificationService service;
+    private final NotificationService notificationService;
 
     @PostMapping
-    public Notification create(@RequestBody NotificationRequest request) {
-        return service.createNotification(request);
+    public ResponseEntity<Void> create(@RequestBody NotificationRequest request) {
+        notificationService.createNotification(request.getUserId(), request.getTitle(), request.getMessage());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{userId}")
-    public List<Notification> get(@PathVariable Long userId) {
-        return service.getUserNotifications(userId);
+    public ResponseEntity<List<NotificationResponse>> get(@PathVariable String userId) {
+        return ResponseEntity.ok(notificationService.getUserNotifications(userId));
     }
 }

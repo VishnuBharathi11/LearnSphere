@@ -1,92 +1,116 @@
-import { useMemo, useState } from "react";
-import { Search, Star, Eye, Edit, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search, Eye, Trash2 } from "lucide-react";
 import "./HandleCourses.scss";
 import { useNavigate } from "react-router-dom";
+import {
+  activateCourse,
+  adminDeleteCourse,
+  archiveCourse,
+  getAdminCourses,
+} from "../../../services/courseApi";
+import { getCourseMetrics } from "../../../services/adminApi";
+import { getFriendlyErrorMessage } from "../../../services/apiError";
 
 function HandleCourses() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [courses, setCourses] = useState([]);
+  const [courseMetrics, setCourseMetrics] = useState([]);
+  const [error, setError] = useState("");
 
-  const { courses, enrollments, ratings } = useMemo(() => {
-    return {
-      courses: JSON.parse(window.appStore.getItem("courses")) || [],
-      enrollments: JSON.parse(window.appStore.getItem("enrolledCourses")) || [],
-      ratings: JSON.parse(window.appStore.getItem("courseRatings")) || [],
-    };
+  const loadData = async () => {
+    try {
+      const courseList = await getAdminCourses();
+      const ids = courseList.map((course) => String(course.id));
+      const metrics = await getCourseMetrics(ids);
+      setCourses(courseList);
+      setCourseMetrics(metrics);
+      setError("");
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to load courses"));
+    }
+  };
+
+  useEffect(() => {
+    loadData();
   }, []);
 
-  const enrichedCourses = useMemo(() => {
-    return courses.map((course) => {
-      const courseEnrollments = enrollments.filter(
-        (e) => e.courseId === course.id,
-      );
-      const courseRatings = ratings.filter((r) => r.courseId === course.id);
-      const avgRating =
-        courseRatings.length === 0
-          ? null
-          : (
-              courseRatings.reduce((s, r) => s + r.rating, 0) /
-              courseRatings.length
-            ).toFixed(1);
-      return {
-        ...course,
-        learners: courseEnrollments.length,
-        revenue: courseEnrollments.length * (course.price || 0),
-        rating: avgRating,
-      };
-    });
-  }, [courses, enrollments, ratings]);
-  const filteredCourses = enrichedCourses.filter((c) => {
-    if (statusFilter !== "all" && c.status !== statusFilter) return false;
-    return c.courseName.toLowerCase().includes(search.toLowerCase());
-  });
+  const metricsMap = useMemo(
+    () =>
+      new Map(
+        (courseMetrics || []).map((metric) => [String(metric.courseId), metric])
+      ),
+    [courseMetrics]
+  );
+
+  const enrichedCourses = useMemo(
+    () =>
+      courses.map((course) => {
+        const metric = metricsMap.get(String(course.id)) || {};
+        return {
+          ...course,
+          learners: Number(metric.learners || 0),
+          revenue: Number(metric.platformRevenue || 0),
+        };
+      }),
+    [courses, metricsMap]
+  );
+
+  const filteredCourses = useMemo(
+    () =>
+      enrichedCourses.filter((course) => {
+        const matchesStatus =
+          statusFilter === "ALL" ? true : String(course.status || "").toUpperCase() === statusFilter;
+        const term = search.toLowerCase();
+        const matchesSearch =
+          String(course.courseName || "").toLowerCase().includes(term) ||
+          String(course.instructor || "").toLowerCase().includes(term);
+        return matchesStatus && matchesSearch;
+      }),
+    [enrichedCourses, statusFilter, search]
+  );
 
   const summary = useMemo(() => {
     const totalCourses = enrichedCourses.length;
     const published = enrichedCourses.filter(
-      (c) => c.status === "published",
+      (course) => String(course.status || "").toUpperCase() === "PUBLISHED"
     ).length;
     const suspended = enrichedCourses.filter(
-      (c) => c.status === "suspended",
+      (course) => String(course.status || "").toUpperCase() === "ARCHIVED"
     ).length;
-    const totalRevenue = enrichedCourses.reduce((sum, c) => sum + c.revenue, 0);
+    const totalRevenue = enrichedCourses.reduce((sum, course) => sum + Number(course.revenue || 0), 0);
     return { totalCourses, published, suspended, totalRevenue };
   }, [enrichedCourses]);
 
-  const updatedCourseStatus = (id, newStatus) => {
-    const allCourses = JSON.parse(window.appStore.getItem("courses")) || [];
-    const updated = allCourses.map((c) =>
-      c.id === id ? { ...c, status: newStatus } : c,
-    );
-    window.appStore.setItem("courses", JSON.stringify(updated));
-    window.location.reload();
+  const updateCourseStatus = async (id, action) => {
+    try {
+      if (action === "suspend") {
+        await archiveCourse(id);
+      } else {
+        await activateCourse(id);
+      }
+      await loadData();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to update course status"));
+    }
   };
 
-  const deleteCourse = (id) => {
+  const deleteCourse = async (id) => {
     if (!window.confirm("Delete this course permanently?")) return;
-    const updatedCourses = courses.filter((c) => c.id !== id);
-    window.appStore.setItem("courses", JSON.stringify(updatedCourses));
-    const cleanArray = (key) => {
-      const arr = JSON.parse(window.appStore.getItem(key)) || [];
-      const filtered = arr.filter((i) => i.courseId !== id);
-      window.appStore.setItem(key, JSON.stringify(filtered));
-    };
-    const cleanMap = (key) => {
-      const map = JSON.parse(window.appStore.getItem(key)) || {};
-      delete map[id];
-      window.appStore.setItem(key, JSON.stringify(map));
-    };
-    cleanArray("enrolledCourses");
-    cleanArray("testResults");
-    cleanArray("courseRatings");
-    cleanMap("courseLessons");
-    cleanMap("courseQuizzes");
-    window.location.reload();
+    try {
+      await adminDeleteCourse(id);
+      await loadData();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to delete course"));
+    }
   };
+
   return (
     <div className="handle-courses-layout">
       <div className="manage-courses">
+        {error && <p className="admin-error">{error}</p>}
+
         <div className="summ-status">
           <div className="summ-status-card">
             <p>Total Courses</p>
@@ -101,37 +125,37 @@ function HandleCourses() {
             <h3>{summary.suspended}</h3>
           </div>
           <div className="summ-status-card">
-            <p>Total Revenue</p>
+            <p>Platform Revenue</p>
             <h3>{summary.totalRevenue.toLocaleString()}</h3>
           </div>
         </div>
+
         <div className="filters">
           <div className="search-box">
             <Search size={16} />
             <input
-              placeholder="Search by Courses..."
+              placeholder="Search courses or instructors..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
-          <select
-            value={status}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">All Status</option>
-            <option value="published">Published</option>
-            <option value="draft">Draft</option>
-            <option value="suspended">Suspended</option>
+          <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+            <option value="ALL">All Status</option>
+            <option value="PUBLISHED">Published</option>
+            <option value="REVIEW">Review</option>
+            <option value="DRAFT">Draft</option>
+            <option value="ARCHIVED">Archived</option>
           </select>
         </div>
+
         <div className="table-wrapper">
           <table>
             <thead>
               <tr>
-                <th>Courses</th>
+                <th>Course</th>
                 <th>Instructor</th>
                 <th>Category</th>
-                <th>Learner</th>
+                <th>Learners</th>
                 <th>Revenue</th>
                 <th>Rating</th>
                 <th>Status</th>
@@ -151,64 +175,27 @@ function HandleCourses() {
                     <td>
                       <div className="course-title">
                         <strong>{course.courseName}</strong>
-                        <span>
-                          {" "}
-                          {new Date(course.createdAt).toDateString()}
-                        </span>
+                        <span>{course.createdAt ? new Date(course.createdAt).toDateString() : "-"}</span>
                       </div>
                     </td>
-                    <td>{course.instructorName}</td>
-                    <td>{course.category}</td>
+                    <td>{course.instructor || course.instructorId || "-"}</td>
+                    <td>{course.category || "-"}</td>
                     <td>{course.learners}</td>
-                    <td className="revenue">
-                      ₹{course.revenue.toLocaleString()}
-                    </td>
+                    <td className="revenue">INR {course.revenue.toLocaleString()}</td>
+                    <td>{course.rating || "N/A"}</td>
                     <td>
-                      {course.rating ? (
-                        <span className="rating">
-                          <Star size={14} /> {course.rating}
-                        </span>
-                      ) : (
-                        <span className="na">N/A</span>
-                      )}
-                    </td>
-                    <td>
-                      <span className={`status ${course.status}`}>
+                      <span className={`status ${String(course.status || "").toLowerCase()}`}>
                         {course.status}
                       </span>
                     </td>
                     <td className="actions">
-                      <Eye
-                        size={16}
-                        onClick={() => navigate(`/course/${course.id}`)}
-                      />
-                      <Edit
-                        size={16}
-                        onClick={() =>
-                          navigate(`/admin/edit-course/${course.id}`)
-                        }
-                      />
-                      {course.status !== "suspended" ? (
-                        <button
-                          onClick={() =>
-                            updatedCourseStatus(course.id, "suspended")
-                          }
-                        >
-                          Suspend
-                        </button>
+                      <Eye size={16} onClick={() => navigate(`/course/${course.id}`)} />
+                      {String(course.status || "").toUpperCase() === "ARCHIVED" ? (
+                        <button onClick={() => updateCourseStatus(course.id, "activate")}>Activate</button>
                       ) : (
-                        <button
-                          onClick={() =>
-                            updatedCourseStatus(course.id, "published")
-                          }
-                        >
-                          Publish
-                        </button>
+                        <button onClick={() => updateCourseStatus(course.id, "suspend")}>Suspend</button>
                       )}
-                      <Trash2
-                        size={16}
-                        onClick={() => deleteCourse(course.id)}
-                      />
+                      <Trash2 size={16} onClick={() => deleteCourse(course.id)} />
                     </td>
                   </tr>
                 ))
@@ -222,3 +209,4 @@ function HandleCourses() {
 }
 
 export default HandleCourses;
+

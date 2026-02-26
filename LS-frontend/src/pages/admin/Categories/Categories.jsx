@@ -1,150 +1,125 @@
-import { useState } from "react";
-import { Plus, Edit, BookOpen } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Trash2, BookOpen } from "lucide-react";
+import { createCategory, deleteCategory, getAdminCourses, getCategories } from "../../../services/courseApi";
+import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./Categories.scss";
 
 const Categories = () => {
-  const [categories, setCategories] = useState([
-    {
-      id: 1,
-      name: "Web Development",
-      description: "HTML, CSS, JavaScript, React, etc.",
-      icon: "💻",
-      courses: 45
-    },
-    {
-      id: 2,
-      name: "Data Science",
-      description: "Python, Statistics, Data Analysis",
-      icon: "📊",
-      courses: 32
-    },
-    {
-      id: 3,
-      name: "Mobile Development",
-      description: "iOS, Android, Flutter",
-      icon: "📱",
-      courses: 28
-    }
-  ]);
-
+  const [categories, setCategories] = useState([]);
+  const [courses, setCourses] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [activeCategory, setActiveCategory] = useState(null);
-  const [form, setForm] = useState({ name: "", description: "", icon: "" });
+  const [form, setForm] = useState({ name: "", description: "" });
+  const [error, setError] = useState("");
 
-  const openAdd = () => {
-    setForm({ name: "", description: "", icon: "" });
-    setShowAdd(true);
+  const loadData = async () => {
+    try {
+      const [categoryList, courseList] = await Promise.all([getCategories(), getAdminCourses()]);
+      const safeCategories = Array.isArray(categoryList) ? categoryList : [];
+      setCategories(safeCategories.filter((category) => category.active !== false));
+      setCourses(Array.isArray(courseList) ? courseList : []);
+      setError("");
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to load categories"));
+    }
   };
 
-  const openEdit = (cat) => {
-    setActiveCategory(cat);
-    setForm(cat);
-    setShowEdit(true);
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const categoryCoursesCount = useMemo(() => {
+    const map = new Map();
+    courses.forEach((course) => {
+      const key = String(course.categoryId || "");
+      map.set(key, (map.get(key) || 0) + 1);
+    });
+    return map;
+  }, [courses]);
+
+  const addCategory = async (event) => {
+    event.preventDefault();
+    try {
+      await createCategory({
+        name: form.name,
+        description: form.description,
+      });
+      setShowAdd(false);
+      setForm({ name: "", description: "" });
+      await loadData();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to create category"));
+    }
   };
 
-  const addCategory = (e) => {
-    e.preventDefault();
-    setCategories([
-      ...categories,
-      { ...form, id: Date.now(), courses: 0 }
-    ]);
-    setShowAdd(false);
-  };
-
-  const updateCategory = (e) => {
-    e.preventDefault();
-    setCategories(
-      categories.map(c =>
-        c.id === activeCategory.id ? { ...c, ...form } : c
-      )
-    );
-    setShowEdit(false);
+  const removeCategory = async (category) => {
+    if (!window.confirm(`Delete category "${category.name}"?`)) return;
+    try {
+      await deleteCategory(category.id);
+      await loadData();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to delete category"));
+    }
   };
 
   return (
     <div className="admin-layout">
-
       <div className="categories-page">
+        {error && <p className="admin-error">{error}</p>}
         <div className="category-grid">
-          {categories.map(cat => (
-            <div key={cat.id} className="category-card">
-              <button className="edit-btn" onClick={() => openEdit(cat)}>
-                <Edit size={16} />
+          {categories.map((category) => (
+            <div key={category.id} className="category-card">
+              <button className="edit-btn delete" onClick={() => removeCategory(category)} title="Delete Category">
+                <Trash2 size={16} />
               </button>
 
-              <div className="icon">{cat.icon}</div>
-              <h3>{cat.name}</h3>
-              <p>{cat.description}</p>
+              <div className="icon">{String(category.name || "?").slice(0, 1).toUpperCase()}</div>
+              <h3>{category.name}</h3>
+              <p>{category.description || "No description"}</p>
 
               <div className="courses">
                 <BookOpen size={16} />
-                <span>{cat.courses} Courses</span>
+                <span>{categoryCoursesCount.get(String(category.id)) || 0} Courses</span>
               </div>
             </div>
           ))}
 
-          <button className="add-card" onClick={openAdd}>
+          <button className="add-card" onClick={() => setShowAdd(true)}>
             <Plus size={28} />
             <span>Add Category</span>
           </button>
         </div>
       </div>
       {showAdd && (
-        <Modal
-          title="Add Category"
-          form={form}
-          setForm={setForm}
-          onSubmit={addCategory}
-          onClose={() => setShowAdd(false)}
-        />
-      )}
-      {showEdit && (
-        <Modal
-          title="Edit Category"
-          form={form}
-          setForm={setForm}
-          onSubmit={updateCategory}
-          onClose={() => setShowEdit(false)}
-        />
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Add Category</h3>
+
+            <form onSubmit={addCategory}>
+              <input
+                placeholder="Category Name"
+                value={form.name}
+                required
+                onChange={(event) => setForm({ ...form, name: event.target.value })}
+              />
+              <textarea
+                placeholder="Description"
+                value={form.description}
+                required
+                onChange={(event) => setForm({ ...form, description: event.target.value })}
+              />
+
+              <div className="modal-actions">
+                <button type="submit">Save</button>
+                <button type="button" className="cancel" onClick={() => setShowAdd(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
 };
-
-const Modal = ({ title, form, setForm, onSubmit, onClose }) => (
-  <div className="modal-overlay">
-    <div className="modal">
-      <h3>{title}</h3>
-
-      <form onSubmit={onSubmit}>
-        <input
-          placeholder="Category Name"
-          value={form.name}
-          required
-          onChange={e => setForm({ ...form, name: e.target.value })}
-        />
-        <textarea
-          placeholder="Description"
-          value={form.description}
-          required
-          onChange={e => setForm({ ...form, description: e.target.value })}
-        />
-        <input
-          placeholder="Emoji Icon"
-          value={form.icon}
-          onChange={e => setForm({ ...form, icon: e.target.value })}
-        />
-
-        <div className="modal-actions">
-          <button type="submit">Save</button>
-          <button type="button" className="cancel" onClick={onClose}>
-            Cancel
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-);
 
 export default Categories;

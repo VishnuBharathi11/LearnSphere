@@ -8,6 +8,7 @@ function Assessment() {
   const navigate = useNavigate();
   const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
   const userId = currentUser?.id || currentUser?.userId || "";
+  const userEmail = String(currentUser?.email || "").trim().toLowerCase();
 
   const [selectedResultCourse, setSelectedResultCourse] = useState(null);
   const [courses, setCourses] = useState([]);
@@ -41,15 +42,95 @@ function Assessment() {
     };
   }, [userId]);
 
-  const { assessmentCourses, totalAssessments, completed, pending, avgScore, failed, passed } = useMemo(() => {
-    const testResults = JSON.parse(window.appStore.getItem("testResults") || "[]");
-    const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
+  useEffect(() => {
+    if (!userId || courses.length === 0) return;
 
-    const myEnrollments = enrollments.filter(
+    const backendEnrollments = enrollments.filter(
       (entry) =>
         String(entry.userId) === String(userId) &&
         String(entry.status || "").toUpperCase() === "ACTIVE"
     );
+    const activeEnrollments = backendEnrollments.map((item) => ({ courseId: String(item.courseId) }));
+
+    if (activeEnrollments.length === 0) return;
+
+    const quizStore = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
+    let modified = false;
+
+    const ensureQuizForCourse = (course) => {
+      const key = String(course.id);
+      if (quizStore[key]) return;
+
+      const isSpringBootCourse = String(course.courseName || "")
+        .trim()
+        .toLowerCase() === "spring boot apis 2";
+
+      quizStore[key] = {
+        quizTitle: `${course.courseName} - Module Assessment`,
+        timeLimit: 20,
+        passingScore: 60,
+        questions: isSpringBootCourse
+          ? [
+              {
+                question: "What does @RestController combine in Spring Boot?",
+                options: [
+                  { text: "@Controller + @ResponseBody", isCorrect: true },
+                  { text: "@Service + @Component", isCorrect: false },
+                  { text: "@Entity + @Repository", isCorrect: false },
+                  { text: "@Bean + @Configuration", isCorrect: false },
+                ],
+              },
+              {
+                question: "Which HTTP method is typically used to create a resource?",
+                options: [
+                  { text: "GET", isCorrect: false },
+                  { text: "POST", isCorrect: true },
+                  { text: "DELETE", isCorrect: false },
+                  { text: "PATCH", isCorrect: false },
+                ],
+              },
+            ]
+          : [
+              {
+                question: `What is a key concept covered in ${course.courseName}?`,
+                options: [
+                  { text: "Core fundamentals and practical usage", isCorrect: true },
+                  { text: "Irrelevant external topic", isCorrect: false },
+                  { text: "Only historical background", isCorrect: false },
+                  { text: "None of the above", isCorrect: false },
+                ],
+              },
+            ],
+      };
+      modified = true;
+    };
+
+    activeEnrollments.forEach((entry) => {
+      const course = courses.find((item) => String(item.id) === String(entry.courseId));
+      if (course) ensureQuizForCourse(course);
+    });
+
+    if (userEmail === "717823s129@kce.ac.in") {
+      const springBootCourse = courses.find(
+        (course) => String(course.courseName || "").trim().toLowerCase() === "spring boot apis 2"
+      );
+      if (springBootCourse) ensureQuizForCourse(springBootCourse);
+    }
+
+    if (modified) {
+      window.appStore.setItem("courseQuizzes", JSON.stringify(quizStore));
+    }
+  }, [courses, enrollments, userEmail, userId]);
+
+  const { assessmentCourses, totalAssessments, completed, pending, avgScore } = useMemo(() => {
+    const testResults = JSON.parse(window.appStore.getItem("testResults") || "[]");
+    const allQuizzes = JSON.parse(window.appStore.getItem("courseQuizzes") || "{}");
+    const backendEnrollments = enrollments.filter(
+      (entry) =>
+        String(entry.userId) === String(userId) &&
+        String(entry.status || "").toUpperCase() === "ACTIVE"
+    );
+    const myEnrollments = backendEnrollments;
 
     const assessmentCourses = myEnrollments
       .map((entry) => {
@@ -89,17 +170,12 @@ function Assessment() {
               scored.length
           );
 
-    const passed = scored.filter((item) => item.result?.passed).length;
-    const failed = scored.filter((item) => !item.result?.passed).length;
-
     return {
       assessmentCourses,
       totalAssessments: assessmentCourses.length,
       completed,
       pending,
       avgScore,
-      failed,
-      passed,
     };
   }, [courses, enrollments, userId]);
 
@@ -148,21 +224,6 @@ function Assessment() {
         <div className="status-card">
           <h3>{avgScore}%</h3>
           <p>Average Score</p>
-        </div>
-      </div>
-
-      <div className="assessment-status assessment-sub-status">
-        <div className="status-card">
-          <h3>{pending}</h3>
-          <p>Not Started</p>
-        </div>
-        <div className="status-card">
-          <h3>{failed}</h3>
-          <p>Failed</p>
-        </div>
-        <div className="status-card">
-          <h3>{passed}</h3>
-          <p>Passed</p>
         </div>
       </div>
 

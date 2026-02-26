@@ -92,7 +92,11 @@ function StudentProgress() {
   }
 
   if (currentRole !== "instructor" || !course) {
-    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+    return (
+      <p style={{ padding: 40 }}>
+        Access denied. Student progress can be viewed only by the course instructor.
+      </p>
+    );
   }
 
   const filtered = students.filter(

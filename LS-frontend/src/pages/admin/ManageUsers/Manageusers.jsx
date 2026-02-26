@@ -1,137 +1,172 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Users, Search, Eye, Edit, Ban, UserCheck, Trash2, X } from "lucide-react";
 import {
-  Users, Search, Eye, Edit, Ban, UserCheck, MoreVertical
-} from "lucide-react";
+  deleteAdminUser,
+  getAdminUsers,
+  suspendAdminUser,
+  updateAdminUserRole,
+} from "../../../services/adminApi";
+import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./Manageuser.scss";
 
-function Manageusers(){
-  const [users, setUsers] = useState(() => {
-    return JSON.parse(window.appStore.getItem("users")) || [];
-  });
+function Manageusers() {
+  const [users, setUsers] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
-   const [viewUser, setViewUser] = useState(null);
+  const [viewUser, setViewUser] = useState(null);
   const [editUser, setEditUser] = useState(null);
+  const [error, setError] = useState("");
 
-  const filteredUsers =useMemo(()=>{
-  return users.filter(u => {
-    if (activeTab === "Learners" && u.role !== "learner") return false;
-    if (activeTab === "Instructors" && u.role !== "instructor") return false;
-    if (activeTab === "Suspended" && u.status !== "suspended") return false;
-    if (roleFilter !== "All" && u.role !== roleFilter) return false;
+  const loadUsers = async () => {
+    try {
+      const list = await getAdminUsers();
+      setUsers(Array.isArray(list) ? list : []);
+      setError("");
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to load users"));
+    }
+  };
 
-    const term=search.toLowerCase();
-    return (
-      u.name?.toLowerCase().includes(term) ||
-      u.email?.toLowerCase().includes(term)
-    );
-  });
-  },[users,activeTab,search,roleFilter]);
-const updateStorage = (updated) => {
-    setUsers(updated);
-    window.appStore.setItem("users", JSON.stringify(updated));
-  };
-  const toggleUserStatus=(id)=>{
-    const updated=users.map((u)=>u.id===id?{...u.status==="active"?"suspended":"active"}:u);
-    updateStorage(updated);
-    //window.appStore.setItem("users",JSON.stringify(updated));
-  };
-  const deleteUser = (id) => {
-    if (!window.confirm("Are you sure you want to delete this user?")) return;
+  useEffect(() => {
+    loadUsers();
+  }, []);
 
-    const updated = users.filter((u) => u.id !== id);
-    updateStorage(updated);
+  const filteredUsers = useMemo(() => {
+    return users.filter((user) => {
+      if (activeTab === "Learners" && String(user.role).toLowerCase() !== "learner") return false;
+      if (activeTab === "Instructors" && String(user.role).toLowerCase() !== "instructor") return false;
+      if (activeTab === "Suspended" && String(user.status).toLowerCase() !== "suspended") return false;
+      if (roleFilter !== "All" && String(user.role).toLowerCase() !== roleFilter.toLowerCase()) return false;
+
+      const term = search.toLowerCase();
+      return (
+        String(user.name || "").toLowerCase().includes(term) ||
+        String(user.email || "").toLowerCase().includes(term)
+      );
+    });
+  }, [users, activeTab, search, roleFilter]);
+
+  const toggleUserStatus = async (user) => {
+    try {
+      const suspend = String(user.status).toLowerCase() !== "suspended";
+      await suspendAdminUser(user.id, suspend);
+      await loadUsers();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to update user status"));
+    }
   };
-  const changeRole = (newRole) => {
-    const updated = users.map((u) =>
-      u.id === editUser.id ? { ...u, role: newRole } : u
-    );
-    updateStorage(updated);
-    setEditUser(null);
+
+  const deleteUser = async (id) => {
+    if (!window.confirm("Delete this user account?")) return;
+    try {
+      await deleteAdminUser(id);
+      await loadUsers();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to delete user"));
+    }
   };
+
+  const changeRole = async (newRole) => {
+    if (!editUser) return;
+    try {
+      await updateAdminUserRole(editUser.id, newRole);
+      setEditUser(null);
+      await loadUsers();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to update user role"));
+    }
+  };
+
   return (
     <div className="manage-users-layout">
       <div className="manage-users">
-      <div className="tabs">
-        {["All", "Learners", "Instructors", "Suspended"].map(tab => (
-          <button
-            key={tab}
-            className={activeTab === tab ? "tab active" : "tab"}
-            onClick={() => setActiveTab(tab)}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+        {error && <p className="admin-error">{error}</p>}
 
-      <div className="filters">
-        <div className="search-box">
-          <Search size={16} />
-          <input
-            placeholder="Search by name or email"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+        <div className="tabs">
+          {["All", "Learners", "Instructors", "Suspended"].map((tab) => (
+            <button
+              key={tab}
+              className={activeTab === tab ? "tab active" : "tab"}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
         </div>
-        <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
-          <option value="all">All roles</option>
-          <option value="learner">Learner</option>
-          <option value="instructor">Instructor</option>
-          <option value="admin">Admin</option>
-        </select>
-      </div>
 
-      <div className="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th>User</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th>Joined</th>
-              <th>Last Active</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.length === 0 ? (
+        <div className="filters">
+          <div className="search-box">
+            <Search size={16} />
+            <input
+              placeholder="Search by name or email"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+            <option value="All">All roles</option>
+            <option value="learner">Learner</option>
+            <option value="instructor">Instructor</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div className="table-wrapper">
+          <table>
+            <thead>
               <tr>
-                <td colSpan="6" className="empty">
-                  <Users size={32} />
-                  No users found
-                </td>
+                <th>User</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Last Active</th>
+                <th>Actions</th>
               </tr>
-            ) : (
-              filteredUsers.map(u => (
-                <tr key={u.id}>
-                  <td>
-                    <div className="user-cell">
-                      <div className="avatar">{u.name?.[0]?.toUpperCase()||"U"}</div>
-                      <div>
-                        <p>{u.name}</p>
-                        <span>{u.email}</span>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{u.role}</td>
-                  <td className={u.status}>{u.status}</td>
-                  <td>{u.createdAt?new Date(u.createdAt).toLocaleDateString():"-"}</td>
-                  <td>{u.lastActive}</td>
-                  <td className="actions">
-                    <Eye size={16} onClick={() => setViewUser(u)}/>
-                    <Edit size={16} onClick={() => setEditUser(u)}/>
-                    {u.status === "active" ? (<Ban size={16} onClick={()=>toggleUserStatus(u.id)}/>) : (<UserCheck size={16} onClick={()=>toggleUserStatus(u.id)}/>)}
-                    <MoreVertical size={16} onClick={() => deleteUser(u.id)}/>
+            </thead>
+            <tbody>
+              {filteredUsers.length === 0 ? (
+                <tr>
+                  <td colSpan="6" className="empty">
+                    <Users size={32} />
+                    No users found
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                filteredUsers.map((user) => (
+                  <tr key={user.id}>
+                    <td>
+                      <div className="user-cell">
+                        <div className="avatar">{user.name?.[0]?.toUpperCase() || "U"}</div>
+                        <div>
+                          <p>{user.name}</p>
+                          <span>{user.email}</span>
+                        </div>
+                      </div>
+                    </td>
+                    <td>{user.role}</td>
+                    <td className={user.status}>{user.status}</td>
+                    <td>{user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "-"}</td>
+                    <td>{user.lastLoginAt ? new Date(user.lastLoginAt).toLocaleString() : "-"}</td>
+                    <td className="actions">
+                      <Eye size={16} onClick={() => setViewUser(user)} />
+                      <Edit size={16} onClick={() => setEditUser(user)} />
+                      {String(user.status).toLowerCase() === "suspended" ? (
+                        <UserCheck size={16} onClick={() => toggleUserStatus(user)} />
+                      ) : (
+                        <Ban size={16} onClick={() => toggleUserStatus(user)} />
+                      )}
+                      <Trash2 size={16} onClick={() => deleteUser(user.id)} />
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
-    {viewUser && (
+
+      {viewUser && (
         <div className="modal-overlay">
           <div className="modal">
             <button className="close" onClick={() => setViewUser(null)}>
@@ -139,20 +174,26 @@ const updateStorage = (updated) => {
             </button>
 
             <h3>User Details</h3>
-            <p><b>Name:</b> {viewUser.name}</p>
-            <p><b>Email:</b> {viewUser.email}</p>
-            <p><b>Role:</b> {viewUser.role}</p>
-            <p><b>Status:</b> {viewUser.status}</p>
             <p>
-              <b>Joined:</b>{" "}
-              {viewUser.createdAt
-                ? new Date(viewUser.createdAt).toLocaleString()
-                : "-"}
+              <b>Name:</b> {viewUser.name}
+            </p>
+            <p>
+              <b>Email:</b> {viewUser.email}
+            </p>
+            <p>
+              <b>Role:</b> {viewUser.role}
+            </p>
+            <p>
+              <b>Status:</b> {viewUser.status}
+            </p>
+            <p>
+              <b>Joined:</b> {viewUser.createdAt ? new Date(viewUser.createdAt).toLocaleString() : "-"}
             </p>
           </div>
         </div>
       )}
-{editUser && (
+
+      {editUser && (
         <div className="modal-overlay">
           <div className="modal">
             <button className="close" onClick={() => setEditUser(null)}>
@@ -161,10 +202,7 @@ const updateStorage = (updated) => {
 
             <h3>Edit User Role</h3>
 
-            <select
-              defaultValue={editUser.role}
-              onChange={(e) => changeRole(e.target.value)}
-            >
+            <select defaultValue={editUser.role} onChange={(e) => changeRole(e.target.value)}>
               <option value="learner">Learner</option>
               <option value="instructor">Instructor</option>
               <option value="admin">Admin</option>
@@ -174,6 +212,7 @@ const updateStorage = (updated) => {
       )}
     </div>
   );
-};
+}
 
 export default Manageusers;
+

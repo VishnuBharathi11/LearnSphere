@@ -154,7 +154,11 @@ function CourseAnalytics() {
     return <p style={{ padding: 40 }}>Loading analytics...</p>;
   }
   if (!isInstructorRole) {
-    return <p style={{ padding: 40 }}>Unauthorized access to analytics.</p>;
+    return (
+      <p style={{ padding: 40 }}>
+        Access denied. Analytics is available only for instructor accounts.
+      </p>
+    );
   }
   if (!course) {
     return <p style={{ padding: 40 }}>Unable to load analytics for this course right now.</p>;

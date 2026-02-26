@@ -1,85 +1,70 @@
-import { useNavigate } from "react-router-dom";
-import {
-  Users,
-  BookOpen,
-  Clock,
-  DollarSign,
-  FileText,
-  Eye,
-  CheckCircle,
-  XCircle,
-} from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Users, BookOpen, Clock, DollarSign, FileText, CheckCircle, XCircle } from "lucide-react";
 import "./Approvecourses.scss";
-import { useMemo, useState } from "react";
+import { getAdminCourses, publishCourse, rejectCourse } from "../../../services/courseApi";
+import { getFriendlyErrorMessage } from "../../../services/apiError";
 
 function ApproveCourses() {
-  const navigate = useNavigate();
-  const [courses, setCourses] = useState(() => {
-    return JSON.parse(window.appStore.getItem("courses")) || [];
-  });
-  const pendingCourses = courses.filter((c) => c.status === "pending");
+  const [courses, setCourses] = useState([]);
+  const [error, setError] = useState("");
+
+  const loadCourses = async () => {
+    try {
+      const list = await getAdminCourses();
+      setCourses(Array.isArray(list) ? list : []);
+      setError("");
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to load courses for approval"));
+    }
+  };
+
+  useEffect(() => {
+    loadCourses();
+  }, []);
+
+  const pendingCourses = useMemo(
+    () => courses.filter((course) => String(course.status || "").toUpperCase() === "REVIEW"),
+    [courses]
+  );
+
   const stats = useMemo(() => {
-    const today = new Date().toISOString();
-    const approvedToday = courses.filter(
-      (c) =>
-        c.status === "published" &&
-        new Date(c.updatedAt).toDateString() === today,
-    ).length;
-    const rejectedToday = courses.filter(
-      (c) =>
-        c.status === "published" &&
-        new Date(c.updatedAt).toDateString() === today,
-    ).length;
+    const approved = courses.filter((course) => String(course.status || "").toUpperCase() === "PUBLISHED").length;
     return [
-      {
-        label: "Pending Review",
-        value: pendingCourses.length,
-        icon: Clock,
-        type: "pending",
-      },
-      {
-        label: "Approved Today",
-        value: approvedToday.length,
-        icon: Clock,
-        type: "approved",
-      },
-      {
-        label: "Rejected Today",
-        value: rejectedToday.length,
-        icon: Clock,
-        type: "rejected",
-      },
+      { label: "Pending Review", value: pendingCourses.length, icon: Clock, type: "pending" },
+      { label: "Approved", value: approved, icon: CheckCircle, type: "approved" },
     ];
   }, [courses, pendingCourses.length]);
-  const approveCourse = (id) => {
-    const updated = courses.map((c) =>
-      c.id === id
-        ? { ...c, status: "published", updatedAt: new Date().toISOString() }
-        : c,
-    );
-    window.appStore.setItem("courses", JSON.stringify(updated));
-    setCourses(updated);
+
+  const approve = async (id) => {
+    try {
+      await publishCourse(id);
+      await loadCourses();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to approve course"));
+    }
   };
-  const rejectCourse = (id) => {
-    const updated = courses.map((c) =>
-      c.id === id
-        ? { ...c, status: "rejected", updatedAt: new Date().toISOString() }
-        : c,
-    );
-    window.appStore.setItem("courses", JSON.stringify(updated));
-    setCourses(updated);
+
+  const reject = async (id) => {
+    try {
+      await rejectCourse(id, "REJECTED_BY_ADMIN");
+      await loadCourses();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to reject course"));
+    }
   };
 
   return (
     <div className="approve-courses-layout">
       <div className="approve-course-content">
+        {error && <p className="admin-error">{error}</p>}
+
         <div className="stats-grid">
-          {stats.map((s, i) => (
-            <div key={i} className={`stat-card ${s.type}`}>
-              <s.icon size={22} />
+          {stats.map((stat) => (
+            <div key={stat.label} className={`stat-card ${stat.type}`}>
+              <stat.icon size={22} />
               <div>
-                <p>{s.label}</p>
-                <h3>{s.value}</h3>
+                <p>{stat.label}</p>
+                <h3>{stat.value}</h3>
               </div>
             </div>
           ))}
@@ -87,65 +72,45 @@ function ApproveCourses() {
 
         <div className="course-list">
           {pendingCourses.length === 0 ? (
-            <p className="empty">No pending courses</p>
+            <p className="empty">No courses pending review</p>
           ) : (
             pendingCourses.map((course) => (
               <div key={course.id} className="admin-course-card">
                 <div className="course-main">
                   <div className="thumb">
-                    {course.thumbnail ? (
-                      <img src={course.thumbnail} alt="thumb" />
-                    ) : (
-                      course.courseName?.[0]
-                    )}
+                    {course.thumbnail ? <img src={course.thumbnail} alt="thumb" /> : course.courseName?.[0]}
                   </div>
                   <div className="details">
                     <h3>{course.courseName}</h3>
                     <div className="meta">
                       <span>
-                        {" "}
-                        <Users size={14} /> Instructor: {course.instructorName}
+                        <Users size={14} /> Instructor: {course.instructor || course.instructorId || "-"}
                       </span>
                       <span>
-                        <BookOpen size={14} /> Category: {course.category}
+                        <BookOpen size={14} /> Category: {course.category || "-"}
                       </span>
                       <span>
                         <Clock size={14} /> Submitted:{" "}
-                        {new Date(course.createdAt).toLocaleDateString()}
+                        {course.createdAt ? new Date(course.createdAt).toLocaleDateString() : "-"}
                       </span>
                     </div>
-                    <p className="description">
-                      {course.description || "No description provided."}
-                    </p>
+                    <p className="description">{course.description || "No description provided."}</p>
                     <div className="extra">
                       <span>
-                        <DollarSign size={14} /> Price: <b>₹{course.price}</b>
+                        <DollarSign size={14} /> Price: <b>INR {course.price || 0}</b>
                       </span>
                       <span>
-                        <FileText size={14} /> Lessons: <b>{course.lessons}</b>
+                        <FileText size={14} /> Lessons: <b>{course.lessons || 0}</b>
                       </span>
                     </div>
                   </div>
                 </div>
                 <div className="actions">
-                  <button className="review"
-                    onClick={() =>
-                      navigate(`/approve-courses/${course.id}/review`)
-                    }
-                  >
-                    <Eye size={16} /> Review
-                  </button>
-                   <button
-                    className="approve"
-                    onClick={() => approveCourse(course.id)}
-                  >
+                  <button className="approve" onClick={() => approve(course.id)}>
                     <CheckCircle size={16} /> Approve
                   </button>
 
-                  <button
-                    className="reject"
-                    onClick={() => rejectCourse(course.id)}
-                  >
+                  <button className="reject" onClick={() => reject(course.id)}>
                     <XCircle size={16} /> Reject
                   </button>
                 </div>
@@ -159,3 +124,4 @@ function ApproveCourses() {
 }
 
 export default ApproveCourses;
+

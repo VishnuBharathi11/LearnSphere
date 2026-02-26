@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Shield, Plus, Edit, Trash2, X } from "lucide-react";
+import { getAdminRoles, saveAdminRolePermissions } from "../../../services/adminApi";
+import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./RoleManagement.scss";
 
 function RoleManagement() {
   const [showModal, setShowModal] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
+  const [roles, setRoles] = useState([]);
+  const [error, setError] = useState("");
   const ALL_PERMISSIONS = [
     "View Dashboard",
     "Manage Users",
@@ -21,119 +25,92 @@ function RoleManagement() {
     "System Settings",
     "Manage Roles",
   ];
-  const [roles, setRoles] = useState([
-    {
-      id: 1,
-      name: "Admin",
-      description: "Full access to the admin system",
-      users: 2,
-      permissions: ALL_PERMISSIONS,
-    },
-    {
-      id: 2,
-      name: "Instructor",
-      description: "Manages courses and student progress",
-      users: 132,
-      permissions: [
-        "View Dashboard",
-        "Manage Courses",
-        "Create Courses",
-        "Upload Lessons",
-        "Create Quizzes",
-        "View Student Progress",
-        "Moderate Discussions",
-      ],
-    },
-    {
-      id: 3,
-      name: "Student",
-      description: "Basic learning access",
-      users: 2156,
-      permissions: ["View Dashboard"],
-    },
-  ]);
 
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
+    role: "",
     permissions: [],
   });
 
+  const loadRoles = async () => {
+    try {
+      const data = await getAdminRoles();
+      setRoles(Array.isArray(data) ? data : []);
+      setError("");
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to load role permissions"));
+    }
+  };
+
+  useEffect(() => {
+    loadRoles();
+  }, []);
+
   const openCreate = () => {
     setEditingRole(null);
-    setFormData({ name: "", description: "", permissions: [] });
+    setFormData({ role: "", permissions: [] });
     setShowModal(true);
   };
 
   const openEdit = (role) => {
     setEditingRole(role);
     setFormData({
-      name: role.name,
-      description: role.description,
-      permissions: [...role.permissions],
+      role: role.role,
+      permissions: [...(role.permissions || [])],
     });
     setShowModal(true);
   };
-  const handleDeleteRole = (roleId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this role?",
-    );
 
+  const handleDeleteRole = async (roleName) => {
+    const confirmDelete = window.confirm("Delete this role permissions?");
     if (!confirmDelete) return;
-
-    setRoles((prev) => prev.filter((role) => role.id !== roleId));
+    try {
+      await saveAdminRolePermissions({ role: roleName, permissions: [] });
+      await loadRoles();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to delete role permissions"));
+    }
   };
 
   const togglePermission = (permission) => {
     setFormData((prev) => ({
       ...prev,
       permissions: prev.permissions.includes(permission)
-        ? prev.permissions.filter((p) => p !== permission)
+        ? prev.permissions.filter((item) => item !== permission)
         : [...prev.permissions, permission],
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (editingRole) {
-      setRoles((prev) =>
-        prev.map((r) => (r.id === editingRole.id ? { ...r, ...formData } : r)),
-      );
-    } else {
-      setRoles((prev) => [
-        ...prev,
-        {
-          id: prev.length + 1,
-          users: 0,
-          ...formData,
-        },
-      ]);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      await saveAdminRolePermissions({
+        role: formData.role,
+        permissions: formData.permissions,
+      });
+      setShowModal(false);
+      await loadRoles();
+    } catch (apiError) {
+      setError(getFriendlyErrorMessage(apiError, "Failed to save role permissions"));
     }
-
-    setShowModal(false);
   };
 
   return (
     <div className="admin-layout">
-
       <div className="admin-content">
+        {error && <p className="admin-error">{error}</p>}
+
         <main className="role-container">
           {roles.map((role) => (
-            <div className="role-card" key={role.id}>
+            <div className="role-card" key={role.role}>
               <div className="role-actions">
-                <button
-                  className="edit-btn"
-                  onClick={() => openEdit(role)}
-                  title="Edit Role"
-                >
+                <button className="edit-btn" onClick={() => openEdit(role)} title="Edit Role">
                   <Edit size={16} />
                 </button>
 
                 <button
                   className="delete-btn"
-                  onClick={() => handleDeleteRole(role.id)}
-                  title="Delete Role"
+                  onClick={() => handleDeleteRole(role.role)}
+                  title="Delete Role Permissions"
                 >
                   <Trash2 size={16} />
                 </button>
@@ -142,17 +119,17 @@ function RoleManagement() {
               <div className="role-header">
                 <Shield size={26} />
                 <div>
-                  <h3>{role.name}</h3>
+                  <h3>{role.role}</h3>
                   <span>{role.users} users</span>
                 </div>
               </div>
 
-              <p className="role-desc">{role.description}</p>
+              <p className="role-desc">Configured permissions for {role.role}</p>
 
               <div className="permission-list">
-                {role.permissions.map((p) => (
-                  <span key={p} className="permission-pill">
-                    {p}
+                {(role.permissions || []).map((permission) => (
+                  <span key={permission} className="permission-pill">
+                    {permission}
                   </span>
                 ))}
               </div>
@@ -181,34 +158,21 @@ function RoleManagement() {
                 Role Name
                 <input
                   required
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                />
-              </label>
-
-              <label>
-                Description
-                <textarea
-                  required
-                  rows="3"
-                  value={formData.description}
-                  onChange={(e) =>
-                    setFormData({ ...formData, description: e.target.value })
-                  }
+                  disabled={Boolean(editingRole)}
+                  value={formData.role}
+                  onChange={(event) => setFormData({ ...formData, role: event.target.value })}
                 />
               </label>
 
               <div className="permission-box">
-                {ALL_PERMISSIONS.map((perm) => (
-                  <label key={perm} className="perm-item">
+                {ALL_PERMISSIONS.map((permission) => (
+                  <label key={permission} className="perm-item">
                     <input
                       type="checkbox"
-                      checked={formData.permissions.includes(perm)}
-                      onChange={() => togglePermission(perm)}
+                      checked={formData.permissions.includes(permission)}
+                      onChange={() => togglePermission(permission)}
                     />
-                    {perm}
+                    {permission}
                   </label>
                 ))}
               </div>
@@ -217,11 +181,7 @@ function RoleManagement() {
                 <button type="submit" className="btn-primary">
                   Save
                 </button>
-                <button
-                  type="button"
-                  className="btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
+                <button type="button" className="btn-secondary" onClick={() => setShowModal(false)}>
                   Cancel
                 </button>
               </div>
@@ -234,3 +194,4 @@ function RoleManagement() {
 }
 
 export default RoleManagement;
+

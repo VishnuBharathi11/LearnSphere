@@ -64,7 +64,11 @@ function CreateQuiz() {
   }
 
   if (currentRole !== "instructor" || !course) {
-    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+    return (
+      <p style={{ padding: 40 }}>
+        Access denied. You can create quizzes only for your own instructor courses.
+      </p>
+    );
   }
   
   const setCorrectOption = (index) => {

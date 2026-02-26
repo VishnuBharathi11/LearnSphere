@@ -1,13 +1,11 @@
 package com.learnsphere.discussion.service;
 
-import com.learnsphere.discussion.dto.NotificationRequest;
-import com.learnsphere.discussion.entity.Notification;
-
 import java.util.List;
 
+import com.learnsphere.discussion.dto.response.NotificationResponse;
+
 public interface NotificationService {
+    void createNotification(String userId, String title, String message);
 
-    Notification createNotification(NotificationRequest request);
-
-    List<Notification> getUserNotifications(Long userId);
+    List<NotificationResponse> getUserNotifications(String userId);
 }

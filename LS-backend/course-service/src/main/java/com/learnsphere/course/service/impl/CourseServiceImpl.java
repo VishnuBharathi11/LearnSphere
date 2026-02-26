@@ -1,6 +1,8 @@
 package com.learnsphere.course.service.impl;
 
 import java.time.Instant;
+import java.util.Comparator;
+import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -37,6 +39,8 @@ public class CourseServiceImpl implements CourseService{
 		    }
 		course.setStatus(CourseStatus.DRAFT);
 		course.setCreatedAt(Instant.now());
+		course.setUpdatedAt(Instant.now());
+		course.setModerationNote(null);
 		return courseRepository.save(course);
 	}
 
@@ -54,6 +58,7 @@ public class CourseServiceImpl implements CourseService{
 		course.setThumbnail(request.getThumbnail());
 		course.setPrice(request.getPrice());
 		course.setCategoryId(request.getCategoryId());
+		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
 	
@@ -75,6 +80,8 @@ public class CourseServiceImpl implements CourseService{
 		if(course.getStatus()!=CourseStatus.DRAFT)
 			throw new BadRequestException("Only draft allowed");
 		course.setStatus(CourseStatus.REVIEW);
+		course.setModerationNote("SUBMITTED_FOR_REVIEW");
+		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
 	@Override
@@ -83,13 +90,33 @@ public class CourseServiceImpl implements CourseService{
 		if(course.getStatus()!=CourseStatus.REVIEW)
 			throw new BadRequestException("Only review allowed");
 		course.setStatus(CourseStatus.PUBLISHED);
+		course.setModerationNote("APPROVED");
+		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
 	@Override
 	public Course archiveCourse(String id) {
 		Course course=getCourse(id);
-		
-		course.setStatus(CourseStatus.REVIEW);
+		course.setStatus(CourseStatus.ARCHIVED);
+		course.setModerationNote("SUSPENDED");
+		course.setUpdatedAt(Instant.now());
+		return courseRepository.save(course);
+	}
+	@Override
+	public Course rejectCourse(String id, String note) {
+		Course course = getCourse(id);
+		course.setStatus(CourseStatus.ARCHIVED);
+		course.setModerationNote(note == null || note.isBlank() ? "REJECTED" : note.trim());
+		course.setUpdatedAt(Instant.now());
+		return courseRepository.save(course);
+	}
+
+	@Override
+	public Course activateCourse(String id) {
+		Course course = getCourse(id);
+		course.setStatus(CourseStatus.PUBLISHED);
+		course.setModerationNote("ACTIVE");
+		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
 	@Override
@@ -107,5 +134,26 @@ public class CourseServiceImpl implements CourseService{
 	@Override
 	public Page<Course> byInstructor(String instructorId, int page, int size) {
 		return courseRepository.findByInstructorId(instructorId, PageRequest.of(page, size));
+	}
+
+	@Override
+	public List<Course> adminList(String status, String search) {
+		String safeStatus = status == null ? "" : status.trim().toUpperCase();
+		String safeSearch = search == null ? "" : search.trim().toLowerCase();
+
+		return courseRepository.findAll().stream()
+				.filter(course -> {
+					if (safeStatus.isBlank()) return true;
+					if ("PENDING".equals(safeStatus)) return course.getStatus() == CourseStatus.REVIEW;
+					return course.getStatus() != null && course.getStatus().name().equals(safeStatus);
+				})
+				.filter(course -> {
+					if (safeSearch.isBlank()) return true;
+					String title = course.getTitle() == null ? "" : course.getTitle().toLowerCase();
+					String instructorId = course.getInstructorId() == null ? "" : course.getInstructorId().toLowerCase();
+					return title.contains(safeSearch) || instructorId.contains(safeSearch);
+				})
+				.sorted(Comparator.comparing(Course::getCreatedAt, Comparator.nullsLast(Comparator.naturalOrder())).reversed())
+				.toList();
 	}
 }

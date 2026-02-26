@@ -1,122 +1,121 @@
 import "./AdminDashboard.scss";
-import {
-  Users,
-  GraduationCap,
-  BookOpen,
-  IndianRupee,
-  AlertCircle,
-  Clock,
-} from "lucide-react";
+import { Users, GraduationCap, BookOpen, IndianRupee, AlertCircle, Clock } from "lucide-react";
 import {
   LineChart,
   Line,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   Tooltip,
   ResponsiveContainer,
+  CartesianGrid,
 } from "recharts";
-import { useMemo } from "react";
-const COLORS = ["#2563eb", "#7c3aed", "#10b981", "#f59e0b", "#6b7280"];
+import { useEffect, useMemo, useState } from "react";
+import { getAdminDashboard } from "../../../services/adminApi";
+import { getAdminCourses } from "../../../services/courseApi";
+import { getFriendlyErrorMessage } from "../../../services/apiError";
+
 function AdminDashboard() {
-  const currentUser = JSON.parse(window.appStore.getItem("currentUser"));
-  const { users, courses, enrollments,discussions } = useMemo(
-    () => ({
-      users: JSON.parse(window.appStore.getItem("users")) || [],
-      courses: JSON.parse(window.appStore.getItem("courses")) || [],
-      enrollments: JSON.parse(window.appStore.getItem("enrolledCourses")) || [],
-      discussions: JSON.parse(window.appStore.getItem("courseDiscussions")) || [],
-    }),
-    [],
+  const currentUser = JSON.parse(window.appStore.getItem("currentUser") || "null");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [dashboard, setDashboard] = useState(null);
+  const [courses, setCourses] = useState([]);
+
+  useEffect(() => {
+    if (!currentUser || currentUser.role !== "admin") return;
+
+    let active = true;
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const [dashboardData, adminCourses] = await Promise.all([
+          getAdminDashboard(),
+          getAdminCourses(),
+        ]);
+        if (!active) return;
+        setDashboard(dashboardData || null);
+        setCourses(Array.isArray(adminCourses) ? adminCourses : []);
+      } catch (apiError) {
+        if (!active) return;
+        setError(getFriendlyErrorMessage(apiError, "Failed to load dashboard analytics"));
+      } finally {
+        if (!active) return;
+        setLoading(false);
+      }
+    }
+
+    load();
+    return () => {
+      active = false;
+    };
+  }, [currentUser?.role]);
+
+  const activeCourses = useMemo(
+    () => courses.filter((course) => String(course.status || "").toUpperCase() === "PUBLISHED").length,
+    [courses]
   );
-  const totalLearners = users.filter((u) => u.role === "learner").length;
-  const totalInstructors = users.filter((u) => u.role === "instructor").length;
-  const activeCourses = courses.filter((c) => c.status === "published").length;
 
-  const totalRevenue = enrollments.reduce((sum, e) => {
-    const course = courses.find((c) => c.id === e.courseId);
-    return sum + (course?.price || 0);
-  }, 0);
-  const pendingCourses = courses.filter((c) => c.status === "draft").length;
-  const flaggedDiscussions = discussions.filter((d) => d.status === "flagged").length;
-  const stats = [
-    { label: "Total Learners", value: totalLearners, icon: Users },
-    {label: "Total Instructors",value: totalInstructors,icon: GraduationCap,},
-    { label: "Active Courses", value: activeCourses, icon: BookOpen },
-    {label: "Total Revenue",value: `₹${(totalRevenue / 100000).toFixed(1)}L`,icon: IndianRupee,},
-  ];
-
-  const userGrowth = useMemo(() => {
-    const map = {};
-    users.forEach((u) => {
-      if (!u.createdAt) return;
-      const month = new Date(u.createdAt).toLocaleString("default", {
-        month: "short",
-      });
-      if (!map[month]) 
-        map[month] = { month, learners: 0, instructors: 0 };
-      if (u.role === "learner") 
-        map[month].learners++;
-      if (u.role === "instructor") 
-        map[month].instructors++;
-    });
-    return Object.values(map);
-  }, [users]);
-
-  const revenueTrend = useMemo(() => {
-    const map = {};
-    enrollments.forEach((e) => {
-      const course = courses.find((c) => c.id === e.courseId);
-      if (!course || !course.price || !e.enrolledAt) 
-        return;
-      const month = new Date(e.enrolledAt).toLocaleString("default", {month: "short",});
-      map[month] = (map[month] || 0) + course.price;
-    });
-    return Object.entries(map).map(([month, revenue]) => ({
-      month,
-      revenue,
-    }));
-  }, [enrollments, courses]);
+  const pendingReviewCourses = useMemo(
+    () => courses.filter((course) => String(course.status || "").toUpperCase() === "REVIEW").length,
+    [courses]
+  );
 
   const categories = useMemo(() => {
     const map = {};
-    courses.forEach((c) => {
-      if (!c.category) return;
-      map[c.category] = (map[c.category] || 0) + 1;
+    courses.forEach((course) => {
+      const category = course.category || "General";
+      map[category] = (map[category] || 0) + 1;
     });
-    return Object.entries(map).map(([name, value], i) => ({
-      name,
-      value,
-      color: COLORS[i % COLORS.length],
-    }));
+    return Object.entries(map).map(([name, count]) => ({ name, count }));
   }, [courses]);
 
-  const recentActivity=useMemo(()=>{
-    const activities=[];
-    courses.slice(-3).forEach((c)=>activities.push(`Course "${c.courseName}" created`));
-    enrollments.slice(-3).forEach((e)=>activities.push(`New enrollment in course ID ${e.courseId}`));
-    discussions.filter((d)=>d.status==="flagged").slice(-2).forEach(()=>activities.push("Discussion flagged learner"));
-    return activities.slice(-5).reverse();
-  },[courses,enrollments,discussions]);
+  const stats = useMemo(
+    () => [
+      { label: "Active Learners", value: dashboard?.activeLearners || 0, icon: Users },
+      { label: "Active Instructors", value: dashboard?.activeInstructors || 0, icon: GraduationCap },
+      { label: "Active Courses", value: activeCourses, icon: BookOpen },
+      {
+        label: "Platform Revenue",
+        value: `INR ${Number(dashboard?.platformRevenue || 0).toLocaleString()}`,
+        icon: IndianRupee,
+      },
+    ],
+    [dashboard, activeCourses]
+  );
 
-  const tasks = [
-    {text: `${pendingCourses} courses pending approval`,priority: "high",},
-    { text: `${flaggedDiscussions} dicussions flagged`, priority: "medium" },
-  ];
+  const pendingTasks = useMemo(() => {
+    const fromApi = Array.isArray(dashboard?.pendingTasks) ? dashboard.pendingTasks : [];
+    return [
+      {
+        text: `${pendingReviewCourses} courses pending approval`,
+        priority: "high",
+      },
+      ...fromApi.map((task) => ({
+        text: `${task.count} ${task.text}`,
+        priority: task.priority || "medium",
+      })),
+    ];
+  }, [dashboard?.pendingTasks, pendingReviewCourses]);
 
-  if(!currentUser||currentUser.role!=="admin"){
-    return <p style={{ padding: 40 }}>Unauthorized access.</p>;
+  if (!currentUser || currentUser.role !== "admin") {
+    return <p style={{ padding: 40 }}>Access denied. This page is available only for admin accounts.</p>;
   }
+
+  if (loading) {
+    return <p style={{ padding: 40 }}>Loading admin analytics...</p>;
+  }
+
   return (
     <div className="admin-dasboard-layout">
       <div className="admin-dashboard">
+        {error && <p className="admin-error">{error}</p>}
+
         <div className="status-grid">
-          {stats.map((s, i) => (
-            <div key={i} className="stat-card">
+          {stats.map((s) => (
+            <div key={s.label} className="stat-card">
               <s.icon size={22} />
               <div>
                 <p className="stat-value">{s.value}</p>
@@ -125,41 +124,46 @@ function AdminDashboard() {
             </div>
           ))}
         </div>
+
         <div className="pending-box">
           <h3>
             <AlertCircle size={18} /> Pending Tasks
           </h3>
           <div className="task-grid">
-            {tasks.map((t, i) => (
-              <div key={i} className={`task ${t.priority}`}>
-                <span>{t.text}</span>
-                <span className="badge">{t.priority}</span>
+            {pendingTasks.map((task, idx) => (
+              <div key={`${task.text}-${idx}`} className={`task ${task.priority}`}>
+                <span>{task.text}</span>
+                <span className="badge">{task.priority}</span>
               </div>
             ))}
           </div>
         </div>
+
         <div className="charts-grid">
           <div className="chart-card">
-            <h3>User Growth</h3>
+            <h3>User Growth (Registration / Login)</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={userGrowth}>
+              <LineChart data={dashboard?.userGrowth || []}>
+                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Line dataKey="learners" stroke="#2563eb" />
-                <Line dataKey="instructors" stroke="#7c3aed" />
+                <Line dataKey="registrations" stroke="#2563eb" strokeWidth={2} />
+                <Line dataKey="logins" stroke="#10b981" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           </div>
 
           <div className="chart-card">
-            <h3>Revenue Trend</h3>
+            <h3>Revenue Trend (Gross / Commission)</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={revenueTrend}>
+              <BarChart data={dashboard?.revenueTrend || []}>
+                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="revenue" fill="#f59e0b" />
+                <Bar dataKey="grossRevenue" fill="#1d4ed8" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="commissionRevenue" fill="#f59e0b" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -167,25 +171,28 @@ function AdminDashboard() {
           <div className="chart-card">
             <h3>Courses by Category</h3>
             <ResponsiveContainer width="100%" height={260}>
-              <PieChart>
-                <Pie data={categories} dataKey="value" nameKey="name">
-                  {categories.map((c, i) => (
-                    <Cell key={i} fill={c.color} />
-                  ))}
-                </Pie>
+              <BarChart data={categories}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis allowDecimals={false} />
                 <Tooltip />
-              </PieChart>
+                <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} />
+              </BarChart>
             </ResponsiveContainer>
           </div>
         </div>
+
         <div className="activity-box">
           <h3>Recent Activity</h3>
-          {recentActivity.length===0?(
+          {!dashboard?.recentActivity?.length ? (
             <p>No activity yet</p>
-          ):(
+          ) : (
             <ul>
-              {recentActivity.map((a,i)=>(
-                <li key={i}><Clock size={14}/> {a}</li>
+              {dashboard.recentActivity.map((activity, idx) => (
+                <li key={`${activity.type}-${idx}`}>
+                  <Clock size={14} />
+                  {activity.message}
+                </li>
               ))}
             </ul>
           )}
@@ -196,3 +203,4 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
+

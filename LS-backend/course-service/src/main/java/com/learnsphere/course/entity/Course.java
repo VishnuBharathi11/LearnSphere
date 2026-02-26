@@ -21,4 +21,6 @@ public class Course {
 	private String instructorId;
 	private CourseStatus status;
 	private Instant createdAt;  
+	private Instant updatedAt;
+	private String moderationNote;
 }

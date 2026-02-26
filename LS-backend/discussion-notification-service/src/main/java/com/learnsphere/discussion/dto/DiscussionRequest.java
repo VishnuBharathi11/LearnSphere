@@ -4,9 +4,8 @@ import lombok.Data;
 
 @Data
 public class DiscussionRequest {
-
-    private Long courseId;
-    private Long userId;
+    private String courseId;
+    private String userId;
     private String message;
-    private Long parentId;
+    private String parentId;
 }

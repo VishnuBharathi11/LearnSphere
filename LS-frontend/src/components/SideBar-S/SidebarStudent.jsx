@@ -1,18 +1,25 @@
-import { NavLink } from "react-router-dom";
+﻿import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   BookOpen,
+  MessageSquare,
   BarChart3,
   ClipboardList,
   Award,
   User,
   LogOut,
 } from "lucide-react";
-
 import logo from "../../assets/Logo/logo.png";
 import "./SidebarStudent.scss";
 
 function SidebarStudent() {
+  const location = useLocation();
+
+  const isDiscussionActive =
+    location.pathname.startsWith("/student-layout/forum") ||
+    (location.pathname.startsWith("/courses/") && location.pathname.endsWith("/forum")) ||
+    location.pathname.startsWith("/forum/topic/");
+
   const handleLogout = () => {
     window.appStore.removeItem("currentUser");
     window.appStore.removeItem("isLoggedIn");
@@ -35,6 +42,14 @@ function SidebarStudent() {
         <NavLink to="/student-layout/my-courses" className="nav-item">
           <BookOpen size={20} />
           <span>My Courses</span>
+        </NavLink>
+
+        <NavLink
+          to="/student-layout/forum"
+          className={({ isActive }) => (isActive || isDiscussionActive ? "nav-item active" : "nav-item")}
+        >
+          <MessageSquare size={20} />
+          <span>Discussion</span>
         </NavLink>
 
         <NavLink to="/student-layout/progress" className="nav-item">

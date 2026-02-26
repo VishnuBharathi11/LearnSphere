@@ -212,7 +212,11 @@ function Discussion() {
   };
 
   if (currentRole !== "instructor") {
-    return <p style={{ padding: 40 }}>Unauthorized access</p>;
+    return (
+      <p style={{ padding: 40 }}>
+        Access denied. This page is available only for instructor accounts.
+      </p>
+    );
   }
 
   if (loading) {

@@ -122,17 +122,20 @@ export function getLearnerProfile(userId) {
 
 export function saveLearnerProfile(userId, profileData) {
   if (!userId) return;
+
   window.appStore.setItem(learnerProfileKey(userId), JSON.stringify(profileData));
 
   const currentUser = getCurrentUser();
   if (!currentUser) return;
 
-  setCurrentUser({
+  const updatedUser = {
     ...currentUser,
     name: profileData.name || currentUser.name,
     username: profileData.name || currentUser.username,
     email: profileData.email || currentUser.email,
     phone: profileData.phone || currentUser.phone,
     image: profileData.image || currentUser.image || null,
-  });
+  };
+
+  setCurrentUser(updatedUser);
 }

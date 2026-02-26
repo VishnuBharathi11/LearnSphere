@@ -1,10 +1,12 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, useLocation, useOutlet } from "react-router-dom";
 import { getCurrentUser } from "../../../services/userProfileStore";
 import StudentSideBar from "../../../components/SideBar-S/SidebarStudent";
 import TopNavBarStudent from "../../../components/TopNavBar-S/TopNavBarStudent";
 import "./StudentLayout.scss";
 
 function StudentLayout() {
+  const location = useLocation();
+  const outlet = useOutlet();
   const currentUser = getCurrentUser();
   const role = String(currentUser?.role || "").toLowerCase();
 
@@ -17,9 +19,7 @@ function StudentLayout() {
       <StudentSideBar />
       <div className="student-main">
         <TopNavBarStudent />
-        <div className="page-content">
-          <Outlet />
-        </div>
+        <div className="page-content" key={location.key}>{outlet}</div>
       </div>
     </div>
   );

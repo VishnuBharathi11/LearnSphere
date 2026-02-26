@@ -1,20 +1,27 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+﻿import { Link, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   PlusSquare,
   FolderKanban,
   MessageSquare,
   User,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import "./SidebarInstructor.scss";
 
 function SidebarInstructor() {
   const location = useLocation();
+
   const isActive = (path) =>
     location.pathname === path || location.pathname.startsWith(`${path}/`);
+
+  const isDiscussionActive =
+    location.pathname.startsWith("/instructor-layout/forum") ||
+    location.pathname.startsWith("/instructor-layout/forum/topic/") ||
+    location.pathname.startsWith("/instructor-layout/discussions") ||
+    (location.pathname.startsWith("/courses/") && location.pathname.endsWith("/forum")) ||
+    location.pathname.startsWith("/forum/topic/");
 
   const handleLogout = () => {
     window.appStore.removeItem("currentUser");
@@ -54,12 +61,9 @@ function SidebarInstructor() {
           Manage Courses
         </Link>
 
-        <Link
-          to="/instructor-layout/discussions"
-          className={isActive("/instructor-layout/discussions") ? "active" : ""}
-        >
+        <Link to="/instructor-layout/forum" className={isDiscussionActive ? "active" : ""}>
           <MessageSquare size={18} />
-          Discussions
+          Discussion
         </Link>
 
         <Link

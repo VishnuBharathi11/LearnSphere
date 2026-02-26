@@ -77,6 +77,12 @@ export async function getCategories() {
   return Array.isArray(response.data) ? response.data : [];
 }
 
+export async function deleteCategory(categoryId) {
+  await axios.delete(`${CATEGORIES_API_BASE_URL}/${categoryId}`, {
+    headers: getAuthHeaders(),
+  });
+}
+
 export async function getPublishedCourses(page = 0, size = 100) {
   const categoryMap = await getCategoryMap();
   const response = await axios.get(`${COURSES_API_BASE_URL}/published`, {
@@ -176,4 +182,53 @@ export async function publishCourse(courseId) {
     { headers: getAuthHeaders() }
   );
   return response.data;
+}
+
+export async function getAdminCourses({ status = "", search = "" } = {}) {
+  const categoryMap = await getCategoryMap();
+  const response = await axios.get(`${COURSES_API_BASE_URL}/admin/all`, {
+    params: {
+      ...(status ? { status } : {}),
+      ...(search ? { search } : {}),
+    },
+    headers: getAuthHeaders(),
+  });
+  const items = Array.isArray(response.data) ? response.data : [];
+  return items.map((course) => mapCourse(course, categoryMap));
+}
+
+export async function rejectCourse(courseId, note = "REJECTED") {
+  const response = await axios.post(
+    `${COURSES_API_BASE_URL}/${courseId}/reject`,
+    null,
+    {
+      params: { note },
+      headers: getAuthHeaders(),
+    }
+  );
+  return response.data;
+}
+
+export async function archiveCourse(courseId) {
+  const response = await axios.post(
+    `${COURSES_API_BASE_URL}/${courseId}/archive`,
+    {},
+    { headers: getAuthHeaders() }
+  );
+  return response.data;
+}
+
+export async function activateCourse(courseId) {
+  const response = await axios.post(
+    `${COURSES_API_BASE_URL}/${courseId}/activate`,
+    {},
+    { headers: getAuthHeaders() }
+  );
+  return response.data;
+}
+
+export async function adminDeleteCourse(courseId) {
+  await axios.delete(`${COURSES_API_BASE_URL}/${courseId}/admin`, {
+    headers: getAuthHeaders(),
+  });
 }

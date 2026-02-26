@@ -1,12 +1,11 @@
 package com.learnsphere.discussion.repository;
 
-import com.learnsphere.discussion.entity.Notification;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import java.util.List;
 
-public interface NotificationRepository
-        extends JpaRepository<Notification, Long> {
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-    List<Notification> findByUserId(Long userId);
+import com.learnsphere.discussion.model.NotificationDocument;
+
+public interface NotificationRepository extends MongoRepository<NotificationDocument, String> {
+    List<NotificationDocument> findByUserIdOrderByCreatedAtDesc(String userId);
 }

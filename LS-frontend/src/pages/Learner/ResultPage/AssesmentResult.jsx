@@ -1,4 +1,4 @@
-﻿import { useLocation, useNavigate } from "react-router-dom";
+﻿﻿import { useLocation, useNavigate } from "react-router-dom";
 import "./AssesmentResult.scss";
 
 function AssesmentResult() {
@@ -17,7 +17,7 @@ function AssesmentResult() {
   };
 
   const handleCertificate = () => {
-    navigate(`/student-layout/certificate/${courseId}`);
+    navigate(`/student-layout/download-certificate/${courseId}`);
   };
 
   return (
