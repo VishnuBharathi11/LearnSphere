@@ -1,16 +1,10 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Login.scss";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
 import { loginUser, normalizeApiError } from "../../services/authApi";
-import {
-  getLearnerProfile,
-  getRegistrationSeedByEmail,
-  getInstructorProfile,
-  setCurrentUser,
-  setAuthToken,
-} from "../../services/userProfileStore";
+import { setCurrentUser, setAuthToken } from "../../services/userProfileStore";
 
 function Login() {
   const [email, setEmail] = useState("");
@@ -18,8 +12,6 @@ function Login() {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const redirectTo = location.state?.from;
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,49 +19,23 @@ function Login() {
 
     try {
       const data = await loginUser({ email, password });
+      setAuthToken(data.token || "");
       const normalizedRole = (data.role || "").toLowerCase();
-      const registrationSeed = getRegistrationSeedByEmail(data.email);
       const fallbackName = data.email?.split("@")[0] || "User";
-      const resolvedName = data.name || registrationSeed?.name || fallbackName;
-      const profile =
-        data.userId && normalizedRole === "instructor"
-          ? getInstructorProfile(data.userId)
-          : data.userId
-            ? getLearnerProfile(data.userId)
-            : null;
+      const resolvedName = data.name || fallbackName;
 
-      const currentUser = {
+      setCurrentUser({
         id: data.userId,
         userId: data.userId,
         email: data.email,
         role: normalizedRole,
-        name: profile?.fullName || resolvedName,
-        username: profile?.fullName || resolvedName,
-        phone: registrationSeed?.phone || "",
-        image: profile?.image || null,
-      };
+        name: resolvedName,
+        username: resolvedName,
+        phone: data.phone || "",
+        image: data.profileImage || null,
+      });
 
-      setCurrentUser(currentUser);
-      setAuthToken(data.token || "");
-
-      if (redirectTo) {
-        navigate(redirectTo, { replace: true });
-        return;
-      }
-
-      switch (normalizedRole) {
-        case "learner":
-          navigate("/student-layout/dashboard", { replace: true });
-          break;
-        case "instructor":
-          navigate("/instructor-layout/dashboard", { replace: true });
-          break;
-        case "admin":
-          navigate("/admin-layout", { replace: true });
-          break;
-        default:
-          navigate("/", { replace: true });
-      }
+      navigate("/", { replace: true });
     } catch (apiError) {
       setError(normalizeApiError(apiError, "Invalid email or password"));
     }

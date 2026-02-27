@@ -2,11 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
-import {
-  getCurrentUser,
-  getInstructorProfile,
-  onProfileUpdated,
-} from "../../services/userProfileStore";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 import "./TopNavBarInstructor.scss";
 
 function formatRelativeTime(dateValue) {
@@ -77,27 +73,7 @@ function TopNavBarInstructor() {
   const pageMeta = resolvePageMeta(location.pathname);
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [currentUser, setCurrentUserState] = useState(() => getCurrentUser());
-
-  useEffect(() => {
-    const syncUser = () => {
-      const rawUser = getCurrentUser();
-      if (!rawUser?.id) {
-        setCurrentUserState(rawUser);
-        return;
-      }
-
-      const profile = getInstructorProfile(rawUser.id);
-      setCurrentUserState({
-        ...rawUser,
-        name: profile?.fullName || rawUser.name,
-        image: profile?.image || rawUser.image || null,
-      });
-    };
-
-    syncUser();
-    return onProfileUpdated(syncUser);
-  }, []);
+  const { currentUser } = useCurrentUser();
 
   const displayName = currentUser?.name || currentUser?.username || "Instructor";
   const displayEmail = currentUser?.email || "instructor@learnsphere.com";

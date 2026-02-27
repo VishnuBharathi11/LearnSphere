@@ -1,24 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getPublishedCourses } from "../../../services/courseApi";
+import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
-import { buildCourseLearningState } from "../../../services/learnerProgressStore";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { getProgressByCourses } from "../../../services/progressApi";
 import certificateImage from "../../../assets/Learner/certificate.png";
 import "./Certificates.scss";
-import { getCurrentUser } from "../../../services/userProfileStore.js";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 function Certificates() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [lessonMap, setLessonMap] = useState({});
+  const [progressMap, setProgressMap] = useState({});
 
-  const currentUser = useMemo(() => {
-    try {
-      return getCurrentUser();
-    } catch {
-      return null;
-    }
-  }, []);
+  const { currentUser } = useCurrentUser();
   const userId = String(currentUser?.id || currentUser?.userId || "");
 
   useEffect(() => {
@@ -47,6 +44,51 @@ function Certificates() {
     };
   }, [userId]);
 
+  useEffect(() => {
+    if (!userId || enrollments.length === 0) {
+      setLessonMap({});
+      setProgressMap({});
+      return;
+    }
+
+    const activeEnrollments = enrollments.filter(
+      (enrollment) =>
+        String(enrollment.userId) === userId && String(enrollment.status || "").toUpperCase() === "ACTIVE"
+    );
+    const courseIds = activeEnrollments.map((enrollment) => String(enrollment.courseId));
+    if (courseIds.length === 0) {
+      setLessonMap({});
+      setProgressMap({});
+      return;
+    }
+
+    let active = true;
+    async function loadProgress() {
+      try {
+        const [lessonPairs, progressResults] = await Promise.all([
+          Promise.all(courseIds.map(async (courseId) => [courseId, await getCourseLessons(courseId).catch(() => [])])),
+          getProgressByCourses(userId, courseIds),
+        ]);
+        if (!active) return;
+        setLessonMap(Object.fromEntries(lessonPairs));
+        const progressPairs = (Array.isArray(progressResults) ? progressResults : []).map((item) => [
+          String(item.courseId),
+          item,
+        ]);
+        setProgressMap(Object.fromEntries(progressPairs));
+      } catch {
+        if (!active) return;
+        setLessonMap({});
+        setProgressMap({});
+      }
+    }
+
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
+
   const certificateCards = useMemo(() => {
     if (!userId) return [];
 
@@ -59,7 +101,10 @@ function Certificates() {
         const course = courses.find((c) => String(c.id) === String(enrollment.courseId));
         if (!course) return null;
 
-        const state = buildCourseLearningState(userId, course.id);
+        const state = buildCourseLearningStateFromApi(
+          lessonMap[String(course.id)] || [],
+          progressMap[String(course.id)]
+        );
         return {
           course,
           issuedOn: state.progress.finalAssessment?.submittedAt
@@ -70,7 +115,7 @@ function Certificates() {
         };
       })
       .filter(Boolean);
-  }, [courses, enrollments, userId]);
+  }, [courses, enrollments, lessonMap, progressMap, userId]);
 
   if (!certificateCards.length) {
     return (

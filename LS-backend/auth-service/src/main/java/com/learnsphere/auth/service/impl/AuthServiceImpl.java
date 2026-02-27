@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthServiceImpl implements AuthService {
-    private static final Set<String> ALLOWED_SELF_REGISTER_ROLES = Set.of("learner", "instructor");
+    private static final Set<String> ALLOWED_SELF_REGISTER_ROLES = Set.of("learner");
     private static final Random RANDOM = new Random();
 
     private final UserRepository userRepository;
@@ -60,14 +60,10 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public String register(RegisterRequest request) {
         String email = request.getEmail() == null ? null : request.getEmail().trim().toLowerCase();
-        String role = request.getRole() == null ? "learner" : request.getRole().trim().toLowerCase();
+        String role = "learner";
 
         if (email == null || email.isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required");
-        }
-
-        if (!ALLOWED_SELF_REGISTER_ROLES.contains(role)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Only learner/instructor registration is allowed");
         }
 
         if (userRepository.findByEmail(email).isPresent()) {

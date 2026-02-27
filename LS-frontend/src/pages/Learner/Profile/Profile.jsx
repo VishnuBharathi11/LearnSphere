@@ -1,17 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
-import { normalizeApiError, updateMyProfile } from "../../../services/authApi";
+import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
-import { buildCourseLearningState } from "../../../services/learnerProgressStore";
-import {
-  buildDefaultLearnerProfile,
-  getCurrentUser,
-  getLearnerProfile,
-  getRegistrationSeedByEmail,
-  saveLearnerProfile,
-} from "../../../services/userProfileStore";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { setCurrentUser } from "../../../services/userProfileStore";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
+import { getCourseLessons } from "../../../services/courseApi";
+import { getProgressByCourses } from "../../../services/progressApi";
 import "./Profile.scss";
 
 function Profile() {
@@ -20,30 +17,36 @@ function Profile() {
   const summaryRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const user = getCurrentUser();
+  const { currentUser: user } = useCurrentUser();
   const isAdminPreview = searchParams.get("adminPreview") === "true";
   const previewUserId = searchParams.get("adminUserId") || "";
   const previewUserName = searchParams.get("adminUserName") || "";
   const previewUserEmail = searchParams.get("adminUserEmail") || "";
   const userId = isAdminPreview ? previewUserId : user?.id || user?.userId || "";
-  const registrationSeed = useMemo(() => getRegistrationSeedByEmail(user?.email), [user?.email]);
 
   const [isEditing, setIsEditing] = useState(false);
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [lessonMap, setLessonMap] = useState({});
+  const [progressMap, setProgressMap] = useState({});
 
   const initialProfile = useMemo(() => {
-    const stored = getLearnerProfile(userId);
     if (isAdminPreview) {
       return {
-        name: previewUserName || stored?.name || "Learner",
-        email: previewUserEmail || stored?.email || "-",
-        phone: stored?.phone || "",
-        bio: stored?.bio || "",
-        image: stored?.image || null,
+        name: previewUserName || "Learner",
+        email: previewUserEmail || "-",
+        phone: "",
+        bio: "",
+        image: null,
       };
     }
-    return stored || buildDefaultLearnerProfile(user, registrationSeed);
+    return {
+      name: user?.name || user?.username || "",
+      email: user?.email || "",
+      phone: user?.phone || "",
+      bio: "",
+      image: user?.image || null,
+    };
   }, [
     isAdminPreview,
     previewUserName,
@@ -54,9 +57,6 @@ function Profile() {
     user?.email,
     user?.phone,
     user?.image,
-    registrationSeed?.name,
-    registrationSeed?.email,
-    registrationSeed?.phone,
   ]);
 
   const [profile, setProfile] = useState(initialProfile);
@@ -77,6 +77,32 @@ function Profile() {
       return initialProfile;
     });
   }, [initialProfile]);
+
+  useEffect(() => {
+    if (!userId || isAdminPreview) return;
+    let active = true;
+    async function loadProfile() {
+      try {
+        const response = await getMyProfile();
+        if (!active) return;
+        const normalized = {
+          name: response?.name || initialProfile.name,
+          email: response?.email || initialProfile.email,
+          phone: response?.phone || initialProfile.phone,
+          bio: response?.bio || "",
+          image: response?.profileImage || null,
+        };
+        setProfile(normalized);
+        setFormData(normalized);
+      } catch {
+        // keep defaults
+      }
+    }
+    loadProfile();
+    return () => {
+      active = false;
+    };
+  }, [userId, isAdminPreview, initialProfile]);
 
   useEffect(() => {
     if (!userId) return;
@@ -105,6 +131,51 @@ function Profile() {
     };
   }, [userId]);
 
+  useEffect(() => {
+    if (!userId || enrollments.length === 0) {
+      setLessonMap({});
+      setProgressMap({});
+      return;
+    }
+
+    const activeEnrollments = enrollments.filter(
+      (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
+    );
+    const courseIds = activeEnrollments.map((item) => String(item.courseId));
+    if (courseIds.length === 0) {
+      setLessonMap({});
+      setProgressMap({});
+      return;
+    }
+
+    let active = true;
+    async function loadProgress() {
+      try {
+        const [lessonResults, progressResults] = await Promise.all([
+          Promise.all(courseIds.map(async (courseId) => [courseId, await getCourseLessons(courseId).catch(() => [])])),
+          getProgressByCourses(userId, courseIds),
+        ]);
+
+        if (!active) return;
+        setLessonMap(Object.fromEntries(lessonResults));
+        const progressPairs = (Array.isArray(progressResults) ? progressResults : []).map((item) => [
+          String(item.courseId),
+          item,
+        ]);
+        setProgressMap(Object.fromEntries(progressPairs));
+      } catch {
+        if (!active) return;
+        setLessonMap({});
+        setProgressMap({});
+      }
+    }
+
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
+
   const { enrolledCount, completedCount, certificatesCount, learningHours, achievements } = useMemo(() => {
     const myEnrollments = enrollments.filter(
       (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
@@ -123,13 +194,13 @@ function Profile() {
       .filter(Boolean);
 
     const completedCourses = withCourse.filter(({ course }) => {
-      const state = buildCourseLearningState(userId, course.id);
+      const state = buildCourseLearningStateFromApi(lessonMap[String(course.id)] || [], progressMap[String(course.id)]);
       return state.progressPercentage >= 100;
     });
 
     const certificatesCount = completedCourses.length;
     const learningHours = Math.floor(withCourse.reduce((sum, { course }) => {
-      const state = buildCourseLearningState(userId, course.id);
+      const state = buildCourseLearningStateFromApi(lessonMap[String(course.id)] || [], progressMap[String(course.id)]);
       return sum + Number(state.completedLessons || 0) * 0.5;
     }, 0));
 
@@ -149,7 +220,7 @@ function Profile() {
       learningHours,
       achievements,
     };
-  }, [courses, enrollments, userId]);
+  }, [courses, enrollments, lessonMap, progressMap, userId]);
 
   const initials = useMemo(
     () =>
@@ -167,9 +238,8 @@ function Profile() {
     try {
       await updateMyProfile({
         name: payload.name || "",
-        email: payload.email || "",
         phone: payload.phone || "",
-        image: payload.image || null,
+        profileImage: payload.image || null,
         bio: payload.bio || "",
       });
     } catch (error) {
@@ -197,7 +267,15 @@ function Profile() {
     };
 
     setProfile(normalized);
-    saveLearnerProfile(userId, normalized);
+    const baseUser = user || {};
+    setCurrentUser({
+      ...baseUser,
+      name: normalized.name || baseUser.name,
+      username: normalized.name || baseUser.username,
+      email: normalized.email || baseUser.email,
+      phone: normalized.phone || baseUser.phone,
+      image: normalized.image || baseUser.image || null,
+    });
     await persistProfile(normalized);
     setIsEditing(false);
     requestAnimationFrame(() => {
@@ -225,7 +303,11 @@ function Profile() {
       const nextFormData = { ...(formData || {}), image };
       setProfile(nextProfile);
       setFormData(nextFormData);
-      saveLearnerProfile(userId, nextFormData);
+      const baseUser = user || {};
+      setCurrentUser({
+        ...baseUser,
+        image,
+      });
       await persistProfile(nextFormData);
     };
     reader.readAsDataURL(file);

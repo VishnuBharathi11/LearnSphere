@@ -16,11 +16,10 @@ import {
   CartesianGrid,
 } from "recharts";
 import { useParams } from "react-router-dom";
-import { getCourseById, getInstructorCourses } from "../../../../services/courseApi";
+import { getCourseById, getCourseLessons, getInstructorCourses } from "../../../../services/courseApi";
 import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
 import { listThreads } from "../../../../services/discussionApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
-import { getScopedLessonsForCourse } from "../../../../services/learnerProgressStore";
 
 function CourseAnalytics() {
   const { courseId } = useParams();
@@ -74,6 +73,20 @@ function CourseAnalytics() {
     }
     loadCourse();
   }, [id, userId]);
+
+  const [lessonList, setLessonList] = useState([]);
+
+  useEffect(() => {
+    async function loadLessons() {
+      try {
+        const list = await getCourseLessons(id);
+        setLessonList(Array.isArray(list) ? list : []);
+      } catch {
+        setLessonList([]);
+      }
+    }
+    loadLessons();
+  }, [id]);
 
   const {
     totalRevenue,
@@ -143,8 +156,7 @@ function CourseAnalytics() {
       { name: "Not Started", value: notStarted },
     ];
 
-    const merged = getScopedLessonsForCourse(userId, id);
-
+    const merged = Array.isArray(lessonList) ? lessonList : [];
     const lessonCount = merged.length;
     const base = totalEnrollments === 0 ? 1 : totalEnrollments;
     const lessons = (lessonCount > 0 ? merged : Array.from({ length: 5 }).map((_, i) => ({ title: `Lesson ${i + 1}` }))).map((l, idx) => {
@@ -165,7 +177,7 @@ function CourseAnalytics() {
       completionData,
       lessons,
     };
-  }, [id, course, enrollments, userId]);
+  }, [id, course, enrollments, lessonList]);
 
   const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
 

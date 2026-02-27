@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LearnerImg from "../../../assets/learner/learner.jpg";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
-import { getPublishedCourses } from "../../../services/courseApi";
+import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
-import { buildCourseLearningState } from "../../../services/learnerProgressStore";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { getProgressByCourses } from "../../../services/progressApi";
 import "./Dashboard.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 
@@ -22,6 +23,8 @@ function Dashboard() {
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [lessonMap, setLessonMap] = useState({});
+  const [progressMap, setProgressMap] = useState({});
 
   useEffect(() => {
     if (!userId) {
@@ -56,6 +59,57 @@ function Dashboard() {
     };
   }, [navigate, userId]);
 
+  useEffect(() => {
+    let active = true;
+    async function loadLessonsAndProgress() {
+      const activeEnrollments = enrollments.filter(
+        (enrollment) =>
+          String(enrollment.userId) === String(userId) &&
+          String(enrollment.status || "").toUpperCase() === "ACTIVE"
+      );
+      const courseIds = activeEnrollments.map((item) => String(item.courseId));
+      if (courseIds.length === 0) {
+        setLessonMap({});
+        setProgressMap({});
+        return;
+      }
+      try {
+        const [lessonsList, progressList] = await Promise.all([
+          Promise.all(
+            courseIds.map(async (courseId) => {
+              try {
+                const lessons = await getCourseLessons(courseId);
+                return [courseId, Array.isArray(lessons) ? lessons : []];
+              } catch {
+                return [courseId, []];
+              }
+            })
+          ),
+          getProgressByCourses(userId, courseIds),
+        ]);
+        if (!active) return;
+        const nextLessons = {};
+        lessonsList.forEach(([courseId, lessons]) => {
+          nextLessons[courseId] = lessons;
+        });
+        const nextProgress = {};
+        (Array.isArray(progressList) ? progressList : []).forEach((item) => {
+          nextProgress[String(item.courseId)] = item;
+        });
+        setLessonMap(nextLessons);
+        setProgressMap(nextProgress);
+      } catch {
+        if (!active) return;
+        setLessonMap({});
+        setProgressMap({});
+      }
+    }
+    loadLessonsAndProgress();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
+
   const myActiveEnrollments = useMemo(
     () =>
       enrollments.filter(
@@ -72,14 +126,16 @@ function Dashboard() {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
 
-        const state = buildCourseLearningState(userId, course.id);
+        const lessons = lessonMap[String(course.id)] || [];
+        const progress = progressMap[String(course.id)] || null;
+        const state = buildCourseLearningStateFromApi(lessons, progress);
         return {
           ...course,
           progress: state.progressPercentage,
         };
       })
       .filter(Boolean);
-  }, [courses, myActiveEnrollments, userId]);
+  }, [courses, lessonMap, myActiveEnrollments, progressMap, userId]);
 
   const recommendedCourses = useMemo(() => {
     const myCourseIds = new Set(myActiveEnrollments.map((enrollment) => String(enrollment.courseId)));

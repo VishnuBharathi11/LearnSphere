@@ -2,17 +2,20 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./DownloadCertificate.scss";
 import certificateImage from "../../../assets/Learner/certificate.png";
-import { buildCourseLearningState } from "../../../services/learnerProgressStore";
-import { getCourseById } from "../../../services/courseApi";
-import { getCurrentUser } from "../../../services/userProfileStore.js";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { getCourseById, getCourseLessons } from "../../../services/courseApi";
+import { getCourseProgress } from "../../../services/progressApi";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 function DownloadCertificate() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const currentUser = getCurrentUser();
+  const { currentUser } = useCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
   const [courseName, setCourseName] = useState("");
+  const [courseLessons, setCourseLessons] = useState([]);
+  const [courseProgress, setCourseProgress] = useState(null);
 
   useEffect(() => {
     let active = true;
@@ -33,10 +36,34 @@ function DownloadCertificate() {
     };
   }, [id]);
 
+  useEffect(() => {
+    if (!id || !userId) return;
+    let active = true;
+    async function loadProgress() {
+      try {
+        const [lessons, progress] = await Promise.all([
+          getCourseLessons(String(id)),
+          getCourseProgress(String(userId), String(id)),
+        ]);
+        if (!active) return;
+        setCourseLessons(Array.isArray(lessons) ? lessons : []);
+        setCourseProgress(progress);
+      } catch {
+        if (!active) return;
+        setCourseLessons([]);
+        setCourseProgress(null);
+      }
+    }
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [id, userId]);
+
   const certificate = useMemo(() => {
     if (!userId || !id) return null;
 
-    const state = buildCourseLearningState(userId, id);
+    const state = buildCourseLearningStateFromApi(courseLessons, courseProgress);
     if (!state.certificateUnlocked) return null;
 
     return {
@@ -45,7 +72,7 @@ function DownloadCertificate() {
       issuedDate: new Date(state.progress.finalAssessment?.submittedAt || Date.now()).toDateString(),
       certificateId: `LS-${id}-${String(userId)}`,
     };
-  }, [courseName, currentUser?.name, currentUser?.username, id, userId]);
+  }, [courseLessons, courseProgress, courseName, currentUser?.name, currentUser?.username, id, userId]);
 
   const handleDownload = () => {
     if (!certificate) return;

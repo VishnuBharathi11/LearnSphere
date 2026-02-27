@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { LayoutDashboard, BookOpen, BarChart3, Award, User, LogOut } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import { logoutUser } from "../../services/userProfileStore";
@@ -11,10 +11,10 @@ function SidebarStudent() {
 
   return (
     <nav className="L-navbar">
-      <div className="logo-name">
+      <Link to="/" className="logo-name" aria-label="LearnSphere Home">
         <img src={logo} className="logo" alt="logo" />
         <span className="page-name">LearnSphere</span>
-      </div>
+      </Link>
 
       <div className="L-sidebar">
         <NavLink to="/student-layout/dashboard" className="nav-item">

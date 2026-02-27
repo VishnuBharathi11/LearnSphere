@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import { normalizeApiError, registerUser } from "../../services/authApi";
-import { saveRegistrationSeed } from "../../services/userProfileStore";
 import { getAdminSettings } from "../../services/adminApi";
 
 function Register() {
@@ -15,7 +14,6 @@ function Register() {
     phone: "",
     password: "",
     confirmPassword: "",
-    role: "learner",
   });
   const [error, setError] = useState("");
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
@@ -67,13 +65,7 @@ function Register() {
         email: form.email,
         phone: form.phone,
         password: form.password,
-        role: form.role,
-      });
-      saveRegistrationSeed({
-        name: form.username,
-        email: form.email,
-        phone: form.phone,
-        role: form.role,
+        role: "learner",
       });
 
       navigate("/login");
@@ -123,12 +115,6 @@ function Register() {
                 onChange={handleChange}
                 disabled={!registrationEnabled}
               />
-            </div>
-            <div className="reg-form-input">
-              <select name="role" onChange={handleChange} disabled={!registrationEnabled}>
-                <option value="learner">Learner</option>
-                <option value="instructor">Instructor</option>
-              </select>
             </div>
             <div className="reg-form-input">
               <input

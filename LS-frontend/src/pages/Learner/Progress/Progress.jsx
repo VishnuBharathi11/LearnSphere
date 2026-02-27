@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { getPublishedCourses } from "../../../services/courseApi";
+import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
-import { buildCourseLearningState } from "../../../services/learnerProgressStore";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { getProgressByCourses } from "../../../services/progressApi";
 import "./Progress.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 
@@ -11,6 +12,8 @@ function Progress() {
 
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [lessonMap, setLessonMap] = useState({});
+  const [progressMap, setProgressMap] = useState({});
 
   useEffect(() => {
     if (!userId) return;
@@ -35,6 +38,55 @@ function Progress() {
     };
   }, [userId]);
 
+  useEffect(() => {
+    let active = true;
+    async function loadLessonsAndProgress() {
+      const activeEnrollments = enrollments.filter(
+        (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
+      );
+      const courseIds = activeEnrollments.map((item) => String(item.courseId));
+      if (courseIds.length === 0) {
+        setLessonMap({});
+        setProgressMap({});
+        return;
+      }
+      try {
+        const [lessonsList, progressList] = await Promise.all([
+          Promise.all(
+            courseIds.map(async (courseId) => {
+              try {
+                const lessons = await getCourseLessons(courseId);
+                return [courseId, Array.isArray(lessons) ? lessons : []];
+              } catch {
+                return [courseId, []];
+              }
+            })
+          ),
+          getProgressByCourses(userId, courseIds),
+        ]);
+        if (!active) return;
+        const nextLessons = {};
+        lessonsList.forEach(([courseId, lessons]) => {
+          nextLessons[courseId] = lessons;
+        });
+        const nextProgress = {};
+        (Array.isArray(progressList) ? progressList : []).forEach((item) => {
+          nextProgress[String(item.courseId)] = item;
+        });
+        setLessonMap(nextLessons);
+        setProgressMap(nextProgress);
+      } catch {
+        if (!active) return;
+        setLessonMap({});
+        setProgressMap({});
+      }
+    }
+    loadLessonsAndProgress();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
+
   const progressData = useMemo(() => {
     if (!userId) return [];
 
@@ -44,7 +96,9 @@ function Progress() {
         const course = courses.find((c) => String(c.id) === String(entry.courseId));
         if (!course) return null;
 
-        const state = buildCourseLearningState(userId, course.id);
+        const lessons = lessonMap[String(course.id)] || [];
+        const progress = progressMap[String(course.id)] || null;
+        const state = buildCourseLearningStateFromApi(lessons, progress);
 
         let status = "Pending";
         if (state.progressPercentage > 0 && state.progressPercentage < 100) status = "In Progress";
@@ -61,7 +115,7 @@ function Progress() {
         };
       })
       .filter(Boolean);
-  }, [courses, enrollments, userId]);
+  }, [courses, enrollments, lessonMap, progressMap, userId]);
 
   const totalCourses = progressData.length;
   const inProgressCourses = progressData.filter((item) => item.status === "In Progress").length;

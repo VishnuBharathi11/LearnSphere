@@ -1,15 +1,8 @@
 import axios from "axios";
 import { appStore } from "./appStore";
+import { getCurrentUser } from "./userProfileStore";
 
 const DISCUSSION_API_BASE = import.meta.env.VITE_DISCUSSION_API_BASE_URL || "/api";
-
-function getCurrentUser() {
-  try {
-    return JSON.parse(appStore.getItem("currentUser") || "null");
-  } catch {
-    return null;
-  }
-}
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");

@@ -6,6 +6,7 @@ import mobile from "../../../assets/Popular Categories/app-development.png";
 import ui from "../../../assets/Popular Categories/ui.png";
 import cy from "../../../assets/Popular Categories/cyber-security.png";
 import data from "../../../assets/Popular Categories/data-science.png";
+import applicationImg from "../../../assets/Home/application.png";
 
 import { FaSearch } from "react-icons/fa";
 import Footer from "../../../components/Footer/Footer";
@@ -159,6 +160,32 @@ function Home() {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      <div className="instructor-cta">
+        <div className="instructor-cta__card">
+          <div className="instructor-cta__image">
+            <img src={applicationImg} alt="Become an instructor" />
+          </div>
+          <div className="instructor-cta__content">
+            <h2>Become a LearnSphere Instructor</h2>
+            <p>
+              Share your expertise with thousands of learners. Build your profile, publish
+              high-quality courses, and grow your impact with our community.
+            </p>
+            <div className="instructor-cta__meta">
+              Flexible schedule - Dedicated support - Professional growth
+            </div>
+            <div className="instructor-cta__actions">
+              <button
+                className="instructor-cta__button"
+                onClick={() => navigate("/instructor-application")}
+              >
+                Send Application
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 

@@ -218,6 +218,82 @@ $font-inter: "Inter", sans-serif;
   }
 }
 
+.instructor-cta {
+  display: flex;
+  justify-content: center;
+  padding: 40px 60px 10px;
+
+  &__card {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr;
+    gap: 30px;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    background: #ffffff;
+    border: 1px solid $border;
+    border-radius: 16px;
+    box-shadow: $shadow-sm, $shadow-lg;
+    padding: 30px;
+  }
+
+  &__image {
+    display: flex;
+    justify-content: center;
+
+    img {
+      max-width: 100%;
+      border-radius: 14px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+  }
+
+  &__content {
+    h2 {
+      font-family: $font-poppins;
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      font-family: $font-inter;
+      color: $text-gray;
+      line-height: 1.7;
+      margin-bottom: 14px;
+    }
+  }
+
+  &__meta {
+    font-family: $font-inter;
+    font-size: 14px;
+    color: #475569;
+    margin-bottom: 20px;
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__button {
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: 1.5px solid $primary;
+    background: $primary;
+    color: #ffffff;
+    font-family: $font-inter;
+    font-size: 15px;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(79, 110, 247, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px rgba(79, 110, 247, 0.28);
+    }
+  }
+}
+
 .why-learn {
   @include flex-center;
   flex-direction: column;
@@ -255,5 +331,18 @@ $font-inter: "Inter", sans-serif;
     color: #666;
     text-align: center;
     padding: 10px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .instructor-cta {
+    &__card {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    &__actions {
+      justify-content: center;
+    }
   }
 }

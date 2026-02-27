@@ -3,25 +3,20 @@ import { useSearchParams } from "react-router-dom";
 import { Upload, User, BookOpen, Users, CheckCircle, Clock } from "lucide-react";
 import "./InstructorProfile.scss";
 import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
-import {
-  buildDefaultInstructorProfile,
-  getCurrentUser,
-  getRegistrationSeedByEmail,
-  saveInstructorProfile,
-} from "../../../services/userProfileStore";
+import { setCurrentUser } from "../../../services/userProfileStore";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { getInstructorCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import { getCourseDiscussions } from "../../../services/discussionApi";
 
 function InstructorProfile() {
   const [searchParams] = useSearchParams();
-  const currentUser = getCurrentUser();
+  const { currentUser } = useCurrentUser();
   const isAdminPreview = searchParams.get("adminPreview") === "true";
   const previewUserId = searchParams.get("adminUserId") || "";
   const previewUserName = searchParams.get("adminUserName") || "";
   const previewUserEmail = searchParams.get("adminUserEmail") || "";
   const userId = isAdminPreview ? previewUserId : currentUser?.id;
-  const registrationSeed = getRegistrationSeedByEmail(currentUser?.email || "");
   const initialProfile = useMemo(
     () =>
       isAdminPreview
@@ -37,8 +32,19 @@ function InstructorProfile() {
             professionalWebsite: "",
             image: null,
           }
-        : buildDefaultInstructorProfile(currentUser, registrationSeed),
-    [isAdminPreview, previewUserName, previewUserEmail, currentUser?.id, currentUser?.name, currentUser?.email, currentUser?.phone]
+        : {
+            fullName: currentUser?.name || "",
+            email: currentUser?.email || "",
+            phone: currentUser?.phone || "",
+            bio: "",
+            expertise: "",
+            experience: "",
+            linkedin: "",
+            portfolio: "",
+            professionalWebsite: "",
+            image: currentUser?.image || null,
+          },
+    [isAdminPreview, previewUserName, previewUserEmail, currentUser?.id, currentUser?.name, currentUser?.email, currentUser?.phone, currentUser?.image]
   );
   const loadedProfileUserIdRef = useRef(null);
 
@@ -83,9 +89,6 @@ function InstructorProfile() {
         setProfileData(normalized);
         setDraftData(normalized);
 
-        if (userId) {
-          saveInstructorProfile(userId, normalized);
-        }
       } catch {
         // Keep default values if profile API is unavailable.
       }
@@ -201,7 +204,14 @@ function InstructorProfile() {
         image: response?.profileImage || sanitized.image,
       };
 
-      saveInstructorProfile(userId, saved);
+      const baseUser = currentUser || {};
+      setCurrentUser({
+        ...baseUser,
+        name: saved.fullName || baseUser.name,
+        username: saved.fullName || baseUser.username,
+        phone: saved.phone || baseUser.phone,
+        image: saved.image || baseUser.image || null,
+      });
       setProfileData(saved);
       setDraftData(saved);
       setIsEditing(false);

@@ -56,6 +56,8 @@ public class SecurityConfig {
                         		"/api/auth/refresh",
                                 "/api/auth/forgot-password",
                                 "/api/auth/reset-password").permitAll()
+                        .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/auth/instructor-applications")
+                        .permitAll()
 
                         // ✅ PROTECTED ENDPOINTS
                         .anyRequest().authenticated()

@@ -33,6 +33,7 @@ const DEPRECATED_KEYS = new Set([
   "forum_topics",
   "forum_notifications",
   "enrolledCourses",
+  "currentUser",
   "rzp_checkout_order_id",
   "rzp_device_id",
   "rzp_stored_checkout_id",

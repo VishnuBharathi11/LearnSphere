@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+ï»¿import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
 import { getCourseById } from "../../../services/courseApi.js";
@@ -10,7 +10,7 @@ import {
   verifyEnrollmentPayment,
 } from "../../../services/enrollmentApi.js";
 import "./CourseDetail.scss";
-import { getCurrentUser } from "../../../services/userProfileStore.js";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
@@ -27,7 +27,7 @@ function CourseDetail() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const paymentOpeningRef = useRef(false);
 
-  const currentUser = getCurrentUser();
+  const { currentUser, loading: userLoading } = useCurrentUser();
   const resolvedUserId = currentUser?.id || currentUser?.userId || "";
   const coursePrice = Number(course?.price || 0);
   const formattedPrice = new Intl.NumberFormat("en-IN").format(coursePrice);
@@ -57,6 +57,7 @@ function CourseDetail() {
   }, [id]);
 
   useEffect(() => {
+    if (userLoading) return;
     if (!resolvedUserId) {
       setIsEnrolled(false);
       return;
@@ -76,7 +77,7 @@ function CourseDetail() {
     return () => {
       active = false;
     };
-  }, [id, resolvedUserId]);
+  }, [id, resolvedUserId, userLoading]);
 
   const curriculum = useMemo(() => {
     const lessonCount = Math.max(1, Number(course?.lessons || 0));
@@ -121,6 +122,7 @@ function CourseDetail() {
   }, [course?.lessons]);
 
   const enrollFreeCourse = async () => {
+    if (userLoading) return;
     if (!currentUser) {
       navigate("/login", { state: { from: `/course/${id}` } });
       return;
@@ -247,6 +249,7 @@ function CourseDetail() {
 
   const handlePrimaryAction = () => {
     if (!course) return;
+    if (userLoading) return;
     if (coursePrice === 0) {
       enrollFreeCourse();
       return;
@@ -272,7 +275,7 @@ function CourseDetail() {
           <h1 className="cd-course-title">{course.courseName}</h1>
           <p className="hero-desc">{course.description || "Course description coming soon."}</p>
           <div className="hero-meta">
-            Rating {course.rating} • {course.lessons} lessons • {course.level}
+            Rating {course.rating} â€¢ {course.lessons} lessons â€¢ {course.level}
           </div>
           <p className="hero-instructor">Instructor: {course.instructor || "Instructor"}</p>
         </div>
@@ -379,5 +382,6 @@ function CourseDetail() {
 }
 
 export default CourseDetail;
+
 
 

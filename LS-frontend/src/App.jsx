@@ -7,6 +7,7 @@ import GetStarted from "./pages/Public/GetStarted/GetStarted.jsx";
 import BrowseCourses from "./pages/Public/BrowseCourses/BrowseCourses.jsx";
 import CourseDetail from "./pages/Public/CourseDetail/CourseDetail.jsx";
 import Instructors from "./pages/Public/Instructors/Instructors.jsx";
+import InstructorApplication from "./pages/Public/InstructorApplication/InstructorApplication.jsx";
 import Login from "./auth-pages/Login/Login.jsx";
 import Register from "./auth-pages/Register/Register.jsx";
 import ForgotPassword from "./auth-pages/ForgotPassword/ForgotPassword.jsx";
@@ -27,6 +28,7 @@ import InstructorDashboard from "./pages/instructor/Dashboard/Dashboard.jsx";
 import CreateCourse from "./pages/instructor/CreateCourse/Createcourse.jsx";
 import ManageCourses from "./pages/instructor/ManageCourse/Managecourse.jsx";
 import UploadLesson from "./pages/instructor/ManageCourse/UpdateLesson/UpdateLesson.jsx";
+import AddLesson from "./pages/instructor/ManageCourse/AddLesson/AddLesson.jsx";
 import CreateQuiz from "./pages/instructor/ManageCourse/CreateQuiz/CreateQuiz.jsx";
 import StudentProgress from "./pages/instructor/ManageCourse/StudentProgress/StudentProgress.jsx";
 import CourseAnalytics from "./pages/instructor/ManageCourse/CourseAnalytics/CourseAnalytics.jsx";
@@ -42,6 +44,7 @@ import ApproveCourses from "./pages/admin/ApproveCourses/Approvecourses.jsx";
 import Categories from "./pages/admin/Categories/Categories.jsx";
 import RoleManagement from "./pages/admin/RoleManagement/RoleManagement.jsx";
 import Settings from "./pages/admin/Settings/Settings.jsx";
+import InstructorApplications from "./pages/admin/InstructorApplications/InstructorApplications.jsx";
 
 function App() {
   return (
@@ -49,6 +52,7 @@ function App() {
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route path="/instructors" element={<Instructors />} />
+      <Route path="/instructor-application" element={<InstructorApplication />} />
       <Route path="/contact" element={<Contact />} />
       <Route path="/free-courses" element={<GetStarted />} />
       <Route path="/courses" element={<BrowseCourses />} />
@@ -86,6 +90,7 @@ function App() {
         <Route path="edit-course/:courseId" element={<CreateCourse />} />
         <Route path="manage-courses" element={<ManageCourses />} />
         <Route path="manage-courses/:courseId/lessons" element={<UploadLesson />} />
+        <Route path="manage-courses/:courseId/lessons/new" element={<AddLesson />} />
         <Route path="manage-courses/:courseId/quiz" element={<CreateQuiz />} />
         <Route path="manage-courses/:courseId/students" element={<StudentProgress />} />
         <Route path="manage-courses/:courseId/analytics" element={<CourseAnalytics />} />
@@ -100,6 +105,7 @@ function App() {
         <Route path="approve-courses" element={<ApproveCourses />} />
         <Route path="categories" element={<Categories />} />
         <Route path="roles" element={<RoleManagement />} />
+        <Route path="instructor-applications" element={<InstructorApplications />} />
         <Route path="settings" element={<Settings />} />
         <Route path="forum" element={<ForumPage />} />
         <Route path="forum/topic/:topicId" element={<TopicPage />} />

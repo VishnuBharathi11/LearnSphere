@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import StudentLayout from "../../pages/Learner/StudentLayout/StudentLayout.jsx";
 import InstructorLayout from "../../pages/instructor/InstructorLayout/InstructorLayout.jsx";
 import AdminLayout from "../../pages/admin/AdminLayout/AdminLayout.jsx";
-import { getCurrentUser } from "../../services/userProfileStore.js";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 
 const resolveLayoutByRole = (rawRole) => {
   const role = String(rawRole || "").trim().toLowerCase();
@@ -19,8 +19,12 @@ const resolveLayoutByRole = (rawRole) => {
 };
 
 const ForumRoleLayout = () => {
-  const currentUser = getCurrentUser();
+  const { currentUser, loading } = useCurrentUser();
   const SelectedLayout = resolveLayoutByRole(currentUser?.role);
+
+  if (loading) {
+    return null;
+  }
 
   if (!currentUser) {
     return <Navigate to="/login" replace />;

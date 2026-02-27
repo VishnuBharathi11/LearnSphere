@@ -1,11 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
-import {
-  getCurrentUser,
-  getLearnerProfile,
-  onProfileUpdated,
-} from "../../services/userProfileStore";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
 import "./TopNavBarStudent.scss";
 
@@ -28,7 +24,7 @@ function TopNavBarStudent() {
   const navigate = useNavigate();
   const location = useLocation();
   const panelRef = useRef(null);
-  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const { currentUser } = useCurrentUser();
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
 
@@ -54,29 +50,6 @@ function TopNavBarStudent() {
   };
 
   const pageTitle = pageMap[getNormalizedPath(location.pathname)] || "Dashboard";
-
-  useEffect(() => {
-    const syncUser = () => {
-      const user = getCurrentUser();
-      const userId = user?.id || user?.userId;
-      if (!userId) {
-        setCurrentUser(user);
-        return;
-      }
-
-      const profile = getLearnerProfile(userId);
-      setCurrentUser({
-        ...user,
-        name: profile?.name || user.name,
-        username: profile?.name || user.username,
-        email: profile?.email || user.email,
-        image: profile?.image || user.image || null,
-      });
-    };
-
-    syncUser();
-    return onProfileUpdated(syncUser);
-  }, []);
 
   useEffect(() => {
     const userId = currentUser?.id || currentUser?.userId;

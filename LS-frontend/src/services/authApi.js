@@ -4,7 +4,7 @@ import { appStore } from "./appStore";
 
 const AUTH_API_BASE_URL = import.meta.env.VITE_AUTH_API_BASE_URL || "/api/auth";
 
-export async function registerUser({ name, email, phone, password, role }) {
+export async function registerUser({ name, email, phone, password, role = "learner" }) {
   const payload = {
     name,
     email: email.trim().toLowerCase(),
@@ -63,6 +63,68 @@ export async function resetPassword({ email, otp, newPassword }) {
   };
 
   const response = await axios.post(`${AUTH_API_BASE_URL}/reset-password`, payload);
+  return response.data;
+}
+
+export async function submitInstructorApplication({
+  name,
+  expertise,
+  email,
+  phone,
+  dateOfBirth,
+  linkedin,
+  resumeFile,
+}) {
+  const formData = new FormData();
+  formData.append("name", (name || "").trim());
+  formData.append("expertise", (expertise || "").trim());
+  formData.append("email", (email || "").trim().toLowerCase());
+  formData.append("phone", (phone || "").trim());
+  formData.append("dateOfBirth", dateOfBirth || "");
+  formData.append("linkedin", (linkedin || "").trim());
+  formData.append("resume", resumeFile);
+
+  const response = await axios.post(`${AUTH_API_BASE_URL}/instructor-applications`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+}
+
+export async function getInstructorApplications() {
+  const response = await axios.get(`${AUTH_API_BASE_URL}/instructor-applications`, {
+    headers: authHeader(),
+  });
+  return Array.isArray(response.data) ? response.data : [];
+}
+
+export async function getInstructorApplicationResume(applicationId) {
+  const response = await axios.get(
+    `${AUTH_API_BASE_URL}/instructor-applications/${applicationId}/resume`,
+    {
+      headers: authHeader(),
+      responseType: "blob",
+    }
+  );
+  return response;
+}
+
+export async function approveInstructorApplication(applicationId, payload) {
+  const response = await axios.post(
+    `${AUTH_API_BASE_URL}/instructor-applications/${applicationId}/approve`,
+    payload,
+    { headers: authHeader() }
+  );
+  return response.data;
+}
+
+export async function rejectInstructorApplication(applicationId) {
+  const response = await axios.post(
+    `${AUTH_API_BASE_URL}/instructor-applications/${applicationId}/reject`,
+    null,
+    { headers: authHeader() }
+  );
   return response.data;
 }
 

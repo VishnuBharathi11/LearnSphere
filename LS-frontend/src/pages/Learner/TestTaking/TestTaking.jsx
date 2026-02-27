@@ -1,10 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import {
-  saveFinalAssessmentResult,
-  saveLessonAssessmentResult,
-} from "../../../services/learnerProgressStore";
-import { getCourseQuizzesByCourseId } from "../../../services/progressApi";
+import { getCourseQuizzesByCourseId, saveFinalAssessmentDb, saveLessonAssessmentDb } from "../../../services/progressApi";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 
 function TestTaking() {
@@ -108,9 +104,9 @@ function TestTaking() {
     };
 
     if (mode === "lesson" && lessonId) {
-      saveLessonAssessmentResult(userId, courseId, lessonId, resultPayload);
+      saveLessonAssessmentDb(userId, courseId, lessonId, resultPayload).catch(() => null);
     } else {
-      saveFinalAssessmentResult(userId, courseId, resultPayload);
+      saveFinalAssessmentDb(userId, courseId, resultPayload).catch(() => null);
     }
 
     navigate("/student-layout/result", {

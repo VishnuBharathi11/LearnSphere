@@ -25,8 +25,72 @@ $pdf-text: #991b1b;
 }
 
 .page-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 8px;
+}
+
+.primary-action {
+  background: $primary;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
+}
+
+.course-banner {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border: 1px solid $border;
+  border-radius: 12px;
+  background: $white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+
+  h3 {
+    margin: 6px 0 0;
+    font-size: 18px;
+  }
+}
+
+.course-label {
+  font-size: 12px;
   color: $text-muted;
-  font-size: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.course-meta {
+  display: flex;
+  gap: 18px;
+
+  div {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 10px;
+    min-width: 120px;
+  }
+
+  span {
+    font-size: 12px;
+    color: $text-muted;
+  }
+
+  strong {
+    font-size: 16px;
+    color: $text-dark;
+  }
 }
 
 .lesson-message {
@@ -63,9 +127,11 @@ $pdf-text: #991b1b;
 .lesson-card {
   background-color: $white;
   border: 1px solid $border;
-  border-radius: 8px;
+  border-radius: 12px;
   padding: 20px;
-  max-width: 900px;
+  max-width: 980px;
+  margin-top: 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
 }
 
 .lesson-row {
@@ -83,9 +149,9 @@ $pdf-text: #991b1b;
 .lesson-index {
   width: 36px;
   height: 36px;
-  background-color: $primary;
+  background: linear-gradient(135deg, $primary, #1e40af);
   color: white;
-  border-radius: 6px;
+  border-radius: 10px;
 
   display: flex;
   align-items: center;
@@ -108,6 +174,7 @@ $pdf-text: #991b1b;
   gap: 10px;
   font-size: 13px;
   color: $text-muted;
+  flex-wrap: wrap;
 }
 
 .tag {
@@ -135,7 +202,7 @@ $pdf-text: #991b1b;
     border: none;
     background-color: #f3f4f6;
     padding: 6px;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
   }
 
@@ -145,14 +212,22 @@ $pdf-text: #991b1b;
   }
 }
 
-.add-lesson-btn {
-  width: 100%;
-  margin-top: 16px;
-  padding: 12px;
-  border: 2px dashed #d1d5db;
-  background: none;
+.empty-state {
+  padding: 30px;
+  text-align: center;
+  color: $text-muted;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ghost-btn {
+  border: 1px dashed #cbd5f5;
+  background: #f8fafc;
+  padding: 10px 16px;
+  border-radius: 10px;
   cursor: pointer;
-  border-radius: 6px;
+  color: $primary;
 }
 
 .modal-overlay {
@@ -174,6 +249,63 @@ $pdf-text: #991b1b;
 
 .form-group {
   margin-bottom: 14px;
+}
+
+.subheading-group {
+  border: 1px solid $border;
+  border-radius: 8px;
+  padding: 10px;
+  background: #ffffff;
+}
+
+.subheading-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+
+  span {
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  button {
+    border: 1px solid $border;
+    background: #ffffff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
+}
+
+.subheading-list {
+  display: grid;
+  gap: 8px;
+}
+
+.subheading-item {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+
+  input {
+    flex: 1;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid $border;
+    font-size: 13px;
+  }
+
+  button {
+    border: none;
+    background: $danger-bg;
+    color: $danger;
+    padding: 6px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+  }
 }
 
 .modal-actions {

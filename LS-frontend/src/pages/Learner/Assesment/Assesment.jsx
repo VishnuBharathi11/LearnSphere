@@ -4,8 +4,7 @@ import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import "./Assesment.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-import { getCourseQuizzesByCourseId } from "../../../services/progressApi";
-import { getLearnerCourseProgress } from "../../../services/learnerProgressStore";
+import { getCourseQuizzesByCourseId, getProgressByCourses } from "../../../services/progressApi";
 
 function Assessment() {
   const navigate = useNavigate();
@@ -16,6 +15,7 @@ function Assessment() {
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [quizzesByCourseId, setQuizzesByCourseId] = useState({});
+  const [progressMap, setProgressMap] = useState({});
 
   useEffect(() => {
     if (!userId) return;
@@ -54,10 +54,28 @@ function Assessment() {
     );
     if (!activeEnrollments.length) {
       setQuizzesByCourseId({});
+      setProgressMap({});
       return;
     }
 
     let active = true;
+    const courseIds = activeEnrollments.map((entry) => String(entry.courseId));
+
+    async function loadProgress() {
+      try {
+        const results = await getProgressByCourses(userId, courseIds);
+        if (!active) return;
+        const pairs = (Array.isArray(results) ? results : []).map((item) => [
+          String(item.courseId),
+          item,
+        ]);
+        setProgressMap(Object.fromEntries(pairs));
+      } catch {
+        if (!active) return;
+        setProgressMap({});
+      }
+    }
+
     async function loadQuizzes() {
       const pairs = await Promise.all(
         activeEnrollments.map(async (entry) => {
@@ -78,6 +96,7 @@ function Assessment() {
       setQuizzesByCourseId(Object.fromEntries(pairs));
     }
     loadQuizzes();
+    loadProgress();
     return () => {
       active = false;
     };
@@ -99,7 +118,7 @@ function Assessment() {
         const quiz = quizzesByCourseId[String(course.id)];
         if (!quiz) return null;
 
-        const result = getLearnerCourseProgress(userId, course.id).finalAssessment;
+        const result = progressMap[String(course.id)]?.finalAssessment || null;
 
         const status = result ? "Completed" : "Pending";
 
@@ -132,13 +151,13 @@ function Assessment() {
       pending,
       avgScore,
     };
-  }, [courses, enrollments, quizzesByCourseId, userId]);
+  }, [courses, enrollments, quizzesByCourseId, progressMap, userId]);
 
   const selectedResultData = useMemo(() => {
     if (!selectedResultCourse) return null;
 
     const course = courses.find((item) => String(item.id) === String(selectedResultCourse));
-    const result = getLearnerCourseProgress(userId, selectedResultCourse).finalAssessment;
+    const result = progressMap[String(selectedResultCourse)]?.finalAssessment || null;
     const quiz = quizzesByCourseId[String(selectedResultCourse)];
 
     if (!result || !course || !quiz) return null;
@@ -152,7 +171,7 @@ function Assessment() {
       passed: result.passed,
       passingScore: quiz.passingScore,
     };
-  }, [selectedResultCourse, courses, quizzesByCourseId, userId]);
+  }, [selectedResultCourse, courses, quizzesByCourseId, progressMap, userId]);
 
   return (
     <div className="assessment-container">

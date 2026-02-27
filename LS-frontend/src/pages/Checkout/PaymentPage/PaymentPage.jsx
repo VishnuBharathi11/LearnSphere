@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import "./PaymentPage.scss";
 import { getCourseById } from "../../../services/courseApi";
-import { getCurrentUser } from "../../../services/userProfileStore.js";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import {
   createEnrollmentOrder,
   getRazorpayPublicKey,
@@ -15,7 +15,7 @@ function PaymentPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const currentUser = getCurrentUser();
+  const { currentUser, loading: userLoading } = useCurrentUser();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,6 +25,7 @@ function PaymentPage() {
   const checkoutOpenedRef = useRef(false);
 
   useEffect(() => {
+    if (userLoading) return;
     if (!currentUser?.id) {
       navigate("/login", {
         replace: true,
@@ -54,7 +55,7 @@ function PaymentPage() {
     return () => {
       active = false;
     };
-  }, [id, currentUser?.id, location.pathname, navigate]);
+  }, [id, currentUser?.id, location.pathname, navigate, userLoading]);
 
   useEffect(() => {
     if (!currentUser?.id) return;
@@ -177,7 +178,7 @@ function PaymentPage() {
     handlePayNow();
   }, [loading, course, currentUser?.id, razorpayKey]);
 
-  if (loading) return <p style={{ padding: 40 }}>Loading...</p>;
+  if (loading || userLoading) return <p style={{ padding: 40 }}>Loading...</p>;
   if (error && !course) return <p style={{ padding: 40 }}>{error}</p>;
   if (!course) return <p style={{ padding: 40 }}>Invalid course</p>;
 

@@ -4,10 +4,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Comparator;
+import java.time.Instant;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.learnsphere.course.dto.CourseRequest;
+import com.learnsphere.course.dto.LessonRequest;
+import com.learnsphere.course.dto.LessonResponse;
 import com.learnsphere.course.entity.Course;
+import com.learnsphere.course.entity.CourseContent;
 import com.learnsphere.course.service.CourseService;
+import com.learnsphere.course.repository.CourseContentRepository;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -16,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CourseController {
 	private final CourseService courseService;
+	private final CourseContentRepository courseContentRepository;
 	
 	@PostMapping
 	@PreAuthorize("hasRole('INSTRUCTOR')")
@@ -111,5 +120,86 @@ public class CourseController {
 	@PreAuthorize("hasRole('ADMIN')")
 	public void adminDelete(@PathVariable String id) {
 		courseService.deleteCourse(id);
+	}
+
+	@GetMapping("/{id}/lessons")
+	@PreAuthorize("hasRole('INSTRUCTOR')")
+	public List<LessonResponse> listLessons(@PathVariable String id) {
+		return courseContentRepository.findByCourseIdOrderByOrderIndexAsc(id)
+				.stream()
+				.sorted(Comparator.comparing(CourseContent::getOrderIndex, Comparator.nullsLast(Comparator.naturalOrder())))
+				.map(this::toLessonResponse)
+				.toList();
+	}
+
+	@PostMapping("/{id}/lessons")
+	@PreAuthorize("hasRole('INSTRUCTOR')")
+	public LessonResponse addLesson(@PathVariable String id, @RequestBody LessonRequest request) {
+		CourseContent content = CourseContent.builder()
+				.courseId(id)
+				.title(request.getTitle())
+				.heading(request.getHeading())
+				.subheadings(request.getSubheadings())
+				.description(request.getDescription())
+				.type(request.getType())
+				.fileUrl(request.getFileUrl())
+				.fileName(request.getFileName())
+				.mimeType(request.getMimeType())
+				.orderIndex(request.getOrderIndex())
+				.uploadedAt(Instant.now())
+				.build();
+		return toLessonResponse(courseContentRepository.save(content));
+	}
+
+	@PutMapping("/{courseId}/lessons/{lessonId}")
+	@PreAuthorize("hasRole('INSTRUCTOR')")
+	public LessonResponse updateLesson(
+			@PathVariable String courseId,
+			@PathVariable String lessonId,
+			@RequestBody LessonRequest request
+	) {
+		CourseContent content = courseContentRepository.findById(lessonId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found"));
+		if (!courseId.equals(content.getCourseId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson does not belong to course");
+		}
+		content.setTitle(request.getTitle());
+		content.setHeading(request.getHeading());
+		content.setSubheadings(request.getSubheadings());
+		content.setDescription(request.getDescription());
+		content.setType(request.getType());
+		content.setFileUrl(request.getFileUrl());
+		content.setFileName(request.getFileName());
+		content.setMimeType(request.getMimeType());
+		content.setOrderIndex(request.getOrderIndex());
+		return toLessonResponse(courseContentRepository.save(content));
+	}
+
+	@DeleteMapping("/{courseId}/lessons/{lessonId}")
+	@PreAuthorize("hasRole('INSTRUCTOR')")
+	public void deleteLesson(@PathVariable String courseId, @PathVariable String lessonId) {
+		CourseContent content = courseContentRepository.findById(lessonId)
+				.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Lesson not found"));
+		if (!courseId.equals(content.getCourseId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson does not belong to course");
+		}
+		courseContentRepository.deleteById(lessonId);
+	}
+
+	private LessonResponse toLessonResponse(CourseContent content) {
+		return LessonResponse.builder()
+				.id(content.getId())
+				.courseId(content.getCourseId())
+				.title(content.getTitle())
+				.heading(content.getHeading())
+				.subheadings(content.getSubheadings())
+				.description(content.getDescription())
+				.type(content.getType())
+				.fileUrl(content.getFileUrl())
+				.fileName(content.getFileName())
+				.mimeType(content.getMimeType())
+				.orderIndex(content.getOrderIndex())
+				.uploadedAt(content.getUploadedAt())
+				.build();
 	}
 }

@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
-import { getPublishedCourses } from "../../../services/courseApi";
+import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
-import { buildCourseLearningState } from "../../../services/learnerProgressStore";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { getProgressByCourses } from "../../../services/progressApi";
 import "./MyCourses.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 
@@ -12,6 +13,8 @@ function MyCourses() {
   const [activeTab, setActiveTab] = useState("all");
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
+  const [lessonMap, setLessonMap] = useState({});
+  const [progressMap, setProgressMap] = useState({});
 
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
@@ -47,6 +50,79 @@ function MyCourses() {
     };
   }, [userId]);
 
+  useEffect(() => {
+    let active = true;
+    async function loadLessons() {
+      if (!userId || enrollments.length === 0) {
+        setLessonMap({});
+        return;
+      }
+      const activeEnrollments = enrollments.filter(
+        (enrollment) =>
+          String(enrollment.userId) === String(userId) &&
+          String(enrollment.status || "").toUpperCase() === "ACTIVE"
+      );
+      const courseIds = activeEnrollments.map((enrollment) => String(enrollment.courseId));
+      try {
+        const results = await Promise.all(
+          courseIds.map(async (courseId) => {
+            try {
+              const lessons = await getCourseLessons(courseId);
+              return [courseId, Array.isArray(lessons) ? lessons : []];
+            } catch {
+              return [courseId, []];
+            }
+          })
+        );
+        if (!active) return;
+        const next = {};
+        results.forEach(([courseId, lessons]) => {
+          next[courseId] = lessons;
+        });
+        setLessonMap(next);
+      } catch {
+        if (!active) return;
+        setLessonMap({});
+      }
+    }
+    loadLessons();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
+
+  useEffect(() => {
+    let active = true;
+    async function loadProgress() {
+      if (!userId || enrollments.length === 0) {
+        setProgressMap({});
+        return;
+      }
+      const activeEnrollments = enrollments.filter(
+        (enrollment) =>
+          String(enrollment.userId) === String(userId) &&
+          String(enrollment.status || "").toUpperCase() === "ACTIVE"
+      );
+      const courseIds = activeEnrollments.map((enrollment) => String(enrollment.courseId));
+      try {
+        const results = await getProgressByCourses(userId, courseIds);
+        if (!active) return;
+        const next = {};
+        (Array.isArray(results) ? results : []).forEach((item) => {
+          next[String(item.courseId)] = item;
+        });
+        setProgressMap(next);
+      } catch {
+        if (!active) return;
+        setProgressMap({});
+      }
+    }
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [enrollments, userId]);
+
   const myCourses = useMemo(() => {
     const backendActive = enrollments.filter(
       (enrollment) =>
@@ -59,7 +135,9 @@ function MyCourses() {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
 
-        const state = buildCourseLearningState(userId, course.id);
+        const lessons = lessonMap[String(course.id)] || [];
+        const progress = progressMap[String(course.id)] || null;
+        const state = buildCourseLearningStateFromApi(lessons, progress);
         return {
           ...course,
           completedLessons: state.completedLessons,
@@ -69,7 +147,7 @@ function MyCourses() {
         };
       })
       .filter(Boolean);
-  }, [courses, enrollments, userId]);
+  }, [courses, enrollments, lessonMap, progressMap, userId]);
 
   const coursesToShow = myCourses.filter((course) => {
     if (activeTab === "pending") return course.progress < 100;

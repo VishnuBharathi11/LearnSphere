@@ -234,3 +234,32 @@ export async function adminDeleteCourse(courseId) {
     headers: getAuthHeaders(),
   });
 }
+
+export async function getCourseLessons(courseId) {
+  const response = await axios.get(`${COURSES_API_BASE_URL}/${courseId}/lessons`, {
+    headers: getAuthHeaders(),
+  });
+  return Array.isArray(response.data) ? response.data : [];
+}
+
+export async function createCourseLesson(courseId, payload) {
+  const response = await axios.post(`${COURSES_API_BASE_URL}/${courseId}/lessons`, payload, {
+    headers: getAuthHeaders(),
+  });
+  return response.data;
+}
+
+export async function updateCourseLesson(courseId, lessonId, payload) {
+  const response = await axios.put(
+    `${COURSES_API_BASE_URL}/${courseId}/lessons/${lessonId}`,
+    payload,
+    { headers: getAuthHeaders() }
+  );
+  return response.data;
+}
+
+export async function deleteCourseLesson(courseId, lessonId) {
+  await axios.delete(`${COURSES_API_BASE_URL}/${courseId}/lessons/${lessonId}`, {
+    headers: getAuthHeaders(),
+  });
+}

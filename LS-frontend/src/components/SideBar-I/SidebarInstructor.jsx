@@ -22,10 +22,10 @@ function SidebarInstructor() {
 
   return (
     <nav className="I-navbar">
-      <div className="logo-name">
+      <Link to="/" className="logo-name" aria-label="LearnSphere Home">
         <img src={logo} className="logo" alt="LearnSphere" />
         <div className="page-name">LearnSphere</div>
-      </div>
+      </Link>
 
       <div className="I-sidebar">
         <Link

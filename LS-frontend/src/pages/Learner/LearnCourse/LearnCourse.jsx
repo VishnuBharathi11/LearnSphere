@@ -4,10 +4,12 @@ import CreateTopicModal from "../../../forum/components/CreateTopicModal";
 import ReplyBox from "../../../forum/components/ReplyBox";
 import ReplyItem from "../../../forum/components/ReplyItem";
 import useForum from "../../../forum/hooks/useForum";
+import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
+import { getCourseLessons } from "../../../services/courseApi";
 import {
-  buildCourseLearningState,
-  markLessonCompleted,
-} from "../../../services/learnerProgressStore";
+  getCourseProgress,
+  markLessonCompletedDb,
+} from "../../../services/progressApi";
 import { getCourseQuizzesByCourseId } from "../../../services/progressApi";
 import { getAdminSettings } from "../../../services/adminApi";
 import "./LearnCourse.scss";
@@ -31,7 +33,13 @@ function LearnCourse() {
   const [loadingQuiz, setLoadingQuiz] = useState(true);
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
 
-  const learningState = useMemo(() => buildCourseLearningState(userId, courseId), [userId, courseId]);
+  const [courseLessons, setCourseLessons] = useState([]);
+  const [courseProgress, setCourseProgress] = useState(null);
+
+  const learningState = useMemo(
+    () => buildCourseLearningStateFromApi(courseLessons, courseProgress),
+    [courseLessons, courseProgress]
+  );
   const lessons = learningState.lessons;
   const activeLesson = lessons[currentIndex];
   const currentLessonDone = activeLesson
@@ -109,6 +117,49 @@ function LearnCourse() {
     };
   }, [courseId]);
 
+  useEffect(() => {
+    let active = true;
+    async function loadLessons() {
+      try {
+        const list = await getCourseLessons(courseId);
+        if (!active) return;
+        setCourseLessons(Array.isArray(list) ? list : []);
+      } catch {
+        if (!active) return;
+        setCourseLessons([]);
+      }
+    }
+    loadLessons();
+    return () => {
+      active = false;
+    };
+  }, [courseId]);
+
+  useEffect(() => {
+    let active = true;
+    async function loadProgress() {
+      if (!userId) return;
+      try {
+        const progress = await getCourseProgress(userId, courseId);
+        if (!active) return;
+        setCourseProgress(progress || null);
+      } catch {
+        if (!active) return;
+        setCourseProgress(null);
+      }
+    }
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [courseId, userId]);
+
+  useEffect(() => {
+    if (currentIndex >= lessons.length) {
+      setCurrentIndex(0);
+    }
+  }, [currentIndex, lessons.length]);
+
   const finalQuiz = useMemo(
     () => courseQuizzes.find((quiz) => String(quiz.assessmentType || "FINAL").toUpperCase() === "FINAL") || null,
     [courseQuizzes]
@@ -136,7 +187,9 @@ function LearnCourse() {
 
   const handleCompleteLesson = () => {
     if (!activeLesson) return;
-    markLessonCompleted(userId, courseId, activeLesson.id);
+    markLessonCompletedDb(userId, courseId, activeLesson.id)
+      .then((progress) => setCourseProgress(progress || null))
+      .catch(() => null);
     const next = Math.min(currentIndex + 1, lessons.length - 1);
     setCurrentIndex(next);
   };
@@ -146,7 +199,9 @@ function LearnCourse() {
 
     const heading = activeLesson.heading || activeLesson.title || "Lesson";
     const subheading =
-      activeLesson.subheading ||
+      (Array.isArray(activeLesson.subheadings) && activeLesson.subheadings.length > 0
+        ? activeLesson.subheadings.join(" • ")
+        : activeLesson.subheading) ||
       (activeLesson.type ? `${String(activeLesson.type).toUpperCase()} lesson` : "Theory module");
 
     return (

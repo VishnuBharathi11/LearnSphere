@@ -79,7 +79,8 @@ $danger-hover: #fecaca;
   }
 
   input,
-  textarea {
+  textarea,
+  select {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #d1d5db;
@@ -135,6 +136,29 @@ $danger-hover: #fecaca;
   input[type="text"],
   input:not([type]) {
     flex: 1;
+  }
+}
+
+.select-field {
+  position: relative;
+
+  select {
+    appearance: none;
+    background: #ffffff;
+    padding-right: 36px;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-right: 2px solid #6b7280;
+    border-bottom: 2px solid #6b7280;
+    transform: translateY(-50%) rotate(45deg);
+    pointer-events: none;
   }
 }
 

@@ -7,6 +7,7 @@ import {
   CheckCircle,
   Layers,
   UserCog,
+  BadgeCheck,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -20,10 +21,10 @@ function SidebarAdmin() {
 
   return (
     <nav className="admin-navbar">
-      <div className="admin-logo">
+      <Link to="/" className="admin-logo" aria-label="LearnSphere Home">
         <img src={logo} alt="LearnSphere" />
         <span>LearnSphere</span>
-      </div>
+      </Link>
 
       <div className="admin-menu">
 
@@ -73,6 +74,14 @@ function SidebarAdmin() {
         >
           <UserCog size={18} />
           Role Management
+        </Link>
+
+        <Link
+          to="/admin-layout/instructor-applications"
+          className={isActive("/admin-layout/instructor-applications")}
+        >
+          <BadgeCheck size={18} />
+          Instructor Registration
         </Link>
 
         <Link

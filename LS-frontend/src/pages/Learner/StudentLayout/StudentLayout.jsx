@@ -1,5 +1,5 @@
 import { Navigate, useLocation, useOutlet } from "react-router-dom";
-import { getCurrentUser } from "../../../services/userProfileStore.js";
+import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import StudentSideBar from "../../../components/SideBar-S/SidebarStudent";
 import TopNavBarStudent from "../../../components/TopNavBar-S/TopNavBarStudent";
 import "./StudentLayout.scss";
@@ -7,10 +7,14 @@ import "./StudentLayout.scss";
 function StudentLayout() {
   const location = useLocation();
   const outlet = useOutlet();
-  const currentUser = getCurrentUser();
+  const { currentUser, loading } = useCurrentUser();
   const role = String(currentUser?.role || "").toLowerCase();
   const search = new URLSearchParams(location.search);
   const isAdminPreview = search.get("adminPreview") === "true" && role === "admin";
+
+  if (loading) {
+    return null;
+  }
 
   if (!currentUser || (role !== "learner" && !isAdminPreview)) {
     return <Navigate to="/login" replace />;

@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Plus, Trash2, CheckCircle } from "lucide-react";
 import "./CreateQuiz.scss";
-import { getCourseById } from "../../../../services/courseApi";
+import { getCourseById, getCourseLessons } from "../../../../services/courseApi";
 import { getCourseQuizzesByCourseId, saveCourseQuiz } from "../../../../services/progressApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
-import { getScopedLessonsForCourse } from "../../../../services/learnerProgressStore";
 
 function CreateQuiz() {
   const { courseId } = useParams();
@@ -54,7 +53,12 @@ function CreateQuiz() {
 
         setCourse(fetched);
 
-        setLessons(getScopedLessonsForCourse(currentUser?.id, courseId));
+        try {
+          const list = await getCourseLessons(String(courseId));
+          setLessons(Array.isArray(list) ? list : []);
+        } catch {
+          setLessons([]);
+        }
 
         const existingQuizzes = await getCourseQuizzesByCourseId(String(courseId));
         if (!active || !Array.isArray(existingQuizzes) || existingQuizzes.length === 0) return;
@@ -184,40 +188,44 @@ function CreateQuiz() {
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
 
           <label>Assessment Type</label>
-          <select
-            value={assessmentType}
-            onChange={(e) => {
-              const next = String(e.target.value || "FINAL");
-              setAssessmentType(next);
-              if (next === "FINAL") {
-                setLessonId("");
-                setLessonTitle("");
-              }
-            }}
-          >
-            <option value="FINAL">Final Course Assessment</option>
-            <option value="LESSON">Lesson Assessment</option>
-          </select>
+          <div className="select-field">
+            <select
+              value={assessmentType}
+              onChange={(e) => {
+                const next = String(e.target.value || "FINAL");
+                setAssessmentType(next);
+                if (next === "FINAL") {
+                  setLessonId("");
+                  setLessonTitle("");
+                }
+              }}
+            >
+              <option value="FINAL">Final Course Assessment</option>
+              <option value="LESSON">Lesson Assessment</option>
+            </select>
+          </div>
 
           {assessmentType === "LESSON" ? (
             <>
               <label>Lesson Name</label>
-              <select
-                value={lessonId}
-                onChange={(e) => {
-                  const nextLessonId = String(e.target.value || "");
-                  const lesson = lessons.find((item) => String(item.id) === nextLessonId);
-                  setLessonId(nextLessonId);
-                  setLessonTitle(lesson?.title || "");
-                }}
-              >
-                <option value="">Select lesson</option>
-                {lessons.map((lesson) => (
-                  <option key={lesson.id} value={lesson.id}>
-                    {lesson.title}
-                  </option>
-                ))}
-              </select>
+              <div className="select-field">
+                <select
+                  value={lessonId}
+                  onChange={(e) => {
+                    const nextLessonId = String(e.target.value || "");
+                    const lesson = lessons.find((item) => String(item.id) === nextLessonId);
+                    setLessonId(nextLessonId);
+                    setLessonTitle(lesson?.title || "");
+                  }}
+                >
+                  <option value="">Select lesson</option>
+                  {lessons.map((lesson) => (
+                    <option key={lesson.id} value={lesson.id}>
+                      {lesson.title}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </>
           ) : null}
 

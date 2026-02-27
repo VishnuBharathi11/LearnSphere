@@ -7,31 +7,34 @@ import {
   Trash2,
   Edit,
   Plus,
-  Form,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./UpdateLesson.scss";
-import { getCourseById } from "../../../../services/courseApi";
-import { getCurrentUser } from "../../../../services/userProfileStore.js";
 import {
-  getScopedLessonsForCourse,
-  saveScopedLessonsForCourse,
-} from "../../../../services/learnerProgressStore";
+  deleteCourseLesson,
+  getCourseById,
+  getCourseLessons,
+  updateCourseLesson,
+} from "../../../../services/courseApi";
+import { getCurrentUser } from "../../../../services/userProfileStore.js";
 function UpdateLesson() {
   const { courseId } = useParams();
   const id = String(courseId);
+  const navigate = useNavigate();
   const currentUser = getCurrentUser() || {};
   const currentRole = String(currentUser?.role || "").toLowerCase();
   const [course, setCourse] = useState(null);
   const [loadingCourse, setLoadingCourse] = useState(true);
   const [lessons, setLessons] = useState([]);
+  const [loadingLessons, setLoadingLessons] = useState(true);
+  const [lessonError, setLessonError] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editLessonId, setEditLessonId] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
   const [form, setForm] = useState({
     title: "",
     heading: "",
-    subheading: "",
+    subheadings: [""],
     description: "",
     type: "video",
     file: null,
@@ -59,8 +62,21 @@ function UpdateLesson() {
   }, [id, currentUser?.id]);
 
   useEffect(() => {
-    setLessons(getScopedLessonsForCourse(currentUser?.id, id));
-  }, [currentUser?.id, id]);
+    async function loadLessons() {
+      setLoadingLessons(true);
+      setLessonError("");
+      try {
+        const list = await getCourseLessons(id);
+        setLessons(Array.isArray(list) ? list : []);
+      } catch {
+        setLessons([]);
+        setLessonError("Unable to load lessons. Please try again.");
+      } finally {
+        setLoadingLessons(false);
+      }
+    }
+    loadLessons();
+  }, [id]);
 
   if (loadingCourse) {
     return <p style={{ padding: 40 }}>Loading course...</p>;
@@ -73,10 +89,6 @@ function UpdateLesson() {
       </p>
     );
   }
-
-  const persistLessons = (updatedLessons) => {
-    saveScopedLessonsForCourse(currentUser?.id, id, updatedLessons);
-  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -94,11 +106,28 @@ function UpdateLesson() {
     reader.readAsDataURL(file);
   };
 
+  const handleTypeChange = (nextType) => {
+    setForm((prev) => ({
+      ...prev,
+      type: nextType,
+      description: nextType === "theory" ? prev.description : "",
+      file: nextType === "theory" ? null : prev.file,
+      fileUrl: nextType === "theory" ? "" : prev.fileUrl,
+      fileName: nextType === "theory" ? "" : prev.fileName,
+      mimeType: nextType === "theory" ? "" : prev.mimeType,
+    }));
+  };
+
   const validate = () => {
     if (!form.title.trim()) return "Lesson title required";
     if (!form.heading.trim()) return "Heading is required";
-    if (!form.subheading.trim()) return "Subheading is required";
-    if (!form.description.trim() && !form.fileUrl) return "Add theory content or attach a file";
+    const cleanedSubheadings = form.subheadings.map((s) => s.trim()).filter(Boolean);
+    if (cleanedSubheadings.length === 0) return "Add at least one subheading";
+    if (form.type === "theory") {
+      if (!form.description.trim()) return "Add theory content";
+    } else if (!form.fileUrl) {
+      return "Upload a lesson file";
+    }
 
     const duplicate = lessons.find(
       (l) =>
@@ -111,84 +140,67 @@ function UpdateLesson() {
     return null;
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setMessage({ type: "", text: "" });
     const error = validate();
     if (error) {
       setMessage({ type: "error", text: error });
       return;
     }
-    let updated;
-    if (editLessonId) {
-      updated = lessons.map((l) =>
-        l.id === editLessonId
-          ? {
-              ...l,
-              title: form.title,
-              heading: form.heading,
-              subheading: form.subheading,
-              description: form.description,
-              type: form.type,
-              fileUrl: form.fileUrl || l.fileUrl || "",
-              fileName: form.fileName || l.fileName || "",
-              mimeType: form.mimeType || l.mimeType || "",
-            }
-          : l,
-      );
-    } else {
-      const newLesson = {
-        id: Date.now(),
-        title: form.title,
-        heading: form.heading,
-        subheading: form.subheading,
-        description: form.description,
+    if (!editLessonId) {
+      return;
+    }
+    try {
+      const cleanedSubheadings = form.subheadings.map((s) => s.trim()).filter(Boolean);
+      const updatedLesson = await updateCourseLesson(id, editLessonId, {
+        title: form.title.trim(),
+        heading: form.heading.trim(),
+        subheadings: cleanedSubheadings,
+        description: form.description.trim(),
         type: form.type,
-        order: lessons.length,
-        duration: form.type === "video" ? "00:00" : null,
-        fileSize:
-          form.type !== "video" && form.file
-            ? `${(form.file.size / (1024 * 1024)).toFixed(1)}MB`
-            : null,
         fileUrl: form.fileUrl || "",
         fileName: form.fileName || "",
         mimeType: form.mimeType || "",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      updated = [...lessons, newLesson];
+        orderIndex: lessons.findIndex((l) => String(l.id) === String(editLessonId)),
+      });
+      setLessons((prev) =>
+        prev.map((l) => (String(l.id) === String(editLessonId) ? updatedLesson : l))
+      );
+      setForm({
+        title: "",
+        heading: "",
+        subheadings: [""],
+        description: "",
+        type: "video",
+        file: null,
+        fileUrl: "",
+        fileName: "",
+        mimeType: "",
+      });
+      setEditLessonId(null);
+      setShowModal(false);
+      setMessage({
+        type: "success",
+        text: "Lesson updated successfully.",
+      });
+    } catch {
+      setMessage({ type: "error", text: "Failed to update lesson." });
     }
-    setLessons(updated);
-    persistLessons(updated);
-    setForm({
-      title: "",
-      heading: "",
-      subheading: "",
-      description: "",
-      type: "video",
-      file: null,
-      fileUrl: "",
-      fileName: "",
-      mimeType: "",
-    });
-    setEditLessonId(null);
-    setShowModal(false);
-    setMessage({
-      type: "success",
-      text: editLessonId ? "Lesson updated successfully." : "Lesson added successfully.",
-    });
   };
   const deleteLesson = (lessonId) => {
-    const updated = lessons
-      .filter((l) => l.id !== lessonId)
-      .map((l, index) => ({ ...l, order: index }));
-    setLessons(updated);
-    persistLessons(updated);
+    deleteCourseLesson(id, lessonId)
+      .then(() => {
+        setLessons((prev) => prev.filter((l) => String(l.id) !== String(lessonId)));
+      })
+      .catch(() => {
+        setMessage({ type: "error", text: "Failed to delete lesson." });
+      });
   };
   const openEdit = (lesson) => {
     setForm({
       title: lesson.title,
       heading: lesson.heading || "",
-      subheading: lesson.subheading || "",
+      subheadings: Array.isArray(lesson.subheadings) && lesson.subheadings.length > 0 ? lesson.subheadings : [""],
       description: lesson.description || "",
       type: lesson.type,
       file: null,
@@ -208,12 +220,60 @@ function UpdateLesson() {
     <div className="upload-lesson-layout">
       <div className="upload-lessons-page">
         <div className="page-header">
-          <p>{course.courseName}</p>
+          <button
+            className="primary-action"
+            onClick={() => navigate(`/instructor-layout/manage-courses/${id}/lessons/new`)}
+          >
+            <Plus size={16} /> Add New Lesson
+          </button>
+        </div>
+
+        <div className="course-banner">
+          <div>
+            <span className="course-label">Course</span>
+            <h3>{course.courseName}</h3>
+          </div>
+          <div className="course-meta">
+            <div>
+              <span>Total Lessons</span>
+              <strong>{lessons.length}</strong>
+            </div>
+            <div>
+              <span>Last Updated</span>
+              <strong>
+                {lessons[lessons.length - 1]?.uploadedAt
+                  ? new Date(lessons[lessons.length - 1]?.uploadedAt).toLocaleDateString()
+                  : "-"}
+              </strong>
+            </div>
+          </div>
         </div>
         {message.text && <p className={`lesson-message ${message.type}`}>{message.text}</p>}
         <div className="lesson-card">
-          {lessons.length === 0 ? (
-            <p>No lessons added yet</p>
+          {loadingLessons ? (
+            <div className="empty-state">
+              <p>Loading lessons...</p>
+            </div>
+          ) : lessonError ? (
+            <div className="empty-state">
+              <p>{lessonError}</p>
+              <button
+                className="ghost-btn"
+                onClick={() => navigate(0)}
+              >
+                Retry
+              </button>
+            </div>
+          ) : lessons.length === 0 ? (
+            <div className="empty-state">
+              <p>No lessons added yet</p>
+              <button
+                className="ghost-btn"
+                onClick={() => navigate(`/instructor-layout/manage-courses/${id}/lessons/new`)}
+              >
+                + Add New Lesson
+              </button>
+            </div>
           ) : (
             lessons.map((lesson, index) => (
               <div className="lesson-row" key={lesson.id}>
@@ -226,14 +286,14 @@ function UpdateLesson() {
                       {lesson.type.toUpperCase()}
                     </span>
                     {lesson.heading ? <span>{lesson.heading}</span> : null}
-                    {lesson.subheading ? <span>{lesson.subheading}</span> : null}
-                    {lesson.duration && (
+                    {Array.isArray(lesson.subheadings) && lesson.subheadings.length > 0
+                      ? lesson.subheadings.map((sub, idx) => <span key={idx}>{sub}</span>)
+                      : null}
+                    {lesson.type === "video" && (
                       <span>
-                        <Clock size={14} /> {lesson.duration}
+                        <Clock size={14} /> 00:00
                       </span>
                     )}
-
-                    {lesson.fileSize && <span>{lesson.fileSize}</span>}
                   </div>
                 </div>
                 <div className="lesson-actions">
@@ -250,9 +310,6 @@ function UpdateLesson() {
               </div>
             ))
           )}
-          <button className="add-lesson-btn" onClick={() => setShowModal(true)}>
-            <Plus size={18} /> Add Lesson
-          </button>
         </div>
         {showModal && (
           <div className="modal-overlay">
@@ -272,39 +329,74 @@ function UpdateLesson() {
                   onChange={(e) => setForm({ ...form, heading: e.target.value })}
                 />
               </div>
-              <div className="form-group">
-                <input
-                  placeholder="Subheading"
-                  value={form.subheading}
-                  onChange={(e) => setForm({ ...form, subheading: e.target.value })}
-                />
-              </div>
-              <div className="form-group">
-                <textarea
-                  placeholder="Theory content"
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                />
+              <div className="form-group subheading-group">
+                <div className="subheading-header">
+                  <span>Subheadings</span>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm((prev) => ({ ...prev, subheadings: [...prev.subheadings, ""] }))
+                    }
+                  >
+                    Add
+                  </button>
+                </div>
+                <div className="subheading-list">
+                  {form.subheadings.map((value, index) => (
+                    <div className="subheading-item" key={index}>
+                      <input
+                        placeholder={`Subheading ${index + 1}`}
+                        value={value}
+                        onChange={(e) => {
+                          const next = [...form.subheadings];
+                          next[index] = e.target.value;
+                          setForm((prev) => ({ ...prev, subheadings: next }));
+                        }}
+                      />
+                      {form.subheadings.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const next = form.subheadings.filter((_, idx) => idx !== index);
+                            setForm((prev) => ({ ...prev, subheadings: next }));
+                          }}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
               <div className="form-group">
                 <select
                   value={form.type}
                   onChange={(e) =>
-                    setForm({
-                      ...form,
-                      type: e.target.value,
-                    })
+                    handleTypeChange(e.target.value)
                   }
                 >
                   <option value="theory">Theory</option>
                   <option value="video">Video</option>
                   <option value="pdf">PDF</option>
-                  <option value="document">Document</option>
                 </select>
               </div>
-              <div className="form-group">
-                <input type="file" onChange={handleFileChange} />
-              </div>
+              {form.type === "theory" ? (
+                <div className="form-group">
+                  <textarea
+                    placeholder="Theory content"
+                    value={form.description}
+                    onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  />
+                </div>
+              ) : (
+                <div className="form-group">
+                  <input
+                    type="file"
+                    accept={form.type === "pdf" ? ".pdf" : "video/*"}
+                    onChange={handleFileChange}
+                  />
+                </div>
+              )}
               <div className="modal-actions">
                 <button className="primary-btn" onClick={handleSubmit}>
                   {editLessonId ? "Updated" : "Add"}

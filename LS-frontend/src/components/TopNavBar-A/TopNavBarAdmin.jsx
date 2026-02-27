@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
-import { getCurrentUser, onProfileUpdated } from "../../services/userProfileStore";
+import { useCurrentUser } from "../../hooks/useCurrentUser";
 import "./TopNavBarAdmin.scss";
 
 function formatRelativeTime(dateValue) {
@@ -26,7 +26,7 @@ function TopNavBarAdmin() {
   const panelRef = useRef(null);
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
-  const [currentUser, setCurrentUser] = useState(() => getCurrentUser());
+  const { currentUser } = useCurrentUser();
 
   const pageMap = {
     "/admin-layout/dashboard": { title: "System Overview", subtitle: "Platform-wide health and controls" },
@@ -47,12 +47,6 @@ function TopNavBarAdmin() {
         : location.pathname;
 
   const pageMeta = pageMap[normalizedPath] || pageMap["/admin-layout/dashboard"];
-
-  useEffect(() => {
-    const sync = () => setCurrentUser(getCurrentUser());
-    sync();
-    return onProfileUpdated(sync);
-  }, []);
 
   useEffect(() => {
     const userId = currentUser?.id || currentUser?.userId;
