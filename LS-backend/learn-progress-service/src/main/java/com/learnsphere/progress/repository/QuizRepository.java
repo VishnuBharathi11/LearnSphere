@@ -10,5 +10,6 @@ import com.learnsphere.progress.entity.Quiz;
 public interface QuizRepository extends MongoRepository<Quiz, String> {
     Optional<Quiz> findByCourseId(String courseId);
     Optional<Quiz> findByCourseIdAndAssessmentTypeAndLessonId(String courseId, String assessmentType, String lessonId);
+    List<Quiz> findByCourseIdAndAssessmentTypeOrderByUpdatedAtDesc(String courseId, String assessmentType);
     List<Quiz> findByCourseIdOrderByUpdatedAtDesc(String courseId);
 }

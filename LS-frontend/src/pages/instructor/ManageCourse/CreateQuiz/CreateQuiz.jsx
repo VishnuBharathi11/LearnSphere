@@ -33,7 +33,44 @@ function CreateQuiz() {
   const [lessonId, setLessonId] = useState("");
   const [lessonTitle, setLessonTitle] = useState("");
   const [lessons, setLessons] = useState([]);
+  const [existingQuizzes, setExistingQuizzes] = useState([]);
   const [message, setMessage] = useState({ type: "", text: "" });
+
+  const emptyQuestion = () => ({
+    question: "",
+    points: 10,
+    options: [
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+      { text: "", isCorrect: false },
+    ],
+  });
+
+  const optionIsCorrect = (option) => Boolean(option?.isCorrect ?? option?.correct);
+
+  const normalizeQuestions = (questionList) => {
+    if (!Array.isArray(questionList)) return [];
+    return questionList.map((question, index) => ({
+      id: question?.id || `${Date.now()}-${index}`,
+      question: question?.question || "",
+      points: Number(question?.points || 1),
+      options: Array.isArray(question?.options)
+        ? question.options.map((option) => ({
+            text: option?.text || "",
+            isCorrect: optionIsCorrect(option),
+          }))
+        : [],
+    }));
+  };
+
+  const applyQuizForm = (quizData) => {
+    setQuizTitle(quizData?.quizTitle || "");
+    setDescription(quizData?.description || "");
+    setPassingScore(quizData?.passingScore || 70);
+    setTimeLimit(quizData?.timeLimit || 30);
+    setQuestions(normalizeQuestions(quizData?.questions));
+  };
 
   useEffect(() => {
     let active = true;
@@ -60,18 +97,9 @@ function CreateQuiz() {
           setLessons([]);
         }
 
-        const existingQuizzes = await getCourseQuizzesByCourseId(String(courseId));
-        if (!active || !Array.isArray(existingQuizzes) || existingQuizzes.length === 0) return;
-
-        const defaultQuiz = existingQuizzes[0];
-        setQuizTitle(defaultQuiz.quizTitle || "");
-        setDescription(defaultQuiz.description || "");
-        setPassingScore(defaultQuiz.passingScore || 70);
-        setTimeLimit(defaultQuiz.timeLimit || 30);
-        setQuestions(Array.isArray(defaultQuiz.questions) ? defaultQuiz.questions : []);
-        setAssessmentType(String(defaultQuiz.assessmentType || "FINAL").toUpperCase());
-        setLessonId(defaultQuiz.lessonId || "");
-        setLessonTitle(defaultQuiz.lessonTitle || "");
+        const loadedQuizzes = await getCourseQuizzesByCourseId(String(courseId));
+        if (!active) return;
+        setExistingQuizzes(Array.isArray(loadedQuizzes) ? loadedQuizzes : []);
       } catch {
         if (!active) return;
         setCourse(null);
@@ -84,6 +112,30 @@ function CreateQuiz() {
       active = false;
     };
   }, [courseId, currentUser?.email, currentUser?.id]);
+
+  useEffect(() => {
+    const scopedQuiz =
+      assessmentType === "LESSON"
+        ? existingQuizzes.find(
+            (quiz) =>
+              String(quiz.assessmentType || "").toUpperCase() === "LESSON" &&
+              String(quiz.lessonId || "") === String(lessonId || "")
+          )
+        : existingQuizzes.find((quiz) => String(quiz.assessmentType || "FINAL").toUpperCase() === "FINAL");
+
+    if (scopedQuiz) {
+      applyQuizForm(scopedQuiz);
+      if (assessmentType === "LESSON") {
+        setLessonTitle(scopedQuiz.lessonTitle || "");
+      }
+      return;
+    }
+
+    applyQuizForm(null);
+    if (assessmentType === "FINAL") {
+      setLessonTitle("");
+    }
+  }, [assessmentType, lessonId, existingQuizzes]);
 
   if (loadingCourse) {
     return <p style={{ padding: 40 }}>Loading course...</p>;
@@ -117,23 +169,14 @@ function CreateQuiz() {
       setMessage({ type: "error", text: "All options must be filled." });
       return;
     }
-    const correctCount = currentQuestion.options.filter((o) => o.isCorrect).length;
+    const correctCount = currentQuestion.options.filter((o) => optionIsCorrect(o)).length;
     if (correctCount !== 1) {
       setMessage({ type: "error", text: "Exactly one correct answer must be selected." });
       return;
     }
 
     setQuestions((prev) => [...prev, { id: String(Date.now()), ...currentQuestion }]);
-    setCurrentQuestion({
-      question: "",
-      points: 10,
-      options: [
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-        { text: "", isCorrect: false },
-      ],
-    });
+    setCurrentQuestion(emptyQuestion());
   };
 
   const saveQuiz = async () => {
@@ -257,6 +300,7 @@ function CreateQuiz() {
             <div key={i} className="option-row">
               <input type="radio" name="correct" checked={opt.isCorrect} onChange={() => setCorrectOption(i)} />
               <input
+                type="text"
                 value={opt.text}
                 onChange={(e) => {
                   const updated = [...currentQuestion.options];
@@ -279,8 +323,8 @@ function CreateQuiz() {
               <div key={q.id} className="question-preview">
                 <strong>{q.question}</strong>
                 {q.options.map((o, j) => (
-                  <div key={j} className={o.isCorrect ? "correct" : ""}>
-                    {o.isCorrect && <CheckCircle size={14} />} {o.text}
+                  <div key={j} className={optionIsCorrect(o) ? "correct" : ""}>
+                    {optionIsCorrect(o) && <CheckCircle size={14} />} {o.text}
                   </div>
                 ))}
                 <button onClick={() => setQuestions((prev) => prev.filter((item) => item.id !== q.id))}>

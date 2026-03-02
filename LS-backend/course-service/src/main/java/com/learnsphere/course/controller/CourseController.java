@@ -138,8 +138,8 @@ public class CourseController {
 		CourseContent content = CourseContent.builder()
 				.courseId(id)
 				.title(request.getTitle())
-				.heading(request.getHeading())
-				.subheadings(request.getSubheadings())
+				.heading(null)
+				.subheadings(List.of())
 				.description(request.getDescription())
 				.type(request.getType())
 				.fileUrl(request.getFileUrl())
@@ -164,8 +164,8 @@ public class CourseController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Lesson does not belong to course");
 		}
 		content.setTitle(request.getTitle());
-		content.setHeading(request.getHeading());
-		content.setSubheadings(request.getSubheadings());
+		content.setHeading(null);
+		content.setSubheadings(List.of());
 		content.setDescription(request.getDescription());
 		content.setType(request.getType());
 		content.setFileUrl(request.getFileUrl());
@@ -191,8 +191,8 @@ public class CourseController {
 				.id(content.getId())
 				.courseId(content.getCourseId())
 				.title(content.getTitle())
-				.heading(content.getHeading())
-				.subheadings(content.getSubheadings())
+				.heading(null)
+				.subheadings(List.of())
 				.description(content.getDescription())
 				.type(content.getType())
 				.fileUrl(content.getFileUrl())

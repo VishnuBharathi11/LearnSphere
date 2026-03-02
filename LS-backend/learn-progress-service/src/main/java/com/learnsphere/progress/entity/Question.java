@@ -3,6 +3,9 @@ package com.learnsphere.progress.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,6 +29,9 @@ public class Question {
     @AllArgsConstructor
     public static class Option {
         private String text;
+
+        @JsonProperty("isCorrect")
+        @JsonAlias("correct")
         private boolean isCorrect;
     }
 }

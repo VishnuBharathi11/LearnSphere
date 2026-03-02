@@ -17,8 +17,6 @@ function AddLesson() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [form, setForm] = useState({
     title: "",
-    heading: "",
-    subheadings: [],
     description: "",
     type: "theory",
     file: null,
@@ -99,7 +97,6 @@ function AddLesson() {
 
   const validate = () => {
     if (!form.title.trim()) return "Lesson title required";
-    if (!form.heading.trim()) return "Heading is required";
     if (form.type === "theory") {
       if (!form.description.trim()) return "Add lesson content";
     } else if (!form.fileUrl) {
@@ -123,7 +120,7 @@ function AddLesson() {
     try {
       const saved = await createCourseLesson(id, {
         title: form.title.trim(),
-        heading: form.heading.trim(),
+        heading: null,
         subheadings: [],
         description: form.type === "theory" ? form.description.trim() : "",
         type: form.type,
@@ -167,14 +164,6 @@ function AddLesson() {
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
                 placeholder="Enter lesson title"
-              />
-            </label>
-            <label>
-              Heading
-              <input
-                value={form.heading}
-                onChange={(e) => setForm({ ...form, heading: e.target.value })}
-                placeholder="Heading"
               />
             </label>
           </div>

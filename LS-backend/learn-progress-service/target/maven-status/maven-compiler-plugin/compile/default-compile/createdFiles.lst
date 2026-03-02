@@ -25,6 +25,7 @@ com\learnsphere\progress\entity\Quiz.class
 com\learnsphere\progress\repository\CourseProgressRepository.class
 com\learnsphere\progress\config\RestConfig.class
 com\learnsphere\progress\controller\AssessmentController.class
+com\learnsphere\progress\config\CourseProgressIndexInitializer.class
 com\learnsphere\progress\dto\CourseProgressResponse.class
 com\learnsphere\progress\entity\Question$QuestionBuilder.class
 com\learnsphere\progress\entity\QuizAttempt.class

@@ -26,26 +26,24 @@ public class AssessmentServiceImpl implements AssessmentService {
             throw new IllegalArgumentException("Course id is required");
         }
 
-        Quiz existing = quizRepository.findByCourseId(request.getCourseId()).orElse(null);
+        String courseId = request.getCourseId().trim();
         String assessmentType = isBlank(request.getAssessmentType()) ? "FINAL" : request.getAssessmentType().trim().toUpperCase();
-        String lessonId = isBlank(request.getLessonId()) ? "NONE" : request.getLessonId().trim();
-        Optional<Quiz> scoped = quizRepository.findByCourseIdAndAssessmentTypeAndLessonId(
-            request.getCourseId().trim(),
-            assessmentType,
-            lessonId
-        );
-        if (scoped.isPresent()) {
-            existing = scoped.get();
+        String lessonId = isBlank(request.getLessonId()) ? null : request.getLessonId().trim();
+
+        if ("LESSON".equals(assessmentType) && isBlank(lessonId)) {
+            throw new IllegalArgumentException("Lesson assessment must include lessonId");
         }
+
+        Quiz existing = findScopedQuiz(courseId, assessmentType, lessonId).orElse(null);
         Instant now = Instant.now();
 
         Quiz target = existing == null ? new Quiz() : existing;
-        target.setCourseId(request.getCourseId().trim());
+        target.setCourseId(courseId);
         target.setInstructorId(isBlank(request.getInstructorId()) ? "unknown" : request.getInstructorId().trim());
         target.setQuizTitle(isBlank(request.getQuizTitle()) ? "Course Assessment" : request.getQuizTitle().trim());
         target.setDescription(request.getDescription() == null ? "" : request.getDescription().trim());
         target.setAssessmentType(assessmentType);
-        target.setLessonId("NONE".equals(lessonId) ? null : lessonId);
+        target.setLessonId("LESSON".equals(assessmentType) ? lessonId : null);
         target.setLessonTitle(isBlank(request.getLessonTitle()) ? null : request.getLessonTitle().trim());
         target.setPassingScore(request.getPassingScore() == null ? 60 : request.getPassingScore());
         target.setTimeLimit(request.getTimeLimit() == null ? 20 : request.getTimeLimit());
@@ -63,7 +61,11 @@ public class AssessmentServiceImpl implements AssessmentService {
         if (isBlank(courseId)) {
             return Optional.empty();
         }
-        return quizRepository.findByCourseId(courseId.trim());
+        List<Quiz> finals = quizRepository.findByCourseIdAndAssessmentTypeOrderByUpdatedAtDesc(courseId.trim(), "FINAL");
+        if (finals.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(finals.get(0));
     }
 
     @Override
@@ -72,6 +74,16 @@ public class AssessmentServiceImpl implements AssessmentService {
             return List.of();
         }
         return quizRepository.findByCourseIdOrderByUpdatedAtDesc(courseId.trim());
+    }
+
+    private Optional<Quiz> findScopedQuiz(String courseId, String assessmentType, String lessonId) {
+        if ("LESSON".equals(assessmentType)) {
+            return quizRepository.findByCourseIdAndAssessmentTypeAndLessonId(courseId, "LESSON", lessonId);
+        }
+        List<Quiz> finals = quizRepository.findByCourseIdAndAssessmentTypeOrderByUpdatedAtDesc(courseId, "FINAL");
+        return finals.stream()
+            .filter(quiz -> isBlank(quiz.getLessonId()))
+            .findFirst();
     }
 
     private List<Question> normalizeQuestions(List<Question> questions) {

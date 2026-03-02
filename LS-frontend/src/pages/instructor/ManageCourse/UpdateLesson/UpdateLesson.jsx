@@ -32,8 +32,6 @@ function UpdateLesson() {
   const [message, setMessage] = useState({ type: "", text: "" });
   const [form, setForm] = useState({
     title: "",
-    heading: "",
-    subheadings: [""],
     description: "",
     type: "video",
     file: null,
@@ -119,9 +117,6 @@ function UpdateLesson() {
 
   const validate = () => {
     if (!form.title.trim()) return "Lesson title required";
-    if (!form.heading.trim()) return "Heading is required";
-    const cleanedSubheadings = form.subheadings.map((s) => s.trim()).filter(Boolean);
-    if (cleanedSubheadings.length === 0) return "Add at least one subheading";
     if (form.type === "theory") {
       if (!form.description.trim()) return "Add theory content";
     } else if (!form.fileUrl) {
@@ -150,11 +145,10 @@ function UpdateLesson() {
       return;
     }
     try {
-      const cleanedSubheadings = form.subheadings.map((s) => s.trim()).filter(Boolean);
       const updatedLesson = await updateCourseLesson(id, editLessonId, {
         title: form.title.trim(),
-        heading: form.heading.trim(),
-        subheadings: cleanedSubheadings,
+        heading: null,
+        subheadings: [],
         description: form.description.trim(),
         type: form.type,
         fileUrl: form.fileUrl || "",
@@ -167,8 +161,6 @@ function UpdateLesson() {
       );
       setForm({
         title: "",
-        heading: "",
-        subheadings: [""],
         description: "",
         type: "video",
         file: null,
@@ -198,8 +190,6 @@ function UpdateLesson() {
   const openEdit = (lesson) => {
     setForm({
       title: lesson.title,
-      heading: lesson.heading || "",
-      subheadings: Array.isArray(lesson.subheadings) && lesson.subheadings.length > 0 ? lesson.subheadings : [""],
       description: lesson.description || "",
       type: lesson.type,
       file: null,
@@ -276,22 +266,12 @@ function UpdateLesson() {
             </div>
           ) : (
             lessons.map((lesson, index) => {
-              const metaText = [lesson.heading, ...(Array.isArray(lesson.subheadings) ? lesson.subheadings : [])]
-                .map((text) => String(text || "").trim())
-                .filter(Boolean)
-                .join(" | ");
               return (
                 <div className="lesson-row" key={lesson.id}>
                   <div className="lesson-index">{index + 1}</div>
                   <div className="lesson-icon">{lessonIcon(lesson.type)}</div>
                   <div className="lesson-info">
                     <h3>{lesson.title}</h3>
-                    <div className="lesson-meta">
-                      <span className={`lesson-type-pill ${lesson.type}`}>
-                        {lesson.type.toUpperCase()}
-                      </span>
-                      {metaText ? <span className="lesson-meta-text">{metaText}</span> : null}
-                    </div>
                   </div>
                   <div className="lesson-actions">
                     <button onClick={() => openEdit(lesson)}>
@@ -319,52 +299,6 @@ function UpdateLesson() {
                   value={form.title}
                   onChange={(e) => setForm({ ...form, title: e.target.value })}
                 />
-              </div>
-              <div className="form-group">
-                <input
-                  placeholder="Heading"
-                  value={form.heading}
-                  onChange={(e) => setForm({ ...form, heading: e.target.value })}
-                />
-              </div>
-              <div className="form-group subheading-group">
-                <div className="subheading-header">
-                  <span>Subheadings</span>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setForm((prev) => ({ ...prev, subheadings: [...prev.subheadings, ""] }))
-                    }
-                  >
-                    Add
-                  </button>
-                </div>
-                <div className="subheading-list">
-                  {form.subheadings.map((value, index) => (
-                    <div className="subheading-item" key={index}>
-                      <input
-                        placeholder={`Subheading ${index + 1}`}
-                        value={value}
-                        onChange={(e) => {
-                          const next = [...form.subheadings];
-                          next[index] = e.target.value;
-                          setForm((prev) => ({ ...prev, subheadings: next }));
-                        }}
-                      />
-                      {form.subheadings.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const next = form.subheadings.filter((_, idx) => idx !== index);
-                            setForm((prev) => ({ ...prev, subheadings: next }));
-                          }}
-                        >
-                          Remove
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
               </div>
               <div className="form-group">
                 <select

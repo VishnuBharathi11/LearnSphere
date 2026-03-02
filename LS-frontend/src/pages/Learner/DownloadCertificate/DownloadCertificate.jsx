@@ -74,35 +74,57 @@ function DownloadCertificate() {
     };
   }, [courseLessons, courseProgress, courseName, currentUser?.name, currentUser?.username, id, userId]);
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!certificate) return;
 
-    const printable = window.open("", "_blank");
-    if (!printable) return;
+    const image = new Image();
+    image.src = certificateImage;
 
-    printable.document.write(`
-      <html>
-        <head>
-          <title>${certificate.courseName} Certificate</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 24px; text-align: center; }
-            img { max-width: 700px; width: 100%; border: 1px solid #ddd; border-radius: 12px; }
-            h1 { margin-bottom: 8px; }
-            p { color: #475569; margin: 6px 0; }
-          </style>
-        </head>
-        <body>
-          <h1>${certificate.courseName} Certificate</h1>
-          <img src="${certificateImage}" alt="Certificate" />
-          <p>Learner: ${certificate.learnerName}</p>
-          <p>Issued: ${certificate.issuedDate}</p>
-          <p>Certificate ID: ${certificate.certificateId}</p>
-        </body>
-      </html>
-    `);
+    await new Promise((resolve, reject) => {
+      image.onload = resolve;
+      image.onerror = reject;
+    });
 
-    printable.document.close();
-    printable.print();
+    const canvas = document.createElement("canvas");
+    canvas.width = image.naturalWidth;
+    canvas.height = image.naturalHeight;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const textColor = "#2f3e67";
+    const centerX = canvas.width * 0.34;
+    const learnerY = canvas.height * 0.485;
+    const courseY = canvas.height * 0.642;
+    const issuedY = canvas.height * 0.785;
+    const certificateIdY = canvas.height * 0.835;
+
+    ctx.fillStyle = textColor;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.font = `${Math.max(24, Math.round(canvas.width * 0.046))}px Georgia`;
+    ctx.fillText(certificate.learnerName, centerX, learnerY, canvas.width * 0.62);
+
+    ctx.font = `${Math.max(18, Math.round(canvas.width * 0.026))}px Georgia`;
+    ctx.fillText(certificate.courseName, centerX, courseY, canvas.width * 0.62);
+
+    ctx.textAlign = "left";
+    ctx.font = `${Math.max(12, Math.round(canvas.width * 0.0145))}px Arial`;
+    ctx.fillText(`Issued: ${certificate.issuedDate}`, canvas.width * 0.08, issuedY, canvas.width * 0.56);
+    ctx.fillText(
+      `Certificate ID: ${certificate.certificateId}`,
+      canvas.width * 0.08,
+      certificateIdY,
+      canvas.width * 0.7
+    );
+
+    const downloadLink = document.createElement("a");
+    downloadLink.href = canvas.toDataURL("image/png");
+    downloadLink.download = `${certificate.courseName.replace(/[^a-zA-Z0-9-_ ]/g, "")} Certificate.png`;
+    downloadLink.click();
   };
 
   if (!certificate) {
@@ -116,52 +138,60 @@ function DownloadCertificate() {
   }
 
   return (
-    <div className="certificate-page">
-      <div className="certificate-header">
+    <div className="download-certificate-page">
+      <div className="download-certificate-header">
         <div>
           <h2>{certificate.courseName} Certificate</h2>
         </div>
       </div>
 
-      <div className="certificate-layout">
-        <div className="certificate-preview">
-          <img src={certificateImage} alt="Certificate" className="certificate-image" />
+      <div className="download-certificate-layout">
+        <div className="download-certificate-preview">
+          <div className="download-certificate-template">
+            <img src={certificateImage} alt="Certificate" className="download-certificate-image" />
+            <div className="download-certificate-overlay download-certificate-learner">{certificate.learnerName}</div>
+            <div className="download-certificate-overlay download-certificate-course">{certificate.courseName}</div>
+            <div className="download-certificate-overlay download-certificate-issued">Issued: {certificate.issuedDate}</div>
+            <div className="download-certificate-overlay download-certificate-id">Certificate ID: {certificate.certificateId}</div>
+          </div>
         </div>
 
-        <div className="certificate-actions">
-          <div className="cert-meta">
+        <div className="download-certificate-actions">
+          <div className="download-cert-meta">
             <p>
               <span>Course</span>
-              {certificate.courseName}
+              <strong>{certificate.courseName}</strong>
             </p>
             <p>
               <span>Learner</span>
-              {certificate.learnerName}
+              <strong>{certificate.learnerName}</strong>
             </p>
             <p>
               <span>Issued</span>
-              {certificate.issuedDate}
+              <strong>{certificate.issuedDate}</strong>
             </p>
             <p>
               <span>Certificate</span>
-              {certificate.certificateId}
+              <strong>{certificate.certificateId}</strong>
             </p>
           </div>
 
-          <button className="download-btn" onClick={handleDownload}>
-            Download PDF
-          </button>
-          <button
-            className="share-btn"
-            onClick={() =>
-              window.open(
-                "https://www.linkedin.com/sharing/share-offsite/?url=https://learnsphere.com",
-                "_blank"
-              )
-            }
-          >
-            Share on LinkedIn
-          </button>
+          <div className="download-cert-action-row">
+            <button className="download-cert-btn" onClick={handleDownload}>
+              Download Certificate
+            </button>
+            <button
+              className="download-cert-share-btn"
+              onClick={() =>
+                window.open(
+                  "https://www.linkedin.com/sharing/share-offsite/?url=https://learnsphere.com",
+                  "_blank"
+                )
+              }
+            >
+              Share on LinkedIn
+            </button>
+          </div>
         </div>
       </div>
     </div>

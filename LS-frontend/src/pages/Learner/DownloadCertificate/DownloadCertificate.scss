@@ -1,204 +1,185 @@
-* {
-  box-sizing: border-box;
-  font-family: "Inter", sans-serif;
-}
-
-.certificate-page {
+.download-certificate-page {
   background: #f6f8fc;
   min-height: 100vh;
   padding: 20px;
-}
-
-.certificate-header {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: 30px;
-}
-
-.certificate-header h2 {
+  box-sizing: border-box;
   font-family: "Poppins", sans-serif;
-  font-size: 26px;
-  font-weight: 600;
 }
 
-.certificate-layout {
-  display: grid;
-  grid-template-columns: 2.3fr 1fr;
-  gap: 35px;
-}
-
-.certificate-list {
-  display: grid;
-  gap: 14px;
-}
-
-.certificate-empty {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 24px;
-
-  h3 {
-    margin-bottom: 6px;
-  }
-
-  p {
-    color: #64748b;
-    margin-bottom: 12px;
-  }
-
-  button {
-    border: none;
-    background: #2563eb;
-    color: #fff;
-    border-radius: 10px;
-    padding: 10px 14px;
-    cursor: pointer;
-  }
-}
-
-.certificate-list-card {
+.download-certificate-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  border-radius: 14px;
-  padding: 16px;
-
-  h4 {
-    margin-bottom: 4px;
-  }
-
-  p {
-    color: #64748b;
-    font-size: 13px;
-  }
+  margin-bottom: 24px;
 }
 
-.certificate-list-actions {
-  display: flex;
-  gap: 8px;
-
-  button {
-    border: 1px solid #dbe1ea;
-    background: #fff;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-
-    &:last-child {
-      background: #2563eb;
-      border-color: #2563eb;
-      color: #fff;
-    }
-  }
+.download-certificate-header h2 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.15;
+  font-weight: 700;
+  color: #0f172a;
 }
 
-.certificate-preview {
-  background: white;
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: auto;
-  min-height: 650px;
+.download-certificate-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  gap: 20px;
+  align-items: start;
 }
 
-.certificate-image {
+.download-certificate-preview {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.download-certificate-template {
+  position: relative;
+  width: 100%;
+  max-width: 980px;
+}
+
+.download-certificate-image {
   width: 100%;
   height: auto;
-  max-height: 100%;
-  object-fit: contain;
-  border-radius: 14px;
+  display: block;
+  border-radius: 10px;
 }
 
-.certificate-actions {
-  background: white;
-  border-radius: 20px;
-  padding: 28px;
-  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.08);
+.download-certificate-overlay {
+  position: absolute;
+  color: #2f3e67;
+  pointer-events: none;
+  text-align: center;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
-.certificate-actions h3 {
-  font-size: 16px;
-  margin-bottom: 12px;
+.download-certificate-learner {
+  left: 34%;
+  top: 48.5%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  font-size: clamp(18px, 1.95vw, 42px);
+  font-weight: 500;
 }
 
-.certificate-actions h4 {
-  font-size: 14px;
-  margin-top: 18px;
-  margin-bottom: 6px;
+.download-certificate-course {
+  left: 34%;
+  top: 64.2%;
+  transform: translate(-50%, -50%);
+  width: 58%;
+  font-size: clamp(13px, 1.1vw, 24px);
 }
 
-.certificate-actions input {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
-  font-size: 13px;
-  background: #f9fafb;
+.download-certificate-issued {
+  left: 8%;
+  top: 78.5%;
+  transform: translateY(-50%);
+  text-align: left;
+  width: 62%;
+  font-size: clamp(9px, 0.8vw, 15px);
+  font-family: "Poppins", sans-serif;
 }
-.cert-meta{
+
+.download-certificate-id {
+  left: 8%;
+  top: 83.5%;
+  transform: translateY(-50%);
+  text-align: left;
+  width: 62%;
+  font-size: clamp(9px, 0.8vw, 15px);
+  font-family: "Poppins", sans-serif;
+}
+
+.download-certificate-actions {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 18px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+.download-cert-meta {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-bottom: 18px;
-  p{
-    font-size: 14px;
-    color: #374151;
-    display: flex;
-    justify-content: space-between;
-  }
-  span{
-    color: #6b7280;
-  }
+  margin-bottom: 16px;
 }
-.download-btn {
-  display: block;
-  margin-top: 22px;
-  width: 100%;
-  padding: 12px;
-  background:#4f46e5;
-  color: white;
-  border-radius: 10px;
-  border: none;
-  text-align: center;
-  text-decoration: none;
+
+.download-cert-meta p {
+  margin: 0;
+  font-size: 14px;
+  color: #334155;
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.download-cert-meta span {
+  color: #64748b;
   font-weight: 500;
 }
 
-.download-btn:hover {
-  background:  #4338ca;
+.download-cert-meta strong {
+  color: #1e293b;
+  text-align: left;
+  word-break: break-word;
 }
-.share-btn{
-  font-weight: 500;
+
+.download-cert-action-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.download-cert-btn,
+.download-cert-share-btn {
   width: 100%;
-  padding: 11px;
-  margin-top: 10px;
+  min-height: 44px;
+  padding: 10px 14px;
   border-radius: 10px;
-  border: 1px solid #e5e7eb;
-  background-color: #f9fafb;
+  font-size: 14px;
+  line-height: 1.2;
+  font-weight: 600;
   cursor: pointer;
 }
 
-@media (max-width: 980px) {
-  .certificate-layout {
-    grid-template-columns: 1fr;
-  }
+.download-cert-btn {
+  border: none;
+  background: #4f46e5;
+  color: #ffffff;
+}
 
-  .certificate-preview {
-    min-height: auto;
-  }
+.download-cert-btn:hover {
+  background: #4338ca;
+}
 
-  .certificate-list-card {
-    flex-direction: column;
-    align-items: flex-start;
+.download-cert-share-btn {
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+}
+
+.download-cert-share-btn:hover {
+  background-color: #f8fafc;
+}
+
+@media (max-width: 1200px) {
+  .download-certificate-header h2 {
+    font-size: 36px;
   }
 }
 
+@media (max-width: 980px) {
+  .download-certificate-layout {
+    grid-template-columns: 1fr;
+  }
 
+  .download-certificate-actions {
+    order: 2;
+  }
+}

@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { ArrowLeft, ArrowRight, Clock3 } from "lucide-react";
 import { getCourseQuizzesByCourseId, saveFinalAssessmentDb, saveLessonAssessmentDb } from "../../../services/progressApi";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
+import "./TestTaking.scss";
 
 function TestTaking() {
   const navigate = useNavigate();
@@ -12,22 +14,20 @@ function TestTaking() {
   const userId = currentUser?.id || currentUser?.userId;
   const mode = searchParams.get("mode") === "lesson" ? "lesson" : "final";
   const lessonId = searchParams.get("lessonId") || "";
-  const lessonIndex = Number(searchParams.get("lessonIndex") || 0);
 
   const [quiz, setQuiz] = useState(null);
   const [loadingQuiz, setLoadingQuiz] = useState(true);
-
-  const questions = useMemo(() => {
-    if (!quiz?.questions || !Array.isArray(quiz.questions)) return [];
-    if (mode === "lesson") {
-      if (quiz.questions.length === 0) return [];
-      return [quiz.questions[Math.abs(lessonIndex) % quiz.questions.length]];
-    }
-    return quiz.questions;
-  }, [lessonIndex, mode, quiz]);
-
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState({});
+  const [reviewFlags, setReviewFlags] = useState({});
+  const [secondsLeft, setSecondsLeft] = useState(0);
+  const optionIsCorrect = (option) => Boolean(option?.isCorrect ?? option?.correct);
+
+  useEffect(() => {
+    if (!userId) {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate, userId]);
 
   useEffect(() => {
     let active = true;
@@ -57,38 +57,24 @@ function TestTaking() {
     return () => {
       active = false;
     };
-  }, [courseId]);
+  }, [courseId, lessonId, mode]);
 
-  if (!userId) {
-    navigate("/login");
-    return null;
-  }
+  const questions = useMemo(() => {
+    if (!Array.isArray(quiz?.questions)) return [];
+    return quiz.questions;
+  }, [quiz]);
 
-  if (loadingQuiz) {
-    return (
-      <div className="test-container">
-        <h2>Loading quiz...</h2>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (!quiz) return;
+    const minutes = Number(quiz.timeLimit || 20);
+    setSecondsLeft(Math.max(0, minutes * 60));
+  }, [quiz]);
 
-  if (!quiz || questions.length === 0) {
-    return (
-      <div className="test-container">
-        <h2>No quiz available for this assessment.</h2>
-        <button onClick={() => navigate(-1)}>Go Back</button>
-      </div>
-    );
-  }
-
-  const handleOptionClick = (index) => {
-    setAnswers({ ...answers, [current]: index });
-  };
-
-  const handleSubmit = () => {
+  const finishAssessment = () => {
+    if (!quiz || questions.length === 0) return;
     let score = 0;
     questions.forEach((q, index) => {
-      const correctIndex = q.options.findIndex((o) => o.isCorrect);
+      const correctIndex = q.options.findIndex((o) => optionIsCorrect(o));
       if (answers[index] === correctIndex) score += 1;
     });
 
@@ -118,48 +104,115 @@ function TestTaking() {
         mode,
         lessonId,
       },
+      replace: true,
     });
   };
 
+  useEffect(() => {
+    if (!quiz || secondsLeft <= 0) return;
+    const timer = window.setInterval(() => {
+      setSecondsLeft((prev) => {
+        if (prev <= 1) {
+          window.clearInterval(timer);
+          finishAssessment();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [quiz, secondsLeft]);
+
+  const progressPercent = questions.length ? Math.round(((current + 1) / questions.length) * 100) : 0;
+  const minutesView = String(Math.floor(secondsLeft / 60)).padStart(2, "0");
+  const secondsView = String(secondsLeft % 60).padStart(2, "0");
+  const currentQuestion = questions[current];
+  const selectedOption = answers[current];
+
+  if (!userId) return null;
+
+  if (loadingQuiz) {
+    return <div className="test-loading">Loading assessment...</div>;
+  }
+
+  if (!quiz || !questions.length) {
+    return (
+      <div className="test-empty">
+        <h2>No quiz available for this assessment.</h2>
+        <button onClick={() => navigate(-1)}>Go Back</button>
+      </div>
+    );
+  }
+
   return (
-    <div className="test-container">
-      <div className="test-header">
-        <h2>{mode === "lesson" ? "Lesson Assessment" : quiz.quizTitle}</h2>
-        <span>
-          Question {current + 1}/{questions.length}
-        </span>
-      </div>
-      <div className="question-box">
-        <h3>{questions[current].question}</h3>
-        <div className="options">
-          {questions[current].options.map((opt, i) => (
-            <div
-              key={i}
-              className={`option${answers[current] === i ? "selected" : ""}`}
-              onClick={() => handleOptionClick(i)}
-            >
-              {opt.text}
+    <div className="assessment-attempt-page">
+      <div className="assessment-attempt-card">
+        <div className="attempt-topbar">
+          <div className="attempt-title">
+            <h3>{quiz.quizTitle || "Course Assessment"}</h3>
+            <span>{mode === "lesson" ? "Lesson Assessment" : "Final Assessment"}</span>
+          </div>
+
+          <div className="attempt-progress-wrap">
+            <span>
+              {current + 1}/{questions.length}
+            </span>
+            <div className="attempt-progress-track">
+              <div className="attempt-progress-fill" style={{ width: `${progressPercent}%` }} />
             </div>
-          ))}
+          </div>
+
+          <button
+            className={`review-btn ${reviewFlags[current] ? "active" : ""}`}
+            onClick={() => setReviewFlags((prev) => ({ ...prev, [current]: !prev[current] }))}
+          >
+            {reviewFlags[current] ? "Marked for review" : "Mark as review"}
+          </button>
+
+          <div className="attempt-timer">
+            <Clock3 size={16} />
+            <span>{minutesView}.{secondsView} Min</span>
+          </div>
         </div>
-      </div>
-      <div className="test-actions">
-        <button disabled={current === 0} onClick={() => setCurrent(current - 1)}>
-          Previous
-        </button>
-        {current < questions.length - 1 ? (
-          <button className="primary" onClick={() => setCurrent(current + 1)}>
-            Next
+
+        <div className="attempt-question-shell">
+          <p className="question-index">Question {current + 1}</p>
+          <h4>{currentQuestion.question}</h4>
+
+          <div className="attempt-options">
+            {currentQuestion.options.map((option, optionIndex) => (
+              <button
+                key={optionIndex}
+                className={`attempt-option ${selectedOption === optionIndex ? "selected" : ""}`}
+                onClick={() => setAnswers((prev) => ({ ...prev, [current]: optionIndex }))}
+              >
+                <span>{option.text}</span>
+                <span className="radio-dot" />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="attempt-actions">
+          <button className="nav-btn" disabled={current === 0} onClick={() => setCurrent((prev) => prev - 1)}>
+            <ArrowLeft size={16} />
+            Previous
           </button>
-        ) : (
-          <button className="submit" onClick={handleSubmit}>
-            Submit
-          </button>
-        )}
+
+          {current < questions.length - 1 ? (
+            <button className="nav-btn next" onClick={() => setCurrent((prev) => prev + 1)}>
+              Next
+              <ArrowRight size={16} />
+            </button>
+          ) : (
+            <button className="finish-btn" onClick={finishAssessment}>
+              Finish
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
 }
 
 export default TestTaking;
-

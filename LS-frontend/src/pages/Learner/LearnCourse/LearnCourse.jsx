@@ -1,15 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { ChevronDown, ChevronUp, Lock, MessageCircle, Reply, ThumbsUp } from "lucide-react";
 import CreateTopicModal from "../../../forum/components/CreateTopicModal";
-import ReplyBox from "../../../forum/components/ReplyBox";
-import ReplyItem from "../../../forum/components/ReplyItem";
 import useForum from "../../../forum/hooks/useForum";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getCourseLessons } from "../../../services/courseApi";
-import {
-  getCourseProgress,
-  markLessonCompletedDb,
-} from "../../../services/progressApi";
+import { getCourseProgress, markLessonCompletedDb } from "../../../services/progressApi";
 import { getCourseQuizzesByCourseId } from "../../../services/progressApi";
 import { getAdminSettings } from "../../../services/adminApi";
 import "./LearnCourse.scss";
@@ -18,17 +14,20 @@ import { getCurrentUser } from "../../../services/userProfileStore.js";
 function LearnCourse() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const courseId = String(id);
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
-  const isAdminPreview = searchParams.get("adminPreview") === "true" && String(currentUser?.role || "").toLowerCase() === "admin";
+  const isAdminPreview =
+    searchParams.get("adminPreview") === "true" && String(currentUser?.role || "").toLowerCase() === "admin";
 
-  const [activeTab, setActiveTab] = useState(searchParams.get("tab") === "discussion" ? "discussion" : "learn");
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [openLessonIndex, setOpenLessonIndex] = useState(-1);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedThreadId, setSelectedThreadId] = useState(searchParams.get("threadId") || "");
+  const [isDiscussionOpen, setIsDiscussionOpen] = useState(false);
+  const [expandedTopicId, setExpandedTopicId] = useState("");
+  const [replyDrafts, setReplyDrafts] = useState({});
+  const [composerText, setComposerText] = useState("");
   const [courseQuizzes, setCourseQuizzes] = useState([]);
   const [loadingQuiz, setLoadingQuiz] = useState(true);
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
@@ -40,11 +39,9 @@ function LearnCourse() {
     () => buildCourseLearningStateFromApi(courseLessons, courseProgress),
     [courseLessons, courseProgress]
   );
+
   const lessons = learningState.lessons;
-  const activeLesson = lessons[currentIndex];
-  const currentLessonDone = activeLesson
-    ? learningState.progress.completedLessonIds.includes(String(activeLesson.id))
-    : false;
+  const completedCount = learningState.progress.completedLessonIds.length;
 
   const {
     topics,
@@ -55,9 +52,6 @@ function LearnCourse() {
     fetchThreadById,
     threadDetail,
     addReply,
-    voteReply,
-    reportReply,
-    replyMeta,
     countReplies,
   } = useForum(courseId, currentUser);
 
@@ -84,17 +78,6 @@ function LearnCourse() {
       active = false;
     };
   }, []);
-
-  useEffect(() => {
-    if (!discussionEnabled && activeTab === "discussion") {
-      setActiveTab("learn");
-    }
-  }, [discussionEnabled, activeTab]);
-
-  useEffect(() => {
-    if (!selectedThreadId) return;
-    fetchThreadById(selectedThreadId, 0, false);
-  }, [fetchThreadById, selectedThreadId]);
 
   useEffect(() => {
     let active = true;
@@ -155,77 +138,225 @@ function LearnCourse() {
   }, [courseId, userId]);
 
   useEffect(() => {
-    if (currentIndex >= lessons.length) {
-      setCurrentIndex(0);
-    }
-  }, [currentIndex, lessons.length]);
+    if (!expandedTopicId) return;
+    fetchThreadById(expandedTopicId, 0, false);
+  }, [expandedTopicId, fetchThreadById]);
 
   const finalQuiz = useMemo(
     () => courseQuizzes.find((quiz) => String(quiz.assessmentType || "FINAL").toUpperCase() === "FINAL") || null,
     [courseQuizzes]
   );
-  const lessonQuiz = useMemo(
-    () =>
-      courseQuizzes.find(
-        (quiz) =>
-          String(quiz.assessmentType || "").toUpperCase() === "LESSON" &&
-          String(quiz.lessonId || "") === String(activeLesson?.id || "")
-      ) || null,
-    [courseQuizzes, activeLesson?.id]
-  );
 
-  const openDiscussionTab = (threadId = "") => {
-    setActiveTab("discussion");
-    const next = new URLSearchParams(searchParams);
-    next.set("tab", "discussion");
-    if (threadId) {
-      next.set("threadId", String(threadId));
-      setSelectedThreadId(String(threadId));
-    }
-    setSearchParams(next, { replace: true });
-  };
+  const getLessonQuiz = (lessonId) =>
+    courseQuizzes.find(
+      (quiz) =>
+        String(quiz.assessmentType || "").toUpperCase() === "LESSON" &&
+        String(quiz.lessonId || "") === String(lessonId || "")
+    ) || null;
 
-  const handleCompleteLesson = () => {
-    if (!activeLesson) return;
-    markLessonCompletedDb(userId, courseId, activeLesson.id)
+  const handleCompleteLesson = (lessonId, index) => {
+    markLessonCompletedDb(userId, courseId, lessonId)
       .then((progress) => setCourseProgress(progress || null))
       .catch(() => null);
-    const next = Math.min(currentIndex + 1, lessons.length - 1);
-    setCurrentIndex(next);
+    setOpenLessonIndex(Math.min(index + 1, lessons.length - 1));
   };
 
-  const renderLessonContent = () => {
-    if (!activeLesson) return null;
+  const getAuthorName = (topic) => topic?.authorName || topic?.createdByName || topic?.userName || "Learner";
 
-    const heading = activeLesson.heading || activeLesson.title || "Lesson";
-    const subheading =
-      (Array.isArray(activeLesson.subheadings) && activeLesson.subheadings.length > 0
-        ? activeLesson.subheadings.join(" • ")
-        : activeLesson.subheading) ||
-      (activeLesson.type ? `${String(activeLesson.type).toUpperCase()} lesson` : "Theory module");
+  const toggleTopicReplies = (topicId) => {
+    setExpandedTopicId((prev) => (String(prev) === String(topicId) ? "" : String(topicId)));
+  };
+
+  const activeThread =
+    expandedTopicId && threadDetail && String(threadDetail.id || "") === String(expandedTopicId)
+      ? threadDetail
+      : null;
+
+  const submitInlineReply = async (topicId) => {
+    const text = String(replyDrafts[topicId] || "").trim();
+    if (!text) return;
+    const result = await addReply(topicId, { content: text });
+    if (result?.ok) {
+      setReplyDrafts((prev) => ({ ...prev, [topicId]: "" }));
+      fetchThreadById(topicId, 0, false);
+    }
+  };
+
+  const renderLessonPanel = (lesson, index) => {
+    const lessonDone = learningState.progress.completedLessonIds.includes(String(lesson.id));
+    const lessonQuiz = getLessonQuiz(lesson.id);
 
     return (
-      <div className="lesson-renderer">
-        <h2>{heading}</h2>
-        <h4>{subheading}</h4>
+      <div className="lesson-panel" key={`panel-${lesson.id}-${index}`}>
+        {lesson.description ? <p className="lesson-text">{lesson.description}</p> : null}
 
-        {activeLesson.description ? <p className="lesson-text">{activeLesson.description}</p> : null}
-
-        {activeLesson.type === "video" && activeLesson.fileUrl ? (
-          <video className="lesson-video" controls src={activeLesson.fileUrl}>
+        {lesson.type === "video" && lesson.fileUrl ? (
+          <video className="lesson-video" controls src={lesson.fileUrl}>
             Your browser does not support video playback.
           </video>
         ) : null}
 
-        {activeLesson.type === "pdf" && activeLesson.fileUrl ? (
-          <iframe className="lesson-pdf" src={activeLesson.fileUrl} title={activeLesson.title} />
+        {lesson.type === "pdf" && lesson.fileUrl ? (
+          <iframe className="lesson-pdf" src={lesson.fileUrl} title={lesson.title} />
         ) : null}
 
-        {activeLesson.fileUrl && activeLesson.type !== "video" && activeLesson.type !== "pdf" ? (
-          <a className="lesson-download" href={activeLesson.fileUrl} target="_blank" rel="noreferrer">
-            Open {activeLesson.fileName || "Material"}
+        {lesson.fileUrl && lesson.type !== "video" && lesson.type !== "pdf" ? (
+          <a className="lesson-download" href={lesson.fileUrl} target="_blank" rel="noreferrer">
+            Open {lesson.fileName || "Material"}
           </a>
         ) : null}
+
+        <div className="lesson-actions-row">
+          <button onClick={() => handleCompleteLesson(lesson.id, index)} disabled={lessonDone || isAdminPreview}>
+            {lessonDone ? "Lesson Completed" : "Mark as Completed"}
+          </button>
+          <button onClick={() => setOpenLessonIndex(Math.min(index + 1, lessons.length - 1))} disabled={index === lessons.length - 1}>
+            Next Lesson
+          </button>
+        </div>
+
+        <div className="lesson-assessment-card">
+          <h3>Lesson Assessment</h3>
+          <button
+            disabled={!lessonDone || !lessonQuiz || loadingQuiz || isAdminPreview}
+            onClick={() =>
+              navigate(
+                `/student-layout/test/${courseId}?mode=lesson&lessonId=${encodeURIComponent(String(lesson.id))}&lessonIndex=${index}`
+              )
+            }
+          >
+            {!lessonQuiz ? "Assessment unavailable" : lessonDone ? "Start Lesson Assessment" : "Complete lesson to unlock"}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderDiscussionPanel = () => {
+    if (!discussionEnabled) {
+      return <div className="discussion-meta">Discussion is disabled by admin.</div>;
+    }
+
+    return (
+      <div className="discussion-board">
+        <div className="discussion-compose">
+          <div className="discussion-compose-head">
+            <h3>
+              <MessageCircle size={17} /> Discussion ({topics.length})
+            </h3>
+          </div>
+          <textarea
+            placeholder="Type comment here..."
+            value={composerText}
+            onChange={(e) => setComposerText(e.target.value)}
+            disabled={isAdminPreview}
+          />
+          <div className="discussion-compose-actions">
+            <button
+              onClick={() => setIsCreateOpen(true)}
+              disabled={isAdminPreview}
+            >
+              Comment
+            </button>
+          </div>
+        </div>
+
+        <div className="discussion-rules">
+          <h4>Discussion Rules</h4>
+          <p>1. Keep the discussion helpful and respectful.</p>
+          <p>2. Ask doubts or share hints. Avoid posting direct solutions.</p>
+        </div>
+
+        <div className="discussion-thread-list">
+          {loading ? <p className="discussion-meta">Loading discussions...</p> : null}
+          {error ? <p className="discussion-meta">{error}</p> : null}
+          {!loading && topics.length === 0 ? <div className="discussion-meta">No discussions yet. Start one.</div> : null}
+          {topics.map((topic) => {
+            const topicId = String(topic.id);
+            const isExpanded = topicId === String(expandedTopicId);
+            const replies = isExpanded && activeThread ? activeThread.replies || [] : [];
+            const repliesCount = countReplies(topic.replies || []) || topic.replyCount || 0;
+            return (
+              <div key={topic.id} className="discussion-thread-card">
+                <div className="discussion-author-dot">{String(getAuthorName(topic)).slice(0, 1).toUpperCase()}</div>
+                <div className="discussion-thread-main">
+                  <div className="discussion-thread-head">
+                    <strong>{getAuthorName(topic)}</strong>
+                    <span>{new Date(topic.createdAt).toLocaleDateString()}</span>
+                  </div>
+                  <h4>{topic.title}</h4>
+                  <p className="discussion-thread-preview" dangerouslySetInnerHTML={{ __html: topic.content }} />
+                  <div className="discussion-thread-actions">
+                    <button onClick={() => likeTopic(topic.id)} disabled={isAdminPreview}>
+                      <ThumbsUp size={14} /> {topic.likes || 0}
+                    </button>
+                    <button onClick={() => toggleTopicReplies(topic.id)}>
+                      <MessageCircle size={14} /> {isExpanded ? "Hide Replies" : `Show ${repliesCount} Replies`}
+                    </button>
+                    <button onClick={() => setReplyDrafts((prev) => ({ ...prev, [topicId]: prev[topicId] || "" }))}>
+                      <Reply size={14} /> Reply
+                    </button>
+                  </div>
+
+                  {isExpanded ? (
+                    <div className="discussion-replies-wrap">
+                      {replies.map((reply) => (
+                        <div key={reply.id} className="discussion-reply-card">
+                          <div className="discussion-author-dot small">
+                            {String(reply.authorName || reply.createdByName || "R").slice(0, 1).toUpperCase()}
+                          </div>
+                          <div className="discussion-reply-main">
+                            <div className="discussion-thread-head">
+                              <strong>{reply.authorName || reply.createdByName || "Learner"}</strong>
+                              <span>{reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : ""}</span>
+                            </div>
+                            <p dangerouslySetInnerHTML={{ __html: reply.content || "" }} />
+                          </div>
+                        </div>
+                      ))}
+
+                      <div className="discussion-reply-input-row">
+                        <div className="discussion-author-dot small">{String(currentUser?.name || "U").slice(0, 1).toUpperCase()}</div>
+                        <input
+                          type="text"
+                          placeholder="Type reply here..."
+                          value={replyDrafts[topicId] || ""}
+                          onChange={(e) => setReplyDrafts((prev) => ({ ...prev, [topicId]: e.target.value }))}
+                          disabled={isAdminPreview}
+                        />
+                      </div>
+                      <div className="discussion-reply-input-actions">
+                        <button className="cancel" onClick={() => setReplyDrafts((prev) => ({ ...prev, [topicId]: "" }))}>Cancel</button>
+                        <button className="reply" onClick={() => submitInlineReply(topic.id)} disabled={isAdminPreview || !String(replyDrafts[topicId] || "").trim()}>
+                          Reply
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <CreateTopicModal
+          isOpen={isCreateOpen}
+          onClose={() => setIsCreateOpen(false)}
+          onCreate={async (payload) => {
+            const fallbackTitle = "Course Discussion";
+            const content = String(composerText || "").trim();
+            const result = await createTopic({
+              ...payload,
+              title: payload?.title || fallbackTitle,
+              content: payload?.content || content,
+            });
+            if (result?.ok) {
+              setIsCreateOpen(false);
+              setComposerText("");
+            }
+            return result;
+          }}
+        />
       </div>
     );
   };
@@ -242,184 +373,67 @@ function LearnCourse() {
 
   return (
     <div className="learn-page">
-      <div className="learn-sidebar">
-        <h3>Lessons</h3>
-        {lessons.map((lesson, index) => {
-          const done = learningState.progress.completedLessonIds.includes(String(lesson.id));
-          return (
-            <div
-              key={`${lesson.id}-${index}`}
-              className={index === currentIndex ? "lesson active" : "lesson"}
-              onClick={() => {
-                setCurrentIndex(index);
-                setActiveTab("learn");
-              }}
-            >
-              <span>{lesson.title}</span>
-              {done ? <span className="lesson-check">Done</span> : null}
-            </div>
-          );
-        })}
-      </div>
-
       <div className="learn-content">
-        <div className="learn-tabs">
-          <button className={activeTab === "learn" ? "active" : ""} onClick={() => setActiveTab("learn")}>
-            Continue Learning
-          </button>
+        <div className="lesson-accordion-list">
+          {lessons.map((lesson, index) => {
+            const done = learningState.progress.completedLessonIds.includes(String(lesson.id));
+            const locked = !done && index > completedCount;
+            const opened = openLessonIndex === index;
+            return (
+              <div key={`${lesson.id}-${index}`} className={`lesson-accordion-item ${opened ? "open" : ""}`}>
+                <button
+                  className="lesson-accordion-title"
+                  disabled={locked}
+                  onClick={() => {
+                    if (locked) return;
+                    setIsDiscussionOpen(false);
+                    setExpandedTopicId("");
+                    setOpenLessonIndex((prev) => (prev === index ? -1 : index));
+                  }}
+                >
+                  <span className="lesson-title-only">{lesson.title}</span>
+                  <span className="lesson-title-icons">
+                    {locked ? <Lock size={14} /> : null}
+                    {opened ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                  </span>
+                </button>
+                {opened ? renderLessonPanel(lesson, index) : null}
+              </div>
+            );
+          })}
+
           {discussionEnabled && (
-            <button
-              className={activeTab === "discussion" ? "active" : ""}
-              onClick={() => openDiscussionTab(selectedThreadId)}
-            >
-              Course Discussion
-            </button>
+            <div className="lesson-accordion-item discussion-entry-item">
+              <button
+                className="lesson-accordion-title discussion-entry"
+                onClick={() => {
+                  setOpenLessonIndex(-1);
+                  setIsDiscussionOpen((prev) => !prev);
+                  setExpandedTopicId("");
+                }}
+              >
+                <span className="lesson-title-only">Course Discussion</span>
+                <span className="lesson-title-icons">
+                  <MessageCircle size={17} />
+                </span>
+              </button>
+              {isDiscussionOpen ? renderDiscussionPanel() : null}
+            </div>
           )}
         </div>
 
-        {activeTab === "learn" ? (
-          <>
-            {renderLessonContent()}
-
-            <div className="lesson-actions-row">
-              <button onClick={handleCompleteLesson} disabled={currentLessonDone || isAdminPreview}>
-                {currentLessonDone ? "Lesson Completed" : "Mark as Completed"}
-              </button>
-              <button
-                onClick={() => setCurrentIndex((prev) => Math.min(prev + 1, lessons.length - 1))}
-                disabled={currentIndex === lessons.length - 1}
-              >
-                Next Lesson
-              </button>
-            </div>
-
-            <div className="lesson-assessment-card">
-              <h3>Lesson Assessment</h3>
-              <p>Unlocks after this lesson is completed.</p>
-              <button
-                disabled={!currentLessonDone || !lessonQuiz || loadingQuiz || isAdminPreview}
-                onClick={() =>
-                  navigate(
-                    `/student-layout/test/${courseId}?mode=lesson&lessonId=${encodeURIComponent(
-                      String(activeLesson.id)
-                    )}&lessonIndex=${currentIndex}`
-                  )
-                }
-              >
-                {!lessonQuiz
-                  ? "Assessment unavailable"
-                  : currentLessonDone
-                    ? "Start Lesson Assessment"
-                    : "Complete lesson to unlock"}
-              </button>
-            </div>
-
-            <div className="lesson-assessment-card">
-              <h3>Final Course Assessment</h3>
-              <p>Unlocks only when all lessons are completed.</p>
-              <button
-                disabled={learningState.progressPercentage < 100 || !finalQuiz || loadingQuiz || isAdminPreview}
-                onClick={() => navigate(`/student-layout/test/${courseId}?mode=final`)}
-              >
-                {learningState.progressPercentage < 100 ? "Finish all lessons to unlock" : "Start Final Assessment"}
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className="learn-discussion-wrap">
-            <div className="learn-discussion-head">
-              <h3>Discussion for this course</h3>
-              <button onClick={() => setIsCreateOpen(true)} disabled={isAdminPreview || !discussionEnabled}>
-                Ask Question
-              </button>
-            </div>
-
-            {loading ? <p>Loading discussions...</p> : null}
-            {error ? <p className="forum-error">{error}</p> : null}
-
-            {!selectedThreadId ? (
-              <div className="forum-topic-list">
-                {topics.length === 0 ? (
-                  <div className="forum-empty-state">No discussions yet. Start one.</div>
-                ) : (
-                  topics.map((topic) => (
-                    <div key={topic.id} className="forum-topic-card">
-                      <button className="topic-inline-link" onClick={() => openDiscussionTab(topic.id)}>
-                        <h4>{topic.title}</h4>
-                      </button>
-                      <p className="forum-topic-preview" dangerouslySetInnerHTML={{ __html: topic.content }} />
-                      <div className="forum-meta-row">
-                        <span className="forum-pill">{new Date(topic.createdAt).toLocaleString()}</span>
-                        <span className="forum-pill forum-pill-accent">{countReplies(topic.replies || []) || topic.replyCount || 0} replies</span>
-                      </div>
-                      <button className="forum-like-icon-btn" onClick={() => likeTopic(topic.id)} disabled={isAdminPreview}>
-                        Upvote {topic.likes || 0}
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            ) : (
-              <div className="learn-thread-view">
-                <button onClick={() => openDiscussionTab("")}>Back to discussions</button>
-                {threadDetail ? (
-                  <>
-                    <h4>{threadDetail.title}</h4>
-                    <p className="forum-topic-preview" dangerouslySetInnerHTML={{ __html: threadDetail.content }} />
-
-                    {!threadDetail.isLocked && !isAdminPreview ? (
-                      <ReplyBox
-                        onSubmit={(content) => addReply(threadDetail.id, { content })}
-                        placeholder="Share your answer..."
-                        buttonLabel="Reply"
-                      />
-                    ) : (
-                      <div className="forum-empty-state">{threadDetail.isLocked ? "Thread is locked." : "Admin preview is read-only."}</div>
-                    )}
-
-                    <div className="forum-replies-list">
-                      {(threadDetail.replies || []).map((reply) => (
-                        <ReplyItem
-                          key={reply.id}
-                          reply={reply}
-                          topicId={threadDetail.id}
-                          onVoteReply={voteReply}
-                          onReply={addReply}
-                          onReportReply={reportReply}
-                          currentUserId={String(userId)}
-                        />
-                      ))}
-                    </div>
-
-                    {Number(replyMeta.page || 0) + 1 < Number(replyMeta.totalPages || 0) ? (
-                      <button onClick={() => fetchThreadById(threadDetail.id, replyMeta.page + 1, true)}>
-                        Load More Replies
-                      </button>
-                    ) : null}
-                  </>
-                ) : (
-                  <p>Loading thread...</p>
-                )}
-              </div>
-            )}
-
-            <CreateTopicModal
-              isOpen={isCreateOpen}
-              onClose={() => setIsCreateOpen(false)}
-              onCreate={async (payload) => {
-                const result = await createTopic(payload);
-                if (result?.ok) {
-                  setIsCreateOpen(false);
-                }
-                return result;
-              }}
-            />
-          </div>
-        )}
+        <div className="final-assessment-card">
+          <h3>Final Course Assessment</h3>
+          <button
+            disabled={learningState.progressPercentage < 100 || !finalQuiz || loadingQuiz || isAdminPreview}
+            onClick={() => navigate(`/student-layout/test/${courseId}?mode=final`)}
+          >
+            {learningState.progressPercentage < 100 ? "Finish all lessons to unlock" : "Start Final Assessment"}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
 export default LearnCourse;
-
