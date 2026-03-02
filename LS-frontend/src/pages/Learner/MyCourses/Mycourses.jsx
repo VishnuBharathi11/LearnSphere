@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
-import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
+import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getProgressByCourses } from "../../../services/progressApi";
@@ -15,6 +15,9 @@ function MyCourses() {
   const [enrollments, setEnrollments] = useState([]);
   const [lessonMap, setLessonMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [lessonsLoading, setLessonsLoading] = useState(true);
+  const [progressLoading, setProgressLoading] = useState(true);
 
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
@@ -29,18 +32,29 @@ function MyCourses() {
     let active = true;
 
     async function load() {
+      setLoading(true);
       try {
-        const [published, mine] = await Promise.all([
-          getPublishedCourses(0, 250),
-          getEnrollmentsByUser(String(userId)),
-        ]);
+        const mine = await getEnrollmentsByUser(String(userId));
         if (!active) return;
-        setCourses(Array.isArray(published) ? published : []);
-        setEnrollments(Array.isArray(mine) ? mine : []);
+        const safeEnrollments = Array.isArray(mine) ? mine : [];
+        setEnrollments(safeEnrollments);
+
+        const activeCourseIds = safeEnrollments
+          .filter(
+            (enrollment) =>
+              String(enrollment.userId) === String(userId) &&
+              String(enrollment.status || "").toUpperCase() === "ACTIVE"
+          )
+          .map((enrollment) => String(enrollment.courseId));
+        const enrolledCourses = await getCoursesByIds(activeCourseIds);
+        if (!active) return;
+        setCourses(Array.isArray(enrolledCourses) ? enrolledCourses : []);
       } catch {
         if (!active) return;
         setCourses([]);
         setEnrollments([]);
+      } finally {
+        if (active) setLoading(false);
       }
     }
 
@@ -53,8 +67,10 @@ function MyCourses() {
   useEffect(() => {
     let active = true;
     async function loadLessons() {
+      setLessonsLoading(true);
       if (!userId || enrollments.length === 0) {
         setLessonMap({});
+        setLessonsLoading(false);
         return;
       }
       const activeEnrollments = enrollments.filter(
@@ -83,6 +99,8 @@ function MyCourses() {
       } catch {
         if (!active) return;
         setLessonMap({});
+      } finally {
+        if (active) setLessonsLoading(false);
       }
     }
     loadLessons();
@@ -94,8 +112,10 @@ function MyCourses() {
   useEffect(() => {
     let active = true;
     async function loadProgress() {
+      setProgressLoading(true);
       if (!userId || enrollments.length === 0) {
         setProgressMap({});
+        setProgressLoading(false);
         return;
       }
       const activeEnrollments = enrollments.filter(
@@ -115,6 +135,8 @@ function MyCourses() {
       } catch {
         if (!active) return;
         setProgressMap({});
+      } finally {
+        if (active) setProgressLoading(false);
       }
     }
     loadProgress();
@@ -154,6 +176,7 @@ function MyCourses() {
     if (activeTab === "completed") return course.progress === 100;
     return true;
   });
+  const isPageLoading = loading || lessonsLoading || progressLoading;
 
   return (
     <div className="mycourses-container">
@@ -170,7 +193,9 @@ function MyCourses() {
       </div>
 
       <div className="mycourse-grid">
-        {coursesToShow.length === 0 ? (
+        {isPageLoading ? (
+          <p className="empty-text">Loading courses...</p>
+        ) : coursesToShow.length === 0 ? (
           <p className="empty-text">No courses found</p>
         ) : (
           coursesToShow.map((course) => (

@@ -1,6 +1,4 @@
-/* =========================
-   Variables (file-scoped)
-   ========================= */
+
 
 $app-font-primary: "Poppins", sans-serif;
 
@@ -8,10 +6,6 @@ $app-bg-body: #f9fafb;
 $app-text-color: #111827;
 
 $app-full-size: 100%;
-
-/* =========================
-   Mixins
-   ========================= */
 
 @mixin reset-box {
   margin: 0;

@@ -8,6 +8,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 import com.learnsphere.progress.dto.AssessmentRequest;
 import com.learnsphere.progress.dto.CourseProgressResponse;
@@ -24,12 +29,14 @@ import lombok.RequiredArgsConstructor;
 public class ProgressServiceImpl implements ProgressService {
 
     private final CourseProgressRepository courseProgressRepository;
+    private final MongoTemplate mongoTemplate;
 
     @Override
     public CourseProgressResponse getProgress(String userId, String courseId) {
-        CourseProgress progress = courseProgressRepository
-                .findByUserIdAndCourseId(userId, courseId)
-                .orElseGet(() -> createEmptyProgress(userId, courseId));
+        CourseProgress progress = getLatestOrNull(userId, courseId);
+        if (progress == null) {
+            progress = createEmptyProgress(userId, courseId, false);
+        }
         return toResponse(progress);
     }
 
@@ -43,7 +50,10 @@ public class ProgressServiceImpl implements ProgressService {
 
         List<CourseProgressResponse> responses = new ArrayList<>();
         for (String courseId : courseIds) {
-            CourseProgress progress = byCourse.getOrDefault(courseId, createEmptyProgress(userId, courseId));
+            CourseProgress progress = byCourse.get(courseId);
+            if (progress == null) {
+                progress = createEmptyProgress(userId, courseId, false);
+            }
             responses.add(toResponse(progress));
         }
         return responses;
@@ -51,59 +61,101 @@ public class ProgressServiceImpl implements ProgressService {
 
     @Override
     public CourseProgressResponse markLessonCompleted(String courseId, LessonProgressRequest request) {
-        CourseProgress progress = getOrCreate(request.getUserId(), courseId);
-        List<String> completed = new ArrayList<>(Optional.ofNullable(progress.getCompletedLessonIds()).orElse(List.of()));
-        String lessonId = String.valueOf(request.getLessonId());
-        if (!completed.contains(lessonId)) {
-            completed.add(lessonId);
-        }
-        progress.setCompletedLessonIds(completed);
-        progress.setUpdatedAt(Instant.now());
-        CourseProgress saved = courseProgressRepository.save(progress);
+        Instant now = Instant.now();
+        Query query = userCourseQuery(request.getUserId(), courseId);
+        Update update = new Update()
+                .set("updatedAt", now)
+                .setOnInsert("userId", request.getUserId())
+                .setOnInsert("courseId", courseId)
+                .setOnInsert("createdAt", now)
+                .addToSet("completedLessonIds", String.valueOf(request.getLessonId()));
+
+        CourseProgress saved = mongoTemplate.findAndModify(
+                query,
+                update,
+                FindAndModifyOptions.options().upsert(true).returnNew(true),
+                CourseProgress.class
+        );
         return toResponse(saved);
     }
 
     @Override
     public CourseProgressResponse saveLessonAssessment(String courseId, AssessmentRequest request) {
-        CourseProgress progress = getOrCreate(request.getUserId(), courseId);
-        Map<String, AssessmentResult> lessonAssessments = new HashMap<>(
-                Optional.ofNullable(progress.getLessonAssessments()).orElse(Map.of())
-        );
+        Instant now = Instant.now();
         String lessonId = String.valueOf(request.getLessonId());
-        lessonAssessments.put(lessonId, AssessmentResult.builder()
+        AssessmentResult assessmentResult = AssessmentResult.builder()
                 .score(request.getScore())
                 .total(request.getTotal())
                 .passed(Boolean.TRUE.equals(request.getPassed()))
                 .passingScore(request.getPassingScore())
-                .submittedAt(Instant.now())
-                .build());
-        progress.setLessonAssessments(lessonAssessments);
-        progress.setUpdatedAt(Instant.now());
-        CourseProgress saved = courseProgressRepository.save(progress);
+                .submittedAt(now)
+                .build();
+
+        Query query = userCourseQuery(request.getUserId(), courseId);
+        Update update = new Update()
+                .set("updatedAt", now)
+                .setOnInsert("userId", request.getUserId())
+                .setOnInsert("courseId", courseId)
+                .setOnInsert("createdAt", now)
+                .set("lessonAssessments." + lessonId, assessmentResult);
+
+        CourseProgress saved = mongoTemplate.findAndModify(
+                query,
+                update,
+                FindAndModifyOptions.options().upsert(true).returnNew(true),
+                CourseProgress.class
+        );
         return toResponse(saved);
     }
 
     @Override
     public CourseProgressResponse saveFinalAssessment(String courseId, AssessmentRequest request) {
-        CourseProgress progress = getOrCreate(request.getUserId(), courseId);
-        progress.setFinalAssessment(AssessmentResult.builder()
+        Instant now = Instant.now();
+        AssessmentResult assessmentResult = AssessmentResult.builder()
                 .score(request.getScore())
                 .total(request.getTotal())
                 .passed(Boolean.TRUE.equals(request.getPassed()))
                 .passingScore(request.getPassingScore())
-                .submittedAt(Instant.now())
-                .build());
-        progress.setUpdatedAt(Instant.now());
-        CourseProgress saved = courseProgressRepository.save(progress);
+                .submittedAt(now)
+                .build();
+
+        Query query = userCourseQuery(request.getUserId(), courseId);
+        Update update = new Update()
+                .set("updatedAt", now)
+                .setOnInsert("userId", request.getUserId())
+                .setOnInsert("courseId", courseId)
+                .setOnInsert("createdAt", now)
+                .set("finalAssessment", assessmentResult);
+
+        CourseProgress saved = mongoTemplate.findAndModify(
+                query,
+                update,
+                FindAndModifyOptions.options().upsert(true).returnNew(true),
+                CourseProgress.class
+        );
         return toResponse(saved);
     }
 
-    private CourseProgress getOrCreate(String userId, String courseId) {
-        return courseProgressRepository.findByUserIdAndCourseId(userId, courseId)
-                .orElseGet(() -> createEmptyProgress(userId, courseId));
+    private Query userCourseQuery(String userId, String courseId) {
+        return new Query(Criteria.where("userId").is(userId).and("courseId").is(courseId));
     }
 
-    private CourseProgress createEmptyProgress(String userId, String courseId) {
+    private CourseProgress getLatestOrNull(String userId, String courseId) {
+        List<CourseProgress> duplicates = courseProgressRepository
+                .findByUserIdAndCourseIdOrderByUpdatedAtDesc(userId, courseId);
+        if (duplicates == null || duplicates.isEmpty()) {
+            return null;
+        }
+        CourseProgress latest = duplicates.get(0);
+        if (duplicates.size() > 1) {
+            // Keep newest record and remove stale duplicates that cause read failures.
+            List<CourseProgress> stale = duplicates.subList(1, duplicates.size());
+            courseProgressRepository.deleteAll(stale);
+        }
+        return latest;
+    }
+
+    private CourseProgress createEmptyProgress(String userId, String courseId, boolean persist) {
         CourseProgress progress = CourseProgress.builder()
                 .userId(userId)
                 .courseId(courseId)
@@ -112,15 +164,15 @@ public class ProgressServiceImpl implements ProgressService {
                 .createdAt(Instant.now())
                 .updatedAt(Instant.now())
                 .build();
-        return courseProgressRepository.save(progress);
+        return persist ? courseProgressRepository.save(progress) : progress;
     }
 
     private CourseProgressResponse toResponse(CourseProgress progress) {
         return CourseProgressResponse.builder()
                 .userId(progress.getUserId())
                 .courseId(progress.getCourseId())
-                .completedLessonIds(progress.getCompletedLessonIds())
-                .lessonAssessments(progress.getLessonAssessments())
+                .completedLessonIds(Optional.ofNullable(progress.getCompletedLessonIds()).orElse(List.of()))
+                .lessonAssessments(Optional.ofNullable(progress.getLessonAssessments()).orElse(Map.of()))
                 .finalAssessment(progress.getFinalAssessment())
                 .updatedAt(progress.getUpdatedAt())
                 .build();

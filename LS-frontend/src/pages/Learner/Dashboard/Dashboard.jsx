@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LearnerImg from "../../../assets/learner/learner.jpg";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
-import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
+import {  getCourseLessons,
+  getCoursesByIds,
+  getPublishedCourses,
+} from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getProgressByCourses } from "../../../services/progressApi";
@@ -20,9 +23,11 @@ function Dashboard() {
   }, []);
   const userId = currentUser?.id || currentUser?.userId || "";
 
-  const [courses, setCourses] = useState([]);
+  const [publishedCourses, setPublishedCourses] = useState([]);
+  const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [detailsLoading, setDetailsLoading] = useState(true);
   const [lessonMap, setLessonMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
 
@@ -42,12 +47,26 @@ function Dashboard() {
         ]);
 
         if (!active) return;
-        setEnrollments(Array.isArray(myEnrollments) ? myEnrollments : []);
-        setCourses(Array.isArray(published) ? published : []);
+        const safeEnrollments = Array.isArray(myEnrollments) ? myEnrollments : [];
+        setEnrollments(safeEnrollments);
+        setPublishedCourses(Array.isArray(published) ? published : []);
+
+        const activeCourseIds = safeEnrollments
+          .filter(
+            (enrollment) =>
+              String(enrollment.userId) === String(userId) &&
+              String(enrollment.status || "").toUpperCase() === "ACTIVE"
+          )
+          .map((item) => String(item.courseId));
+
+        const enrolled = await getCoursesByIds(activeCourseIds);
+        if (!active) return;
+        setEnrolledCourses(Array.isArray(enrolled) ? enrolled : []);
       } catch {
         if (!active) return;
         setEnrollments([]);
-        setCourses([]);
+        setPublishedCourses([]);
+        setEnrolledCourses([]);
       } finally {
         if (active) setLoading(false);
       }
@@ -62,6 +81,7 @@ function Dashboard() {
   useEffect(() => {
     let active = true;
     async function loadLessonsAndProgress() {
+      setDetailsLoading(true);
       const activeEnrollments = enrollments.filter(
         (enrollment) =>
           String(enrollment.userId) === String(userId) &&
@@ -71,6 +91,7 @@ function Dashboard() {
       if (courseIds.length === 0) {
         setLessonMap({});
         setProgressMap({});
+        setDetailsLoading(false);
         return;
       }
       try {
@@ -102,6 +123,8 @@ function Dashboard() {
         if (!active) return;
         setLessonMap({});
         setProgressMap({});
+      } finally {
+        if (active) setDetailsLoading(false);
       }
     }
     loadLessonsAndProgress();
@@ -123,7 +146,7 @@ function Dashboard() {
   const continueCourses = useMemo(() => {
     return myActiveEnrollments
       .map((enrollment) => {
-        const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
+        const course = enrolledCourses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
 
         const lessons = lessonMap[String(course.id)] || [];
@@ -135,12 +158,14 @@ function Dashboard() {
         };
       })
       .filter(Boolean);
-  }, [courses, lessonMap, myActiveEnrollments, progressMap, userId]);
+  }, [enrolledCourses, lessonMap, myActiveEnrollments, progressMap]);
 
   const recommendedCourses = useMemo(() => {
     const myCourseIds = new Set(myActiveEnrollments.map((enrollment) => String(enrollment.courseId)));
-    return courses.filter((course) => !myCourseIds.has(String(course.id))).slice(0, 5);
-  }, [courses, myActiveEnrollments]);
+    return publishedCourses.filter((course) => !myCourseIds.has(String(course.id))).slice(0, 5);
+  }, [publishedCourses, myActiveEnrollments]);
+
+  const isPageLoading = loading || detailsLoading;
 
   return (
     <div className="dashboard-container">
@@ -172,7 +197,7 @@ function Dashboard() {
         <div className="continue-section">
           <h3>Continue Learning</h3>
           <div className="course-grid">
-            {loading ? (
+            {isPageLoading ? (
               <p>Loading courses...</p>
             ) : continueCourses.length === 0 ? (
               <p>No courses in progress</p>
@@ -213,7 +238,7 @@ function Dashboard() {
         <div className="recommended-section">
           <h3>Recommended Courses</h3>
 
-          {loading ? (
+          {isPageLoading ? (
             <p>Loading recommendations...</p>
           ) : recommendedCourses.length === 0 ? (
             <p>No recommendations available</p>

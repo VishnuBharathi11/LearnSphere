@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
+import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getProgressByCourses } from "../../../services/progressApi";
@@ -14,21 +14,35 @@ function Progress() {
   const [enrollments, setEnrollments] = useState([]);
   const [lessonMap, setLessonMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [detailsLoading, setDetailsLoading] = useState(true);
 
   useEffect(() => {
     if (!userId) return;
 
     let active = true;
     async function load() {
+      setLoading(true);
       try {
-        const [published, mine] = await Promise.all([getPublishedCourses(0, 300), getEnrollmentsByUser(String(userId))]);
+        const mine = await getEnrollmentsByUser(String(userId));
         if (!active) return;
-        setCourses(Array.isArray(published) ? published : []);
-        setEnrollments(Array.isArray(mine) ? mine : []);
+        const safeEnrollments = Array.isArray(mine) ? mine : [];
+        setEnrollments(safeEnrollments);
+
+        const activeCourseIds = safeEnrollments
+          .filter(
+            (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
+          )
+          .map((item) => String(item.courseId));
+        const enrolledCourses = await getCoursesByIds(activeCourseIds);
+        if (!active) return;
+        setCourses(Array.isArray(enrolledCourses) ? enrolledCourses : []);
       } catch {
         if (!active) return;
         setCourses([]);
         setEnrollments([]);
+      } finally {
+        if (active) setLoading(false);
       }
     }
 
@@ -41,6 +55,7 @@ function Progress() {
   useEffect(() => {
     let active = true;
     async function loadLessonsAndProgress() {
+      setDetailsLoading(true);
       const activeEnrollments = enrollments.filter(
         (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
       );
@@ -48,6 +63,7 @@ function Progress() {
       if (courseIds.length === 0) {
         setLessonMap({});
         setProgressMap({});
+        setDetailsLoading(false);
         return;
       }
       try {
@@ -79,6 +95,8 @@ function Progress() {
         if (!active) return;
         setLessonMap({});
         setProgressMap({});
+      } finally {
+        if (active) setDetailsLoading(false);
       }
     }
     loadLessonsAndProgress();
@@ -121,6 +139,7 @@ function Progress() {
   const inProgressCourses = progressData.filter((item) => item.status === "In Progress").length;
   const completedCourses = progressData.filter((item) => item.status === "Completed").length;
   const avgProgress = totalCourses === 0 ? 0 : Math.floor(progressData.reduce((sum, item) => sum + item.progress, 0) / totalCourses);
+  const isPageLoading = loading || detailsLoading;
 
   return (
     <div className="progress-container">
@@ -146,7 +165,9 @@ function Progress() {
       <div className="course-progress-section">
         <h3>Progress Per Course</h3>
 
-        {progressData.length === 0 ? (
+        {isPageLoading ? (
+          <p>Loading progress...</p>
+        ) : progressData.length === 0 ? (
           <p>No learning activity yet</p>
         ) : (
           progressData.map((course) => (

@@ -23,7 +23,9 @@ D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\jav
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\entity\LessonProgress.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\service\impl\AssessmentServiceImpl.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\config\JwtConfig.java
+D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\dto\AssessmentRequest.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\repository\VideoProgressRepository.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\config\SecurityConfig.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\dto\LessonProgressRequest.java
 D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\config\RestConfig.java
+D:\Full stack project\LearnSphere\LS-backend\learn-progress-service\src\main\java\com\learnsphere\progress\entity\AssessmentResult.java

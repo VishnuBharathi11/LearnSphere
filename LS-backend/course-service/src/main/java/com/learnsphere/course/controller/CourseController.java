@@ -123,7 +123,7 @@ public class CourseController {
 	}
 
 	@GetMapping("/{id}/lessons")
-	@PreAuthorize("hasRole('INSTRUCTOR')")
+	@PreAuthorize("isAuthenticated()")
 	public List<LessonResponse> listLessons(@PathVariable String id) {
 		return courseContentRepository.findByCourseIdOrderByOrderIndexAsc(id)
 				.stream()

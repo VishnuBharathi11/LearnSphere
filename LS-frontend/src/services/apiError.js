@@ -11,7 +11,7 @@ export function getFriendlyErrorMessage(error, fallbackMessage = "Something went
   }
 
   if (status === 403) {
-    return "Access denied. You do not have permission to perform this action.";
+    return apiMessage || "Access denied. You do not have permission to perform this action.";
   }
 
   if (status === 404) {
@@ -28,4 +28,3 @@ export function getFriendlyErrorMessage(error, fallbackMessage = "Something went
 
   return apiMessage || fallbackMessage;
 }
-

@@ -3,7 +3,6 @@ import {
   Video,
   FileText,
   File,
-  Clock,
   Trash2,
   Edit,
   Plus,
@@ -216,6 +215,7 @@ function UpdateLesson() {
     if (type === "pdf") return <FileText size={22} />;
     return <File size={22} />;
   };
+
   return (
     <div className="upload-lesson-layout">
       <div className="upload-lessons-page">
@@ -275,40 +275,38 @@ function UpdateLesson() {
               </button>
             </div>
           ) : (
-            lessons.map((lesson, index) => (
-              <div className="lesson-row" key={lesson.id}>
-                <div className="lesson-index">{index + 1}</div>
-                <div className="lesson-icon">{lessonIcon(lesson.type)}</div>
-                <div className="lesson-info">
-                  <h3>{lesson.title}</h3>
-                  <div className="lesson-meta">
-                    <span className={`tag ${lesson.type}`}>
-                      {lesson.type.toUpperCase()}
-                    </span>
-                    {lesson.heading ? <span>{lesson.heading}</span> : null}
-                    {Array.isArray(lesson.subheadings) && lesson.subheadings.length > 0
-                      ? lesson.subheadings.map((sub, idx) => <span key={idx}>{sub}</span>)
-                      : null}
-                    {lesson.type === "video" && (
-                      <span>
-                        <Clock size={14} /> 00:00
+            lessons.map((lesson, index) => {
+              const metaText = [lesson.heading, ...(Array.isArray(lesson.subheadings) ? lesson.subheadings : [])]
+                .map((text) => String(text || "").trim())
+                .filter(Boolean)
+                .join(" | ");
+              return (
+                <div className="lesson-row" key={lesson.id}>
+                  <div className="lesson-index">{index + 1}</div>
+                  <div className="lesson-icon">{lessonIcon(lesson.type)}</div>
+                  <div className="lesson-info">
+                    <h3>{lesson.title}</h3>
+                    <div className="lesson-meta">
+                      <span className={`lesson-type-pill ${lesson.type}`}>
+                        {lesson.type.toUpperCase()}
                       </span>
-                    )}
+                      {metaText ? <span className="lesson-meta-text">{metaText}</span> : null}
+                    </div>
+                  </div>
+                  <div className="lesson-actions">
+                    <button onClick={() => openEdit(lesson)}>
+                      <Edit size={16} />
+                    </button>
+                    <button
+                      onClick={() => deleteLesson(lesson.id)}
+                      className="lesson-actions delete"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
-                <div className="lesson-actions">
-                  <button onClick={() => openEdit(lesson)}>
-                    <Edit size={16} />
-                  </button>
-                  <button
-                    onClick={() => deleteLesson(lesson.id)}
-                    className="lesson-actions delete"
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
         {showModal && (

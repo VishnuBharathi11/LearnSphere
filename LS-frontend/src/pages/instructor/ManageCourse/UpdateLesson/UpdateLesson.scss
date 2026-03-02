@@ -161,6 +161,9 @@ $pdf-text: #991b1b;
 }
 
 .lesson-info {
+  flex: 1;
+  min-width: 0;
+
   h3 {
     font-size: 15px;
     font-weight: 500;
@@ -171,26 +174,45 @@ $pdf-text: #991b1b;
 
 .lesson-meta {
   display: flex;
-  gap: 10px;
+  align-items: center;
+  gap: 8px;
   font-size: 13px;
   color: $text-muted;
   flex-wrap: wrap;
 }
 
-.tag {
-  padding: 2px 8px;
-  border-radius: 12px;
+.lesson-type-pill {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 3px 10px;
+  border-radius: 999px;
   font-size: 12px;
+  line-height: 1.2;
+  font-weight: 500;
+  background: #e5e7eb;
+  color: #374151;
+}
 
-  &.video {
-    background-color: $video-bg;
-    color: $video-text;
-  }
+.lesson-type-pill.video {
+  background-color: $video-bg;
+  color: $video-text;
+}
 
-  &.pdf {
-    background-color: $pdf-bg;
-    color: $pdf-text;
-  }
+.lesson-type-pill.pdf {
+  background-color: $pdf-bg;
+  color: $pdf-text;
+}
+
+.lesson-type-pill.theory {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.lesson-meta-text {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .lesson-actions {

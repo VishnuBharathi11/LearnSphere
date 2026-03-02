@@ -99,8 +99,33 @@ export async function getCourseById(id) {
   const categoryMap = await getCategoryMap();
   const response = await axios.get(`${COURSES_API_BASE_URL}/${id}`, {
     headers: getAuthHeaders(),
+    timeout: 12000,
   });
   return mapCourse(response.data, categoryMap);
+}
+
+export async function getCoursesByIds(courseIds = []) {
+  const normalizedIds = Array.from(
+    new Set(courseIds.map((id) => String(id || "").trim()).filter(Boolean))
+  );
+  if (normalizedIds.length === 0) return [];
+
+  const categoryMap = await getCategoryMap();
+  const results = await Promise.all(
+    normalizedIds.map(async (courseId) => {
+      try {
+        const response = await axios.get(`${COURSES_API_BASE_URL}/${encodeURIComponent(courseId)}`, {
+          headers: getAuthHeaders(),
+          timeout: 12000,
+        });
+        return mapCourse(response.data, categoryMap);
+      } catch {
+        return null;
+      }
+    })
+  );
+
+  return results.filter(Boolean);
 }
 
 export async function getInstructorCourses(instructorId, page = 0, size = 30) {

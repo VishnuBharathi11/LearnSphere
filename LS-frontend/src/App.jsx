@@ -45,72 +45,76 @@ import Categories from "./pages/admin/Categories/Categories.jsx";
 import RoleManagement from "./pages/admin/RoleManagement/RoleManagement.jsx";
 import Settings from "./pages/admin/Settings/Settings.jsx";
 import InstructorApplications from "./pages/admin/InstructorApplications/InstructorApplications.jsx";
+import GlobalNetworkLoader from "./components/GlobalNetworkLoader/GlobalNetworkLoader.jsx";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/about" element={<About />} />
-      <Route path="/instructors" element={<Instructors />} />
-      <Route path="/instructor-application" element={<InstructorApplication />} />
-      <Route path="/contact" element={<Contact />} />
-      <Route path="/free-courses" element={<GetStarted />} />
-      <Route path="/courses" element={<BrowseCourses />} />
-      <Route path="/course/:id" element={<CourseDetail />} />
+    <>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/instructors" element={<Instructors />} />
+        <Route path="/instructor-application" element={<InstructorApplication />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/free-courses" element={<GetStarted />} />
+        <Route path="/courses" element={<BrowseCourses />} />
+        <Route path="/course/:id" element={<CourseDetail />} />
 
-      <Route element={<ForumRoleLayout />}>
-        <Route path="/courses/:courseId/forum" element={<ForumPage />} />
-        <Route path="/forum/topic/:topicId" element={<TopicPage />} />
-      </Route>
+        <Route element={<ForumRoleLayout />}>
+          <Route path="/courses/:courseId/forum" element={<ForumPage />} />
+          <Route path="/forum/topic/:topicId" element={<TopicPage />} />
+        </Route>
 
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
-      <Route path="/buy/:id" element={<PaymentPage />} />
-      <Route path="/payment-success" element={<PaymentSuccess />} />
+        <Route path="/buy/:id" element={<PaymentPage />} />
+        <Route path="/payment-success" element={<PaymentSuccess />} />
 
-      <Route path="/student-layout" element={<StudentLayout />}>
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<StudentDashboard />} />
-        <Route path="my-courses" element={<MyCourses />} />
-        <Route path="progress" element={<Progress />} />
-        <Route path="profile" element={<StudentProfile />} />
-        <Route path="learn/:id" element={<LearnCourse />} />
-        <Route path="test/:courseId" element={<TestTaking />} />
-        <Route path="result" element={<AssesmentResult />} />
-        <Route path="certificate" element={<Certificates />} />
-        <Route path="download-certificate/:id" element={<DownloadCertificate />} />
-      </Route>
+        <Route path="/student-layout" element={<StudentLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<StudentDashboard />} />
+          <Route path="my-courses" element={<MyCourses />} />
+          <Route path="progress" element={<Progress />} />
+          <Route path="profile" element={<StudentProfile />} />
+          <Route path="learn/:id" element={<LearnCourse />} />
+          <Route path="test/:courseId" element={<TestTaking />} />
+          <Route path="result" element={<AssesmentResult />} />
+          <Route path="certificate" element={<Certificates />} />
+          <Route path="download-certificate/:id" element={<DownloadCertificate />} />
+        </Route>
 
-      <Route path="/instructor-layout" element={<InstructorLayout />}>
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<InstructorDashboard />} />
-        <Route path="create-course" element={<CreateCourse />} />
-        <Route path="edit-course/:courseId" element={<CreateCourse />} />
-        <Route path="manage-courses" element={<ManageCourses />} />
-        <Route path="manage-courses/:courseId/lessons" element={<UploadLesson />} />
-        <Route path="manage-courses/:courseId/lessons/new" element={<AddLesson />} />
-        <Route path="manage-courses/:courseId/quiz" element={<CreateQuiz />} />
-        <Route path="manage-courses/:courseId/students" element={<StudentProgress />} />
-        <Route path="manage-courses/:courseId/analytics" element={<CourseAnalytics />} />
-        <Route path="profile" element={<InstructorProfile />} />
-      </Route>
+        <Route path="/instructor-layout" element={<InstructorLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<InstructorDashboard />} />
+          <Route path="create-course" element={<CreateCourse />} />
+          <Route path="edit-course/:courseId" element={<CreateCourse />} />
+          <Route path="manage-courses" element={<ManageCourses />} />
+          <Route path="manage-courses/:courseId/lessons" element={<UploadLesson />} />
+          <Route path="manage-courses/:courseId/lessons/new" element={<AddLesson />} />
+          <Route path="manage-courses/:courseId/quiz" element={<CreateQuiz />} />
+          <Route path="manage-courses/:courseId/students" element={<StudentProgress />} />
+          <Route path="manage-courses/:courseId/analytics" element={<CourseAnalytics />} />
+          <Route path="profile" element={<InstructorProfile />} />
+        </Route>
 
-      <Route path="/admin-layout" element={<AdminLayout />}>
-        <Route index element={<Navigate to="dashboard" replace />} />
-        <Route path="dashboard" element={<AdminDashboard />} />
-        <Route path="users" element={<ManageUsers />} />
-        <Route path="courses" element={<HandleCourses />} />
-        <Route path="approve-courses" element={<ApproveCourses />} />
-        <Route path="categories" element={<Categories />} />
-        <Route path="roles" element={<RoleManagement />} />
-        <Route path="instructor-applications" element={<InstructorApplications />} />
-        <Route path="settings" element={<Settings />} />
-        <Route path="forum" element={<ForumPage />} />
-        <Route path="forum/topic/:topicId" element={<TopicPage />} />
-      </Route>
-    </Routes>
+        <Route path="/admin-layout" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="users" element={<ManageUsers />} />
+          <Route path="courses" element={<HandleCourses />} />
+          <Route path="approve-courses" element={<ApproveCourses />} />
+          <Route path="categories" element={<Categories />} />
+          <Route path="roles" element={<RoleManagement />} />
+          <Route path="instructor-applications" element={<InstructorApplications />} />
+          <Route path="settings" element={<Settings />} />
+          <Route path="forum" element={<ForumPage />} />
+          <Route path="forum/topic/:topicId" element={<TopicPage />} />
+        </Route>
+      </Routes>
+      <GlobalNetworkLoader />
+    </>
   );
 }
 
