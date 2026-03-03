@@ -7,6 +7,33 @@ const PROFILE_UPDATED_EVENT = "learnsphere-profile-updated";
 
 let currentUserCache = null;
 
+function getPreviewUserFromUrl() {
+  if (typeof window === "undefined") return null;
+  if (!currentUserCache || String(currentUserCache.role || "").toLowerCase() !== "admin") return null;
+
+  const params = new URLSearchParams(window.location.search || "");
+  if (params.get("adminPreview") !== "true") return null;
+
+  const previewUserId = params.get("adminUserId") || "";
+  if (!previewUserId) return null;
+
+  const previewRole = (params.get("adminUserRole") || "learner").toLowerCase();
+  const previewName = params.get("adminUserName") || "";
+  const previewEmail = params.get("adminUserEmail") || "";
+
+  return {
+    id: previewUserId,
+    userId: previewUserId,
+    name: previewName,
+    username: previewName,
+    email: previewEmail,
+    phone: "",
+    role: previewRole,
+    image: null,
+    adminPreview: true,
+  };
+}
+
 function toCurrentUser(profile) {
   if (!profile) return null;
   return {
@@ -22,6 +49,8 @@ function toCurrentUser(profile) {
 }
 
 export function getCurrentUser() {
+  const previewUser = getPreviewUserFromUrl();
+  if (previewUser) return previewUser;
   return currentUserCache;
 }
 

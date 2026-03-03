@@ -11,7 +11,7 @@ $danger: #dc2626;
 .instructor-applications-page {
   font-family: $font;
   padding: 20px;
-  background: $bg;
+  background: linear-gradient(180deg, #eef3ff 0%, #f9fafb 55%, #f9fafb 100%);
   min-height: calc(100vh - 80px);
 }
 
@@ -106,6 +106,7 @@ $danger: #dc2626;
 .ia-table td {
   padding: 14px;
   text-align: left;
+  vertical-align: middle;
   font-size: 14px;
   border-bottom: 1px solid $border;
 }
@@ -119,18 +120,47 @@ $danger: #dc2626;
 .status {
   font-weight: 600;
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 92px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 12px;
 
   &.pending {
-    color: #ca8a04;
+    color: #b45309;
+    background: #fff7ed;
+    border-color: #fdba74;
   }
 
   &.approved {
     color: $success;
+    background: #ecfdf3;
+    border-color: #86efac;
   }
 
   &.rejected {
     color: $danger;
+    background: #fef2f2;
+    border-color: #fca5a5;
   }
+}
+
+.status-col,
+.status-cell,
+.review-col,
+.review-cell {
+  text-align: center !important;
+}
+
+.status-cell {
+  min-width: 130px;
+}
+
+.review-cell {
+  min-width: 120px;
 }
 
 .review-btn {

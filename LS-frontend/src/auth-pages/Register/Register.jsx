@@ -79,7 +79,7 @@ function Register() {
       <NavBar />
       <div className="reg-form">
         <div className="reg-form-card">
-          <div className="reg-page-name">LearnSphere</div>
+          <Link to="/" className="reg-page-name">LearnSphere</Link>
           <div className="reg-form-welcome">
             Create Account
             <p>Join LearnSphere today</p>

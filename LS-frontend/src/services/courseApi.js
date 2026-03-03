@@ -1,5 +1,6 @@
 import axios from "axios";
 import { appStore } from "./appStore";
+import { getAdminUsers } from "./adminApi";
 
 const COURSES_API_BASE_URL =
   import.meta.env.VITE_COURSE_API_BASE_URL || "/api/courses";
@@ -9,6 +10,11 @@ const CATEGORIES_API_BASE_URL =
 const DEFAULT_CATEGORY = "General";
 const DEFAULT_LEVEL = "Beginner";
 const DEFAULT_INSTRUCTOR = "Instructor";
+const INSTRUCTOR_CACHE_TTL_MS = 60000;
+let instructorMapCache = {
+  at: 0,
+  map: new Map(),
+};
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
@@ -42,7 +48,32 @@ function deriveEnrollments(course) {
   return 0;
 }
 
-function mapCourse(course, categoryMap) {
+async function getInstructorMap() {
+  const now = Date.now();
+  if (now - instructorMapCache.at < INSTRUCTOR_CACHE_TTL_MS) {
+    return instructorMapCache.map;
+  }
+
+  try {
+    const users = await getAdminUsers();
+    const map = new Map(
+      (Array.isArray(users) ? users : [])
+        .filter((user) => user && user.id !== undefined && user.id !== null)
+        .map((user) => [String(user.id), String(user.name || "").trim()])
+    );
+    instructorMapCache = { at: now, map };
+    return map;
+  } catch {
+    return instructorMapCache.map;
+  }
+}
+
+function mapCourse(course, categoryMap, instructorMap = new Map()) {
+  const instructorName =
+    instructorMap.get(String(course.instructorId || "")) ||
+    String(course.instructorName || "").trim() ||
+    DEFAULT_INSTRUCTOR;
+
   return {
     id: course.id,
     instructorId: course.instructorId || "",
@@ -51,7 +82,7 @@ function mapCourse(course, categoryMap) {
     title: course.title,
     description: course.description || "",
     thumbnail: course.thumbnail || "",
-    instructor: DEFAULT_INSTRUCTOR,
+    instructor: instructorName,
     category: deriveCategory(course, categoryMap),
     level: deriveLevel(course),
     rating: deriveRating(course),
@@ -85,23 +116,29 @@ export async function deleteCategory(categoryId) {
 }
 
 export async function getPublishedCourses(page = 0, size = 100) {
-  const categoryMap = await getCategoryMap();
+  const [categoryMap, instructorMap] = await Promise.all([
+    getCategoryMap(),
+    getInstructorMap(),
+  ]);
   const response = await axios.get(`${COURSES_API_BASE_URL}/published`, {
     params: { page, size },
     timeout: 12000,
   });
   const coursePage = response.data || {};
   const items = Array.isArray(coursePage.content) ? coursePage.content : [];
-  return items.map((course) => mapCourse(course, categoryMap));
+  return items.map((course) => mapCourse(course, categoryMap, instructorMap));
 }
 
 export async function getCourseById(id) {
-  const categoryMap = await getCategoryMap();
+  const [categoryMap, instructorMap] = await Promise.all([
+    getCategoryMap(),
+    getInstructorMap(),
+  ]);
   const response = await axios.get(`${COURSES_API_BASE_URL}/${id}`, {
     headers: getAuthHeaders(),
     timeout: 12000,
   });
-  return mapCourse(response.data, categoryMap);
+  return mapCourse(response.data, categoryMap, instructorMap);
 }
 
 export async function getCoursesByIds(courseIds = []) {
@@ -110,7 +147,10 @@ export async function getCoursesByIds(courseIds = []) {
   );
   if (normalizedIds.length === 0) return [];
 
-  const categoryMap = await getCategoryMap();
+  const [categoryMap, instructorMap] = await Promise.all([
+    getCategoryMap(),
+    getInstructorMap(),
+  ]);
   const results = await Promise.all(
     normalizedIds.map(async (courseId) => {
       try {
@@ -118,7 +158,7 @@ export async function getCoursesByIds(courseIds = []) {
           headers: getAuthHeaders(),
           timeout: 12000,
         });
-        return mapCourse(response.data, categoryMap);
+        return mapCourse(response.data, categoryMap, instructorMap);
       } catch {
         return null;
       }
@@ -129,7 +169,10 @@ export async function getCoursesByIds(courseIds = []) {
 }
 
 export async function getInstructorCourses(instructorId, page = 0, size = 30) {
-  const categoryMap = await getCategoryMap();
+  const [categoryMap, instructorMap] = await Promise.all([
+    getCategoryMap(),
+    getInstructorMap(),
+  ]);
   const response = await axios.get(
     `${COURSES_API_BASE_URL}/instructor/${instructorId}`,
     {
@@ -139,7 +182,7 @@ export async function getInstructorCourses(instructorId, page = 0, size = 30) {
   );
   const coursePage = response.data || {};
   const items = Array.isArray(coursePage.content) ? coursePage.content : [];
-  return items.map((course) => mapCourse(course, categoryMap));
+  return items.map((course) => mapCourse(course, categoryMap, instructorMap));
 }
 
 export async function createCategory({ name, description = "" }) {
@@ -212,7 +255,10 @@ export async function publishCourse(courseId) {
 }
 
 export async function getAdminCourses({ status = "", search = "" } = {}) {
-  const categoryMap = await getCategoryMap();
+  const [categoryMap, instructorMap] = await Promise.all([
+    getCategoryMap(),
+    getInstructorMap(),
+  ]);
   const response = await axios.get(`${COURSES_API_BASE_URL}/admin/all`, {
     params: {
       ...(status ? { status } : {}),
@@ -221,7 +267,7 @@ export async function getAdminCourses({ status = "", search = "" } = {}) {
     headers: getAuthHeaders(),
   });
   const items = Array.isArray(response.data) ? response.data : [];
-  return items.map((course) => mapCourse(course, categoryMap));
+  return items.map((course) => mapCourse(course, categoryMap, instructorMap));
 }
 
 export async function rejectCourse(courseId, note = "REJECTED") {

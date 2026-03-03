@@ -71,12 +71,20 @@ function TopNavBarInstructor() {
   const navigate = useNavigate();
   const panelRef = useRef(null);
   const pageMeta = resolvePageMeta(location.pathname);
+  const searchParams = new URLSearchParams(location.search);
+  const isAdminPreview = searchParams.get("adminPreview") === "true";
+  const previewUserName = searchParams.get("adminUserName") || "";
+  const previewUserEmail = searchParams.get("adminUserEmail") || "";
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const { currentUser } = useCurrentUser();
 
-  const displayName = currentUser?.name || currentUser?.username || "Instructor";
-  const displayEmail = currentUser?.email || "instructor@learnsphere.com";
+  const displayName = isAdminPreview
+    ? previewUserName || "Instructor"
+    : currentUser?.name || currentUser?.username || "Instructor";
+  const displayEmail = isAdminPreview
+    ? previewUserEmail || "instructor@learnsphere.com"
+    : currentUser?.email || "instructor@learnsphere.com";
   const userId = currentUser?.id ? String(currentUser.id) : "";
   const initials = displayName
     .split(" ")
@@ -87,6 +95,11 @@ function TopNavBarInstructor() {
 
   const fetchNotifications = useMemo(
     () => async () => {
+      if (isAdminPreview) {
+        setNotifications([]);
+        return;
+      }
+
       if (!userId) return;
 
       try {
@@ -113,7 +126,7 @@ function TopNavBarInstructor() {
         setNotifications([]);
       }
     },
-    [userId]
+    [userId, isAdminPreview]
   );
 
   useEffect(() => {
@@ -133,6 +146,8 @@ function TopNavBarInstructor() {
   }, []);
 
   const markAllAsRead = async () => {
+    if (isAdminPreview) return;
+
     const unread = notifications.filter((item) => !item.read && item.sourceId);
     if (!unread.length) return;
 
@@ -159,6 +174,7 @@ function TopNavBarInstructor() {
           type="button"
           aria-label="Notifications"
           onClick={() => setOpenNotifications((prev) => !prev)}
+          disabled={isAdminPreview}
         >
           <FiBell />
           {notifications.filter((item) => !item.read).length > 0 && (

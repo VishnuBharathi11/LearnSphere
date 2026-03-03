@@ -1,6 +1,6 @@
 .admin-layout {
   display: flex;
-  height: 100vh;
+  min-height: 100%;
   background: #f5f7fb;
 }
 
@@ -31,13 +31,17 @@
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
   position: relative;
 }
+.role-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
 .role-actions {
-display: flex;
+  display: flex;
+  gap: 8px;
 }
 .edit-btn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
   background: #f1f5f9;
   border: none;
   padding: 6px;
@@ -69,6 +73,7 @@ display: flex;
 .role-header h3 {
   font-size: 18px;
   font-weight: 700;
+  margin: 0;
 }
 
 .role-header span {
@@ -143,7 +148,7 @@ display: flex;
   gap: 14px;
 }
 
-.modal-body input,
+.modal-body input:not([type="checkbox"]),
 .modal-body textarea {
   width: 100%;
   padding: 10px;
@@ -162,7 +167,16 @@ display: flex;
 .perm-item {
   font-size: 13px;
   display: flex;
+  align-items: center;
   gap: 8px;
+
+  input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    margin: 0;
+    flex: 0 0 auto;
+  }
 }
 
 .modal-actions {

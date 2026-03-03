@@ -102,25 +102,27 @@ function RoleManagement() {
         <main className="role-container">
           {roles.map((role) => (
             <div className="role-card" key={role.role}>
-              <div className="role-actions">
-                <button className="edit-btn" onClick={() => openEdit(role)} title="Edit Role">
-                  <Edit size={16} />
-                </button>
+              <div className="role-top-row">
+                <div className="role-header">
+                  <Shield size={26} />
+                  <div>
+                    <h3>{role.role}</h3>
+                    <span>{role.users} users</span>
+                  </div>
+                </div>
 
-                <button
-                  className="delete-btn"
-                  onClick={() => handleDeleteRole(role.role)}
-                  title="Delete Role Permissions"
-                >
-                  <Trash2 size={16} />
-                </button>
-              </div>
+                <div className="role-actions">
+                  <button className="edit-btn" onClick={() => openEdit(role)} title="Edit Role">
+                    <Edit size={16} />
+                  </button>
 
-              <div className="role-header">
-                <Shield size={26} />
-                <div>
-                  <h3>{role.role}</h3>
-                  <span>{role.users} users</span>
+                  <button
+                    className="delete-btn"
+                    onClick={() => handleDeleteRole(role.role)}
+                    title="Delete Role Permissions"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
 
@@ -194,4 +196,3 @@ function RoleManagement() {
 }
 
 export default RoleManagement;
-

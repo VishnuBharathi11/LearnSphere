@@ -134,7 +134,8 @@ td svg {
   font-size: 12px;
   font-weight: 500;
 
-  &.active {
+  &.active,
+  &.in-progress {
     background: $active-bg;
     color: $active-text;
   }

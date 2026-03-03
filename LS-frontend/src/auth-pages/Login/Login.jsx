@@ -47,7 +47,7 @@ function Login() {
 
       <div className="log-form">
         <div className="log-form-card">
-          <div className="log-page-name">LearnSphere</div>
+          <Link to="/" className="log-page-name">LearnSphere</Link>
 
           <div className="log-form-welcome">
             Welcome Back

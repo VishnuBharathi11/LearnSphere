@@ -165,9 +165,9 @@ function InstructorApplications() {
               <th>Name</th>
               <th>Email Address</th>
               <th>Expertise</th>
-              <th>Status</th>
+              <th className="status-col">Status</th>
               <th>Submitted</th>
-              <th>Review</th>
+              <th className="review-col">Review</th>
             </tr>
           </thead>
           <tbody>
@@ -184,11 +184,13 @@ function InstructorApplications() {
                   <td>{app.name}</td>
                   <td>{app.email}</td>
                   <td>{app.expertise}</td>
-                  <td className={`status ${String(app.status || "").toLowerCase()}`}>
-                    {app.status}
+                  <td className="status-cell">
+                    <span className={`status ${String(app.status || "").toLowerCase()}`}>
+                      {app.status}
+                    </span>
                   </td>
                   <td>{app.createdAt ? new Date(app.createdAt).toLocaleDateString() : "-"}</td>
-                  <td>
+                  <td className="review-cell">
                     <button className="review-btn" onClick={() => openReview(app)}>
                       <Eye size={16} />
                       Review

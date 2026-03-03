@@ -21,15 +21,16 @@ function StudentLayout() {
   }
 
   return (
-    <div className="student-layout">
+    <div className={`student-layout ${isAdminPreview ? "admin-preview-mode" : ""}`}>
       <StudentSideBar />
       <div className="student-main">
         <TopNavBarStudent />
-        <div className="page-content" key={location.key}>{outlet}</div>
+        <div className="dashboard-body">
+          <main className="page-content" key={location.key}>{outlet}</main>
+        </div>
       </div>
     </div>
   );
 }
 
 export default StudentLayout;
-

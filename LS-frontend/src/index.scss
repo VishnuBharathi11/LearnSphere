@@ -1,41 +1,90 @@
 
 
-$app-font-primary: "Poppins", sans-serif;
+:root {
+  --ui-primary: #5b4db1;
+  --ui-accent: #6c63ff;
+  --ui-bg: #eef1f8;
+  --ui-card: #ffffff;
+  --ui-text: #2e2e2e;
+  --ui-text-muted: #6b7280;
+  --ui-success: #34c759;
+  --ui-border: #dbe2f0;
+  --ui-radius-lg: 16px;
+  --ui-radius-md: 12px;
+  --ui-shadow: 0 12px 30px rgba(64, 83, 134, 0.08);
+  --ui-shadow-soft: 0 6px 18px rgba(64, 83, 134, 0.08);
+}
 
-$app-bg-body: #f9fafb;
-$app-text-color: #111827;
-
-$app-full-size: 100%;
-
-@mixin reset-box {
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-@mixin full-size {
-  width: $app-full-size;
-  height: $app-full-size;
-}
-
-/* =========================
-   Styles
-   ========================= */
-
-* {
-  @include reset-box;
-}
-
 html,
 body,
 #root {
-  @include full-size;
+  width: 100%;
+  height: 100%;
 }
 
 body {
-  font-family: $app-font-primary;
+  font-family: "Poppins", "Segoe UI", sans-serif;
   overflow-x: hidden;
   overflow-y: auto;
-  background: $app-bg-body;
-  color: $app-text-color;
+  background: var(--ui-bg);
+  color: var(--ui-text);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: var(--ui-text);
+}
+
+/* Shared soft UI primitives for all pages */
+.soft-card,
+.page-content section,
+.page-content .card,
+.page-content .panel,
+.page-content .widget,
+.page-content .stats-card,
+.page-content .course-card,
+.page-content .metric-card,
+.page-content .summary-card,
+.page-content .chart-card,
+.page-content .table-card,
+.page-content .form-card,
+.page-content .info-card,
+.page-content .profile-card,
+.page-content .activity-card {
+  background: var(--ui-card);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-soft);
+}
+
+.page-content button,
+.page-content .btn,
+.navbar .btn-login,
+.navbar .btn-register {
+  border-radius: 12px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.page-content button:hover,
+.page-content .btn:hover,
+.navbar .btn-login:hover,
+.navbar .btn-register:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(91, 77, 177, 0.2);
 }

@@ -43,26 +43,38 @@ $shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 }
 
 .analytics-stat-card {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 16px;
+  align-items: center;
   background: $white;
   border-radius: 14px;
   padding: 16px;
   box-shadow: $shadow;
   border: 1px solid $border;
+  min-height: 110px;
 
-  p {
-    font-size: 13px;
-    color: $text-muted;
-    margin: 10px 0 4px;
-  }
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
 
-  h2 {
-    margin: 0;
-    font-size: 26px;
-    font-weight: 700;
-    color: $text-dark;
+    h2 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: $text-muted;
+      line-height: 1;
+    }
   }
 }
 
@@ -177,6 +189,14 @@ $shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 @media (max-width: 640px) {
   .analytics-stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .analytics-stat-card .stat-content h2 {
+    font-size: 26px;
+  }
+
+  .analytics-stat-card .stat-content p {
+    font-size: 14px;
   }
 
   .lesson-row span {

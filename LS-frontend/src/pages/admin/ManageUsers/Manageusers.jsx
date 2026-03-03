@@ -76,11 +76,16 @@ function Manageusers() {
       adminUserRole: role,
     });
 
-    if (role === "instructor") {
-      navigate(`/instructor-layout/profile?${params.toString()}`);
+    if (role === "admin") {
+      navigate(`/admin-layout/dashboard?${params.toString()}`);
       return;
     }
-    navigate(`/student-layout/profile?${params.toString()}`);
+
+    if (role === "instructor") {
+      navigate(`/instructor-layout/dashboard?${params.toString()}`);
+      return;
+    }
+    navigate(`/student-layout/dashboard?${params.toString()}`);
   };
 
   return (

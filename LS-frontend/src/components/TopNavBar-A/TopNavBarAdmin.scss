@@ -3,9 +3,12 @@
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 16px 24px;
-  background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 16px;
+  margin: 16px 16px 0;
+  background: var(--ui-card);
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  box-shadow: var(--ui-shadow-soft);
   position: relative;
   z-index: 30;
 }
@@ -22,13 +25,13 @@
   font-size: 22px;
   line-height: 1.25;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--ui-text);
   word-break: break-word;
 }
 
 .sub-head {
   font-size: 13px;
-  color: #64748b;
+  color: var(--ui-text-muted);
 }
 
 .header-right {
@@ -43,12 +46,12 @@
   position: relative;
   width: 38px;
   height: 38px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ui-border);
   background: #ffffff;
   border-radius: 10px;
   display: grid;
   place-items: center;
-  color: #334155;
+  color: var(--ui-text-muted);
   cursor: pointer;
 }
 
@@ -56,7 +59,7 @@
   position: absolute;
   top: -5px;
   right: -5px;
-  background: #2563eb;
+  background: var(--ui-accent);
   color: #ffffff;
   font-size: 11px;
   font-weight: 700;
@@ -75,9 +78,9 @@
   max-height: 520px;
   overflow: auto;
   background: #ffffff;
-  border: 1px solid #dbe2ea;
-  border-radius: 0 0 12px 12px;
-  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.2);
+  border: 1px solid var(--ui-border);
+  border-radius: 12px;
+  box-shadow: var(--ui-shadow);
   z-index: 60;
 }
 
@@ -89,8 +92,8 @@
   font-size: 16px;
   font-weight: 500;
   color: #0f172a;
-  background: #f8fafc;
-  border-bottom: 1px solid #dbe2ea;
+  background: #f6f8ff;
+  border-bottom: 1px solid var(--ui-border);
 
   span {
     font-size: 16px;
@@ -187,9 +190,9 @@
   align-items: center;
   gap: 10px;
   padding: 6px 10px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--ui-border);
   border-radius: 12px;
-  background: #f8fafc;
+  background: #f6f8ff;
   min-width: 0;
 }
 
@@ -197,7 +200,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  background: linear-gradient(135deg, var(--ui-primary), var(--ui-accent));
   color: #ffffff;
   font-weight: 700;
   font-size: 12px;
@@ -234,7 +237,8 @@
 
 @media (max-width: 900px) {
   .dashboard-header {
-    padding: 12px 14px;
+    margin: 12px 12px 0;
+    padding: 12px;
   }
 
   .profile-info {

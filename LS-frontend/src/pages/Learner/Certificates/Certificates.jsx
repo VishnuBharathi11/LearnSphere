@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Lock } from "lucide-react";
 import { getCourseLessons, getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
@@ -142,23 +143,22 @@ function Certificates() {
                 <h3>{certificate.course.courseName}</h3>
                 <p>Instructor: {certificate.course.instructor}</p>
               </div>
-              <span className="badge">{certificate.unlocked ? "Unlocked" : "Locked"}</span>
             </div>
             <div className={`certificate-preview-wrap ${certificate.unlocked ? "unlocked" : "locked"}`}>
               <img src={certificateImage} alt="Certificate Preview" className="certificate-preview-image" />
               {!certificate.unlocked ? (
                 <div className="certificate-lock-overlay">
-                  <span className="lock-icon">LOCKED</span>
+                  <span className="lock-icon"><Lock size={24} /></span>
                 </div>
               ) : null}
             </div>
             <div className="certificate-meta">
               <div>
                 <span>Status</span>
-                <strong>{certificate.unlocked ? "Ready" : `Progress ${certificate.progress}%`}</strong>
+                <strong>{certificate.unlocked ? "Completed" : `${certificate.progress}%`}</strong>
               </div>
               <div>
-                <span>Issued</span>
+                <span>Issue Date</span>
                 <strong>
                   {certificate.issuedOn
                     ? certificate.issuedOn.toLocaleDateString("en-US", {
@@ -176,7 +176,7 @@ function Certificates() {
                 disabled={!certificate.unlocked}
                 onClick={() => navigate(`/student-layout/download-certificate/${certificate.course.id}`)}
               >
-                {certificate.unlocked ? "Download PDF" : "Locked"}
+                {certificate.unlocked ? "Download" : "Locked"}
               </button>
             </div>
           </div>

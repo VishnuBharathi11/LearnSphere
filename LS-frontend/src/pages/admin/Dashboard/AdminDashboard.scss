@@ -43,6 +43,8 @@ $priority-medium-muted: #fef3c7;
   border: 1px solid $border;
   box-shadow: $shadow;
   transition: 0.2s ease;
+  user-select: none;
+  cursor: default;
 
   &:hover {
     transform: translateY(-2px);
@@ -117,21 +119,28 @@ $priority-medium-muted: #fef3c7;
   align-items: center;
   border: 1px solid $border;
   font-size: 14px;
+  user-select: none;
+  cursor: default;
 
   .badge {
     font-size: 12px;
     font-weight: 600;
     text-transform: capitalize;
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1px solid transparent;
   }
 
   &.high .badge {
     background: $priority-high-muted;
     color: $priority-high;
+    border-color: rgba(239, 68, 68, 0.35);
   }
 
   &.medium .badge {
     background: $priority-medium-muted;
     color: $priority-medium;
+    border-color: rgba(245, 158, 11, 0.35);
   }
 }
 
@@ -186,4 +195,10 @@ $priority-medium-muted: #fef3c7;
     font-size: 14px;
     color: $text-dark;
   }
+}
+
+.selected-category-label {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: $text-muted;
 }

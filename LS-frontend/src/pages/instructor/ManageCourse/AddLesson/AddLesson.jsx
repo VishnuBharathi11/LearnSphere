@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { FileText, Video, BookOpen } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./AddLesson.scss";
-import { createCourseLesson, getCourseById, getCourseLessons } from "../../../../services/courseApi";
+import { createCourseLesson, getCourseById, getCourseLessons, updateCourseLesson } from "../../../../services/courseApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
 
 function AddLesson() {
   const { courseId } = useParams();
+  const [searchParams] = useSearchParams();
+  const editLessonId = String(searchParams.get("edit") || "").trim();
+  const isEditMode = Boolean(editLessonId);
   const id = String(courseId);
   const navigate = useNavigate();
   const currentUser = getCurrentUser() || {};
@@ -15,6 +18,7 @@ function AddLesson() {
   const [loadingCourse, setLoadingCourse] = useState(true);
   const [lessons, setLessons] = useState([]);
   const [message, setMessage] = useState({ type: "", text: "" });
+  const [loadingLesson, setLoadingLesson] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -54,6 +58,32 @@ function AddLesson() {
     }
     loadLessons();
   }, [id]);
+
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (!Array.isArray(lessons)) return;
+    const lesson = lessons.find((entry) => String(entry.id) === editLessonId);
+    if (!lesson) {
+      setLoadingLesson(false);
+      return;
+    }
+
+    setForm({
+      title: lesson.title || "",
+      description: lesson.description || "",
+      type: lesson.type || "theory",
+      file: null,
+      fileUrl: lesson.fileUrl || "",
+      fileName: lesson.fileName || "",
+      mimeType: lesson.mimeType || "",
+    });
+    setLoadingLesson(false);
+  }, [isEditMode, lessons, editLessonId]);
+
+  useEffect(() => {
+    if (!isEditMode) return;
+    setLoadingLesson(true);
+  }, [isEditMode]);
 
   if (loadingCourse) {
     return <p style={{ padding: 40 }}>Loading course...</p>;
@@ -103,7 +133,11 @@ function AddLesson() {
       return "Upload lesson file";
     }
 
-    const duplicate = lessons.find((l) => String(l.title || "").toLowerCase() === form.title.toLowerCase());
+    const duplicate = lessons.find(
+      (l) =>
+        String(l.title || "").toLowerCase() === form.title.toLowerCase() &&
+        String(l.id) !== editLessonId
+    );
     if (duplicate) return "Lesson with same title already exists";
 
     return null;
@@ -118,7 +152,7 @@ function AddLesson() {
     }
 
     try {
-      const saved = await createCourseLesson(id, {
+      const payload = {
         title: form.title.trim(),
         heading: null,
         subheadings: [],
@@ -127,13 +161,25 @@ function AddLesson() {
         fileUrl: form.fileUrl || "",
         fileName: form.fileName || "",
         mimeType: form.mimeType || "",
-        orderIndex: lessons.length,
-      });
-      setLessons((prev) => [...prev, saved]);
-      setMessage({ type: "success", text: "Lesson added successfully." });
+        orderIndex: isEditMode
+          ? lessons.findIndex((l) => String(l.id) === editLessonId)
+          : lessons.length,
+      };
+
+      if (isEditMode) {
+        const updated = await updateCourseLesson(id, editLessonId, payload);
+        setLessons((prev) =>
+          prev.map((lesson) => (String(lesson.id) === editLessonId ? updated : lesson))
+        );
+      } else {
+        const saved = await createCourseLesson(id, payload);
+        setLessons((prev) => [...prev, saved]);
+      }
+
+      setMessage({ type: "success", text: isEditMode ? "Lesson updated successfully." : "Lesson added successfully." });
       setTimeout(() => navigate(`/instructor-layout/manage-courses/${id}/lessons`), 600);
     } catch {
-      setMessage({ type: "error", text: "Failed to save lesson." });
+      setMessage({ type: "error", text: isEditMode ? "Failed to update lesson." : "Failed to save lesson." });
     }
   };
 
@@ -142,8 +188,12 @@ function AddLesson() {
       <div className="add-lesson-page">
         <div className="add-lesson-header">
           <div>
-            <h2>Add New Lesson</h2>
-            <p>Fill in the details and choose the content type for this lesson.</p>
+            <h2>{isEditMode ? "Edit Lesson" : "Add New Lesson"}</h2>
+            <p>
+              {isEditMode
+                ? "Update lesson details and content type."
+                : "Fill in the details and choose the content type for this lesson."}
+            </p>
           </div>
           <button
             type="button"
@@ -157,6 +207,7 @@ function AddLesson() {
         {message.text && <p className={`lesson-message ${message.type}`}>{message.text}</p>}
 
         <div className="add-lesson-card">
+          {isEditMode && loadingLesson ? <p className="prefill-note">Loading previous lesson content...</p> : null}
           <div className="form-grid">
             <label>
               Lesson Title
@@ -208,22 +259,32 @@ function AddLesson() {
               />
             </div>
           ) : (
-            <label className="upload-box">
-              <input
-                type="file"
-                accept={form.type === "pdf" ? ".pdf" : "video/*"}
-                onChange={handleFileChange}
-              />
-              <div>
-                <strong>Upload {form.type === "pdf" ? "PDF" : "Video"}</strong>
-                <span>{form.fileName || "Choose file to upload"}</span>
-              </div>
-            </label>
+            <div className="upload-stack">
+              <label className="upload-box">
+                <input
+                  type="file"
+                  accept={form.type === "pdf" ? ".pdf" : "video/*"}
+                  onChange={handleFileChange}
+                />
+                <div>
+                  <strong>{isEditMode ? "Replace" : "Upload"} {form.type === "pdf" ? "PDF" : "Video"}</strong>
+                  <span>{form.fileName || "Choose file to upload"}</span>
+                </div>
+              </label>
+              {isEditMode && form.fileUrl ? (
+                <p className="prefill-note">
+                  Existing file available:{" "}
+                  <a href={form.fileUrl} target="_blank" rel="noreferrer">
+                    {form.fileName || "Open current file"}
+                  </a>
+                </p>
+              ) : null}
+            </div>
           )}
 
           <div className="add-lesson-actions">
             <button className="primary-btn" onClick={handleSubmit}>
-              Save Lesson
+              {isEditMode ? "Update Lesson" : "Save Lesson"}
             </button>
             <button
               className="secondary-btn"

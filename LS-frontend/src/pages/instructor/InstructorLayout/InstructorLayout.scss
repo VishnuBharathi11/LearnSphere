@@ -1,18 +1,19 @@
 .instructor-layout {
   display: flex;
-  align-items: stretch;
   width: 100%;
   height: 100vh;
-  background: #f8fafc;
+  background: var(--ui-bg);
   overflow: hidden;
 }
 
-.I-navbar {
-  width: 240px;
-  height: 100vh;
-  background: #ffffff;
-  border-right: 1px solid #e5e7eb;
-  flex-shrink: 0;
+.instructor-layout.admin-preview-mode .page-content {
+  button,
+  input,
+  select,
+  textarea {
+    pointer-events: none;
+    opacity: 0.7;
+  }
 }
 
 .instructor-main {
@@ -20,24 +21,45 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
-  background: #f8fafc;
+  background: var(--ui-bg);
   overflow: hidden;
 }
 
-.page-content {
+.instructor-main .dashboard-body {
   flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.instructor-main .page-content {
+  flex: 1;
+  min-width: 0;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 18px 22px;
-  width: 100%;
+  padding: 0;
+}
+
+@media (max-width: 1200px) {
+  .instructor-main .dashboard-body {
+    padding: 12px;
+  }
 }
 
 @media (max-width: 900px) {
-  .I-navbar {
-    width: 84px;
+  .instructor-layout {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
   }
 
-  .page-content {
-    padding: 14px;
+  .instructor-main .dashboard-body {
+    overflow: visible;
+  }
+
+  .instructor-main .page-content {
+    overflow: visible;
   }
 }

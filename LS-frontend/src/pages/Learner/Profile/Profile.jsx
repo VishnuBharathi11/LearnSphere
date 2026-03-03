@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
+import { Flame, Medal, Target, Trophy } from "lucide-react";
 import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
@@ -369,6 +370,29 @@ function Profile() {
           </div>
         </div>
       </div>
+      <div className="profile-highlights">
+        <div className="highlight-card">
+          <Flame size={18} />
+          <div>
+            <span>Learning Streak</span>
+            <strong>{Math.max(1, Math.min(30, completedCount * 2 + 1))} days</strong>
+          </div>
+        </div>
+        <div className="highlight-card">
+          <Target size={18} />
+          <div>
+            <span>Goal Completion</span>
+            <strong>{enrolledCount ? Math.round((completedCount / enrolledCount) * 100) : 0}%</strong>
+          </div>
+        </div>
+        <div className="highlight-card">
+          <Medal size={18} />
+          <div>
+            <span>Top Badge</span>
+            <strong>{certificatesCount > 0 ? "Certified Learner" : "In Progress"}</strong>
+          </div>
+        </div>
+      </div>
 
       <div className="profile-bottom">
         <div className="personal-info" ref={infoRef}>
@@ -401,7 +425,7 @@ function Profile() {
           ) : (
             achievements.map((item, index) => (
               <div className="achievement-card" key={`${item.title}-${index}`}>
-                <span className="achievement-icon">Trophy</span>
+                <span className="achievement-icon"><Trophy size={18} /></span>
                 <div>
                   <strong>{item.title}</strong>
                   <p>Completed {item.date}</p>

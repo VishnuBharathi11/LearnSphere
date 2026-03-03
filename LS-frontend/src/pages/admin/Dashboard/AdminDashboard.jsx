@@ -21,6 +21,7 @@ function AdminDashboard() {
   const currentUser = getCurrentUser();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [dashboard, setDashboard] = useState(null);
   const [courses, setCourses] = useState([]);
 
@@ -71,8 +72,16 @@ function AdminDashboard() {
       const category = course.category || "General";
       map[category] = (map[category] || 0) + 1;
     });
-    return Object.entries(map).map(([name, count]) => ({ name, count }));
+    return Object.entries(map)
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
   }, [courses]);
+
+  const handleCategorySelect = (barData) => {
+    const picked = barData?.name || barData?.payload?.name || "";
+    if (!picked) return;
+    setSelectedCategory(picked);
+  };
 
   const courseNameMap = useMemo(
     () =>
@@ -195,9 +204,18 @@ function AdminDashboard() {
                 <XAxis dataKey="name" />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Bar dataKey="count" fill="#6366f1" radius={[6, 6, 0, 0]} />
+                <Bar
+                  dataKey="count"
+                  fill="#6366f1"
+                  radius={[6, 6, 0, 0]}
+                  onClick={handleCategorySelect}
+                  cursor="pointer"
+                />
               </BarChart>
             </ResponsiveContainer>
+            <p className="selected-category-label">
+              {selectedCategory ? `Selected Category: ${selectedCategory}` : "Click a category bar to view its label"}
+            </p>
           </div>
         </div>
 

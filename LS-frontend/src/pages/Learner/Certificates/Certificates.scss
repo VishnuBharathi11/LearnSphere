@@ -69,16 +69,6 @@
   }
 }
 
-.badge {
-  background: #e0f2fe;
-  color: #0369a1;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 999px;
-  align-self: flex-start;
-}
-
 .certificate-meta {
   display: flex;
   justify-content: space-between;
@@ -129,17 +119,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(15, 23, 42, 0.28);
+  background: rgba(15, 23, 42, 0.2);
 }
 
 .lock-icon {
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(2, 6, 23, 0.72);
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(2, 6, 23, 0.6);
   color: #fff;
-  font-size: 12px;
-  letter-spacing: 0.08em;
-  font-weight: 700;
+  display: grid;
+  place-items: center;
 }
 
 .certificate-actions {
@@ -159,6 +149,12 @@
     background: #2563eb;
     color: #fff;
     box-shadow: 0 10px 25px rgba(37, 99, 235, 0.32);
+  }
+
+  .primary:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    cursor: not-allowed;
   }
 
   .primary:hover {

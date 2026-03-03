@@ -50,8 +50,17 @@ function TopNavBarStudent() {
   };
 
   const pageTitle = pageMap[getNormalizedPath(location.pathname)] || "Dashboard";
+  const searchParams = new URLSearchParams(location.search);
+  const isAdminPreview = searchParams.get("adminPreview") === "true";
+  const previewUserName = searchParams.get("adminUserName") || "";
+  const previewUserEmail = searchParams.get("adminUserEmail") || "";
 
   useEffect(() => {
+    if (isAdminPreview) {
+      setNotifications([]);
+      return;
+    }
+
     const userId = currentUser?.id || currentUser?.userId;
     if (!userId) {
       setNotifications([]);
@@ -81,7 +90,7 @@ function TopNavBarStudent() {
       active = false;
       clearInterval(timer);
     };
-  }, [currentUser?.id, currentUser?.userId]);
+  }, [currentUser?.id, currentUser?.userId, isAdminPreview]);
 
   useEffect(() => {
     const onDocClick = (event) => {
@@ -94,8 +103,12 @@ function TopNavBarStudent() {
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
 
-  const displayName = currentUser?.name || currentUser?.username || "Learner";
-  const displayEmail = currentUser?.email || "learner@learnsphere.com";
+  const displayName = isAdminPreview
+    ? previewUserName || "Learner"
+    : currentUser?.name || currentUser?.username || "Learner";
+  const displayEmail = isAdminPreview
+    ? previewUserEmail || "learner@learnsphere.com"
+    : currentUser?.email || "learner@learnsphere.com";
   const initials = useMemo(
     () =>
       displayName
@@ -109,6 +122,8 @@ function TopNavBarStudent() {
   const unreadCount = notifications.filter((item) => !item.read).length;
 
   const handleNotificationClick = async (item) => {
+    if (isAdminPreview) return;
+
     const userId = currentUser?.id || currentUser?.userId;
     if (userId && item?.id) {
       try {
@@ -135,6 +150,8 @@ function TopNavBarStudent() {
   };
 
   const markAllAsRead = async () => {
+    if (isAdminPreview) return;
+
     const userId = currentUser?.id || currentUser?.userId;
     if (!userId) return;
     const unread = notifications.filter((item) => !item.read);
@@ -159,7 +176,10 @@ function TopNavBarStudent() {
           className="notification"
           type="button"
           aria-label="Notifications"
-          onClick={() => setOpenNotifications((prev) => !prev)}
+          onClick={() => {
+            if (isAdminPreview) return;
+            setOpenNotifications((prev) => !prev);
+          }}
         >
           <FiBell />
           {unreadCount > 0 && <span className="badge">{Math.min(unreadCount, 9)}</span>}

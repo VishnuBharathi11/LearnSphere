@@ -21,8 +21,10 @@ function AdminLayout() {
       <div className="admin-main">
         <TopNavBarAdmin />
 
-        <div className="page-content">
-          <Outlet />
+        <div className="dashboard-body">
+          <main className="page-content">
+            <Outlet />
+          </main>
         </div>
       </div>
     </div>
@@ -30,4 +32,3 @@ function AdminLayout() {
 }
 
 export default AdminLayout;
-

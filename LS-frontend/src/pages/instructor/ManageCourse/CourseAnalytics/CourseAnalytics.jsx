@@ -19,6 +19,7 @@ import { useParams } from "react-router-dom";
 import { getCourseById, getCourseLessons, getInstructorCourses } from "../../../../services/courseApi";
 import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
 import { listThreads } from "../../../../services/discussionApi";
+import { getCourseProgress } from "../../../../services/progressApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
 
 function CourseAnalytics() {
@@ -28,6 +29,7 @@ function CourseAnalytics() {
   const [loadingCourse, setLoadingCourse] = useState(true);
   const [enrollments, setEnrollments] = useState([]);
   const [discussionCount, setDiscussionCount] = useState(0);
+  const [progressByUser, setProgressByUser] = useState({});
   const currentUser = getCurrentUser() || {};
   const userId = currentUser?.id || currentUser?.userId || "";
   const currentRole = String(currentUser?.role || "").toLowerCase();
@@ -57,36 +59,57 @@ function CourseAnalytics() {
 
         setCourse(selectedCourse || null);
 
-        const [list, threadData] = await Promise.all([
+        const [list, threadData, lessons] = await Promise.all([
           getEnrollmentsByCourse(id),
           listThreads(id, { page: 0, size: 200 }),
+          getCourseLessons(id).catch(() => []),
         ]);
         setEnrollments(Array.isArray(list) ? list : []);
         setDiscussionCount(Array.isArray(threadData?.items) ? threadData.items.length : 0);
+        setLessonList(Array.isArray(lessons) ? lessons : []);
       } catch {
         setCourse(null);
         setEnrollments([]);
         setDiscussionCount(0);
+        setLessonList([]);
       } finally {
         setLoadingCourse(false);
       }
     }
     loadCourse();
   }, [id, userId]);
-
   const [lessonList, setLessonList] = useState([]);
 
   useEffect(() => {
-    async function loadLessons() {
+    if (!id || enrollments.length === 0) {
+      setProgressByUser({});
+      return;
+    }
+
+    let active = true;
+    async function loadProgress() {
       try {
-        const list = await getCourseLessons(id);
-        setLessonList(Array.isArray(list) ? list : []);
+        const results = await Promise.all(
+          enrollments.map(async (enrollment) => {
+            const userId = String(enrollment.userId || "");
+            if (!userId) return [userId, null];
+            const progress = await getCourseProgress(userId, id).catch(() => null);
+            return [userId, progress];
+          })
+        );
+        if (!active) return;
+        setProgressByUser(Object.fromEntries(results.filter(([userId]) => Boolean(userId))));
       } catch {
-        setLessonList([]);
+        if (!active) return;
+        setProgressByUser({});
       }
     }
-    loadLessons();
-  }, [id]);
+
+    loadProgress();
+    return () => {
+      active = false;
+    };
+  }, [id, enrollments]);
 
   const {
     totalRevenue,
@@ -114,7 +137,13 @@ function CourseAnalytics() {
     const totalEnrollments = courseEnrollments.length;
     const price = Number(course.price) || 0;
     const totalRevenue = totalEnrollments * price;
-    const avgRating = Number(course.rating || 0).toFixed(1);
+    const scoredAssessments = courseEnrollments
+      .map((enrollment) => progressByUser[String(enrollment.userId)]?.finalAssessment)
+      .filter((assessment) => Number.isFinite(assessment?.score) && Number.isFinite(assessment?.total))
+      .map((assessment) => (assessment.score / Math.max(assessment.total, 1)) * 5);
+    const avgRating = scoredAssessments.length
+      ? (scoredAssessments.reduce((sum, value) => sum + value, 0) / scoredAssessments.length).toFixed(1)
+      : "0.0";
 
     const monthMap = {};
     courseEnrollments.forEach((e) => {
@@ -144,9 +173,14 @@ function CourseAnalytics() {
     let notStarted = 0;
 
     courseEnrollments.forEach((e) => {
-      const normalized = String(e.status || "").toUpperCase();
-      if (normalized === "COMPLETED") completed += 1;
-      else if (normalized === "ACTIVE") inProgress += 1;
+      const userProgress = progressByUser[String(e.userId)] || null;
+      const completedLessons = Array.isArray(userProgress?.completedLessonIds)
+        ? userProgress.completedLessonIds.length
+        : 0;
+      const percent =
+        lessonList.length > 0 ? Math.min(100, Math.round((completedLessons / lessonList.length) * 100)) : 0;
+      if (percent >= 100 || String(e.status || "").toUpperCase() === "COMPLETED") completed += 1;
+      else if (percent > 0 || String(e.status || "").toUpperCase() === "ACTIVE") inProgress += 1;
       else notStarted += 1;
     });
 
@@ -156,15 +190,16 @@ function CourseAnalytics() {
       { name: "Not Started", value: notStarted },
     ];
 
-    const merged = Array.isArray(lessonList) ? lessonList : [];
-    const lessonCount = merged.length;
-    const base = totalEnrollments === 0 ? 1 : totalEnrollments;
-    const lessons = (lessonCount > 0 ? merged : Array.from({ length: 5 }).map((_, i) => ({ title: `Lesson ${i + 1}` }))).map((l, idx) => {
-      const dropFactor = 100 - idx * Math.min(18, Math.max(8, Math.floor(80 / Math.max(lessonCount, 1))));
-      const engagement = Math.max(12, Math.min(98, dropFactor - Math.floor((idx * base) / Math.max(1, lessonCount))));
+    const lessons = (Array.isArray(lessonList) ? lessonList : []).map((lesson, idx) => {
+      const completedCount = courseEnrollments.reduce((sum, enrollment) => {
+        const completedIds = progressByUser[String(enrollment.userId)]?.completedLessonIds;
+        const done = Array.isArray(completedIds) && completedIds.includes(String(lesson.id));
+        return sum + (done ? 1 : 0);
+      }, 0);
+      const value = totalEnrollments > 0 ? Math.round((completedCount / totalEnrollments) * 100) : 0;
       return {
-        name: l.title || `Lesson ${idx + 1}`,
-        value: engagement,
+        name: lesson.title || `Lesson ${idx + 1}`,
+        value,
       };
     });
 
@@ -177,7 +212,7 @@ function CourseAnalytics() {
       completionData,
       lessons,
     };
-  }, [id, course, enrollments, lessonList]);
+  }, [id, course, enrollments, lessonList, progressByUser]);
 
   const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
 
@@ -197,26 +232,34 @@ function CourseAnalytics() {
         <div className="analytics-stats-grid">
           <div className="analytics-stat-card revenue">
             <div className="stat-icon green"><DollarSign size={22} /></div>
-            <p>Total Revenue</p>
-            <h2>Rs {totalRevenue.toLocaleString()}</h2>
+            <div className="stat-content">
+              <h2>Rs {totalRevenue.toLocaleString()}</h2>
+              <p>Total Revenue</p>
+            </div>
           </div>
 
           <div className="analytics-stat-card enroll">
             <div className="stat-icon blue"><Users size={22} /></div>
-            <p>Total Enrollments</p>
-            <h2>{totalEnrollments}</h2>
+            <div className="stat-content">
+              <h2>{totalEnrollments}</h2>
+              <p>Total Enrollments</p>
+            </div>
           </div>
 
           <div className="analytics-stat-card rating">
             <div className="stat-icon yellow"><Star size={22} /></div>
-            <p>Avg. Rating</p>
-            <h2>{avgRating}</h2>
+            <div className="stat-content">
+              <h2>{avgRating}</h2>
+              <p>Avg. Rating</p>
+            </div>
           </div>
 
           <div className="analytics-stat-card reviews">
             <div className="stat-icon purple"><MessageSquare size={22} /></div>
-            <p>Discussions</p>
-            <h2>{discussionCount}</h2>
+            <div className="stat-content">
+              <h2>{discussionCount}</h2>
+              <p>Discussions</p>
+            </div>
           </div>
         </div>
 
@@ -269,16 +312,20 @@ function CourseAnalytics() {
 
           <div className="analytics-card">
             <h3>Lesson Engagement</h3>
-            <p>Estimated completion trend by lesson sequence.</p>
-            {lessons.map((l, i) => (
-              <div className="lesson-row" key={i}>
-                <span>{l.name}</span>
-                <div className="analytics-progress">
-                  <div className="analytics-progress-fill" style={{ width: `${l.value}%` }}></div>
+            <p>Completion ratio for each lesson based on learner progress data.</p>
+            {lessons.length === 0 ? (
+              <p>No lesson engagement data.</p>
+            ) : (
+              lessons.map((l, i) => (
+                <div className="lesson-row" key={i}>
+                  <span>{l.name}</span>
+                  <div className="analytics-progress">
+                    <div className="analytics-progress-fill" style={{ width: `${l.value}%` }}></div>
+                  </div>
+                  <small>{l.value}%</small>
                 </div>
-                <small>{l.value}%</small>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </div>

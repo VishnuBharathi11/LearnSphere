@@ -13,7 +13,6 @@ import {
   deleteCourseLesson,
   getCourseById,
   getCourseLessons,
-  updateCourseLesson,
 } from "../../../../services/courseApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
 function UpdateLesson() {
@@ -27,18 +26,7 @@ function UpdateLesson() {
   const [lessons, setLessons] = useState([]);
   const [loadingLessons, setLoadingLessons] = useState(true);
   const [lessonError, setLessonError] = useState("");
-  const [showModal, setShowModal] = useState(false);
-  const [editLessonId, setEditLessonId] = useState(null);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [form, setForm] = useState({
-    title: "",
-    description: "",
-    type: "video",
-    file: null,
-    fileUrl: "",
-    fileName: "",
-    mimeType: "",
-  });
 
   useEffect(() => {
     async function loadCourse() {
@@ -87,97 +75,6 @@ function UpdateLesson() {
     );
   }
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setForm((prev) => ({
-        ...prev,
-        file,
-        fileUrl: String(reader.result || ""),
-        fileName: file.name,
-        mimeType: file.type || "",
-      }));
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleTypeChange = (nextType) => {
-    setForm((prev) => ({
-      ...prev,
-      type: nextType,
-      description: nextType === "theory" ? prev.description : "",
-      file: nextType === "theory" ? null : prev.file,
-      fileUrl: nextType === "theory" ? "" : prev.fileUrl,
-      fileName: nextType === "theory" ? "" : prev.fileName,
-      mimeType: nextType === "theory" ? "" : prev.mimeType,
-    }));
-  };
-
-  const validate = () => {
-    if (!form.title.trim()) return "Lesson title required";
-    if (form.type === "theory") {
-      if (!form.description.trim()) return "Add theory content";
-    } else if (!form.fileUrl) {
-      return "Upload a lesson file";
-    }
-
-    const duplicate = lessons.find(
-      (l) =>
-        l.title.toLowerCase() === form.title.toLowerCase() &&
-        l.id !== editLessonId
-    );
-
-    if (duplicate) return "Lesson with same title already exists";
-
-    return null;
-  };
-
-  const handleSubmit = async () => {
-    setMessage({ type: "", text: "" });
-    const error = validate();
-    if (error) {
-      setMessage({ type: "error", text: error });
-      return;
-    }
-    if (!editLessonId) {
-      return;
-    }
-    try {
-      const updatedLesson = await updateCourseLesson(id, editLessonId, {
-        title: form.title.trim(),
-        heading: null,
-        subheadings: [],
-        description: form.description.trim(),
-        type: form.type,
-        fileUrl: form.fileUrl || "",
-        fileName: form.fileName || "",
-        mimeType: form.mimeType || "",
-        orderIndex: lessons.findIndex((l) => String(l.id) === String(editLessonId)),
-      });
-      setLessons((prev) =>
-        prev.map((l) => (String(l.id) === String(editLessonId) ? updatedLesson : l))
-      );
-      setForm({
-        title: "",
-        description: "",
-        type: "video",
-        file: null,
-        fileUrl: "",
-        fileName: "",
-        mimeType: "",
-      });
-      setEditLessonId(null);
-      setShowModal(false);
-      setMessage({
-        type: "success",
-        text: "Lesson updated successfully.",
-      });
-    } catch {
-      setMessage({ type: "error", text: "Failed to update lesson." });
-    }
-  };
   const deleteLesson = (lessonId) => {
     deleteCourseLesson(id, lessonId)
       .then(() => {
@@ -188,17 +85,7 @@ function UpdateLesson() {
       });
   };
   const openEdit = (lesson) => {
-    setForm({
-      title: lesson.title,
-      description: lesson.description || "",
-      type: lesson.type,
-      file: null,
-      fileUrl: lesson.fileUrl || "",
-      fileName: lesson.fileName || "",
-      mimeType: lesson.mimeType || "",
-    });
-    setEditLessonId(lesson.id);
-    setShowModal(true);
+    navigate(`/instructor-layout/manage-courses/${id}/lessons/new?edit=${encodeURIComponent(String(lesson.id))}`);
   };
   const lessonIcon = (type) => {
     if (type === "video") return <Video size={22} />;
@@ -289,63 +176,6 @@ function UpdateLesson() {
             })
           )}
         </div>
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal-box">
-              <h2>{editLessonId ? "Edit Lesson" : "Add Lesson"}</h2>
-              <div className="form-group">
-                <input
-                  placeholder="Lesson Title"
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                />
-              </div>
-              <div className="form-group">
-                <select
-                  value={form.type}
-                  onChange={(e) =>
-                    handleTypeChange(e.target.value)
-                  }
-                >
-                  <option value="theory">Theory</option>
-                  <option value="video">Video</option>
-                  <option value="pdf">PDF</option>
-                </select>
-              </div>
-              {form.type === "theory" ? (
-                <div className="form-group">
-                  <textarea
-                    placeholder="Theory content"
-                    value={form.description}
-                    onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  />
-                </div>
-              ) : (
-                <div className="form-group">
-                  <input
-                    type="file"
-                    accept={form.type === "pdf" ? ".pdf" : "video/*"}
-                    onChange={handleFileChange}
-                  />
-                </div>
-              )}
-              <div className="modal-actions">
-                <button className="primary-btn" onClick={handleSubmit}>
-                  {editLessonId ? "Updated" : "Add"}
-                </button>
-                <button
-                  className="secondary-btn"
-                  onClick={() => {
-                    setShowModal(false);
-                    setEditLessonId(null);
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

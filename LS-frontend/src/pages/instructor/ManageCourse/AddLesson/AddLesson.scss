@@ -49,6 +49,23 @@ $border: #e5e7eb;
   gap: 18px;
 }
 
+.upload-stack {
+  display: grid;
+  gap: 10px;
+}
+
+.prefill-note {
+  margin: 0;
+  font-size: 13px;
+  color: $text-muted;
+
+  a {
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 500;
+  }
+}
+
 .lesson-message {
   margin: 0 0 12px;
   padding: 10px 12px;

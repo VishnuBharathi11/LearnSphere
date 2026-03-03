@@ -34,6 +34,11 @@ const DEPRECATED_KEYS = new Set([
   "forum_notifications",
   "enrolledCourses",
   "currentUser",
+  "courseLessons",
+  "courseQuizzes",
+  "learnerCourseProgress",
+  "testResults",
+  "lessonProgress",
   "rzp_checkout_order_id",
   "rzp_device_id",
   "rzp_stored_checkout_id",
@@ -64,10 +69,22 @@ export function cleanupDeprecatedStoreKeys() {
       window.localStorage.removeItem(key);
     }
   }
+
+  if (!hasSessionStorage) return;
+  for (let i = window.sessionStorage.length - 1; i >= 0; i -= 1) {
+    const key = window.sessionStorage.key(i);
+    if (!key) continue;
+    if (isDeprecatedKey(key) || isDeprecatedPrefixKey(key)) {
+      window.sessionStorage.removeItem(key);
+    }
+  }
 }
 
 export const appStore = {
   getItem(key) {
+    if (isDeprecatedKey(key) || isDeprecatedPrefixKey(key)) {
+      return null;
+    }
     if (SESSION_KEYS.has(String(key || "")) && hasSessionStorage) {
       return window.sessionStorage.getItem(key);
     }

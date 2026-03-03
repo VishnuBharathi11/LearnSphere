@@ -28,10 +28,10 @@ function NavBar() {
   return (
     <>
     <nav className="navbar">
-      <div className="logo-section">
+      <Link to="/" className="logo-section" aria-label="LearnSphere Home">
           <img src={logo} className="logo"/>
           <div className="logo-page-name">LearnSphere</div>
-          </div>
+          </Link>
           <div className="nav-links">
           <Link to="/">Home</Link>
           <span onClick={()=>scrollToSection("about")}>About</span>

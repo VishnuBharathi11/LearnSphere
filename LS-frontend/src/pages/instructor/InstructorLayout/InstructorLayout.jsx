@@ -18,14 +18,16 @@ function InstructorLayout() {
   }
 
   return (
-    <div className="instructor-layout">
+    <div className={`instructor-layout ${isAdminPreview ? "admin-preview-mode" : ""}`}>
       <InstructorSideBar />
 
       <div className="instructor-main">
         <TopNavBarInstructor />
 
-        <div className="page-content">
-          <Outlet />
+        <div className="dashboard-body">
+          <main className="page-content">
+            <Outlet />
+          </main>
         </div>
       </div>
     </div>
@@ -33,4 +35,3 @@ function InstructorLayout() {
 }
 
 export default InstructorLayout;
-

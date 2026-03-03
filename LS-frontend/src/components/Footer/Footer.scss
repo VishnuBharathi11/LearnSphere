@@ -1,5 +1,5 @@
 .footer {
-  background-color: #2f2f2f;
+  background: linear-gradient(140deg, #4e42a0, #5b4db1 55%, #6c63ff);
   color: #ffffff;
   padding: 50px 80px 20px;
   font-family: "Poppins", sans-serif;
@@ -24,7 +24,7 @@
       .footer-item {
         font-size: 14px;
         font-weight: 400;
-        color: #d1d5db;
+        color: rgba(255, 255, 255, 0.82);
         cursor: pointer;
 
         &:hover {
@@ -56,10 +56,10 @@
   }
 
   .footer-bottom {
-    border-top: 1px solid #444;
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
     padding-top: 15px;
     text-align: center;
     font-size: 13px;
-    color: #9ca3af;
+    color: rgba(255, 255, 255, 0.78);
   }
 }
