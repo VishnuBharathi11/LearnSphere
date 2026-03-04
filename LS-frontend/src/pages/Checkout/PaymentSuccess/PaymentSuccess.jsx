@@ -1,7 +1,9 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CheckCircle, Play } from "lucide-react";
 import { getCourseById } from "../../../services/courseApi";
+import { pushLocalNotification } from "../../../services/activityNotificationStore";
+import { getCurrentUser } from "../../../services/userProfileStore";
 import "./PaymentSuccess.scss";
 
 function PaymentSuccess() {
@@ -9,6 +11,8 @@ function PaymentSuccess() {
   const { state } = useLocation();
   const courseId = state?.courseId;
   const paymentId = state?.paymentId;
+  const currentUser = getCurrentUser();
+  const userId = currentUser?.id || currentUser?.userId || "";
 
   const [course, setCourse] = useState(null);
 
@@ -18,6 +22,20 @@ function PaymentSuccess() {
       .then((data) => setCourse(data))
       .catch(() => setCourse(null));
   }, [courseId]);
+
+  useEffect(() => {
+    if (!courseId || !userId) return;
+    pushLocalNotification({
+      userId: String(userId),
+      role: "learner",
+      type: "payment-success",
+      eventKey: `learner-payment-success-${courseId}-${paymentId || "na"}`,
+      title: "Payment successful",
+      message: `Payment completed${paymentId ? ` (ID: ${paymentId})` : ""}. Enrollment is active.`,
+      courseId: String(courseId),
+      targetPath: `/student-layout/learn/${courseId}`,
+    });
+  }, [courseId, paymentId, userId]);
 
   if (!courseId) {
     return (

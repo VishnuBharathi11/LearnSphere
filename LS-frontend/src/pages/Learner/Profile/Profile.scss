@@ -3,8 +3,8 @@ $profile-font-heading: "Poppins", sans-serif;
 $profile-white: #ffffff;
 $profile-text-dark: #111827;
 $profile-text-muted: #6b7280;
-$profile-primary: #4a6cf7;
-$profile-primary-hover: #3b5bf0;
+$profile-primary: #A435F0;
+$profile-primary-hover: #8A2BE2;
 $profile-border-light: #e5e7eb;
 $profile-bg-disabled: #f3f4f6;
 $profile-bg-soft: #eef2ff;
@@ -190,7 +190,7 @@ $profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
   @include flex-row(12px, flex-start, center);
 
   svg {
-    color: #5b4db1;
+    color: #A435F0;
     flex-shrink: 0;
   }
 
@@ -288,7 +288,7 @@ $profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
   font-size: 24px;
   font-weight: 700;
   color: #ffffff;
-  background: linear-gradient(135deg, #0ea5e9, #2563eb);
+  background: linear-gradient(135deg, #0ea5e9, #A435F0);
 }
 
 .achievement-icon {
@@ -296,7 +296,7 @@ $profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
   height: 40px;
   border-radius: 10px;
   background: #eef2ff;
-  color: #5b4db1;
+  color: #A435F0;
   @include flex-row(0, center, center);
 }
 

@@ -152,6 +152,9 @@ function Dashboard() {
         const lessons = lessonMap[String(course.id)] || [];
         const progress = progressMap[String(course.id)] || null;
         const state = buildCourseLearningStateFromApi(lessons, progress);
+        if (state.progressPercentage >= 100 && state.certificateUnlocked) {
+          return null;
+        }
         return {
           ...course,
           progress: state.progressPercentage,
@@ -271,4 +274,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

@@ -1,4 +1,4 @@
-﻿/* =====================================================
+/* =====================================================
   COURSE DETAIL SCSS
   File: CourseDetail.scss
   ===================================================== */
@@ -17,8 +17,8 @@ $course-text-light: #374151;
 
 $course-border: #e5e7eb;
 
-$course-primary: #3b82f6;
-$course-primary-hover: #2563eb;
+$course-primary: #A435F0;
+$course-primary-hover: #A435F0;
 $course-success: #10b981;
 
 $course-preview-bg: #f3f4f6;
@@ -138,7 +138,7 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
   color: $course-text-light;
 
   &::before {
-   content: "✓";
+   content: "?";
    color: $course-success;
    font-weight: bold;
    width: 22px;
@@ -207,7 +207,7 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
  }
 
  li:has(.preview)::before {
-  content: "▶";
+  content: "?";
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -219,7 +219,7 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
  }
 
  li:not(:has(.preview))::before {
-  content: "🔒";
+  content: "??";
   font-size: 16px;
   color: #9ca3af;
   flex-shrink: 0;
@@ -286,7 +286,7 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
  position: relative;
 
  &::after {
-  content: "▶";
+  content: "?";
   width: 40px;
   height: 40px;
   border-radius: 50%;
@@ -365,24 +365,24 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
   }
 
   &.video::before {
-   content: "🕘";
+   content: "??";
   }
 
   &.resource::before {
-   content: "📘";
+   content: "??";
   }
 
   &.certificate::before {
-   content: "🎓";
+   content: "??";
   }
 
   &.access::before {
-   content: "✔";
+   content: "?";
    border-radius: 50%;
   }
 
   &.devices::before {
-   content: "💻";
+   content: "??";
   }
  }
 }

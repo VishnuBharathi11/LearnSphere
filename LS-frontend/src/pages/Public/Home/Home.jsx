@@ -7,47 +7,62 @@ import ui from "../../../assets/Popular Categories/ui.png";
 import cy from "../../../assets/Popular Categories/cyber-security.png";
 import data from "../../../assets/Popular Categories/data-science.png";
 import applicationImg from "../../../assets/Home/application.png";
+import heroVideo from "../../../assets/Home/Hero section.mp4";
 
 import { FaSearch } from "react-icons/fa";
+import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaStar } from "react-icons/fa";
 import Footer from "../../../components/Footer/Footer";
 import NavBar from "../../../components/NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import About from "../About/About";
-import Contact from "../Contact/Contact";
-import { featuredCourses } from "../../../data/courses";
+
 function Home() {
   const navigate = useNavigate();
+
   return (
     <>
-      <NavBar />
-      <div className="main-head">
-        Unlock Your
-        <br /> Potential with
-        <br /> Online Learning
-      </div>
-      <div className="sub-main">
-        LearnSphere helps you master new skills with high-quality courses,
-        expert instructors, and flexible learning paths tailored for you.
-      </div>
+      <NavBar transparent />
+      <section className="hero-section">
+        <video
+          className="hero-section__video-bg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        >
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+        <div className="hero-section__overlay" />
+        <div className="hero-section__content">
+          <div className="hero-section__right">
+            <div className="main-head">
+              Unlock Your
+              <br /> <span className="hero-gradient-text">Potential</span> with
+              <br /> Online Learning
+            </div>
 
-      <div className="search">
-        <input
-          type="search"
-          name="search"
-          placeholder="Search for Courses,Instructors..."
-        />
-        <div>
-          <FaSearch />
+            <div className="search">
+              <input
+                type="search"
+                name="search"
+                placeholder="Search for Courses,Instructors..."
+              />
+              <div>
+                <FaSearch />
+              </div>
+            </div>
+            <div className="btn-get-browse">
+              <button className="btn-get" onClick={() => navigate("/free-courses")}>
+                Get Started for Free
+              </button>
+              <button className="btn-browse" onClick={() => navigate("/courses")}>
+                Browse Course
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-      <div className="btn-get-browse">
-        <button className="btn-get" onClick={() => navigate("/free-courses")}>
-          Get Started for Free
-        </button>
-        <button className="btn-browse" onClick={() => navigate("/courses")}>
-          Browse Course
-        </button>
-      </div>
+      </section>
 
       <div className="pop-cat">
         <div className="pop-cat-head">Popular Categories</div>
@@ -125,41 +140,6 @@ function Home() {
               </div>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="fea-cour">
-        <div className="pop-cat-head">Featured Courses</div>
-        <div className="fea-cat-sub-title">
-          Learn from high-quality courses curated by industry experts.
-        </div>
-        <div className="fea-cour-box">
-          {featuredCourses.map((course) => (
-            <div className="fea-cour-cont" key={course.id}>
-              <div className="fea-cour-title-align">
-                <img
-                  src={course.thumbnail || "/assets/course-placeholder.png"}
-                  alt={course.courseName}
-                />
-                <div className="fea-cour-title">
-                  {course.courseName}
-                  <br />
-                  <span className="fea-cour-inst-name">
-                    {course.instructor}
-                  </span>
-                </div>
-              </div>
-              <div className="fea-cour-review">
-                ⭐ {course.rating}
-                <span className="fea-cour-price">
-                  {course.price === 0 ? "Free" : `₹${course.price}`}
-                </span>
-              </div>
-              <div className="fea-cour-module-font">
-                {course.category} • {course.level}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
 
@@ -246,7 +226,72 @@ function Home() {
         </div>
       </div>
       <About />
-      <Contact />
+      <section className="home-contact" id="contact">
+        <div className="home-contact__header">
+          <div className="home-contact__eyebrow">Get in Touch</div>
+          <h2>Let us help you</h2>
+          <p>Our team is here to answer questions about courses, support, and learning paths.</p>
+        </div>
+        <div className="home-contact__quick">
+          <div className="home-contact__item">
+            <FaMapMarkerAlt />
+            <div>
+              <h4>Main Office</h4>
+              <p>LearnSphere Support Hub, India</p>
+            </div>
+          </div>
+          <div className="home-contact__item">
+            <FaEnvelope />
+            <div>
+              <h4>Email Address</h4>
+              <a href="mailto:learnspheredemo@gmail.com">learnspheredemo@gmail.com</a>
+            </div>
+          </div>
+          <div className="home-contact__item">
+            <FaPhoneAlt />
+            <div>
+              <h4>Phone Number</h4>
+              <a href="tel:+919047006761">9047006761</a>
+            </div>
+          </div>
+        </div>
+        <div className="home-contact__body">
+          <div className="home-contact__content">
+            <div className="home-contact__mini-title">Contact Us</div>
+            <h3>Have questions? Don't hesitate to contact us</h3>
+            <p>
+              We can guide you through course selection, account support, and
+              instructor onboarding. Send your message and our team will respond quickly.
+            </p>
+            <div className="home-contact__social-proof">
+              <div className="home-contact__avatars">
+                <span className="home-contact__avatar">AK</span>
+                <span className="home-contact__avatar">RV</span>
+                <span className="home-contact__avatar">SM</span>
+                <span className="home-contact__avatar">NT</span>
+              </div>
+              <div className="home-contact__rating">
+                <span>
+                  <FaStar />
+                  <FaStar />
+                  <FaStar />
+                  <FaStar />
+                  <FaStar />
+                </span>
+                <small>2.5k+ reviews (4.8 of 5)</small>
+              </div>
+            </div>
+          </div>
+          <form className="home-contact__form" autoComplete="off">
+            <h4>Get In Touch</h4>
+            <input type="text" name="name" placeholder="Enter Name..." />
+            <input type="email" name="email" placeholder="Enter Email..." />
+            <input type="tel" name="phone" placeholder="Enter Phone..." />
+            <textarea name="message" rows={4} placeholder="Enter Your Message..." />
+            <button type="button">Send Message</button>
+          </form>
+        </div>
+      </section>
       <Footer />
     </>
   );

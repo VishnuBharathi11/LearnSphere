@@ -3,6 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
+import { getInstructorCourses } from "../../services/courseApi";
+import { getEnrollmentsByCourses } from "../../services/enrollmentApi";
+import {
+  getLocalNotificationsByUser,
+  markAllLocalNotificationsRead,
+  markLocalNotificationRead,
+  pushLocalNotification,
+} from "../../services/activityNotificationStore";
 import "./TopNavBarInstructor.scss";
 
 function formatRelativeTime(dateValue) {
@@ -18,6 +26,41 @@ function formatRelativeTime(dateValue) {
   if (hrs < 24) return `${hrs} hours ago`;
   const days = Math.floor(hrs / 24);
   return `${days} days ago`;
+}
+
+function buildDiscussionMessage(item) {
+  const rawActor =
+    item?.actorName ||
+    item?.authorName ||
+    item?.replyAuthorName ||
+    item?.createdByName ||
+    "";
+  const actorText = String(rawActor || "").trim();
+  const actor =
+    !actorText ||
+    /^\d+$/.test(actorText) ||
+    /^learner\s*#?\d+$/i.test(actorText) ||
+    /^user\s*#?\d+$/i.test(actorText)
+      ? ""
+      : actorText;
+  const topicTitle = item?.threadTitle || item?.topicTitle || "";
+  const type = String(item?.type || item?.notificationType || "").toLowerCase();
+  const message = String(item?.message || "").trim();
+  if (message) return message;
+
+  if (type.includes("reply")) {
+    if (actor && topicTitle) return `${actor} replied on "${topicTitle}".`;
+    if (actor) return `${actor} replied on your course thread.`;
+    return "A learner posted a new reply in your course thread.";
+  }
+
+  if (type.includes("question") || type.includes("thread")) {
+    if (actor && topicTitle) return `${actor} asked: "${topicTitle}".`;
+    if (actor) return `${actor} asked a new question in your course discussion.`;
+    return "A new learner question was posted in your course discussion.";
+  }
+
+  return "You have a new discussion update.";
 }
 
 const PAGE_MAP = {
@@ -85,7 +128,7 @@ function TopNavBarInstructor() {
   const displayEmail = isAdminPreview
     ? previewUserEmail || "instructor@learnsphere.com"
     : currentUser?.email || "instructor@learnsphere.com";
-  const userId = currentUser?.id ? String(currentUser.id) : "";
+  const userId = currentUser?.id || currentUser?.userId ? String(currentUser.id || currentUser.userId) : "";
   const initials = displayName
     .split(" ")
     .map((part) => part[0])
@@ -103,27 +146,38 @@ function TopNavBarInstructor() {
       if (!userId) return;
 
       try {
-        const discussionList = await getNotifications(userId);
+        const [discussionList, localList] = await Promise.all([
+          getNotifications(userId),
+          Promise.resolve(getLocalNotificationsByUser(userId, "instructor")),
+        ]);
 
         const discussionNotifications = (discussionList || []).map((item) => ({
           id: `d-${item.id}`,
+          source: "api",
           sourceId: item.id,
           title: item.title || "New discussion update",
-          message: item.message || "A learner posted in your course discussion.",
+          message: buildDiscussionMessage(item),
           rank: item.createdAt ? new Date(item.createdAt).getTime() : Number(item.id) || 0,
           courseId: item.courseId || "",
           threadId: item.threadId || "",
+          targetPath: "",
           read: Boolean(item.read),
           createdAt: item.createdAt,
         }));
 
-        const merged = [...discussionNotifications]
+        const localNotifications = (Array.isArray(localList) ? localList : []).map((item) => ({
+          ...item,
+          source: "local",
+          rank: item.createdAt ? new Date(item.createdAt).getTime() : 0,
+        }));
+
+        const merged = [...localNotifications, ...discussionNotifications]
           .sort((a, b) => b.rank - a.rank)
-          .slice(0, 10);
+          .slice(0, 12);
 
         setNotifications(merged);
       } catch {
-        setNotifications([]);
+        setNotifications(getLocalNotificationsByUser(userId, "instructor").slice(0, 12));
       }
     },
     [userId, isAdminPreview]
@@ -134,6 +188,109 @@ function TopNavBarInstructor() {
     const timer = setInterval(fetchNotifications, 15000);
     return () => clearInterval(timer);
   }, [fetchNotifications]);
+
+  useEffect(() => {
+    if (isAdminPreview || !userId) return;
+
+    let active = true;
+    const syncEnrollmentNotifications = async () => {
+      try {
+        const instructorCourses = await getInstructorCourses(userId, 0, 120);
+        if (!active) return;
+        const courses = Array.isArray(instructorCourses) ? instructorCourses : [];
+        if (courses.length === 0) return;
+        const courseMap = new Map(courses.map((course) => [String(course.id), course]));
+        const enrollments = await getEnrollmentsByCourses(Array.from(courseMap.keys()));
+        if (!active) return;
+
+        (Array.isArray(enrollments) ? enrollments : []).forEach((enrollment) => {
+          const course = courseMap.get(String(enrollment.courseId));
+          if (!course) return;
+          const learnerRaw =
+            String(
+              enrollment.learnerName ||
+                enrollment.userName ||
+                enrollment.studentName ||
+                enrollment.name ||
+                ""
+            ).trim();
+          const learnerName =
+            !learnerRaw ||
+            /^\d+$/.test(learnerRaw) ||
+            /^learner\s*#?\d+$/i.test(learnerRaw) ||
+            /^user\s*#?\d+$/i.test(learnerRaw)
+              ? "A learner"
+              : learnerRaw;
+
+          pushLocalNotification({
+            userId,
+            role: "instructor",
+            type: "enrollment",
+            eventKey: `instructor-enrollment-${enrollment.id || `${enrollment.courseId}-${enrollment.userId}`}`,
+            title: `New enrollment in ${course.courseName || "your course"}`,
+            message: `${learnerName} enrolled in ${course.courseName || "your course"}.`,
+            courseId: String(course.id),
+            createdAt: enrollment.enrolledAt || enrollment.createdAt || new Date().toISOString(),
+            targetPath: `/instructor-layout/manage-courses/${course.id}/students`,
+          });
+
+          const paymentStatus = String(
+            enrollment.paymentStatus || enrollment.paymentState || enrollment.paymentResult || ""
+          ).toUpperCase();
+          if (paymentStatus.includes("SUCCESS") || paymentStatus.includes("PAID")) {
+            pushLocalNotification({
+              userId,
+              role: "instructor",
+              type: "payment-success",
+              eventKey: `instructor-payment-success-${enrollment.id || `${enrollment.courseId}-${enrollment.userId}`}`,
+              title: `Payment received for ${course.courseName || "course"}`,
+              message: `${learnerName} completed payment for ${course.courseName || "your course"}.`,
+              courseId: String(course.id),
+              createdAt: enrollment.updatedAt || enrollment.createdAt || new Date().toISOString(),
+              targetPath: `/instructor-layout/manage-courses/${course.id}/students`,
+            });
+          } else if (paymentStatus.includes("FAILED") || paymentStatus.includes("FAIL")) {
+            pushLocalNotification({
+              userId,
+              role: "instructor",
+              type: "payment-failure",
+              eventKey: `instructor-payment-failed-${enrollment.id || `${enrollment.courseId}-${enrollment.userId}`}`,
+              title: `Payment failed for ${course.courseName || "course"}`,
+              message: `${learnerName} payment failed for ${course.courseName || "your course"}.`,
+              courseId: String(course.id),
+              createdAt: enrollment.updatedAt || enrollment.createdAt || new Date().toISOString(),
+              targetPath: `/instructor-layout/manage-courses/${course.id}/students`,
+            });
+          }
+
+          const progressPercent = Number(enrollment.progressPercentage || enrollment.progress || 0);
+          const enrollmentStatus = String(enrollment.status || "").toUpperCase();
+          if (progressPercent >= 100 || enrollmentStatus === "COMPLETED") {
+            pushLocalNotification({
+              userId,
+              role: "instructor",
+              type: "course-completion",
+              eventKey: `instructor-completion-${enrollment.id || `${enrollment.courseId}-${enrollment.userId}`}`,
+              title: `Learner completed ${course.courseName || "a course"}`,
+              message: `${learnerName} completed ${course.courseName || "your course"}.`,
+              courseId: String(course.id),
+              createdAt: enrollment.updatedAt || enrollment.completedAt || new Date().toISOString(),
+              targetPath: `/instructor-layout/manage-courses/${course.id}/students`,
+            });
+          }
+        });
+      } catch {
+        // ignore enrollment sync failures
+      }
+    };
+
+    syncEnrollmentNotifications();
+    const timer = setInterval(syncEnrollmentNotifications, 45000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [userId, isAdminPreview]);
 
   useEffect(() => {
     const onDocClick = (event) => {
@@ -148,14 +305,15 @@ function TopNavBarInstructor() {
   const markAllAsRead = async () => {
     if (isAdminPreview) return;
 
-    const unread = notifications.filter((item) => !item.read && item.sourceId);
+    const unread = notifications.filter((item) => !item.read);
     if (!unread.length) return;
 
     await Promise.all(
-      unread.map((item) =>
-        markNotificationRead(String(item.sourceId), userId).catch(() => null)
-      )
+      unread
+        .filter((item) => item.source === "api" && item.sourceId)
+        .map((item) => markNotificationRead(String(item.sourceId), userId).catch(() => null))
     );
+    markAllLocalNotificationsRead(userId, "instructor");
     setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
 
@@ -198,28 +356,40 @@ function TopNavBarInstructor() {
                 {notifications.map((item) => (
                   <div key={item.id} className={`notification-item ${item.read ? "read" : "unread"}`}>
                     <p className="n-title"><FiEdit3 size={14} />{item.title}</p>
+                    {item.message ? <p className="n-message">{item.message}</p> : null}
                     <p className="n-time">{formatRelativeTime(item.createdAt)}</p>
                     <button
                       type="button"
                       className="n-link"
                       onClick={async () => {
-                        if (item.sourceId) {
+                        if (item.source === "api" && item.sourceId) {
                           try {
                             await markNotificationRead(item.sourceId, userId);
                           } catch {
                             // ignore read errors
                           }
                         }
+                        if (item.source === "local") {
+                          markLocalNotificationRead(item.id, userId);
+                        }
 
                         setOpenNotifications(false);
 
-                        if (item.threadId) {
-                          navigate(`/forum/topic/${item.threadId}`);
+                        if (item.targetPath) {
+                          navigate(item.targetPath);
                           return;
                         }
 
                         if (item.courseId) {
-                          navigate(`/courses/${item.courseId}/forum`);
+                          const params = new URLSearchParams();
+                          if (item.threadId) params.set("threadId", String(item.threadId));
+                          const query = params.toString();
+                          navigate(`/courses/${item.courseId}/forum${query ? `?${query}` : ""}`);
+                          return;
+                        }
+
+                        if (item.threadId) {
+                          navigate(`/forum/topic/${item.threadId}`);
                         }
                       }}
                     >

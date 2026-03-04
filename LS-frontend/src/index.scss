@@ -1,18 +1,18 @@
 
 
 :root {
-  --ui-primary: #5b4db1;
-  --ui-accent: #6c63ff;
-  --ui-bg: #eef1f8;
+  --ui-primary: #a435f0;
+  --ui-accent: #f69c08;
+  --ui-bg: #f7f9fa;
   --ui-card: #ffffff;
-  --ui-text: #2e2e2e;
-  --ui-text-muted: #6b7280;
+  --ui-text: #1c1d1f;
+  --ui-text-muted: #6a6f73;
   --ui-success: #34c759;
-  --ui-border: #dbe2f0;
-  --ui-radius-lg: 16px;
-  --ui-radius-md: 12px;
-  --ui-shadow: 0 12px 30px rgba(64, 83, 134, 0.08);
-  --ui-shadow-soft: 0 6px 18px rgba(64, 83, 134, 0.08);
+  --ui-border: #e5e7eb;
+  --ui-radius-lg: 8px;
+  --ui-radius-md: 6px;
+  --ui-shadow: 0 10px 24px rgba(28, 29, 31, 0.08);
+  --ui-shadow-soft: 0 2px 10px rgba(28, 29, 31, 0.08);
 }
 
 * {
@@ -29,7 +29,7 @@ body,
 }
 
 body {
-  font-family: "Poppins", "Segoe UI", sans-serif;
+  font-family: "Inter", "Segoe UI", sans-serif;
   overflow-x: hidden;
   overflow-y: auto;
   background: var(--ui-bg);
@@ -49,6 +49,15 @@ select,
 textarea {
   font-family: inherit;
   color: var(--ui-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
 }
 
 /* Shared soft UI primitives for all pages */
@@ -77,7 +86,7 @@ textarea {
 .page-content .btn,
 .navbar .btn-login,
 .navbar .btn-register {
-  border-radius: 12px;
+  border-radius: 6px;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
@@ -86,5 +95,5 @@ textarea {
 .navbar .btn-login:hover,
 .navbar .btn-register:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 16px rgba(91, 77, 177, 0.2);
+  box-shadow: 0 8px 16px rgba(164, 53, 240, 0.22);
 }

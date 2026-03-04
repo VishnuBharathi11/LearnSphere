@@ -4,8 +4,8 @@ $white: #ffffff;
 $text-dark: #111827;
 $text-muted: #64748b;
 $border: #dbe3ee;
-$primary: #2563eb;
-$primary-hover: #1d4ed8;
+$primary: #A435F0;
+$primary-hover: #8A2BE2;
 
 .instructor-profile-layout {
   width: 100%;
@@ -55,7 +55,7 @@ $primary-hover: #1d4ed8;
   }
 
   &.blue .instructor-stat-icon {
-    background: #3b82f6;
+    background: #A435F0;
   }
 
   &.green .instructor-stat-icon {
@@ -133,14 +133,14 @@ $primary-hover: #1d4ed8;
 
 .profile-edit-btn,
 .profile-save-btn {
-  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  background: linear-gradient(135deg, #8A2BE2, #A435F0);
   color: #ffffff;
   box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
 }
 
 .profile-edit-btn:hover,
 .profile-save-btn:hover {
-  background: linear-gradient(135deg, #1e40af, #1d4ed8);
+  background: linear-gradient(135deg, #F69C08, #8A2BE2);
 }
 
 .profile-edit-btn:disabled,
@@ -203,7 +203,7 @@ $primary-hover: #1d4ed8;
     padding: 8px 12px;
     border-radius: 9px;
     background: #e8f0ff;
-    color: #1d4ed8;
+    color: #8A2BE2;
     font-size: 13px;
     font-weight: 600;
     display: inline-flex;

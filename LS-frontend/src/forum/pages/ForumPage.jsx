@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Plus } from "lucide-react";
 import TopicCard from "../components/TopicCard";
 import CreateTopicModal from "../components/CreateTopicModal";
@@ -13,9 +13,12 @@ import { getCurrentUser } from "../../services/userProfileStore.js";
 const ForumPage = () => {
   const { courseId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
   const currentUser = getCurrentUser();
   const currentUserId = String(currentUser?.id || currentUser?.userId || currentUser?.email || "anonymous");
   const currentRole = normalizeForumRole(currentUser?.role);
+  const searchParams = new URLSearchParams(location.search);
+  const focusedThreadId = String(searchParams.get("threadId") || "");
 
   const [courseOptions, setCourseOptions] = useState([]);
   const [activeCourseId, setActiveCourseId] = useState(courseId || "");
@@ -124,8 +127,16 @@ const ForumPage = () => {
       );
     }
 
+    if (focusedThreadId) {
+      nextTopics = [...nextTopics].sort((a, b) => {
+        const aFocused = String(a.id) === focusedThreadId ? 1 : 0;
+        const bFocused = String(b.id) === focusedThreadId ? 1 : 0;
+        return bFocused - aFocused;
+      });
+    }
+
     return nextTopics;
-  }, [countReplies, filter, search, topics]);
+  }, [countReplies, filter, focusedThreadId, search, topics]);
 
   const handleDeleteTopic = async (topicId) => {
     if (!window.confirm("Delete this topic and all its replies?")) {
@@ -203,6 +214,13 @@ const ForumPage = () => {
               key={topic.id}
               topic={topic}
               onLike={likeTopic}
+              onReply={(topicId) => {
+                const query = new URLSearchParams();
+                if (activeCourseId) query.set("courseId", String(activeCourseId));
+                const qs = query.toString();
+                navigate(`/forum/topic/${topicId}${qs ? `?${qs}` : ""}`);
+              }}
+              isFocused={focusedThreadId && String(topic.id) === focusedThreadId}
               isLiked={Boolean(topic.likedBy?.includes("self") || topic.likedBy?.includes(currentUserId))}
               canManage={isInstructor || isAdmin}
               onDeleteTopic={handleDeleteTopic}

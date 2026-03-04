@@ -176,7 +176,7 @@ function AdminDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis allowDecimals={false} />
                 <Tooltip />
-                <Line dataKey="registrations" stroke="#2563eb" strokeWidth={2} />
+                <Line dataKey="registrations" stroke="#A435F0" strokeWidth={2} />
                 <Line dataKey="logins" stroke="#10b981" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
@@ -190,8 +190,8 @@ function AdminDashboard() {
                 <XAxis dataKey="month" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="grossRevenue" fill="#1d4ed8" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="commissionRevenue" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="grossRevenue" fill="#7F1FC9" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="commissionRevenue" fill="#F69C08" radius={[6, 6, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
@@ -206,7 +206,7 @@ function AdminDashboard() {
                 <Tooltip />
                 <Bar
                   dataKey="count"
-                  fill="#6366f1"
+                  fill="#8A2BE2"
                   radius={[6, 6, 0, 0]}
                   onClick={handleCategorySelect}
                   cursor="pointer"

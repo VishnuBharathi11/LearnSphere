@@ -3,6 +3,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
+import { getEnrollmentsByUser } from "../../services/enrollmentApi";
+import { getCourseLessons, getCoursesByIds } from "../../services/courseApi";
+import { getProgressByCourses } from "../../services/progressApi";
+import { buildCourseLearningStateFromApi } from "../../services/learnerProgressStore";
+import {
+  getLocalNotificationsByUser,
+  markAllLocalNotificationsRead,
+  markLocalNotificationRead,
+  pushLocalNotification,
+} from "../../services/activityNotificationStore";
 import "./TopNavBarStudent.scss";
 
 function formatRelativeTime(dateValue) {
@@ -18,6 +28,41 @@ function formatRelativeTime(dateValue) {
   if (hrs < 24) return `${hrs} hours ago`;
   const days = Math.floor(hrs / 24);
   return `${days} days ago`;
+}
+
+function buildDiscussionMessage(item) {
+  const rawActor =
+    item?.actorName ||
+    item?.authorName ||
+    item?.replyAuthorName ||
+    item?.createdByName ||
+    "";
+  const actorText = String(rawActor || "").trim();
+  const actor =
+    !actorText ||
+    /^\d+$/.test(actorText) ||
+    /^learner\s*#?\d+$/i.test(actorText) ||
+    /^user\s*#?\d+$/i.test(actorText)
+      ? ""
+      : actorText;
+  const topicTitle = item?.threadTitle || item?.topicTitle || "";
+  const type = String(item?.type || item?.notificationType || "").toLowerCase();
+  const message = String(item?.message || "").trim();
+  if (message) return message;
+
+  if (type.includes("reply")) {
+    if (actor && topicTitle) return `${actor} replied on "${topicTitle}".`;
+    if (actor) return `${actor} replied to your thread.`;
+    return "New reply on your thread.";
+  }
+
+  if (type.includes("question") || type.includes("thread")) {
+    if (actor && topicTitle) return `${actor} posted a question: "${topicTitle}".`;
+    if (actor) return `${actor} posted a new question.`;
+    return "New learner question posted.";
+  }
+
+  return "You have a new discussion update.";
 }
 
 function TopNavBarStudent() {
@@ -71,21 +116,121 @@ function TopNavBarStudent() {
 
     const load = async () => {
       try {
-        const list = await getNotifications(String(userId));
+        const [list, localList] = await Promise.all([
+          getNotifications(String(userId)),
+          Promise.resolve(getLocalNotificationsByUser(String(userId), "learner")),
+        ]);
         if (!active) return;
+
+        const discussionNotifications = (Array.isArray(list) ? list : []).map((item) => ({
+          id: `api-${item.id}`,
+          source: "api",
+          sourceId: item.id,
+          title: item.title || "New discussion update",
+          message: buildDiscussionMessage(item),
+          read: Boolean(item.read),
+          courseId: item.courseId || "",
+          threadId: item.threadId || "",
+          targetPath: "",
+          createdAt: item.createdAt || new Date().toISOString(),
+        }));
+
+        const localNotifications = (Array.isArray(localList) ? localList : []).map((item) => ({
+          ...item,
+          source: "local",
+          createdAt: item.createdAt || new Date().toISOString(),
+        }));
+
         setNotifications(
-          (Array.isArray(list) ? list : [])
+          [...localNotifications, ...discussionNotifications]
             .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
-            .slice(0, 8)
+            .slice(0, 12)
         );
       } catch {
         if (!active) return;
-        setNotifications([]);
+        setNotifications(getLocalNotificationsByUser(String(userId), "learner").slice(0, 12));
       }
     };
 
     load();
     const timer = setInterval(load, 12000);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
+  }, [currentUser?.id, currentUser?.userId, isAdminPreview]);
+
+  useEffect(() => {
+    if (isAdminPreview) return;
+
+    const userId = currentUser?.id || currentUser?.userId;
+    if (!userId) return;
+
+    let active = true;
+    const syncCourseCompletionNotifications = async () => {
+      try {
+        const enrollmentList = await getEnrollmentsByUser(String(userId));
+        if (!active) return;
+        const activeCourseIds = (Array.isArray(enrollmentList) ? enrollmentList : [])
+          .filter(
+            (enrollment) =>
+              String(enrollment.userId) === String(userId) &&
+              String(enrollment.status || "").toUpperCase() === "ACTIVE"
+          )
+          .map((enrollment) => String(enrollment.courseId));
+        if (!active || activeCourseIds.length === 0) return;
+
+        const [courses, progressList, lessonsList] = await Promise.all([
+          getCoursesByIds(activeCourseIds),
+          getProgressByCourses(String(userId), activeCourseIds),
+          Promise.all(
+            activeCourseIds.map(async (courseId) => {
+              try {
+                const lessons = await getCourseLessons(courseId);
+                return [courseId, Array.isArray(lessons) ? lessons : []];
+              } catch {
+                return [courseId, []];
+              }
+            })
+          ),
+        ]);
+        if (!active) return;
+
+        const progressMap = {};
+        (Array.isArray(progressList) ? progressList : []).forEach((item) => {
+          progressMap[String(item.courseId)] = item;
+        });
+        const lessonMap = {};
+        (Array.isArray(lessonsList) ? lessonsList : []).forEach(([courseId, lessons]) => {
+          lessonMap[String(courseId)] = lessons;
+        });
+
+        (Array.isArray(courses) ? courses : []).forEach((course) => {
+          if (!course?.id) return;
+          const state = buildCourseLearningStateFromApi(
+            lessonMap[String(course.id)] || [],
+            progressMap[String(course.id)] || null
+          );
+          if (!state.certificateUnlocked) return;
+
+          pushLocalNotification({
+            userId: String(userId),
+            role: "learner",
+            type: "course-completion",
+            eventKey: `learner-course-complete-${course.id}`,
+            title: `Course completed: ${course.courseName || "Course"}`,
+            message: `You completed ${course.courseName || "this course"} and your certificate is ready.`,
+            courseId: String(course.id),
+            targetPath: `/student-layout/download-certificate/${course.id}`,
+          });
+        });
+      } catch {
+        // ignore completion sync failures
+      }
+    };
+
+    syncCourseCompletionNotifications();
+    const timer = setInterval(syncCourseCompletionNotifications, 60000);
     return () => {
       active = false;
       clearInterval(timer);
@@ -125,9 +270,9 @@ function TopNavBarStudent() {
     if (isAdminPreview) return;
 
     const userId = currentUser?.id || currentUser?.userId;
-    if (userId && item?.id) {
+    if (userId && item?.id && item?.source === "api" && item?.sourceId) {
       try {
-        await markNotificationRead(String(item.id), String(userId));
+        await markNotificationRead(String(item.sourceId), String(userId));
       } catch {
         // Ignore marking failures and continue navigation
       }
@@ -135,8 +280,19 @@ function TopNavBarStudent() {
         prev.map((entry) => (String(entry.id) === String(item.id) ? { ...entry, read: true } : entry))
       );
     }
+    if (userId && item?.id && item?.source === "local") {
+      markLocalNotificationRead(String(item.id), String(userId));
+      setNotifications((prev) =>
+        prev.map((entry) => (String(entry.id) === String(item.id) ? { ...entry, read: true } : entry))
+      );
+    }
 
     setOpenNotifications(false);
+
+    if (item?.targetPath) {
+      navigate(item.targetPath);
+      return;
+    }
 
     if (item?.courseId) {
       const query = new URLSearchParams();
@@ -158,10 +314,11 @@ function TopNavBarStudent() {
     if (!unread.length) return;
 
     await Promise.all(
-      unread.map((item) =>
-        markNotificationRead(String(item.id), String(userId)).catch(() => null)
-      )
+      unread
+        .filter((item) => item.source === "api" && item.sourceId)
+        .map((item) => markNotificationRead(String(item.sourceId), String(userId)).catch(() => null))
     );
+    markAllLocalNotificationsRead(String(userId), "learner");
     setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
 
@@ -204,6 +361,7 @@ function TopNavBarStudent() {
                     className={`notification-item ${item.read ? "read" : "unread"}`}
                   >
                     <p className="n-title"><FiEdit3 size={14} />{item.title || "New Update"}</p>
+                    {item.message ? <p className="n-message">{item.message}</p> : null}
                     <p className="n-time">{formatRelativeTime(item.createdAt)}</p>
                     <button type="button" className="n-link" onClick={() => handleNotificationClick(item)}>
                       View full notification

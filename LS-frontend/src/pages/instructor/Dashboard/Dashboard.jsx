@@ -180,15 +180,15 @@ function Dashboard() {
               <AreaChart data={trendData} margin={{ left: -20, right: 10, top: 10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="enrollFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#2563eb" stopOpacity={0.35} />
-                    <stop offset="95%" stopColor="#2563eb" stopOpacity={0.02} />
+                    <stop offset="5%" stopColor="#A435F0" stopOpacity={0.35} />
+                    <stop offset="95%" stopColor="#A435F0" stopOpacity={0.02} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" />
                 <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                 <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
                 <Tooltip />
-                <Area type="monotone" dataKey="students" stroke="#1d4ed8" fill="url(#enrollFill)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="students" stroke="#7F1FC9" fill="url(#enrollFill)" strokeWidth={2.5} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -211,7 +211,7 @@ function Dashboard() {
                     startAngle={210}
                     endAngle={-30}
                     data={[
-                      { name: "score", value: averagePerformance, fill: "#0ea5e9" },
+                      { name: "score", value: averagePerformance, fill: "#A435F0" },
                       { name: "remaining", value: 100 - averagePerformance, fill: "#e5eef8" },
                     ]}
                   >
@@ -230,7 +230,7 @@ function Dashboard() {
                   <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} />
                   <YAxis type="category" dataKey="course" width={150} tick={{ fontSize: 11 }} />
                   <Tooltip />
-                  <Bar dataKey="score" radius={[0, 8, 8, 0]} fill="#0ea5e9" />
+                  <Bar dataKey="score" radius={[0, 8, 8, 0]} fill="#8A2BE2" />
                 </BarChart>
               </ResponsiveContainer>
             )}

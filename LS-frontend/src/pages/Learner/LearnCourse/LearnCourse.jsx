@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Lock, MessageCircle, Reply, ThumbsUp } from "lucide-react";
-import CreateTopicModal from "../../../forum/components/CreateTopicModal";
 import useForum from "../../../forum/hooks/useForum";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getCourseLessons } from "../../../services/courseApi";
@@ -23,11 +22,11 @@ function LearnCourse() {
     searchParams.get("adminPreview") === "true" && String(currentUser?.role || "").toLowerCase() === "admin";
 
   const [openLessonIndex, setOpenLessonIndex] = useState(-1);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [isDiscussionOpen, setIsDiscussionOpen] = useState(false);
   const [expandedTopicId, setExpandedTopicId] = useState("");
   const [replyDrafts, setReplyDrafts] = useState({});
   const [composerText, setComposerText] = useState("");
+  const [composerError, setComposerError] = useState("");
   const [courseQuizzes, setCourseQuizzes] = useState([]);
   const [loadingQuiz, setLoadingQuiz] = useState(true);
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
@@ -161,7 +160,8 @@ function LearnCourse() {
     setOpenLessonIndex(Math.min(index + 1, lessons.length - 1));
   };
 
-  const getAuthorName = (topic) => topic?.authorName || topic?.createdByName || topic?.userName || "Learner";
+  const getAuthorName = (topic) =>
+    topic?.author || topic?.authorName || topic?.createdByName || topic?.userName || "Learner";
 
   const toggleTopicReplies = (topicId) => {
     setExpandedTopicId((prev) => (String(prev) === String(topicId) ? "" : String(topicId)));
@@ -180,6 +180,43 @@ function LearnCourse() {
       setReplyDrafts((prev) => ({ ...prev, [topicId]: "" }));
       fetchThreadById(topicId, 0, false);
     }
+  };
+
+  const escapeHtml = (value) =>
+    String(value || "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#39;");
+
+  const buildTopicTitle = (text) => {
+    const compact = String(text || "").replace(/\s+/g, " ").trim();
+    if (!compact) return "Course Discussion";
+    if (compact.length <= 70) return compact;
+    return `${compact.slice(0, 67)}...`;
+  };
+
+  const submitDiscussionComment = async () => {
+    const text = String(composerText || "").trim();
+    if (!text) {
+      setComposerError("Write your discussion before commenting.");
+      return;
+    }
+
+    setComposerError("");
+    const result = await createTopic({
+      title: buildTopicTitle(text),
+      content: escapeHtml(text).replace(/\n/g, "<br/>"),
+    });
+
+    if (!result?.ok) {
+      setComposerError(result?.error || "Unable to post discussion.");
+      return;
+    }
+
+    setComposerText("");
+    setComposerError("");
   };
 
   const renderLessonPanel = (lesson, index) => {
@@ -248,13 +285,17 @@ function LearnCourse() {
           <textarea
             placeholder="Type comment here..."
             value={composerText}
-            onChange={(e) => setComposerText(e.target.value)}
+            onChange={(e) => {
+              setComposerText(e.target.value);
+              if (composerError) setComposerError("");
+            }}
             disabled={isAdminPreview}
           />
+          {composerError ? <p className="discussion-meta">{composerError}</p> : null}
           <div className="discussion-compose-actions">
             <button
-              onClick={() => setIsCreateOpen(true)}
-              disabled={isAdminPreview}
+              onClick={submitDiscussionComment}
+              disabled={isAdminPreview || !String(composerText || "").trim()}
             >
               Comment
             </button>
@@ -284,7 +325,6 @@ function LearnCourse() {
                     <strong>{getAuthorName(topic)}</strong>
                     <span>{new Date(topic.createdAt).toLocaleDateString()}</span>
                   </div>
-                  <h4>{topic.title}</h4>
                   <p className="discussion-thread-preview" dangerouslySetInnerHTML={{ __html: topic.content }} />
                   <div className="discussion-thread-actions">
                     <button onClick={() => likeTopic(topic.id)} disabled={isAdminPreview}>
@@ -307,7 +347,7 @@ function LearnCourse() {
                           </div>
                           <div className="discussion-reply-main">
                             <div className="discussion-thread-head">
-                              <strong>{reply.authorName || reply.createdByName || "Learner"}</strong>
+                              <strong>{reply.author || reply.authorName || reply.createdByName || "Learner"}</strong>
                               <span>{reply.createdAt ? new Date(reply.createdAt).toLocaleDateString() : ""}</span>
                             </div>
                             <p dangerouslySetInnerHTML={{ __html: reply.content || "" }} />
@@ -339,24 +379,6 @@ function LearnCourse() {
           })}
         </div>
 
-        <CreateTopicModal
-          isOpen={isCreateOpen}
-          onClose={() => setIsCreateOpen(false)}
-          onCreate={async (payload) => {
-            const fallbackTitle = "Course Discussion";
-            const content = String(composerText || "").trim();
-            const result = await createTopic({
-              ...payload,
-              title: payload?.title || fallbackTitle,
-              content: payload?.content || content,
-            });
-            if (result?.ok) {
-              setIsCreateOpen(false);
-              setComposerText("");
-            }
-            return result;
-          }}
-        />
       </div>
     );
   };

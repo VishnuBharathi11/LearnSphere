@@ -3,7 +3,7 @@ $bg: #f9fafb;
 $white: #ffffff;
 $text-dark: #111827;
 $text-muted: #6b7280;
-$blue: #3b82f6;
+$blue: #A435F0;
 $yellow: #facc15;
 $green: #22c55e;
 $red: #ef4444;
@@ -215,7 +215,7 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
 
 .bar {
   width: 100%;
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(180deg, #A435F0 0%, #A435F0 100%);
   border-radius: 7px;
   transition: height 0.4s ease;
   min-height: 8px;
@@ -225,7 +225,7 @@ $shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
   font-weight: 600;
   margin-top: 7px;
   display: block;
-  color: #1e40af;
+  color: #F69C08;
 }
 .bar-label {
   font-size: 12px;

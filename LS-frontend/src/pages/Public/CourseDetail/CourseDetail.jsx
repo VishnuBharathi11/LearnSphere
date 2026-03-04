@@ -9,6 +9,7 @@ import {
   getRazorpayPublicKey,
   verifyEnrollmentPayment,
 } from "../../../services/enrollmentApi.js";
+import { pushLocalNotification } from "../../../services/activityNotificationStore";
 import "./CourseDetail.scss";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
@@ -134,12 +135,31 @@ function CourseDetail() {
       await enrollInFreeCourse(String(resolvedUserId), String(id));
       setIsEnrolled(true);
       setMessage({ type: "success", text: "Enrolled successfully" });
+      pushLocalNotification({
+        userId: String(resolvedUserId),
+        role: "learner",
+        type: "enrollment",
+        eventKey: `learner-enrollment-free-${id}`,
+        title: `Enrollment successful: ${course?.courseName || "Course"}`,
+        message: `You are now enrolled in ${course?.courseName || "this course"}.`,
+        courseId: String(id),
+        targetPath: `/student-layout/learn/${id}`,
+      });
     } catch (apiError) {
       const msg =
         apiError?.response?.data?.message ||
         apiError?.response?.data?.error ||
         "Enrollment failed";
       setMessage({ type: "error", text: msg });
+      pushLocalNotification({
+        userId: String(resolvedUserId),
+        role: "learner",
+        type: "payment-failure",
+        title: `Enrollment failed: ${course?.courseName || "Course"}`,
+        message: msg,
+        courseId: String(id),
+        targetPath: `/course/${id}`,
+      });
     } finally {
       setActionLoading(false);
     }
@@ -222,12 +242,30 @@ function CourseDetail() {
               type: "error",
               text: "Payment succeeded but enrollment verification failed.",
             });
+            pushLocalNotification({
+              userId: String(resolvedUserId),
+              role: "learner",
+              type: "payment-failure",
+              title: `Payment verification failed: ${course?.courseName || "Course"}`,
+              message: "Payment succeeded but enrollment verification failed. Please contact support.",
+              courseId: String(id),
+              targetPath: `/course/${id}`,
+            });
             setActionLoading(false);
             paymentOpeningRef.current = false;
           }
         },
         modal: {
           ondismiss: () => {
+            pushLocalNotification({
+              userId: String(resolvedUserId),
+              role: "learner",
+              type: "payment-failure",
+              title: `Payment cancelled: ${course?.courseName || "Course"}`,
+              message: "Payment was cancelled before completion.",
+              courseId: String(id),
+              targetPath: `/course/${id}`,
+            });
             setActionLoading(false);
             paymentOpeningRef.current = false;
           },
@@ -242,6 +280,15 @@ function CourseDetail() {
         apiError?.message ||
         "Unable to start Razorpay checkout.";
       setMessage({ type: "error", text: msg });
+      pushLocalNotification({
+        userId: String(resolvedUserId),
+        role: "learner",
+        type: "payment-failure",
+        title: `Payment failed to start: ${course?.courseName || "Course"}`,
+        message: msg,
+        courseId: String(id),
+        targetPath: `/course/${id}`,
+      });
       setActionLoading(false);
       paymentOpeningRef.current = false;
     }

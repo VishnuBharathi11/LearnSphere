@@ -5,7 +5,7 @@ import ReplyItem from "../components/ReplyItem";
 import ReplyBox from "../components/ReplyBox";
 import useForum from "../hooks/useForum";
 import { getAdminSettings } from "../../services/adminApi";
-import { getForumRoleLabel, normalizeForumRole } from "../utils/role";
+import { normalizeForumRole } from "../utils/role";
 import "../styles/forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
 
@@ -39,6 +39,9 @@ const TopicPage = () => {
   const [actionError, setActionError] = useState("");
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
   const replyBottomRef = useRef(null);
+  const plainTitle = String(threadDetail?.title || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const plainContent = String(threadDetail?.content || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const showTitle = plainTitle && plainTitle.toLowerCase() !== plainContent.toLowerCase();
 
   useEffect(() => {
     let active = true;
@@ -156,14 +159,11 @@ const TopicPage = () => {
       </div>
 
       <article className="forum-topic-detail">
-        <h1>{threadDetail.title}</h1>
+        {showTitle ? <h1>{threadDetail.title}</h1> : null}
         <p className="forum-topic-preview" dangerouslySetInnerHTML={{ __html: threadDetail.content }} />
 
         <div className="forum-meta-row">
-          <span className="forum-pill">
-            {threadDetail.author}
-            <span className="forum-role-label">{getForumRoleLabel(threadDetail.authorRole)}</span>
-          </span>
+          <span className="forum-pill">{threadDetail.author}</span>
           <span className="forum-pill">{new Date(threadDetail.createdAt).toLocaleString()}</span>
           <span className="forum-pill forum-pill-accent">{totalReplies} replies</span>
           {threadDetail.isLocked ? <span className="forum-pill">Locked</span> : null}

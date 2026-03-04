@@ -3,9 +3,9 @@ $dash-font-heading: "Poppins", sans-serif;
 $dash-white: #ffffff;
 $dash-text-dark: #111827;
 $dash-text-muted: #6b7280;
-$dash-primary: #4f46e5;
-$dash-primary-hover: #4338ca;
-$dash-link: #2563eb;
+$dash-primary: #A435F0;
+$dash-primary-hover: #8A2BE2;
+$dash-link: #A435F0;
 $dash-border-light: #e5e7eb;
 $dash-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
 $dash-shadow-md: 0 10px 26px rgba(0, 0, 0, 0.07);
@@ -167,7 +167,7 @@ $dash-shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.08);
 }
 
 .course-footer {
-  @include flex-row(space-between);
+  @include flex-row(12px, space-between, center);
   margin: 14px 0 6px;
   font-size: 13px;
 }

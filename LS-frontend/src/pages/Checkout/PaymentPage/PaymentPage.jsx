@@ -127,7 +127,7 @@ function PaymentPage() {
           userId: String(currentUser.id),
         },
         theme: {
-          color: "#2563eb",
+          color: "#A435F0",
         },
         handler: async (response) => {
           try {

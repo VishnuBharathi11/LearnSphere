@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight, Flag, Reply, ThumbsUp, Trash2, X } from "lucide-react";
 import ReplyBox from "./ReplyBox";
 import ReportModal from "./ReportModal";
-import { getForumRoleLabel } from "../utils/role";
 
 const ReplyItem = ({
   reply,
@@ -35,10 +34,7 @@ const ReplyItem = ({
   return (
     <div className="forum-reply-item" style={{ marginLeft: `${depth * 18}px` }}>
       <div className="forum-reply-header">
-        <strong className="forum-reply-author">
-          {reply.author}
-          <span className="forum-role-label">{getForumRoleLabel(reply.authorRole)}</span>
-        </strong>
+        <strong className="forum-reply-author">{reply.author}</strong>
         <span>{new Date(reply.createdAt).toLocaleString()}</span>
       </div>
 

@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/Logo/logo.png'
 import './NavBar.scss' 
 import { useCurrentUser } from '../../hooks/useCurrentUser';
-function NavBar() {
+function NavBar({ transparent = false }) {
   const navigate = useNavigate();
   const { currentUser } = useCurrentUser();
   const scrollToSection=(id)=>{
@@ -27,7 +27,7 @@ function NavBar() {
   };
   return (
     <>
-    <nav className="navbar">
+    <nav className={`navbar${transparent ? " navbar--overlay" : ""}`}>
       <Link to="/" className="logo-section" aria-label="LearnSphere Home">
           <img src={logo} className="logo"/>
           <div className="logo-page-name">LearnSphere</div>
