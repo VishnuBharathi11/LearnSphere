@@ -1,7 +1,7 @@
 import { Navigate } from "react-router-dom";
-import StudentLayout from "../../pages/Learner/StudentLayout/StudentLayout.jsx";
-import InstructorLayout from "../../pages/instructor/InstructorLayout/InstructorLayout.jsx";
-import AdminLayout from "../../pages/admin/AdminLayout/AdminLayout.jsx";
+import StudentLayout from "../Learner/StudentLayout/StudentLayout.jsx";
+import InstructorLayout from "../instructor/InstructorLayout/InstructorLayout.jsx";
+import AdminLayout from "../admin/AdminLayout/AdminLayout.jsx";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 
 const resolveLayoutByRole = (rawRole) => {

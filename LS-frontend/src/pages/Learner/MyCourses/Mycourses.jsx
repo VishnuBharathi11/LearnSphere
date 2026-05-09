@@ -1,6 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
+import ProgressiveImage from "../../../components/ProgressiveImage/ProgressiveImage.jsx";
+import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
+import { useInitialLoadComplete } from "../../../components/GlobalNetworkLoader/InitialLoadContext.jsx";
+import { useProgressiveReveal } from "../../../hooks/useProgressiveReveal";
 import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
@@ -8,8 +12,66 @@ import { getProgressByCourses } from "../../../services/progressApi";
 import "./MyCourses.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 
+const MY_COURSE_PLACEHOLDERS = 6;
+
+function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen }) {
+  if (isSkeleton || !course) {
+    return (
+      <div className="mycourse-card mycourse-card--skeleton" aria-hidden="true">
+        <Skeleton className="mycourse-img-skeleton" />
+        <div className="mycourse-card-body">
+          <Skeleton className="mycourse-title-skeleton" />
+          <Skeleton className="mycourse-instructor-skeleton" />
+          <Skeleton className="mycourse-progress-text-skeleton" />
+          <Skeleton className="mycourse-progress-track-skeleton" />
+          <Skeleton className="mycourse-btn-skeleton" />
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mycourse-card">
+      <div className="mycourse-media">
+        <ProgressiveImage
+          src={course.thumbnail}
+          fallbackSrc={courseImg}
+          alt={course.courseName}
+          reveal={showImage}
+          className="mycourse-img"
+          skeletonClassName="mycourse-img-skeleton"
+        />
+      </div>
+      <div className="mycourse-card-body">
+        {showText ? (
+          <>
+            <div className="mycourse-title">{course.courseName}</div>
+            <div className="mycourse-instructor">{course.instructor || "Instructor"}</div>
+            <div className="mycourse-progress-text">Progress: {course.progress}%</div>
+            <div className="mycourse-progress-track">
+              <div className="mycourse-progress-fill" style={{ width: `${course.progress}%` }} />
+            </div>
+            <button className="mycourse-btn" onClick={onOpen}>
+              {course.certificateUnlocked ? "Download Certificate" : "Continue Learning"}
+            </button>
+          </>
+        ) : (
+          <>
+            <Skeleton className="mycourse-title-skeleton" />
+            <Skeleton className="mycourse-instructor-skeleton" />
+            <Skeleton className="mycourse-progress-text-skeleton" />
+            <Skeleton className="mycourse-progress-track-skeleton" />
+            <Skeleton className="mycourse-btn-skeleton" />
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function MyCourses() {
   const navigate = useNavigate();
+  const initialLoadComplete = useInitialLoadComplete();
   const [activeTab, setActiveTab] = useState("all");
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
@@ -177,6 +239,36 @@ function MyCourses() {
     return true;
   });
   const isPageLoading = loading || lessonsLoading || progressLoading;
+  const reveal = useProgressiveReveal({
+    isLoading: isPageLoading,
+    hasData: coursesToShow.length > 0,
+    hold: !initialLoadComplete,
+    totalItems: coursesToShow.length,
+    initialCount: 2,
+  });
+
+  const renderedCards = useMemo(() => {
+    if (isPageLoading) {
+      return Array.from({ length: MY_COURSE_PLACEHOLDERS }, (_, index) => ({
+        key: `loading-${index}`,
+        type: "skeleton",
+      }));
+    }
+
+    const visibleCourses = coursesToShow.slice(0, reveal.visibleCount).map((course) => ({
+      key: String(course.id),
+      type: "course",
+      course,
+    }));
+
+    const hiddenCount = Math.max(coursesToShow.length - reveal.visibleCount, 0);
+    const hiddenSkeletons = Array.from({ length: hiddenCount }, (_, index) => ({
+      key: `pending-${index}`,
+      type: "skeleton",
+    }));
+
+    return [...visibleCourses, ...hiddenSkeletons];
+  }, [coursesToShow, isPageLoading, reveal.visibleCount]);
 
   return (
     <div className="mycourses-container">
@@ -192,46 +284,33 @@ function MyCourses() {
         </button>
       </div>
 
-      <div className="mycourse-grid">
-        {isPageLoading ? (
-          <p className="empty-text">Loading courses...</p>
-        ) : coursesToShow.length === 0 ? (
-          <p className="empty-text">No courses found</p>
-        ) : (
-          coursesToShow.map((course) => (
-            <div className="mycourse-card" key={course.id}>
-              <img
-                src={course.thumbnail || courseImg}
-                alt={course.courseName}
-                className="mycourse-img"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="mycourse-title">{course.courseName}</div>
-              <div className="mycourse-instructor">{course.instructor || "Instructor"}</div>
-              <div className="mycourse-progress-text">Progress: {course.progress}%</div>
-              <div className="mycourse-progress-track">
-                <div className="mycourse-progress-fill" style={{ width: `${course.progress}%` }} />
-              </div>
-              <button
-                className="mycourse-btn"
-                onClick={() => {
-                  if (course.certificateUnlocked) {
-                    navigate(`/student-layout/download-certificate/${course.id}`);
+      {renderedCards.length > 0 ? (
+        <div className="mycourse-grid">
+          {renderedCards.map((item) =>
+            item.type === "course" ? (
+              <MyCourseCard
+                key={item.key}
+                course={item.course}
+                showText={reveal.showText}
+                showImage={reveal.showImages}
+                onOpen={() => {
+                  if (item.course.certificateUnlocked) {
+                    navigate(`/student-layout/download-certificate/${item.course.id}`);
                   } else {
-                    navigate(`/student-layout/learn/${course.id}`);
+                    navigate(`/student-layout/learn/${item.course.id}`);
                   }
                 }}
-              >
-                {course.certificateUnlocked ? "Download Certificate" : "Continue Learning"}
-              </button>
-            </div>
-          ))
-        )}
-      </div>
+              />
+            ) : (
+              <MyCourseCard key={item.key} isSkeleton />
+            )
+          )}
+        </div>
+      ) : (
+        <p className="empty-text">No courses found</p>
+      )}
     </div>
   );
 }
 
 export default MyCourses;
-

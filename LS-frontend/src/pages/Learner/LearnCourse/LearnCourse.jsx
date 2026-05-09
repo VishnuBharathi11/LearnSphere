@@ -1,19 +1,35 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { ChevronDown, ChevronUp, Lock, MessageCircle, Reply, ThumbsUp } from "lucide-react";
-import useForum from "../../../forum/hooks/useForum";
+import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
+import { useInitialLoadComplete } from "../../../components/GlobalNetworkLoader/InitialLoadContext.jsx";
+import { useProgressiveReveal } from "../../../hooks/useProgressiveReveal";
+import useForum from "../../../hooks/useForum";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getCourseLessons } from "../../../services/courseApi";
-import { getCourseProgress, markLessonCompletedDb } from "../../../services/progressApi";
-import { getCourseQuizzesByCourseId } from "../../../services/progressApi";
+import { getCourseProgress, getCourseQuizzesByCourseId, markLessonCompletedDb } from "../../../services/progressApi";
 import { getAdminSettings } from "../../../services/adminApi";
 import "./LearnCourse.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
+
+const LESSON_PLACEHOLDER_COUNT = 5;
+
+function LessonAccordionSkeleton() {
+  return (
+    <div className="lesson-accordion-item lesson-accordion-item--skeleton" aria-hidden="true">
+      <div className="lesson-accordion-title">
+        <Skeleton className="learn-lesson-title-skeleton" />
+        <Skeleton className="learn-lesson-icon-skeleton" />
+      </div>
+    </div>
+  );
+}
 
 function LearnCourse() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const initialLoadComplete = useInitialLoadComplete();
 
   const courseId = String(id);
   const currentUser = getCurrentUser();
@@ -30,6 +46,8 @@ function LearnCourse() {
   const [courseQuizzes, setCourseQuizzes] = useState([]);
   const [loadingQuiz, setLoadingQuiz] = useState(true);
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
+  const [lessonsLoading, setLessonsLoading] = useState(true);
+  const [progressLoading, setProgressLoading] = useState(true);
 
   const [courseLessons, setCourseLessons] = useState([]);
   const [courseProgress, setCourseProgress] = useState(null);
@@ -102,6 +120,7 @@ function LearnCourse() {
   useEffect(() => {
     let active = true;
     async function loadLessons() {
+      setLessonsLoading(true);
       try {
         const list = await getCourseLessons(courseId);
         if (!active) return;
@@ -109,6 +128,8 @@ function LearnCourse() {
       } catch {
         if (!active) return;
         setCourseLessons([]);
+      } finally {
+        if (active) setLessonsLoading(false);
       }
     }
     loadLessons();
@@ -120,7 +141,11 @@ function LearnCourse() {
   useEffect(() => {
     let active = true;
     async function loadProgress() {
-      if (!userId) return;
+      setProgressLoading(true);
+      if (!userId) {
+        if (active) setProgressLoading(false);
+        return;
+      }
       try {
         const progress = await getCourseProgress(userId, courseId);
         if (!active) return;
@@ -128,6 +153,8 @@ function LearnCourse() {
       } catch {
         if (!active) return;
         setCourseProgress(null);
+      } finally {
+        if (active) setProgressLoading(false);
       }
     }
     loadProgress();
@@ -247,7 +274,10 @@ function LearnCourse() {
           <button onClick={() => handleCompleteLesson(lesson.id, index)} disabled={lessonDone || isAdminPreview}>
             {lessonDone ? "Lesson Completed" : "Mark as Completed"}
           </button>
-          <button onClick={() => setOpenLessonIndex(Math.min(index + 1, lessons.length - 1))} disabled={index === lessons.length - 1}>
+          <button
+            onClick={() => setOpenLessonIndex(Math.min(index + 1, lessons.length - 1))}
+            disabled={index === lessons.length - 1}
+          >
             Next Lesson
           </button>
         </div>
@@ -383,7 +413,21 @@ function LearnCourse() {
     );
   };
 
-  if (!lessons.length) {
+  const isPageLoading = lessonsLoading || progressLoading;
+  const reveal = useProgressiveReveal({
+    isLoading: isPageLoading,
+    hasData: lessons.length > 0,
+    hold: !initialLoadComplete,
+    totalItems: lessons.length,
+    initialCount: 2,
+  });
+
+  const visibleLessons = reveal.showAllContainers ? lessons.length : reveal.showText ? Math.min(lessons.length, 2) : 0;
+  const placeholderCount = isPageLoading
+    ? LESSON_PLACEHOLDER_COUNT
+    : Math.max(lessons.length - visibleLessons, 0);
+
+  if (!isPageLoading && !lessons.length) {
     return (
       <div className="learn-empty">
         <h3>No lessons available yet</h3>
@@ -397,7 +441,7 @@ function LearnCourse() {
     <div className="learn-page">
       <div className="learn-content">
         <div className="lesson-accordion-list">
-          {lessons.map((lesson, index) => {
+          {lessons.slice(0, visibleLessons).map((lesson, index) => {
             const done = learningState.progress.completedLessonIds.includes(String(lesson.id));
             const locked = !done && index > completedCount;
             const opened = openLessonIndex === index;
@@ -424,7 +468,11 @@ function LearnCourse() {
             );
           })}
 
-          {discussionEnabled && (
+          {Array.from({ length: placeholderCount }, (_, index) => (
+            <LessonAccordionSkeleton key={`lesson-skeleton-${index}`} />
+          ))}
+
+          {discussionEnabled && reveal.showAllContainers ? (
             <div className="lesson-accordion-item discussion-entry-item">
               <button
                 className="lesson-accordion-title discussion-entry"
@@ -441,18 +489,27 @@ function LearnCourse() {
               </button>
               {isDiscussionOpen ? renderDiscussionPanel() : null}
             </div>
-          )}
+          ) : discussionEnabled ? (
+            <LessonAccordionSkeleton />
+          ) : null}
         </div>
 
-        <div className="final-assessment-card">
-          <h3>Final Course Assessment</h3>
-          <button
-            disabled={learningState.progressPercentage < 100 || !finalQuiz || loadingQuiz || isAdminPreview}
-            onClick={() => navigate(`/student-layout/test/${courseId}?mode=final`)}
-          >
-            {learningState.progressPercentage < 100 ? "Finish all lessons to unlock" : "Start Final Assessment"}
-          </button>
-        </div>
+        {reveal.showText ? (
+          <div className="final-assessment-card">
+            <h3>Final Course Assessment</h3>
+            <button
+              disabled={learningState.progressPercentage < 100 || !finalQuiz || loadingQuiz || isAdminPreview}
+              onClick={() => navigate(`/student-layout/test/${courseId}?mode=final`)}
+            >
+              {learningState.progressPercentage < 100 ? "Finish all lessons to unlock" : "Start Final Assessment"}
+            </button>
+          </div>
+        ) : (
+          <div className="final-assessment-card final-assessment-card--skeleton" aria-hidden="true">
+            <Skeleton className="learn-assessment-title-skeleton" />
+            <Skeleton className="learn-assessment-button-skeleton" />
+          </div>
+        )}
       </div>
     </div>
   );

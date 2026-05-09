@@ -1,4 +1,5 @@
-﻿import { Navigate, Route, Routes } from "react-router-dom";
+import { useMemo } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.scss";
 import Home from "./pages/Public/Home/Home.jsx";
 import About from "./pages/Public/About/About.jsx";
@@ -33,9 +34,9 @@ import CreateQuiz from "./pages/instructor/ManageCourse/CreateQuiz/CreateQuiz.js
 import StudentProgress from "./pages/instructor/ManageCourse/StudentProgress/StudentProgress.jsx";
 import CourseAnalytics from "./pages/instructor/ManageCourse/CourseAnalytics/CourseAnalytics.jsx";
 import InstructorProfile from "./pages/instructor/Profile/InstructorProfile.jsx";
-import ForumPage from "./forum/pages/ForumPage.jsx";
-import TopicPage from "./forum/pages/TopicPage.jsx";
-import ForumRoleLayout from "./forum/pages/ForumRoleLayout.jsx";
+import ForumPage from "./pages/forum/ForumPage.jsx";
+import TopicPage from "./pages/forum/TopicPage.jsx";
+import ForumRoleLayout from "./pages/forum/ForumRoleLayout.jsx";
 import AdminLayout from "./pages/admin/AdminLayout/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/Dashboard/AdminDashboard.jsx";
 import ManageUsers from "./pages/admin/ManageUsers/Manageusers.jsx";
@@ -45,11 +46,11 @@ import Categories from "./pages/admin/Categories/Categories.jsx";
 import RoleManagement from "./pages/admin/RoleManagement/RoleManagement.jsx";
 import Settings from "./pages/admin/Settings/Settings.jsx";
 import InstructorApplications from "./pages/admin/InstructorApplications/InstructorApplications.jsx";
-import GlobalNetworkLoader from "./components/GlobalNetworkLoader/GlobalNetworkLoader.jsx";
+import { LoadingProvider } from "./components/LoadingSystem/LoadingProvider.jsx";
 
 function App() {
-  return (
-    <>
+  const routes = useMemo(
+    () => (
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -113,9 +114,11 @@ function App() {
           <Route path="forum/topic/:topicId" element={<TopicPage />} />
         </Route>
       </Routes>
-      <GlobalNetworkLoader />
-    </>
+    ),
+    []
   );
+
+  return <LoadingProvider>{routes}</LoadingProvider>;
 }
 
 export default App;

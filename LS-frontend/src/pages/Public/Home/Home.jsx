@@ -42,16 +42,16 @@ function Home() {
               <br /> Online Learning
             </div>
 
-            <div className="search">
-              <input
-                type="search"
-                name="search"
-                placeholder="Search for Courses,Instructors..."
-              />
-              <div>
-                <FaSearch />
-              </div>
-            </div>
+            {/*<div className="search">*/}
+            {/*  <input*/}
+            {/*    type="search"*/}
+            {/*    name="search"*/}
+            {/*    placeholder="Search for Courses,Instructors..."*/}
+            {/*  />*/}
+            {/*  <div>*/}
+            {/*    <FaSearch />*/}
+            {/*  </div>*/}
+            {/*</div>*/}
             <div className="btn-get-browse">
               <button className="btn-get" onClick={() => navigate("/free-courses")}>
                 Get Started for Free

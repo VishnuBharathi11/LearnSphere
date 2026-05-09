@@ -1,6 +1,9 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import NavBar from "../../../components/NavBar/NavBar.jsx";
+import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
+import { useInitialLoadComplete } from "../../../components/GlobalNetworkLoader/InitialLoadContext.jsx";
+import { useProgressiveReveal } from "../../../hooks/useProgressiveReveal";
 import { getCourseById } from "../../../services/courseApi.js";
 import {
   checkEnrollmentStatus,
@@ -15,9 +18,37 @@ import { useCurrentUser } from "../../../hooks/useCurrentUser";
 
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
 
+function DetailCardSkeleton({ lessonRows = 0 }) {
+  return (
+    <div className="card card--skeleton" aria-hidden="true">
+      <Skeleton className="detail-title-skeleton" />
+      <Skeleton className="detail-line-skeleton detail-line-skeleton--primary" />
+      <Skeleton className="detail-line-skeleton" />
+      {lessonRows > 0 ? (
+        <div className="detail-lesson-skeleton-list">
+          {Array.from({ length: lessonRows }, (_, index) => (
+            <Skeleton key={`lesson-row-${index}`} className="detail-lesson-skeleton" />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SidebarSkeleton() {
+  return (
+    <div className="price-card price-card--skeleton" aria-hidden="true">
+      <Skeleton className="detail-price-skeleton" />
+      <Skeleton className="detail-button-skeleton" />
+      <Skeleton className="detail-line-skeleton detail-line-skeleton--short" />
+    </div>
+  );
+}
+
 function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const initialLoadComplete = useInitialLoadComplete();
 
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -121,6 +152,14 @@ function CourseDetail() {
       },
     ].filter((section) => section.lessons.length > 0);
   }, [course?.lessons]);
+
+  const reveal = useProgressiveReveal({
+    isLoading: loading,
+    hasData: Boolean(course),
+    hold: !initialLoadComplete,
+    totalItems: 3,
+    initialCount: 1,
+  });
 
   const enrollFreeCourse = async () => {
     if (userLoading) return;
@@ -310,125 +349,176 @@ function CourseDetail() {
     handlePaidEnrollment();
   };
 
-  if (loading) return <p style={{ padding: "40px" }}>Loading course...</p>;
-  if (!course) return <p style={{ padding: "40px" }}>{error || "Course not found"}</p>;
+  const visibleMainCards = reveal.showAllContainers ? 3 : reveal.showText ? 1 : 0;
 
   return (
     <>
       <NavBar />
 
       <div className="course-detail">
-        <div className="course-hero">
-          <h1 className="cd-course-title">{course.courseName}</h1>
-          <p className="hero-desc">{course.description || "Course description coming soon."}</p>
-          <div className="hero-meta">
-            Rating {course.rating} • {course.lessons} lessons • {course.level}
-          </div>
-          <p className="hero-instructor">Instructor: {course.instructor || "Instructor"}</p>
-        </div>
+        {loading ? (
+          <>
+            <div className="course-hero course-hero--loading">
+              <Skeleton className="detail-hero-title-skeleton" />
+              <Skeleton className="detail-line-skeleton detail-line-skeleton--primary" />
+              <Skeleton className="detail-line-skeleton" />
+              <Skeleton className="detail-line-skeleton detail-line-skeleton--short" />
+            </div>
 
-        <div className="course-detail-grid">
-          <div className="course-main">
-            {previewVideo && (
-              <div className="preview-overlay">
-                <div className="preview-modal">
-                  <button className="close-btn" onClick={() => setPreviewVideo(null)}>
-                    x
-                  </button>
-                  <iframe
-                    src={`https://www.youtube.com/embed/${previewVideo}`}
-                    title="Preview"
-                    allowFullScreen
-                  />
-                </div>
+            <div className="course-detail-grid">
+              <div className="course-main">
+                <DetailCardSkeleton />
+                <DetailCardSkeleton />
+                <DetailCardSkeleton lessonRows={3} />
               </div>
-            )}
-
-            <div className="card">
-              <h3>Course Overview</h3>
-              <p>{course.description || "No detailed description available."}</p>
+              <div className="course-sidebar">
+                <SidebarSkeleton />
+              </div>
+            </div>
+          </>
+        ) : !course ? (
+          <p style={{ padding: "40px" }}>{error || "Course not found"}</p>
+        ) : error ? (
+          <p style={{ padding: "40px" }}>{error}</p>
+        ) : (
+          <>
+            <div className="course-hero">
+              {reveal.showText ? (
+                <>
+                  <h1 className="cd-course-title">{course.courseName}</h1>
+                  <p className="hero-desc">{course.description || "Course description coming soon."}</p>
+                  <div className="hero-meta">
+                    Rating {course.rating} • {course.lessons} lessons • {course.level}
+                  </div>
+                  <p className="hero-instructor">Instructor: {course.instructor || "Instructor"}</p>
+                </>
+              ) : (
+                <>
+                  <Skeleton className="detail-hero-title-skeleton" />
+                  <Skeleton className="detail-line-skeleton detail-line-skeleton--primary" />
+                  <Skeleton className="detail-line-skeleton" />
+                  <Skeleton className="detail-line-skeleton detail-line-skeleton--short" />
+                </>
+              )}
             </div>
 
-            <div className="card">
-              <h3>What You Will Learn</h3>
-              <ul className="learn-list">
-                <li>Understand key concepts with practical examples</li>
-                <li>Build confidence through guided lessons</li>
-                <li>Apply knowledge to real-world scenarios</li>
-                <li>Track your progress lesson by lesson</li>
-              </ul>
-            </div>
+            <div className="course-detail-grid">
+              <div className="course-main">
+                {previewVideo ? (
+                  <div className="preview-overlay">
+                    <div className="preview-modal">
+                      <button className="close-btn" onClick={() => setPreviewVideo(null)}>
+                        x
+                      </button>
+                      <iframe
+                        src={`https://www.youtube.com/embed/${previewVideo}`}
+                        title="Preview"
+                        allowFullScreen
+                      />
+                    </div>
+                  </div>
+                ) : null}
 
-            <div className="card">
-              <h3>Curriculum</h3>
-              {curriculum.map((section) => (
-                <details className="accordion" key={section.section} open>
-                  <summary>
-                    {section.section}
-                    <span>{section.lessons.length} lessons</span>
-                  </summary>
-                  <ul>
-                    {section.lessons.map((lesson, index) => (
-                      <li key={`${section.section}-${index}`}>
-                        <span>{lesson.title}</span>
-                        <span className="lesson-meta">
-                          {lesson.duration}
-                          {lesson.preview && (
-                            <button
-                              type="button"
-                              className="preview"
-                              onClick={() => setPreviewVideo(lesson.youtubeId)}
-                            >
-                              Preview
-                            </button>
-                          )}
-                        </span>
-                      </li>
+                {visibleMainCards >= 1 ? (
+                  <div className="card">
+                    <h3>Course Overview</h3>
+                    <p>{course.description || "No detailed description available."}</p>
+                  </div>
+                ) : (
+                  <DetailCardSkeleton />
+                )}
+
+                {visibleMainCards >= 2 ? (
+                  <div className="card">
+                    <h3>What You Will Learn</h3>
+                    <ul className="learn-list">
+                      <li>Understand key concepts with practical examples</li>
+                      <li>Build confidence through guided lessons</li>
+                      <li>Apply knowledge to real-world scenarios</li>
+                      <li>Track your progress lesson by lesson</li>
+                    </ul>
+                  </div>
+                ) : (
+                  <DetailCardSkeleton />
+                )}
+
+                {visibleMainCards >= 3 ? (
+                  <div className="card">
+                    <h3>Curriculum</h3>
+                    {curriculum.map((section) => (
+                      <details className="accordion" key={section.section} open>
+                        <summary>
+                          {section.section}
+                          <span>{section.lessons.length} lessons</span>
+                        </summary>
+                        <ul>
+                          {section.lessons.map((lesson, index) => (
+                            <li key={`${section.section}-${index}`}>
+                              <span>{lesson.title}</span>
+                              <span className="lesson-meta">
+                                {lesson.duration}
+                                {lesson.preview ? (
+                                  <button
+                                    type="button"
+                                    className="preview"
+                                    onClick={() => setPreviewVideo(lesson.youtubeId)}
+                                  >
+                                    Preview
+                                  </button>
+                                ) : null}
+                              </span>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
                     ))}
-                  </ul>
-                </details>
-              ))}
+                  </div>
+                ) : (
+                  <DetailCardSkeleton lessonRows={3} />
+                )}
+              </div>
+
+              <div className="course-sidebar">
+                {reveal.showText ? (
+                  isEnrolled ? (
+                    <div className="price-card enrolled-card">
+                      <h3>You are enrolled</h3>
+                      <button
+                        className="cd-primary-btn"
+                        onClick={() => navigate(`/student-layout/learn/${course.id}`)}
+                      >
+                        Start Learning
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="price-card">
+                      <h2 className="price-value">{coursePrice === 0 ? "Free" : `INR ${formattedPrice}`}</h2>
+
+                      <button className="cd-primary-btn" onClick={handlePrimaryAction} disabled={actionLoading}>
+                        {coursePrice === 0
+                          ? actionLoading
+                            ? "Enrolling..."
+                            : "Enroll for Free"
+                          : actionLoading
+                            ? "Opening Payment..."
+                            : "Buy Now"}
+                      </button>
+
+                      <p className="guarantee">Secure enrollment and lifetime access</p>
+
+                      {message.text ? <p className={`cd-message ${message.type}`}>{message.text}</p> : null}
+                    </div>
+                  )
+                ) : (
+                  <SidebarSkeleton />
+                )}
+              </div>
             </div>
-          </div>
-
-          <div className="course-sidebar">
-            {isEnrolled ? (
-              <div className="price-card enrolled-card">
-                <h3>You are enrolled</h3>
-                <button
-                  className="cd-primary-btn"
-                  onClick={() => navigate(`/student-layout/learn/${course.id}`)}
-                >
-                  Start Learning
-                </button>
-              </div>
-            ) : (
-              <div className="price-card">
-                <h2 className="price-value">{coursePrice === 0 ? "Free" : `INR ${formattedPrice}`}</h2>
-
-                <button className="cd-primary-btn" onClick={handlePrimaryAction} disabled={actionLoading}>
-                  {coursePrice === 0
-                    ? actionLoading
-                      ? "Enrolling..."
-                      : "Enroll for Free"
-                    : actionLoading
-                      ? "Opening Payment..."
-                      : "Buy Now"}
-                </button>
-
-                <p className="guarantee">Secure enrollment and lifetime access</p>
-
-                {message.text && <p className={`cd-message ${message.type}`}>{message.text}</p>}
-              </div>
-            )}
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </>
   );
 }
 
 export default CourseDetail;
-
-
-

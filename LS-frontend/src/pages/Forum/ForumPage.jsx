@@ -1,205 +1,264 @@
 import { useEffect, useMemo, useState } from "react";
-import { MessageSquareText, Send } from "lucide-react";
-import "./ForumPage.scss";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { Plus } from "lucide-react";
+import TopicCard from "../../components/forum/TopicCard";
+import CreateTopicModal from "../../components/forum/CreateTopicModal";
+import useForum from "../../hooks/useForum";
+import { getInstructorCourses, getPublishedCourses } from "../../services/courseApi";
+import { getAdminSettings } from "../../services/adminApi";
+import { normalizeForumRole } from "../../utils/forumRole";
+import "./forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
-import { createReply, createThread, listThreads } from "../../services/discussionApi";
 
-const getDisplayName = (user) => {
-  return (
-    user?.name ||
-    user?.username ||
-    user?.fullName ||
-    user?.email?.split("@")?.[0] ||
-    "User"
-  );
-};
-
-function ForumPage() {
+const ForumPage = () => {
+  const { courseId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
   const currentUser = getCurrentUser();
-  const [threads, setThreads] = useState([]);
-  const [title, setTitle] = useState("");
-  const [message, setMessage] = useState("");
-  const [replyDrafts, setReplyDrafts] = useState({});
-  const legacyCourseId = "general";
+  const currentUserId = String(currentUser?.id || currentUser?.userId || currentUser?.email || "anonymous");
+  const currentRole = normalizeForumRole(currentUser?.role);
+  const searchParams = new URLSearchParams(location.search);
+  const focusedThreadId = String(searchParams.get("threadId") || "");
+
+  const [courseOptions, setCourseOptions] = useState([]);
+  const [activeCourseId, setActiveCourseId] = useState(courseId || "");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("latest");
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [discussionEnabled, setDiscussionEnabled] = useState(true);
+
+  const isInstructor = location.pathname.startsWith("/instructor-layout/") || currentRole === "instructor";
+  const isAdmin = location.pathname.startsWith("/admin-layout/") || currentRole === "admin";
+  const canCreate = currentRole === "learner" || currentRole === "instructor" || currentRole === "admin";
+
+  const {
+    topics,
+    loading,
+    error,
+    createTopic,
+    likeTopic,
+    deleteTopic,
+    refresh,
+    threadPage,
+    setThreadPage,
+    threadMeta,
+    countReplies,
+  } = useForum(activeCourseId, currentUser);
 
   useEffect(() => {
     let active = true;
-    async function loadThreads() {
+    async function loadFeatureSettings() {
       try {
-        const data = await listThreads(legacyCourseId, { page: 0, size: 100 });
+        const settings = await getAdminSettings();
         if (!active) return;
-        const normalized = Array.isArray(data?.items)
-          ? data.items.map((item) => ({
-              id: item.id,
-              title: item.title,
-              message: item.content,
-              authorId: item.authorId,
-              authorName: item.author,
-              authorRole: item.authorRole,
-              createdAt: item.createdAt,
-              replies: Array.isArray(item.replies) ? item.replies : [],
-            }))
-          : [];
-        setThreads(normalized);
+        setDiscussionEnabled(Boolean(settings?.discussions ?? true));
       } catch {
         if (!active) return;
-        setThreads([]);
+        setDiscussionEnabled(true);
       }
     }
-    loadThreads();
+    loadFeatureSettings();
     return () => {
       active = false;
     };
   }, []);
 
-  const sortedThreads = useMemo(() => {
-    return [...threads].sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-  }, [threads]);
+  useEffect(() => {
+    let active = true;
 
-  if (!currentUser) {
-    return <p className="forum-unauthorized">Please login to use the discussion forum.</p>;
+    async function loadCourses() {
+      try {
+        let courses = [];
+        if (isInstructor && currentUser?.id) {
+          courses = await getInstructorCourses(String(currentUser.id), 0, 100);
+        } else {
+          courses = await getPublishedCourses(0, 100);
+        }
+
+        if (!active) return;
+
+        const normalized = (Array.isArray(courses) ? courses : []).map((item) => ({
+          id: String(item.id),
+          name: item.courseName || item.title || `Course ${item.id}`,
+        }));
+
+        setCourseOptions(normalized);
+
+        if (!activeCourseId && normalized.length > 0) {
+          setActiveCourseId(normalized[0].id);
+        }
+      } catch {
+        if (!active) return;
+        setCourseOptions([]);
+      }
+    }
+
+    loadCourses();
+
+    return () => {
+      active = false;
+    };
+  }, [activeCourseId, currentUser?.id, isInstructor]);
+
+  useEffect(() => {
+    setThreadPage(0);
+  }, [activeCourseId, setThreadPage]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh, threadPage]);
+
+  const filteredTopics = useMemo(() => {
+    const searchTerm = search.trim().toLowerCase();
+
+    let nextTopics = topics.filter((topic) => topic.title.toLowerCase().includes(searchTerm));
+
+    if (filter === "mostLiked") {
+      nextTopics = [...nextTopics].sort((a, b) => (b.likes || 0) - (a.likes || 0));
+    }
+
+    if (filter === "unanswered") {
+      nextTopics = nextTopics.filter((topic) => countReplies(topic.replies || []) === 0 && Number(topic.replyCount || 0) === 0);
+    }
+
+    if (filter === "latest") {
+      nextTopics = [...nextTopics].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
+    }
+
+    if (focusedThreadId) {
+      nextTopics = [...nextTopics].sort((a, b) => {
+        const aFocused = String(a.id) === focusedThreadId ? 1 : 0;
+        const bFocused = String(b.id) === focusedThreadId ? 1 : 0;
+        return bFocused - aFocused;
+      });
+    }
+
+    return nextTopics;
+  }, [countReplies, filter, focusedThreadId, search, topics]);
+
+  const handleDeleteTopic = async (topicId) => {
+    if (!window.confirm("Delete this topic and all its replies?")) {
+      return;
+    }
+    await deleteTopic(topicId);
+    await refresh();
+  };
+
+  if (!discussionEnabled) {
+    return (
+      <section className="forum-page-shell">
+        <div className="forum-empty-state">Discussions are disabled by platform settings.</div>
+      </section>
+    );
   }
 
-  const handleCreateThread = async (e) => {
-    e.preventDefault();
-    const cleanTitle = title.trim();
-    const cleanMessage = message.trim();
-
-    if (!cleanTitle || !cleanMessage) return;
-
-    const created = await createThread(legacyCourseId, {
-      title: cleanTitle,
-      content: cleanMessage,
-    });
-    const nextThread = {
-      id: created?.id || Date.now(),
-      title: created?.title || cleanTitle,
-      message: created?.content || cleanMessage,
-      authorId: currentUser.id,
-      authorName: created?.author || getDisplayName(currentUser),
-      authorRole: created?.authorRole || currentUser.role || "learner",
-      createdAt: created?.createdAt || new Date().toISOString(),
-      replies: [],
-    };
-    setThreads((prev) => [nextThread, ...prev]);
-    setTitle("");
-    setMessage("");
-  };
-
-  const handleReply = async (threadId, e) => {
-    e.preventDefault();
-    const draft = (replyDrafts[threadId] || "").trim();
-    if (!draft) return;
-    const created = await createReply(threadId, { content: draft });
-    const nextReply = {
-      id: created?.id || Date.now(),
-      message: created?.content || draft,
-      authorId: currentUser.id,
-      authorName: created?.author || getDisplayName(currentUser),
-      authorRole: created?.authorRole || currentUser.role || "learner",
-      createdAt: created?.createdAt || new Date().toISOString(),
-    };
-    setThreads((prev) =>
-      prev.map((thread) => {
-        if (thread.id !== threadId) return thread;
-        const safeReplies = Array.isArray(thread.replies) ? thread.replies : [];
-        return { ...thread, replies: [...safeReplies, nextReply] };
-      })
-    );
-    setReplyDrafts((prev) => ({ ...prev, [threadId]: "" }));
-  };
-
   return (
-    <div className="forum-page">
-      <div className="forum-header">
-        <div className="title-block">
-          <MessageSquareText size={24} />
-          <div>
-            <h1>Discussion Forum</h1>
-            <p>Start a discussion and reply to others.</p>
-          </div>
-        </div>
+    <section className="forum-page-shell">
+      <div className="forum-toolbar">
+        <select
+          className="forum-input"
+          value={activeCourseId}
+          onChange={(event) => setActiveCourseId(event.target.value)}
+        >
+          {courseOptions.length === 0 ? <option value="">No Courses</option> : null}
+          {courseOptions.map((course) => (
+            <option key={course.id} value={course.id}>
+              {course.name}
+            </option>
+          ))}
+        </select>
+
+        <input
+          className="forum-input"
+          type="text"
+          placeholder="Search topics by title"
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+        />
+
+        <select
+          className="forum-input"
+          value={filter}
+          onChange={(event) => setFilter(event.target.value)}
+        >
+          <option value="latest">Latest</option>
+          <option value="mostLiked">Most Liked</option>
+          <option value="unanswered">Unanswered</option>
+        </select>
+
+        {canCreate && activeCourseId ? (
+          <button
+            className="forum-btn forum-btn-primary forum-btn-icon"
+            type="button"
+            onClick={() => setIsCreateOpen(true)}
+            title="Create topic"
+            aria-label="Create topic"
+          >
+            <Plus size={16} />
+          </button>
+        ) : null}
       </div>
 
-      <form className="thread-form" onSubmit={handleCreateThread}>
-        <h2>Create Discussion</h2>
-        <input
-          type="text"
-          placeholder="Discussion title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          maxLength={120}
-        />
-        <textarea
-          placeholder="Write your message"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          rows={4}
-          maxLength={1500}
-        />
-        <button type="submit">
-          <Send size={16} />
-          Post Discussion
-        </button>
-      </form>
+      {error ? <p className="forum-error">{error}</p> : null}
 
-      <section className="thread-list">
-        {sortedThreads.length === 0 ? (
-          <div className="empty-state">No discussions yet. Be the first to post.</div>
+      <div className="forum-topic-list">
+        {loading ? (
+          <div className="forum-empty-state">Loading discussions...</div>
+        ) : filteredTopics.length === 0 ? (
+          <div className="forum-empty-state">No discussions yet for this course.</div>
         ) : (
-          sortedThreads.map((thread) => (
-            <article className="thread-card" key={thread.id}>
-              <header>
-                <h3>{thread.title}</h3>
-                <p>
-                  {thread.authorName} ({thread.authorRole}) •{" "}
-                  {new Date(thread.createdAt).toLocaleString()}
-                </p>
-              </header>
-
-              <p className="thread-message">{thread.message}</p>
-
-              <div className="reply-section">
-                <h4>Replies ({Array.isArray(thread.replies) ? thread.replies.length : 0})</h4>
-
-                <div className="reply-list">
-                  {(thread.replies || []).length === 0 ? (
-                    <p className="no-replies">No replies yet.</p>
-                  ) : (
-                    (thread.replies || []).map((reply) => (
-                      <div className="reply-item" key={reply.id}>
-                        <p className="reply-meta">
-                          {reply.authorName} ({reply.authorRole}) •{" "}
-                          {new Date(reply.createdAt).toLocaleString()}
-                        </p>
-                        <p>{reply.message}</p>
-                      </div>
-                    ))
-                  )}
-                </div>
-
-                <form className="reply-form" onSubmit={(e) => handleReply(thread.id, e)}>
-                  <input
-                    type="text"
-                    placeholder="Write a reply"
-                    value={replyDrafts[thread.id] || ""}
-                    onChange={(e) =>
-                      setReplyDrafts((prev) => ({ ...prev, [thread.id]: e.target.value }))
-                    }
-                    maxLength={800}
-                  />
-                  <button type="submit">Reply</button>
-                </form>
-              </div>
-            </article>
+          filteredTopics.map((topic) => (
+            <TopicCard
+              key={topic.id}
+              topic={topic}
+              onLike={likeTopic}
+              onReply={(topicId) => {
+                const query = new URLSearchParams();
+                if (activeCourseId) query.set("courseId", String(activeCourseId));
+                const qs = query.toString();
+                navigate(`/forum/topic/${topicId}${qs ? `?${qs}` : ""}`);
+              }}
+              isFocused={focusedThreadId && String(topic.id) === focusedThreadId}
+              isLiked={Boolean(topic.likedBy?.includes("self") || topic.likedBy?.includes(currentUserId))}
+              canManage={isInstructor || isAdmin}
+              onDeleteTopic={handleDeleteTopic}
+            />
           ))
         )}
-      </section>
-    </div>
+      </div>
+
+      <div className="forum-pagination">
+        <button
+          className="forum-btn ghost"
+          type="button"
+          disabled={threadPage <= 0}
+          onClick={() => setThreadPage((prev) => Math.max(prev - 1, 0))}
+        >
+          Prev
+        </button>
+        <span>
+          Page {threadPage + 1} / {Math.max(threadMeta.totalPages, 1)}
+        </span>
+        <button
+          className="forum-btn ghost"
+          type="button"
+          disabled={threadPage + 1 >= threadMeta.totalPages}
+          onClick={() => setThreadPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
+      </div>
+
+      <CreateTopicModal
+        isOpen={isCreateOpen}
+        onClose={() => setIsCreateOpen(false)}
+        onCreate={createTopic}
+      />
+    </section>
   );
-}
+};
 
 export default ForumPage;
 

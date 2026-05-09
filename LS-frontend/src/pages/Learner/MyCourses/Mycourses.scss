@@ -2,8 +2,8 @@ $course-font-primary: "Inter", sans-serif;
 $course-white: #ffffff;
 $course-text-dark: #111827;
 $course-text-muted: #6b7280;
-$course-primary: #A435F0;
-$course-primary-hover: #8A2BE2;
+$course-primary: #a435f0;
+$course-primary-hover: #8a2be2;
 $course-border-light: #e5e7eb;
 $course-border-active: #c7d2fe;
 $course-bg-active: #eef2ff;
@@ -17,13 +17,6 @@ $course-bg-active: #eef2ff;
   background: $course-white;
   border-radius: $radius;
   box-shadow: $shadow;
-}
-
-@mixin btn-base($padding, $radius: 8px) {
-  border: none;
-  border-radius: $radius;
-  font-size: 14px;
-  cursor: pointer;
 }
 
 * {
@@ -52,10 +45,10 @@ $course-bg-active: #eef2ff;
   }
 }
 
-
 .mycourses-container {
   padding: 20px;
 }
+
 .mycourse-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -70,7 +63,16 @@ $course-bg-active: #eef2ff;
   overflow: hidden;
 }
 
-.mycourse-img {
+.mycourse-media {
+  height: 160px;
+}
+
+.mycourse-card-body {
+  padding: 20px;
+}
+
+.mycourse-img,
+.mycourse-img-skeleton {
   width: 100%;
   height: 160px;
   object-fit: cover;
@@ -78,13 +80,11 @@ $course-bg-active: #eef2ff;
 }
 
 .mycourse-title {
-  padding: 20px 20px 0;
   font-weight: 600;
   font-size: 16px;
 }
 
 .mycourse-instructor {
-  padding: 0 20px;
   margin-top: 8px;
   font-size: 14px;
   font-weight: 500;
@@ -92,14 +92,15 @@ $course-bg-active: #eef2ff;
 }
 
 .mycourse-progress-text {
-  padding: 10px 20px 4px;
+  padding-top: 10px;
   font-size: 13px;
   font-weight: 500;
   color: $course-primary;
 }
 
-.mycourse-progress-track {
-  margin: 0 20px 16px;
+.mycourse-progress-track,
+.mycourse-progress-track-skeleton {
+  margin: 10px 0 16px;
   height: 6px;
   background: $course-border-light;
   border-radius: 10px;
@@ -113,8 +114,7 @@ $course-bg-active: #eef2ff;
 }
 
 .mycourse-btn {
-  margin: 10px 20px 20px;
-  width: calc(100% - 40px);
+  width: 100%;
   background-color: $course-primary;
   padding: 10px;
   border-radius: 8px;
@@ -129,7 +129,52 @@ $course-bg-active: #eef2ff;
   }
 }
 
+.mycourse-card--skeleton {
+  pointer-events: none;
+}
+
+.mycourse-title-skeleton {
+  width: 74%;
+  height: 20px;
+}
+
+.mycourse-instructor-skeleton {
+  width: 46%;
+  height: 16px;
+  margin-top: 12px;
+}
+
+.mycourse-progress-text-skeleton {
+  width: 38%;
+  height: 14px;
+  margin-top: 14px;
+}
+
+.mycourse-btn-skeleton {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+}
+
 .empty-text {
   font-size: 14px;
   color: $course-text-muted;
+  margin-top: 30px;
+}
+
+@media (max-width: 960px) {
+  .mycourse-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .mycourse-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
 }

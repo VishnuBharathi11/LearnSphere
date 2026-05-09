@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { MessageCircle, ThumbsUp, Trash2 } from "lucide-react";
-
 function stripHtml(value) {
   return String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }

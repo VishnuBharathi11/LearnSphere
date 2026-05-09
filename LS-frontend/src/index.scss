@@ -13,6 +13,16 @@
   --ui-radius-md: 6px;
   --ui-shadow: 0 10px 24px rgba(28, 29, 31, 0.08);
   --ui-shadow-soft: 0 2px 10px rgba(28, 29, 31, 0.08);
+  --loader-navy: #1f2940;
+  --loader-royal-blue: #3b82f6;
+  --loader-bright-blue: #4facfe;
+  --loader-violet: #a855f7;
+  --loader-soft-white: #f8fafc;
+  --loader-light-gray: #eef2f7;
+  --loader-overlay: rgba(31, 41, 64, 0.65);
+  --loader-skeleton-base: rgba(59, 130, 246, 0.12);
+  --loader-skeleton-highlight: rgba(248, 250, 252, 0.72);
+  color-scheme: light dark;
 }
 
 * {
@@ -34,6 +44,14 @@ body {
   overflow-y: auto;
   background: var(--ui-bg);
   color: var(--ui-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --loader-light-gray: #0f172a;
+    --loader-skeleton-base: rgba(79, 172, 254, 0.16);
+    --loader-skeleton-highlight: rgba(248, 250, 252, 0.18);
+  }
 }
 
 a {
