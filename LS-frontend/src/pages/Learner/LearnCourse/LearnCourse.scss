@@ -27,6 +27,10 @@ $border: #d1d5db;
   background: #fff;
 }
 
+.lesson-accordion-item--skeleton {
+  pointer-events: none;
+}
+
 .lesson-accordion-title {
   width: 100%;
   border: none;
@@ -42,6 +46,17 @@ $border: #d1d5db;
     opacity: 0.75;
     cursor: not-allowed;
   }
+}
+
+.learn-lesson-title-skeleton {
+  width: 42%;
+  height: 22px;
+}
+
+.learn-lesson-icon-skeleton {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
 }
 
 .lesson-title-only {
@@ -138,6 +153,22 @@ $border: #d1d5db;
       cursor: not-allowed;
     }
   }
+}
+
+.final-assessment-card--skeleton {
+  pointer-events: none;
+}
+
+.learn-assessment-title-skeleton {
+  width: 240px;
+  height: 24px;
+  margin-bottom: 12px;
+}
+
+.learn-assessment-button-skeleton {
+  width: 220px;
+  height: 38px;
+  border-radius: 8px;
 }
 
 .discussion-entry {

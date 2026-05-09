@@ -47,6 +47,10 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
  font-family: $course-font-primary;
 }
 
+.course-hero--loading {
+ min-height: 220px;
+}
+
 /* ================= HERO ================= */
 
 .course-hero {
@@ -81,6 +85,7 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
  display: flex;
  flex-direction: column;
  gap: 30px;
+ min-width: 0;
 }
 
 /* ================= CARD ================= */
@@ -116,6 +121,63 @@ $course-overlay-bg: rgba(0, 0, 0, 0.65);
   color: $course-text-gray;
   margin: 16px;
  }
+}
+
+.card--skeleton,
+.price-card--skeleton {
+ pointer-events: none;
+}
+
+.detail-hero-title-skeleton {
+ width: min(520px, 78%);
+ height: 48px;
+ margin-bottom: 14px;
+}
+
+.detail-title-skeleton {
+ width: 220px;
+ height: 30px;
+ margin-bottom: 14px;
+}
+
+.detail-line-skeleton {
+ width: 100%;
+ height: 16px;
+ margin-bottom: 12px;
+ border-radius: 999px;
+}
+
+.detail-line-skeleton--primary {
+ width: 92%;
+}
+
+.detail-line-skeleton--short {
+ width: 52%;
+}
+
+.detail-price-skeleton {
+ width: 44%;
+ height: 42px;
+ margin-bottom: 10px;
+}
+
+.detail-button-skeleton {
+ width: 100%;
+ height: 52px;
+ margin-bottom: 8px;
+ border-radius: 10px;
+}
+
+.detail-lesson-skeleton-list {
+ display: grid;
+ gap: 12px;
+ margin-top: 16px;
+}
+
+.detail-lesson-skeleton {
+ width: 100%;
+ height: 56px;
+ border-radius: 10px;
 }
 
 /* ================= LEARN LIST ================= */

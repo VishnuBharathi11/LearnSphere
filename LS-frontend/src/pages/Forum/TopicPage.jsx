@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Lock, LockOpen, Trash2 } from "lucide-react";
-import ReplyItem from "../components/ReplyItem";
-import ReplyBox from "../components/ReplyBox";
-import useForum from "../hooks/useForum";
+import ReplyItem from "../../components/forum/ReplyItem";
+import ReplyBox from "../../components/forum/ReplyBox";
+import useForum from "../../hooks/useForum";
 import { getAdminSettings } from "../../services/adminApi";
-import { normalizeForumRole } from "../utils/role";
-import "../styles/forum.scss";
+import { normalizeForumRole } from "../../utils/forumRole";
+import "./forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
 
 const TopicPage = () => {

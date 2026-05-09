@@ -10,9 +10,9 @@ import {
   reportReply,
   upvoteReply,
   upvoteThread,
-} from "../../services/discussionApi";
-import { getFriendlyErrorMessage } from "../../services/apiError";
-import { normalizeForumRole } from "../utils/role";
+} from "../services/discussionApi";
+import { getFriendlyErrorMessage } from "../services/apiError";
+import { normalizeForumRole } from "../utils/forumRole";
 
 const THREAD_PAGE_SIZE = 15;
 const REPLY_PAGE_SIZE = 20;

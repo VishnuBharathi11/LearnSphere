@@ -1,4 +1,4 @@
-import { normalizeForumRole } from "../utils/role";
+import { normalizeForumRole } from "../utils/forumRole";
 
 const TOPICS_KEY = "forum_topics";
 const NOTIFICATIONS_KEY = "forum_notifications";
