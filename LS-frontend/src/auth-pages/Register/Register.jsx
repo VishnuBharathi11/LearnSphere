@@ -70,7 +70,7 @@ function Register() {
 
       navigate("/login");
     } catch (apiError) {
-      setError(normalizeApiError(apiError, "Registration failed"));
+      setError(normalizeApiError(apiError, "We could not create your account. Please check your details and try again."));
     }
   };
 
