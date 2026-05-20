@@ -1,0 +1,65 @@
+.instructor-layout {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+  background: var(--ui-bg);
+  overflow: hidden;
+}
+
+.instructor-layout.admin-preview-mode .page-content {
+  button,
+  input,
+  select,
+  textarea {
+    pointer-events: none;
+    opacity: 0.7;
+  }
+}
+
+.instructor-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--ui-bg);
+  overflow: hidden;
+}
+
+.instructor-main .dashboard-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  gap: 16px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.instructor-main .page-content {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+}
+
+@media (max-width: 1200px) {
+  .instructor-main .dashboard-body {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .instructor-layout {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .instructor-main .dashboard-body {
+    overflow: visible;
+  }
+
+  .instructor-main .page-content {
+    overflow: visible;
+  }
+}

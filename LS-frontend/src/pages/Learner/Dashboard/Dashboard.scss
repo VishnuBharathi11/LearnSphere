@@ -1,0 +1,231 @@
+$dash-font-primary: "Inter", sans-serif;
+$dash-font-heading: "Poppins", sans-serif;
+$dash-white: #ffffff;
+$dash-text-dark: #111827;
+$dash-text-muted: #6b7280;
+$dash-primary: #A435F0;
+$dash-primary-hover: #8A2BE2;
+$dash-link: #A435F0;
+$dash-border-light: #e5e7eb;
+$dash-shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.06);
+$dash-shadow-md: 0 10px 26px rgba(0, 0, 0, 0.07);
+$dash-shadow-lg: 0 12px 30px rgba(0, 0, 0, 0.08);
+
+@mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
+  display: flex;
+  gap: $gap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin card-base($radius, $padding, $shadow) {
+  background: $dash-white;
+  border-radius: $radius;
+  padding: $padding;
+  box-shadow: $shadow;
+}
+
+@mixin hover-lift {
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+* {
+  box-sizing: border-box;
+  font-family: $dash-font-primary;
+}
+
+.dashboard-container{
+  padding: 20px;
+  min-height: 100vh;
+}
+.welcome-row {
+  margin-bottom: 35px;
+}
+
+.welcome-card {
+  @include card-base(22px, 32px, $dash-shadow-lg);
+  @include flex-row(space-between, space-between, center);
+
+  h2 {
+    font-family: $dash-font-heading;
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  p {
+    color: $dash-text-muted;
+    margin: 0 0 18px;
+    font-size: 14px;
+  }
+}
+
+.primary-btn {
+  background: $dash-primary;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  color: $dash-white;
+  font-size: 14px;
+  cursor: pointer;
+
+  &:hover {
+    background: $dash-primary-hover;
+  }
+}
+
+.welcome-img {
+  width: 240px;
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+  margin-bottom: 40px;
+}
+
+.stat-box {
+  @include card-base(18px, 26px, 0 8px 22px rgba(0, 0, 0, 0.06));
+
+  h3 {
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0 0 6px;
+  }
+
+  p {
+    font-size: 14px;
+    color: $dash-text-muted;
+    margin: 0;
+  }
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 32px;
+}
+
+.continue-section {
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 22px;
+}
+
+.course-card {
+  @include card-base(20px, 22px, $dash-shadow-md);
+  @include flex-column;
+  justify-content: space-between;
+  @include hover-lift;
+
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  p {
+    margin: 0;
+    font-size: 13px;
+    color: $dash-text-muted;
+  }
+}
+
+.course-cont {
+  @include flex-row(16px, flex-start, flex-start);
+
+  div {
+    @include flex-column(4px);
+  }
+}
+
+.cont-learn-img {
+  width: 160px;
+  height: 95px;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+.course-footer {
+  @include flex-row(12px, space-between, center);
+  margin: 14px 0 6px;
+  font-size: 13px;
+}
+
+.link {
+  color: $dash-link;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.progress-bar {
+  height: 6px;
+  background: $dash-border-light;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: $dash-primary;
+  border-radius: 10px;
+}
+
+.recommended-section {
+  h3 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+}
+
+.recommend-card {
+  @include card-base(18px, 14px, $dash-shadow-md);
+  @include flex-row(14px, flex-start, center);
+  margin-bottom: 18px;
+  @include hover-lift;
+
+  img {
+    width: 66px;
+    height: 66px;
+    border-radius: 14px;
+    object-fit: cover;
+  }
+
+  h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+
+  p {
+    font-size: 13px;
+    color: $dash-text-muted;
+    margin: 0 0 4px;
+  }
+
+  span {
+    font-weight: 600;
+    font-size: 14px;
+  }
+}

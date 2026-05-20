@@ -1,0 +1,166 @@
+$font: "Inter", sans-serif;
+$bg: #f9fafb;
+$white: #ffffff;
+$text-dark: #111827;
+$text-muted: #6b7280;
+$primary: #A435F0;
+$border: #e5e7eb;
+$active-bg: #dcfce7;
+$active-text: #166534;
+$completed-bg: #dbeafe;
+$completed-text: #F69C08;
+$inactive-bg: #f3f4f6;
+$inactive-text: #374151;
+
+.student-progress-layout {
+  display: flex;
+  font-family: $font;
+}
+
+.student-progress-page {
+  width: 100%;
+  padding: 20px;
+  background: $bg;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+.sp-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+
+  p {
+    font-size: 16px;
+    color: $text-muted;
+  }
+}
+
+.export-btn {
+  background: $primary;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sp-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.sp-stat-card {
+  background: $white;
+  border: 1px solid $border;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  svg {
+    color: #A435F0;
+  }
+
+  span {
+    display: block;
+    font-size: 13px;
+    color: $text-muted;
+  }
+
+  strong {
+    font-size: 22px;
+    color: $text-dark;
+  }
+}
+
+.sp-search-box {
+  background: $white;
+  border: 1px solid $border;
+  padding: 10px 12px;
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+
+  input {
+    border: none;
+    outline: none;
+    width: 100%;
+  }
+}
+
+.table-card {
+  background: $white;
+  border: 1px solid $border;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 14px;
+  border-bottom: 1px solid $border;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #f3f4f6;
+  font-weight: 600;
+  color: $text-dark;
+}
+
+td svg {
+  vertical-align: middle;
+}
+
+.sp-status {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+
+  &.active,
+  &.in-progress {
+    background: $active-bg;
+    color: $active-text;
+  }
+
+  &.completed {
+    background: $completed-bg;
+    color: $completed-text;
+  }
+
+  &.inactive {
+    background: $inactive-bg;
+    color: $inactive-text;
+  }
+}
+
+@media (max-width: 980px) {
+  .sp-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .table-card {
+    overflow-x: auto;
+  }
+
+  table {
+    min-width: 760px;
+  }
+}

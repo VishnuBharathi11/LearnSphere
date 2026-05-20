@@ -1,0 +1,21 @@
+.progressive-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.progressive-image__skeleton,
+.progressive-image__asset {
+  width: 100%;
+  height: 100%;
+}
+
+.progressive-image__asset {
+  display: block;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.progressive-image__asset.is-loaded {
+  opacity: 1;
+}

@@ -1,0 +1,186 @@
+$success-font: "Inter", sans-serif;
+$success-white: #ffffff;
+$success-green: #22c55e;
+$success-green-dark: #16a34a;
+$success-blue: #A435F0;
+$success-purple: #7c3aed;
+$success-indigo: #8b5cf6;
+$success-gray-700: #4b5563;
+$success-gray-500: #6b7280;
+$success-gray-300: #d1d5db;
+$success-bg-main: linear-gradient(135deg, #ecfdf5, #eef2ff, #faf5ff);
+$success-badge-gradient: linear-gradient(to right, #A435F0, #8b5cf6);
+$success-btn-gradient: linear-gradient(to right, #A435F0, #7c3aed);
+
+@mixin flex-center($gap: 0) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $gap;
+}
+
+@mixin flex-column($gap: 0) {
+  display: flex;
+  flex-direction: column;
+  gap: $gap;
+}
+
+@mixin card-shadow {
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+}
+
+.success-page {
+  min-height: 100vh;
+  background: $success-bg-main;
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+  font-family: $success-font;
+}
+
+.success-container {
+  max-width: 900px;
+  width: 100%;
+}
+
+.success-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  h1 {
+    font-size: 36px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    font-size: 18px;
+    color: $success-gray-700;
+  }
+}
+
+.success-icon {
+  color: $success-green;
+  margin-bottom: 16px;
+}
+
+.success-sub {
+  @include flex-center(8px);
+  color: $success-green-dark;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.ps-card {
+  width: 100%;
+  background: $success-white;
+  border-radius: 16px;
+  padding: 24px;
+  @include card-shadow;
+  margin-bottom: 24px;
+}
+
+.ps-course-card {
+  display: flex;
+  gap: 24px;
+
+  img {
+    width: 260px;
+    border-radius: 12px;
+  }
+}
+
+.course-info {
+  h2 {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+}
+
+.payment-badge {
+  width: fit-content;
+  display:flex;
+  align-items: center;
+  gap: 4px;
+  background-color:$success-blue;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 14px;
+
+  p{
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: $success-white;
+  }
+  svg{
+    color: $success-white;
+  }
+}
+
+.transaction-card {
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+}
+
+.transaction-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+
+  label {
+    font-size: 12px;
+    color: $success-gray-500;
+  }
+
+  p {
+    font-weight: 600;
+  }
+
+  small {
+    color: $success-gray-500;
+  }
+}
+
+.amount {
+  font-size: 24px;
+  color: $success-green-dark;
+}
+
+.actions {
+  @include flex-column(14px);
+}
+
+.ps-primary-btn {
+  background: $success-btn-gradient;
+  color: $success-white;
+  border: none;
+  padding: 18px;
+  font-size: 18px;
+  border-radius: 14px;
+  cursor: pointer;
+  @include flex-center(10px);
+}
+
+.ps-secondary-btn {
+  background: $success-white;
+  border: 2px solid $success-gray-300;
+  padding: 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.support {
+  text-align: center;
+  margin-top: 24px;
+  color: $success-gray-500;
+
+  a {
+    color: $success-blue;
+    text-decoration: none;
+    font-weight: 600;
+  }
+}

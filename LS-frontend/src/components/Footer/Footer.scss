@@ -1,0 +1,65 @@
+.footer {
+  background: linear-gradient(135deg, #7f1fc9 0%, #a435f0 65%, #f69c08 100%);
+  color: #ffffff;
+  padding: 50px 80px 20px;
+  font-family: "Poppins", sans-serif;
+
+  .footer-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 30px;
+
+    .footer-column {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      .footer-head {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 8px;
+      }
+
+      .footer-item {
+        font-size: 14px;
+        font-weight: 400;
+        color: rgba(255, 255, 255, 0.82);
+        cursor: pointer;
+
+        &:hover {
+          color: #ffffff;
+        }
+      }
+    }
+  }
+
+  .logo-text {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .footer-brand {
+    font-size: 26px;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1;
+    font-family: "Averia Serif Libre", serif;
+
+    &.first {
+      font-family: "Bree Serif", serif;
+      text-decoration: underline;
+      text-decoration-thickness: 2px;
+      text-underline-offset: 4px;
+    }
+  }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.25);
+    padding-top: 15px;
+    text-align: center;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.78);
+  }
+}

@@ -1,0 +1,157 @@
+.navbar {
+  height: 72px;
+  display: flex;
+  align-items: center;
+  padding-right: 20px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--ui-border);
+  box-shadow: var(--ui-shadow-soft);
+
+  .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 20px;
+    margin-top: 10px;
+    text-decoration: none;
+    cursor: pointer;
+
+    .logo {
+      width: 36px;
+      height: 36px;
+      margin-bottom: 15px;
+    }
+
+    .logo-page-name {
+      font-family: "Poppins", sans-serif;
+      font-size: 25px;
+      font-weight: 600;
+      color: var(--ui-primary);
+      margin-bottom: 15px;
+      text-decoration: none;
+    }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    margin-left: auto;
+
+    a,
+    span {
+      text-decoration: none;
+      font-family: "Poppins", sans-serif;
+      font-size: 17px;
+      font-weight: 500;
+      color: #666;
+
+      &:hover {
+        color: var(--ui-primary);
+        cursor: pointer;
+      }
+    }
+  }
+
+  .nav-actions {
+    display: flex;
+    gap: 14px;
+    margin-left: 32px;
+    align-items: center;
+
+    .btn-login {
+      padding: 8px 18px;
+      border: 1.5px solid var(--ui-primary);
+      border-radius: 6px;
+      color: var(--ui-primary);
+      text-decoration: none;
+      font-family: "Inter", sans-serif;
+      background: #ffffff;
+    }
+
+    .btn-register {
+      padding: 8px 18px;
+      background: var(--ui-primary);
+      border-radius: 6px;
+      color: #fff;
+      text-decoration: none;
+      font-family: "Inter", sans-serif;
+      box-shadow: 0 8px 16px rgba(164, 53, 240, 0.25);
+    }
+
+    .profile-pill {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 2px;
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--ui-border);
+      background: #ffffff;
+      cursor: pointer;
+      font-family: "Inter", sans-serif;
+      box-shadow: var(--ui-shadow-soft);
+    }
+
+    .profile-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .profile-email {
+      font-size: 12px;
+      color: #6b7280;
+    }
+  }
+}
+
+.navbar--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 25;
+  background: transparent;
+  border-bottom: none;
+  box-shadow: none;
+
+  .logo-section {
+    .logo-page-name {
+      color: #ffffff;
+      text-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .nav-links {
+    a,
+    span {
+      color: #ffffff;
+      text-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  .nav-actions {
+    .btn-login {
+      background: rgba(255, 255, 255, 0.22);
+      border-color: #ffffff;
+      color: #ffffff;
+      backdrop-filter: blur(4px);
+    }
+
+    .btn-register {
+      box-shadow: 0 8px 16px rgba(16, 33, 78, 0.35);
+    }
+
+    .profile-pill {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(11, 28, 69, 0.45);
+      color: #ffffff;
+      box-shadow: none;
+    }
+
+    .profile-name,
+    .profile-email {
+      color: #ffffff;
+    }
+  }
+}

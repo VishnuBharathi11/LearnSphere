@@ -1,0 +1,270 @@
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  margin: 16px 16px 0;
+  background: var(--ui-card);
+  border: 1px solid var(--ui-border);
+  border-radius: 16px;
+  box-shadow: var(--ui-shadow-soft);
+  position: relative;
+  z-index: 30;
+}
+
+.header-left h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--ui-text);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  min-width: 0;
+}
+
+.notification {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--ui-border);
+  background: #ffffff;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  color: var(--ui-text-muted);
+  cursor: pointer;
+}
+
+.notification .badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: var(--ui-accent);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+}
+
+.notification-panel {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 248px;
+  max-height: 280px;
+  overflow: auto;
+  background: #ffffff;
+  border: 1px solid var(--ui-border);
+  border-radius: 10px;
+  box-shadow: var(--ui-shadow);
+  z-index: 60;
+}
+
+.notification-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #0f172a;
+  background: #f6f8ff;
+  border-bottom: 1px solid var(--ui-border);
+
+  span {
+    font-size: 12px;
+    color: #0f172a;
+    font-weight: 700;
+  }
+}
+
+.head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  button {
+    border: none;
+    background: transparent;
+    color: #334155;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    font-size: 12px;
+  }
+}
+
+.notification-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-item {
+  border: none;
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+  padding: 6px 8px;
+  border-bottom: 1px solid #d1d5db;
+  min-height: 68px;
+}
+
+.notification-item.read {
+  background: #f9fafb;
+}
+
+.notification-item.unread {
+  background: #ffffff;
+}
+
+.n-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #4b5563;
+  line-height: 1.2;
+}
+
+.n-title svg {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  flex-shrink: 0;
+}
+
+.n-message {
+  margin: 2px 0 0 16px;
+  font-size: 12px;
+  color: #6b7280;
+  line-height: 1.2;
+}
+
+.n-time {
+  margin: 2px 0 0 16px;
+  font-size: 12px;
+  color: #4b5563;
+  font-weight: 500;
+}
+
+.n-link {
+  margin: 2px 0 0 0;
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: #A435F0;
+  font-size: 10px;
+  text-align: right;
+  cursor: pointer;
+}
+
+.notification-empty {
+  margin: 0;
+  padding: 10px 8px;
+  color: #64748b;
+  font-size: 10px;
+}
+
+.notification-see-all {
+  width: 100%;
+  border: none;
+  border-top: 1px solid #dbe2ea;
+  background: #ffffff;
+  color: #A435F0;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 6px 8px;
+  cursor: pointer;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--ui-border);
+  border-radius: 12px;
+  background: #f6f8ff;
+  min-width: 0;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--ui-primary), var(--ui-accent));
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+  min-width: 0;
+}
+
+.profile-info .name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.profile-info .email {
+  font-size: 12px;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+@media (max-width: 900px) {
+  .dashboard-header {
+    margin: 12px 12px 0;
+    padding: 12px;
+  }
+
+  .header-left h2 {
+    font-size: 18px;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .notification-panel {
+    right: 66px;
+    width: min(236px, calc(100vw - 20px));
+  }
+}

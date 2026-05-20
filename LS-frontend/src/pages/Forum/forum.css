@@ -1,0 +1,241 @@
+.forum-page-shell {
+  width: min(1100px, 96%);
+  margin: 24px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e8ecf1;
+  box-shadow: 0 8px 22px rgba(22, 34, 51, 0.06);
+}
+
+.forum-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.forum-page-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.forum-page-header p {
+  margin: 6px 0 0;
+  color: #4f5f73;
+}
+
+.forum-toolbar {
+  display: grid;
+  grid-template-columns: 1fr 180px auto;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.forum-toolbar input,
+.forum-toolbar select,
+.forum-toolbar button,
+.forum-modal input,
+.forum-modal textarea,
+.forum-reply-box textarea,
+.forum-reply-box button {
+  border: 1px solid #d6dde8;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+}
+
+.forum-toolbar button,
+.forum-reply-box button,
+.forum-topic-actions button,
+.forum-modal-actions button,
+.forum-reply-actions button {
+  background: #0067d9;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+.forum-toolbar button:hover,
+.forum-reply-box button:hover,
+.forum-topic-actions button:hover,
+.forum-modal-actions button:hover,
+.forum-reply-actions button:hover {
+  background: #0056b7;
+}
+
+button.ghost,
+.forum-reply-actions button.ghost {
+  background: #edf2f8;
+  color: #24364a;
+}
+
+button.ghost:hover,
+.forum-reply-actions button.ghost:hover {
+  background: #dfe8f3;
+}
+
+.forum-topic-list {
+  display: grid;
+  gap: 12px;
+}
+
+.forum-topic-card,
+.forum-topic-detail {
+  border: 1px solid #dde5ef;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  background: #fbfdff;
+}
+
+.forum-topic-title-link {
+  text-decoration: none;
+  color: #11263f;
+}
+
+.forum-topic-title-link h3 {
+  margin: 0;
+}
+
+.forum-topic-preview,
+.forum-reply-content {
+  color: #33465f;
+  line-height: 1.45;
+}
+
+.forum-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 0.86rem;
+  color: #62758b;
+}
+
+.forum-empty-state {
+  border: 1px dashed #c7d2e0;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  color: #5f7187;
+  background: #f8fbff;
+}
+
+.forum-notification-block {
+  display: flex;
+  align-items: center;
+}
+
+.forum-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  margin-left: 8px;
+  background: #d12f2f;
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0 6px;
+}
+
+.forum-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(7, 18, 33, 0.5);
+  display: grid;
+  place-items: center;
+  z-index: 30;
+}
+
+.forum-modal {
+  background: #fff;
+  width: min(620px, 94vw);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.forum-modal form {
+  display: grid;
+  gap: 10px;
+}
+
+.forum-modal textarea,
+.forum-reply-box textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.forum-modal-actions,
+.forum-reply-box-actions,
+.forum-topic-actions,
+.forum-reply-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.forum-error {
+  color: #cc2323;
+  font-size: 0.86rem;
+  margin: 0;
+}
+
+.forum-replies-section {
+  margin-top: 18px;
+  display: grid;
+  gap: 12px;
+}
+
+.forum-replies-list {
+  display: grid;
+  gap: 10px;
+}
+
+.forum-reply-item {
+  border-left: 2px solid #d8e2ee;
+  padding-left: 12px;
+  margin-top: 8px;
+}
+
+.forum-reply-header {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  color: #5a6e85;
+  font-size: 0.84rem;
+}
+
+.forum-back-link-row {
+  margin-bottom: 12px;
+}
+
+.forum-back-link {
+  color: #0056b7;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 720px) {
+  .forum-page-shell {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  .forum-toolbar {
+    grid-template-columns: 1fr;
+  }
+
+  .forum-topic-card,
+  .forum-topic-detail,
+  .forum-page-header {
+    flex-direction: column;
+  }
+}

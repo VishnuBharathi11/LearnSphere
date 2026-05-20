@@ -1,0 +1,134 @@
+
+
+:root {
+  --ui-primary: #a435f0;
+  --ui-accent: #f69c08;
+  --ui-bg: #f7f9fa;
+  --ui-card: #ffffff;
+  --ui-text: #1c1d1f;
+  --ui-text-muted: #6a6f73;
+  --ui-success: #34c759;
+  --ui-border: #e5e7eb;
+  --ui-radius-lg: 8px;
+  --ui-radius-md: 6px;
+  --ui-shadow: 0 10px 24px rgba(28, 29, 31, 0.08);
+  --ui-shadow-soft: 0 2px 10px rgba(28, 29, 31, 0.08);
+  --loader-navy: #1f2940;
+  --loader-royal-blue: #3b82f6;
+  --loader-bright-blue: #4facfe;
+  --loader-violet: #a855f7;
+  --loader-soft-white: #f8fafc;
+  --loader-light-gray: #eef2f7;
+  --loader-overlay: rgba(31, 41, 64, 0.65);
+  --loader-skeleton-base: rgba(59, 130, 246, 0.12);
+  --loader-skeleton-highlight: rgba(248, 250, 252, 0.72);
+  color-scheme: light;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: var(--ui-bg);
+  color: var(--ui-text);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --loader-light-gray: #0f172a;
+    --loader-skeleton-base: rgba(79, 172, 254, 0.16);
+    --loader-skeleton-highlight: rgba(248, 250, 252, 0.18);
+  }
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: var(--ui-text);
+  background-color: var(--ui-card);
+  border-color: var(--ui-border);
+  color-scheme: light;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ui-text-muted);
+  opacity: 1;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ui-primary);
+  box-shadow: 0 0 0 3px rgba(164, 53, 240, 0.12);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+/* Shared soft UI primitives for all pages */
+.soft-card,
+.page-content section,
+.page-content .card,
+.page-content .panel,
+.page-content .widget,
+.page-content .stats-card,
+.page-content .course-card,
+.page-content .metric-card,
+.page-content .summary-card,
+.page-content .chart-card,
+.page-content .table-card,
+.page-content .form-card,
+.page-content .info-card,
+.page-content .profile-card,
+.page-content .activity-card {
+  background: var(--ui-card);
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius-lg);
+  box-shadow: var(--ui-shadow-soft);
+}
+
+.page-content button,
+.page-content .btn,
+.navbar .btn-login,
+.navbar .btn-register {
+  border-radius: 6px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.page-content button:hover,
+.page-content .btn:hover,
+.navbar .btn-login:hover,
+.navbar .btn-register:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(164, 53, 240, 0.22);
+}

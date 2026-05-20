@@ -1,0 +1,180 @@
+$course-font-primary: "Inter", sans-serif;
+$course-white: #ffffff;
+$course-text-dark: #111827;
+$course-text-muted: #6b7280;
+$course-primary: #a435f0;
+$course-primary-hover: #8a2be2;
+$course-border-light: #e5e7eb;
+$course-border-active: #c7d2fe;
+$course-bg-active: #eef2ff;
+
+@mixin flex-row($gap: 0) {
+  display: flex;
+  gap: $gap;
+}
+
+@mixin card-base($radius: 12px, $shadow: 0 4px 12px rgba(0, 0, 0, 0.05)) {
+  background: $course-white;
+  border-radius: $radius;
+  box-shadow: $shadow;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: $course-font-primary;
+}
+
+.tabs {
+  @include flex-row(20px);
+
+  button {
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border-radius: 8px;
+    border: 1px solid $course-border-light;
+    background: transparent;
+    color: $course-text-muted;
+    cursor: pointer;
+
+    &.active {
+      background-color: $course-bg-active;
+      color: $course-primary;
+      border-color: $course-border-active;
+    }
+  }
+}
+
+.mycourses-container {
+  padding: 20px;
+}
+
+.mycourse-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin-top: 30px;
+}
+
+.mycourse-card {
+  @include card-base;
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+.mycourse-media {
+  height: 160px;
+}
+
+.mycourse-card-body {
+  padding: 20px;
+}
+
+.mycourse-img,
+.mycourse-img-skeleton {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: 10px 10px 0 0;
+}
+
+.mycourse-title {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.mycourse-instructor {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: $course-text-dark;
+}
+
+.mycourse-progress-text {
+  padding-top: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: $course-primary;
+}
+
+.mycourse-progress-track,
+.mycourse-progress-track-skeleton {
+  margin: 10px 0 16px;
+  height: 6px;
+  background: $course-border-light;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.mycourse-progress-fill {
+  height: 100%;
+  background: $course-primary;
+  border-radius: 10px;
+}
+
+.mycourse-btn {
+  width: 100%;
+  background-color: $course-primary;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 400;
+  font-size: 14px;
+  color: $course-white;
+  cursor: pointer;
+  border: none;
+
+  &:hover {
+    background-color: $course-primary-hover;
+  }
+}
+
+.mycourse-card--skeleton {
+  pointer-events: none;
+}
+
+.mycourse-title-skeleton {
+  width: 74%;
+  height: 20px;
+}
+
+.mycourse-instructor-skeleton {
+  width: 46%;
+  height: 16px;
+  margin-top: 12px;
+}
+
+.mycourse-progress-text-skeleton {
+  width: 38%;
+  height: 14px;
+  margin-top: 14px;
+}
+
+.mycourse-btn-skeleton {
+  width: 100%;
+  height: 40px;
+  border-radius: 8px;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: $course-text-muted;
+  margin-top: 30px;
+}
+
+@media (max-width: 960px) {
+  .mycourse-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .mycourse-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tabs {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}

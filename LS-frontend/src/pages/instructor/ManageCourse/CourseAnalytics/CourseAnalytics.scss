@@ -1,0 +1,205 @@
+$font: "Inter", sans-serif;
+$bg: #eef2f7;
+$white: #ffffff;
+$text-dark: #0f172a;
+$text-muted: #64748b;
+$green: #16a34a;
+$blue: #A435F0;
+$amber: #d97706;
+$indigo: #A435F0;
+$danger: #ef4444;
+$warning: #f59e0b;
+$border: #dbe3ee;
+$shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+
+* {
+  box-sizing: border-box;
+  font-family: $font;
+}
+
+.analytics-layout {
+  display: flex;
+}
+
+.analytics-page {
+  width: 100%;
+  padding: 20px;
+  background: $bg;
+  max-width: 1240px;
+  margin: 0 auto;
+
+  p {
+    font-size: 14px;
+    color: $text-muted;
+    margin-bottom: 14px;
+  }
+}
+
+.analytics-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.analytics-stat-card {
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 16px;
+  align-items: center;
+  background: $white;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+  min-height: 110px;
+
+  .stat-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+
+    h2 {
+      margin: 0;
+      font-size: 26px;
+      font-weight: 700;
+      color: $text-dark;
+      line-height: 1;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      color: $text-muted;
+      line-height: 1;
+    }
+  }
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+
+  &.green {
+    background: $green;
+  }
+
+  &.blue {
+    background: $blue;
+  }
+
+  &.yellow {
+    background: $amber;
+  }
+
+  &.purple {
+    background: $indigo;
+  }
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.analytics-card {
+  background: $white;
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: $shadow;
+  border: 1px solid $border;
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: $text-dark;
+  }
+
+  .recharts-responsive-container {
+    min-height: 260px;
+  }
+}
+
+.recharts-tooltip-label,
+.recharts-tooltip-item {
+  font-size: 12px;
+}
+
+.recharts-cartesian-axis-tick text {
+  font-size: 12px;
+  fill: $text-muted;
+}
+
+.lesson-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+
+  span {
+    width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #334155;
+    font-size: 13px;
+  }
+
+  small {
+    width: 40px;
+    text-align: right;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.analytics-progress {
+  flex: 1;
+  height: 10px;
+  background: #e2e8f0;
+  border-radius: 6px;
+}
+
+.analytics-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #8A2BE2, #A435F0);
+  border-radius: 6px;
+}
+
+@media (max-width: 1080px) {
+  .analytics-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .analytics-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-stat-card .stat-content h2 {
+    font-size: 26px;
+  }
+
+  .analytics-stat-card .stat-content p {
+    font-size: 14px;
+  }
+
+  .lesson-row span {
+    width: 120px;
+  }
+}

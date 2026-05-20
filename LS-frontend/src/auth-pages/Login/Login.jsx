@@ -1,80 +1,103 @@
 import React, { useState } from "react";
-import "./Login.css";
-import { Link,useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import "./Login.scss";
 import Footer from "../../components/Footer/Footer";
 import NavBar from "../../components/NavBar/NavBar";
-import UserData from "../UsersData/UsersData"
+import { loginUser, normalizeApiError } from "../../services/authApi";
+import { setCurrentUser, setAuthToken } from "../../services/userProfileStore";
 
 function Login() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-      const user = UserData.find(
-      u => u.email === email && u.password === password
-    );
-    if (!user) {
-      alert("Invalid credentials");
-      return;
-    }
-    localStorage.setItem("role", user.role);
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setError("");
 
-    if (user.role === "learner") navigate("/learner-dashboard");
-    if (user.role === "instructor") navigate("/instructor");
-    if (user.role === "admin") navigate("/admin");
+    try {
+      const data = await loginUser({ email, password });
+      setAuthToken(data.token || "");
+      const normalizedRole = (data.role || "").toLowerCase();
+      const fallbackName = data.email?.split("@")[0] || "User";
+      const resolvedName = data.name || fallbackName;
+
+      setCurrentUser({
+        id: data.userId,
+        userId: data.userId,
+        email: data.email,
+        role: normalizedRole,
+        name: resolvedName,
+        username: resolvedName,
+        phone: data.phone || "",
+        image: data.profileImage || null,
+      });
+
+      navigate("/", { replace: true });
+    } catch (apiError) {
+      setError(normalizeApiError(apiError, "The email or password you entered is incorrect."));
+    }
   };
 
   return (
     <>
-    <NavBar/>
-    <div className="log-form">
-      <div className="log-form-card">
-        <div className="log-page-name">LearnSphere</div>
+      <NavBar />
 
-        <div className="log-form-welcome">
-          Welcome Back
-          <p>Login to continue learning</p>
-        </div>
+      <div className="log-form">
+        <div className="log-form-card">
+          <Link to="/" className="log-page-name">LearnSphere</Link>
 
-        <form>
-          <div className="log-form-input-box">
-            <input
-              type="text"
-              placeholder="Username"
-              required onChange={e => setEmail(e.target.value)}
-            />
+          <div className="log-form-welcome">
+            Welcome Back
+            <p>Login to continue learning</p>
           </div>
 
-          <div className="log-form-input-box">
-            <input
-              type="password"
-              placeholder="Password"
-              required onChange={e => setPassword(e.target.value)}
-            />
-          </div>
+          {error && <p className="error">{error}</p>}
 
-          <div className="log-btn-forgot">
-            <button type="submit" className="log-form-btn" onClick={handleLogin}>
-              Login
-            </button>
+          <form onSubmit={handleLogin}>
+            <div className="log-form-input-box">
+              <input
+                type="email"
+                placeholder="Email"
+                required
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
 
-            <Link to="/forgot-password" className="log-form-forgot">
-              Forgot Password?
+            <div className="log-form-input-box">
+              <input
+                type="password"
+                placeholder="Password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+
+            <div className="log-btn-forgot">
+              <button type="submit" className="log-form-btn">
+                Login
+              </button>
+
+              <Link to="/forgot-password" className="log-form-forgot">
+                Forgot Password?
+              </Link>
+            </div>
+          </form>
+
+          <div className="log-form-register">
+            Don't have an account?
+            <Link to="/register" className="log-reg-text">
+              Register
             </Link>
           </div>
-        </form>
-
-        <div className="log-form-register">
-          Don't have an account?
-          <Link to="/register" className="log-reg-text">
-            Register
-          </Link>
         </div>
       </div>
-    </div>
-    <Footer/>
+
+      <Footer />
     </>
   );
 }

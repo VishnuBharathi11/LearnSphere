@@ -1,0 +1,123 @@
+$font: "Inter", sans-serif;
+$bg: #f5f7fb;
+$white: #ffffff;
+$text-dark: #111827;
+$text-muted: #6b7280;
+$border: #d1d5db;
+$light-border: #f1f5f9;
+$primary: #A435F0;
+
+.settings-layout {
+  display: flex;
+  font-family: $font;
+}
+
+.settings-wrapper {
+  padding: 20px;
+  background: $bg;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.settings-card {
+  background: $white;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: $text-dark;
+  }
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+
+  &.full {
+    grid-column: span 3;
+  }
+
+  label {
+    font-size: 13px;
+    margin-bottom: 6px;
+    color: #374151;
+  }
+
+  input {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid $border;
+    font-size: 14px;
+    outline: none;
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
+}
+
+.toggle-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid $light-border;
+  font-size: 14px;
+  color: $text-dark;
+}
+
+.toggle {
+  width: 44px;
+  height: 22px;
+  background: $border;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  transition: 0.2s;
+
+  &.on {
+    background: $primary;
+  }
+
+  .toggle-thumb {
+    width: 18px;
+    height: 18px;
+    background: $white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    transition: 0.2s;
+  }
+
+  &.on .toggle-thumb {
+    left: 24px;
+  }
+}
+
+.save-btn {
+  margin-top: 12px;
+  background: $primary;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
