@@ -37,7 +37,7 @@ function Login() {
 
       navigate("/", { replace: true });
     } catch (apiError) {
-      setError(normalizeApiError(apiError, "Invalid email or password"));
+      setError(normalizeApiError(apiError, "The email or password you entered is incorrect."));
     }
   };
 

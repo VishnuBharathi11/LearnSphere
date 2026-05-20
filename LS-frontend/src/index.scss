@@ -22,7 +22,7 @@
   --loader-overlay: rgba(31, 41, 64, 0.65);
   --loader-skeleton-base: rgba(59, 130, 246, 0.12);
   --loader-skeleton-highlight: rgba(248, 250, 252, 0.72);
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
 * {
@@ -67,6 +67,23 @@ select,
 textarea {
   font-family: inherit;
   color: var(--ui-text);
+  background-color: var(--ui-card);
+  border-color: var(--ui-border);
+  color-scheme: light;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--ui-text-muted);
+  opacity: 1;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--ui-primary);
+  box-shadow: 0 0 0 3px rgba(164, 53, 240, 0.12);
 }
 
 h1,

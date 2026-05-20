@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+
+# Frontend build output
+dist/
+dist-ssr/
+
+# Java/Maven build output
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Logs and runtime files
+logs/
+*.log
+*.tmp
+*.temp
+*.pid
+*.seed
+*.local
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+
+# IDE and workspace files
+.idea/
+.vscode/*
+!.vscode/extensions.json
+.metadata/
+.classpath
+.factorypath
+.project
+.settings/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
