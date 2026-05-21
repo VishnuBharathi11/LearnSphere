@@ -39,27 +39,37 @@
 }
 .role-actions {
   display: flex;
+  align-items: center;
   gap: 8px;
+  flex: 0 0 auto;
 }
-.edit-btn {
+.role-actions .edit-btn,
+.role-actions .delete-btn {
+  position: static;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 32px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.role-actions .edit-btn {
   background: #f1f5f9;
-  border: none;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
+  color: #475569;
 }
 
 
-.delete-btn {
+.role-actions .delete-btn {
   background: #fee2e2;
-  border: none;
-  padding: 6px;
-  border-radius: 8px;
-  cursor: pointer;
   color: #b91c1c;
 }
 
-.delete-btn:hover {
+.role-actions .delete-btn:hover {
   background: #fecaca;
 }
 
@@ -95,7 +105,7 @@
 
 .permission-pill {
   background: #e0ecff;
-  color: #F69C08;
+  color: #000000;
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 999px;
