@@ -120,6 +120,101 @@
 
 ---
 
+## 🎓 Certificate Module Documentation
+
+**NEW:** Professional organization guide for the 48-file Certificate Module
+
+### 📐 CERTIFICATE_MODULE_STRUCTURE.md
+**Purpose:** High-level architecture and structure overview  
+**Audience:** Architects, Tech Leads, Developers  
+**Contents:**
+- Module overview (48 files)
+- Backend structure (35 files in certificate-service)
+- Frontend structure (13 files in features/certificates)
+- File organization rules
+- Design patterns
+
+**Start here to understand the overall Certificate Module architecture!**
+
+---
+
+### ⚙️ CERTIFICATE_BACKEND_SERVICE.md
+**Purpose:** Detailed backend microservice documentation  
+**Audience:** Backend developers, DevOps  
+**Contents:**
+- Architecture breakdown
+- All 35 Java file descriptions
+- Layered architecture explanation
+- Service interfaces and implementations
+- Request flow examples
+- Database schema
+- Security features
+- Performance optimization
+
+**Read this to understand the Certificate Service backend!**
+
+---
+
+### 🚀 CERTIFICATE_FRONTEND_MIGRATION.md
+**Purpose:** Frontend reorganization and consolidation guide  
+**Audience:** Frontend developers, Tech leads  
+**Contents:**
+- Current frontend file locations
+- Target structure
+- Step-by-step migration steps
+- Code examples for new files
+- Type definitions
+- Custom hooks
+- Verification checklist
+
+**Read this to consolidate and organize frontend certificate files!**
+
+---
+
+### 📡 CERTIFICATE_API.md
+**Purpose:** Complete REST API endpoint reference  
+**Audience:** Frontend/Backend developers, QA  
+**Contents:**
+- 12 API endpoints documented
+- Request/response examples
+- Error codes
+- Authentication details
+- Rate limiting
+- Testing examples with curl/Postman
+
+**Reference this for all Certificate API calls!**
+
+---
+
+### 📊 CERTIFICATE_MODULE_ORGANIZATION_SUMMARY.md
+**Purpose:** Executive summary of module organization  
+**Audience:** Everyone  
+**Contents:**
+- Module overview with statistics
+- Current issues and solutions
+- Benefits of reorganization
+- Implementation roadmap
+- Next steps and phases
+
+**Read this for a quick overview of the Certificate Module!**
+
+---
+
+### 🎯 Why These Guides Matter
+
+The Certificate Module has grown to **48 files** across backend and frontend:
+- ✅ **Backend**: 35 well-organized files in Spring Boot microservice
+- ⚠️ **Frontend**: 13 files scattered across 3 locations (needs consolidation)
+
+These documents provide:
+- Clear organization structure
+- Migration strategy
+- Code examples
+- Best practices
+- Implementation roadmap
+
+---
+
 ## Platform Status At a Glance
 
 ```

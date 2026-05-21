@@ -1,0 +1,98 @@
+.verifyPage {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    linear-gradient(120deg, rgba(28, 83, 158, 0.16), transparent 34%),
+    linear-gradient(145deg, #f7f9fd, #edf3fa);
+}
+
+.verifyCard {
+  width: min(100%, 860px);
+  padding: clamp(28px, 6vw, 58px);
+  border: 1px solid rgba(112, 129, 157, 0.22);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 32px 90px rgba(16, 24, 40, 0.12);
+}
+
+.iconBadge {
+  width: 66px;
+  height: 66px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: #fff;
+  background: #1b7a4b;
+}
+
+.invalid .iconBadge {
+  background: #9b2f2f;
+}
+
+.eyebrow {
+  display: block;
+  margin-top: 22px;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+  color: #a78039;
+}
+
+.verifyCard h1 {
+  margin: 8px 0;
+  color: #172033;
+  font-size: clamp(32px, 5vw, 54px);
+}
+
+.verifyCard p {
+  color: #5d6a7e;
+  font-size: 17px;
+}
+
+.metaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 26px;
+}
+
+.metaGrid div {
+  padding: 16px;
+  border-radius: 8px;
+  background: #f3f6fa;
+}
+
+.metaGrid span,
+.metaGrid strong {
+  display: block;
+}
+
+.metaGrid span {
+  font-size: 12px;
+  color: #718096;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+.metaGrid strong {
+  margin-top: 4px;
+  color: #172033;
+}
+
+.trustLine,
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 28px;
+  color: #426083;
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .metaGrid {
+    grid-template-columns: 1fr;
+  }
+}

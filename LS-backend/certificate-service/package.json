@@ -1,0 +1,8 @@
+{
+  "name": "learnsphere-certificate-pdf-engine",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "puppeteer": "^24.31.0"
+  }
+}
