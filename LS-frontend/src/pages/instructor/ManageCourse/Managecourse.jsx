@@ -78,12 +78,20 @@ function Managecourse() {
   };
 
   if (loading) {
-    return <p style={{ padding: 40 }}>Loading courses...</p>;
+    return null;
   }
+
+  const statusTabs = [
+    { label: "All Courses", value: "all" },
+    { label: "Published", value: "published" },
+    { label: "In Review", value: "review" },
+    { label: "Drafts", value: "draft" }
+  ];
 
   return (
     <div className="manage-course-layout">
       <div className="manage-courses-page">
+        {/* Sleek Welcome Header */}
         <div className="page-header">
           <button
             className="create-btn"
@@ -94,10 +102,11 @@ function Managecourse() {
           </button>
         </div>
 
+        {/* Interactive Filter Toolbar with modern search and glassmorphic tabs */}
         <div className="manage-course-meta">
           <div className="filter-card">
             <div className="filter-search">
-              <Search size={18} />
+              <Search size={18} className="search-icon" />
               <input
                 type="text"
                 placeholder="Search courses..."
@@ -106,92 +115,113 @@ function Managecourse() {
               />
             </div>
 
-            <div className="filter-select">
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-              >
-                <option value="all">All Courses</option>
-                <option value="published">Published</option>
-                <option value="review">In Review</option>
-                <option value="draft">Draft</option>
-              </select>
+            <div className="filter-tabs">
+              {statusTabs.map((tab) => (
+                <button
+                  key={tab.value}
+                  type="button"
+                  className={`filter-tab-pill ${filterStatus === tab.value ? "active" : ""}`}
+                  onClick={() => setFilterStatus(tab.value)}
+                >
+                  {tab.label}
+                </button>
+              ))}
             </div>
           </div>
         </div>
 
+        {/* Courses Cards Listing */}
         {filteredCourses.length === 0 ? (
-          <div className="empty-box">No courses found</div>
+          <div className="empty-box">
+            <div className="empty-icon-wrapper">
+              <FileText size={32} />
+            </div>
+            <h3>No courses found</h3>
+            <p>Try refining your search queries or status filters, or start fresh by building a new course.</p>
+          </div>
         ) : (
-          filteredCourses.map((course) => (
-            <div className="manage-course-card" key={course.id}>
-              <div className="course-info">
-                <div className="course-top">
-                  <div>
-                    <h3>{course.courseName}</h3>
-                    <p>{course.category}</p>
+          <div className="course-registry-grid">
+            {filteredCourses.map((course) => (
+              <div className="manage-course-card" key={course.id}>
+                <div className="course-info">
+                  <div className="course-top">
+                    <div className="course-header-text">
+                      <span className="course-category-badge">{course.category || "General"}</span>
+                      <h3>{course.courseName}</h3>
+                    </div>
+
+                    <span className={`status ${(course.status || "").toLowerCase()}`}>
+                      {course.status}
+                    </span>
                   </div>
 
-                  <span className={`status ${(course.status || "").toLowerCase()}`}>
-                    {course.status}
-                  </span>
-                </div>
-
-                <div className="course-actions">
-                  <button
-                    onClick={() =>
-                      navigate(`/instructor-layout/manage-courses/${course.id}/lessons`)
-                    }
-                  >
-                    <Upload size={14} /> Lessons
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      navigate(`/instructor-layout/manage-courses/${course.id}/quiz`)
-                    }
-                  >
-                    <FileText size={14} />
-                    Quiz
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      navigate(`/instructor-layout/manage-courses/${course.id}/students`)
-                    }
-                  >
-                    <Users size={14} /> Students
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      navigate(`/instructor-layout/manage-courses/${course.id}/analytics`)
-                    }
-                  >
-                    <BarChart3 size={14} /> Analytics
-                  </button>
-
-                  {String(course.status || "").toUpperCase() === "DRAFT" && (
+                  <div className="course-actions">
                     <button
-                      className="submit-review"
-                      disabled={submittingId === course.id}
-                      onClick={() => onSubmitForReview(course.id)}
+                      type="button"
+                      className="action-pill-btn"
+                      onClick={() =>
+                        navigate(`/instructor-layout/manage-courses/${course.id}/lessons`)
+                      }
                     >
-                      {submittingId === course.id ? "Submitting..." : "Submit Review"}
+                      <Upload size={14} /> Lessons
                     </button>
-                  )}
+
+                    <button
+                      type="button"
+                      className="action-pill-btn"
+                      onClick={() =>
+                        navigate(`/instructor-layout/manage-courses/${course.id}/quiz`)
+                      }
+                    >
+                      <FileText size={14} />
+                      Quiz
+                    </button>
+
+                    <button
+                      type="button"
+                      className="action-pill-btn"
+                      onClick={() =>
+                        navigate(`/instructor-layout/manage-courses/${course.id}/students`)
+                      }
+                    >
+                      <Users size={14} /> Students
+                    </button>
+
+                    <button
+                      type="button"
+                      className="action-pill-btn"
+                      onClick={() =>
+                        navigate(`/instructor-layout/manage-courses/${course.id}/analytics`)
+                      }
+                    >
+                      <BarChart3 size={14} /> Analytics
+                    </button>
+
+                    {String(course.status || "").toUpperCase() === "DRAFT" && (
+                      <button
+                        type="button"
+                        className="submit-review"
+                        disabled={submittingId === course.id}
+                        onClick={() => onSubmitForReview(course.id)}
+                      >
+                        {submittingId === course.id ? "Submitting..." : "Submit Review"}
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                <div className="manage-actions">
+                  <button
+                    type="button"
+                    className="edit-course-btn"
+                    onClick={() => navigate(`/instructor-layout/edit-course/${course.id}`)}
+                  >
+                    <Edit size={14} /> Edit Course
+                  </button>
                 </div>
               </div>
-
-              <div className="manage-actions">
-                <button
-                  onClick={() => navigate(`/instructor-layout/edit-course/${course.id}`)}
-                >
-                  <Edit size={14} /> Edit
-                </button>
-              </div>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
     </div>

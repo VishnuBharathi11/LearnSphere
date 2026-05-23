@@ -95,7 +95,7 @@ function RoleManagement() {
   };
 
   return (
-    <div className="admin-layout">
+    <div className="role-management-layout">
       <div className="admin-content">
         {error && <p className="admin-error">{error}</p>}
 

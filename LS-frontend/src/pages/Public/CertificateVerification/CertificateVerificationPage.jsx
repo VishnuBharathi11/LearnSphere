@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { BadgeCheck, CircleAlert, ShieldCheck } from "lucide-react";
-import { verifyCertificate } from "../api/certificateApi";
-import styles from "../styles/CertificateVerification.module.scss";
+import { verifyCertificate } from "../../../services/certificateApi";
+import styles from "./CertificateVerification.module.scss";
 
 function CertificateVerificationPage() {
   const { token } = useParams();

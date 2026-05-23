@@ -121,15 +121,6 @@ function Loader({
             transition={{ delay: reducedMotion ? 0 : 1.05, duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1 className="loader__title">Learnsphere</h1>
-            <p className="loader__subtitle">{subtitle}</p>
-
-            {showProgress ? (
-              <div className="loader__progress" aria-hidden="true">
-                <div className="loader__progress-track">
-                  <div className="loader__progress-bar" />
-                </div>
-              </div>
-            ) : null}
           </motion.div>
         </motion.div>
       </motion.div>

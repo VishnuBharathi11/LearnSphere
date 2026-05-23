@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Play, Award, BookOpen, Search, Sparkles, Clock, CheckCircle2, Trophy } from "lucide-react";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
 import ProgressiveImage from "../../../components/ProgressiveImage/ProgressiveImage.jsx";
 import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
@@ -20,6 +21,7 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
       <div className="mycourse-card mycourse-card--skeleton" aria-hidden="true">
         <Skeleton className="mycourse-img-skeleton" />
         <div className="mycourse-card-body">
+          <Skeleton className="mycourse-badge-skeleton" />
           <Skeleton className="mycourse-title-skeleton" />
           <Skeleton className="mycourse-instructor-skeleton" />
           <Skeleton className="mycourse-progress-text-skeleton" />
@@ -29,6 +31,9 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
       </div>
     );
   }
+
+  const category = course.category || "Development";
+  const level = course.level || "Beginner";
 
   return (
     <div className="mycourse-card">
@@ -41,22 +46,54 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
           className="mycourse-img"
           skeletonClassName="mycourse-img-skeleton"
         />
+        <div className="mycourse-media-overlay">
+          <span className="mycourse-level-badge">{level}</span>
+        </div>
       </div>
       <div className="mycourse-card-body">
         {showText ? (
           <>
-            <div className="mycourse-title">{course.courseName}</div>
-            <div className="mycourse-instructor">{course.instructor || "Instructor"}</div>
-            <div className="mycourse-progress-text">Progress: {course.progress}%</div>
-            <div className="mycourse-progress-track">
-              <div className="mycourse-progress-fill" style={{ width: `${course.progress}%` }} />
+            <div className="mycourse-category-row">
+              <span className="mycourse-category-tag">{category}</span>
+              {course.progress === 100 && (
+                <span className="mycourse-completed-tag">
+                  <CheckCircle2 size={12} /> Completed
+                </span>
+              )}
             </div>
-            <button className="mycourse-btn" onClick={onOpen}>
-              {course.certificateUnlocked ? "Download Certificate" : "Continue Learning"}
+            <h3 className="mycourse-title" title={course.courseName}>{course.courseName}</h3>
+            <div className="mycourse-instructor">Instructed by <strong>{course.instructor || "LearnSphere Faculty"}</strong></div>
+            
+            <div className="mycourse-progress-row">
+              <span className="mycourse-progress-label">Overall Progress</span>
+              <span className="mycourse-progress-value">{course.progress}%</span>
+            </div>
+            <div className="mycourse-progress-track">
+              <div 
+                className={`mycourse-progress-fill ${course.progress === 100 ? "completed" : ""}`} 
+                style={{ width: `${course.progress}%` }} 
+              />
+            </div>
+            <button 
+              className={`mycourse-btn ${course.certificateUnlocked ? "mycourse-btn--success" : ""}`} 
+              onClick={onOpen}
+            >
+              {course.certificateUnlocked ? (
+                <>
+                  <Award size={16} />
+                  <span>Claim Certificate</span>
+                </>
+              ) : (
+                <>
+                  <Play size={15} fill="currentColor" />
+                  <span>Continue Learning</span>
+                </>
+              )}
             </button>
           </>
         ) : (
           <>
+            <Skeleton className="mycourse-badge-skeleton" />
             <Skeleton className="mycourse-title-skeleton" />
             <Skeleton className="mycourse-instructor-skeleton" />
             <Skeleton className="mycourse-progress-text-skeleton" />
@@ -73,6 +110,7 @@ function MyCourses() {
   const navigate = useNavigate();
   const initialLoadComplete = useInitialLoadComplete();
   const [activeTab, setActiveTab] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [lessonMap, setLessonMap] = useState({});
@@ -233,18 +271,42 @@ function MyCourses() {
       .filter(Boolean);
   }, [courses, enrollments, lessonMap, progressMap, userId]);
 
-  const coursesToShow = myCourses.filter((course) => {
-    if (activeTab === "pending") return course.progress < 100;
-    if (activeTab === "completed") return course.progress === 100;
-    return true;
-  });
+  // Statistics derived dynamically
+  const stats = useMemo(() => {
+    const total = myCourses.length;
+    const completed = myCourses.filter((c) => c.progress === 100).length;
+    const inProgress = myCourses.filter((c) => c.progress < 100).length;
+    const avgProgress = total ? Math.round(myCourses.reduce((sum, c) => sum + c.progress, 0) / total) : 0;
+    return { total, completed, inProgress, avgProgress };
+  }, [myCourses]);
+
+  const filteredCourses = useMemo(() => {
+    let result = myCourses;
+
+    // Apply active tab
+    if (activeTab === "pending") {
+      result = result.filter((course) => course.progress < 100);
+    } else if (activeTab === "completed") {
+      result = result.filter((course) => course.progress === 100);
+    }
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      result = result.filter((course) =>
+        course.courseName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    return result;
+  }, [myCourses, activeTab, searchQuery]);
+
   const isPageLoading = loading || lessonsLoading || progressLoading;
   const reveal = useProgressiveReveal({
     isLoading: isPageLoading,
-    hasData: coursesToShow.length > 0,
+    hasData: filteredCourses.length > 0,
     hold: !initialLoadComplete,
-    totalItems: coursesToShow.length,
-    initialCount: 2,
+    totalItems: filteredCourses.length,
+    initialCount: 3,
   });
 
   const renderedCards = useMemo(() => {
@@ -255,35 +317,80 @@ function MyCourses() {
       }));
     }
 
-    const visibleCourses = coursesToShow.slice(0, reveal.visibleCount).map((course) => ({
+    const visibleCourses = filteredCourses.slice(0, reveal.visibleCount).map((course) => ({
       key: String(course.id),
       type: "course",
       course,
     }));
 
-    const hiddenCount = Math.max(coursesToShow.length - reveal.visibleCount, 0);
+    const hiddenCount = Math.max(filteredCourses.length - reveal.visibleCount, 0);
     const hiddenSkeletons = Array.from({ length: hiddenCount }, (_, index) => ({
       key: `pending-${index}`,
       type: "skeleton",
     }));
 
     return [...visibleCourses, ...hiddenSkeletons];
-  }, [coursesToShow, isPageLoading, reveal.visibleCount]);
+  }, [filteredCourses, isPageLoading, reveal.visibleCount]);
 
   return (
     <div className="mycourses-container">
-      <div className="tabs">
-        <button className={activeTab === "all" ? "active" : ""} onClick={() => setActiveTab("all")}>
-          All
-        </button>
-        <button className={activeTab === "pending" ? "active" : ""} onClick={() => setActiveTab("pending")}>
-          Pending
-        </button>
-        <button className={activeTab === "completed" ? "active" : ""} onClick={() => setActiveTab("completed")}>
-          Completed
-        </button>
+      {/* Dynamic Summary Stats Header */}
+      <header className="mycourses-hero">
+        <div className="hero-welcome">
+          <span className="hero-eyebrow"><Sparkles size={14} /> LEARNER PORTAL</span>
+          <h1>My Learning Journey</h1>
+          <p>Track your progress, continue classes, and earn verifiable certifications.</p>
+        </div>
+        <div className="hero-stats-grid">
+          <div className="hero-stat-card">
+            <div className="stat-icon-wrapper purple"><BookOpen size={20} /></div>
+            <div>
+              <span>Enrolled Courses</span>
+              <strong>{stats.total}</strong>
+            </div>
+          </div>
+          <div className="hero-stat-card">
+            <div className="stat-icon-wrapper gold"><Trophy size={20} /></div>
+            <div>
+              <span>Completed</span>
+              <strong>{stats.completed}</strong>
+            </div>
+          </div>
+          <div className="hero-stat-card">
+            <div className="stat-icon-wrapper blue"><Clock size={20} /></div>
+            <div>
+              <span>Average Progress</span>
+              <strong>{stats.avgProgress}%</strong>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Modern Filter Toolbar */}
+      <div className="mycourses-toolbar">
+        <div className="tabs-pill">
+          <button className={activeTab === "all" ? "active" : ""} onClick={() => setActiveTab("all")}>
+            All Programs ({stats.total})
+          </button>
+          <button className={activeTab === "pending" ? "active" : ""} onClick={() => setActiveTab("pending")}>
+            In Progress ({stats.inProgress})
+          </button>
+          <button className={activeTab === "completed" ? "active" : ""} onClick={() => setActiveTab("completed")}>
+            Completed ({stats.completed})
+          </button>
+        </div>
+        <div className="search-field">
+          <Search size={18} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Search enrolled courses..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
+      {/* Main Course Grid */}
       {renderedCards.length > 0 ? (
         <div className="mycourse-grid">
           {renderedCards.map((item) =>
@@ -307,7 +414,11 @@ function MyCourses() {
           )}
         </div>
       ) : (
-        <p className="empty-text">No courses found</p>
+        <div className="courses-empty-state">
+          <BookOpen size={48} className="empty-icon" />
+          <h3>No matching courses found</h3>
+          <p>{searchQuery ? "Try refining your search query or check other filters." : "Enroll in courses to start learning today!"}</p>
+        </div>
       )}
     </div>
   );

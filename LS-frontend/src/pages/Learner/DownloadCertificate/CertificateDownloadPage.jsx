@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import CertificatePreview from "../components/CertificatePreview";
-import { generateCertificate, getCertificate } from "../api/certificateApi";
+import CertificatePreview from "../../../components/CertificatePreview/CertificatePreview";
+import { generateCertificate, getCertificate } from "../../../services/certificateApi";
 import { getCourseById, getCourseLessons } from "../../../services/courseApi";
 import { getCourseProgress } from "../../../services/progressApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
-import styles from "../styles/CertificateDashboard.module.scss";
+import styles from "../Certificates/CertificateDashboard.module.scss";
 
 function CertificateDownloadPage() {
   const { id } = useParams();

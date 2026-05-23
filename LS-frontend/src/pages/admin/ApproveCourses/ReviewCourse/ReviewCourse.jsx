@@ -36,7 +36,7 @@ function ReviewCourse() {
   );
 
   if (loading) {
-    return <p style={{ padding: 40 }}>Loading course...</p>;
+    return null;
   }
 
   if (!course) {

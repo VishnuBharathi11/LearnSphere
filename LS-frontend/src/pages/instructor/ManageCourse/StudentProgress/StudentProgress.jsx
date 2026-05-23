@@ -207,7 +207,7 @@ function StudentProgress() {
   };
 
   if (loadingCourse) {
-    return <p style={{ padding: 40 }}>Loading course...</p>;
+    return null;
   }
 
   if (currentRole !== "instructor" || !course) {
@@ -228,7 +228,10 @@ function StudentProgress() {
     <div className="student-progress-layout">
       <div className="student-progress-page">
         <div className="sp-page-header">
-          <p>{course.courseName}</p>
+          <div className="header-left">
+            <h2 className="sp-title">Student Progress Tracker</h2>
+            <p className="course-pill">{course.courseName}</p>
+          </div>
           <button className="export-btn" onClick={exportAsPdf}>
             <Download size={16} /> Export PDF
           </button>

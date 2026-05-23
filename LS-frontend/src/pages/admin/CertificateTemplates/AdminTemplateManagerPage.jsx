@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Save, Sparkles } from "lucide-react";
-import { getCertificateTemplates, saveCertificateTemplate } from "../api/certificateApi";
-import { CertificateTemplateRenderer } from "../components/CertificateTemplateRegistry";
-import styles from "../styles/AdminTemplateManager.module.scss";
+import { getCertificateTemplates, saveCertificateTemplate } from "../../../services/certificateApi";
+import { CertificateTemplateRenderer } from "../../../components/CertificatePreview/CertificateTemplateRegistry";
+import styles from "./AdminTemplateManager.module.scss";
 
 const componentOptions = [
   "horizontal-luxury",
@@ -26,9 +26,30 @@ const emptyForm = {
 function AdminTemplateManagerPage() {
   const [templates, setTemplates] = useState([]);
   const [form, setForm] = useState(emptyForm);
+  const [loadingTemplates, setLoadingTemplates] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    getCertificateTemplates().then(setTemplates);
+    let active = true;
+
+    getCertificateTemplates()
+      .then((items) => {
+        if (active) setTemplates(items);
+      })
+      .catch((requestError) => {
+        if (!active) return;
+        setError(
+          requestError?.response?.data?.message ||
+            "Unable to load certificate templates. Check admin access and the certificate service."
+        );
+      })
+      .finally(() => {
+        if (active) setLoadingTemplates(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const preview = useMemo(
@@ -50,8 +71,17 @@ function AdminTemplateManagerPage() {
 
   const submit = async (event) => {
     event.preventDefault();
-    const saved = await saveCertificateTemplate(form);
-    setTemplates((current) => [saved, ...current.filter((item) => item.code !== saved.code)]);
+    setError("");
+
+    try {
+      const saved = await saveCertificateTemplate(form);
+      setTemplates((current) => [saved, ...current.filter((item) => item.code !== saved.code)]);
+    } catch (requestError) {
+      setError(
+        requestError?.response?.data?.message ||
+          "Unable to save this template. Check admin access and the certificate service."
+      );
+    }
   };
 
   return (
@@ -114,12 +144,18 @@ function AdminTemplateManagerPage() {
           </button>
         </form>
         <div className={styles.templateList}>
-          {templates.map((template) => (
-            <button key={template.id} onClick={() => setForm({ ...emptyForm, ...template })}>
-              <strong>{template.name}</strong>
-              <span>{template.componentKey}</span>
-            </button>
-          ))}
+          {loadingTemplates ? (
+            null
+          ) : error ? (
+            <div>{error}</div>
+          ) : (
+            templates.map((template) => (
+              <button key={template.id} onClick={() => setForm({ ...emptyForm, ...template })}>
+                <strong>{template.name}</strong>
+                <span>{template.componentKey}</span>
+              </button>
+            ))
+          )}
         </div>
       </section>
       <section className={styles.previewPanel}>

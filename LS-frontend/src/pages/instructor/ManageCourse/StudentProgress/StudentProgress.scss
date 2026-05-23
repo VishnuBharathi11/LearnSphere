@@ -1,27 +1,28 @@
-$font: "Inter", sans-serif;
-$bg: #f9fafb;
-$white: #ffffff;
-$text-dark: #111827;
-$text-muted: #6b7280;
-$primary: #A435F0;
-$border: #e5e7eb;
-$active-bg: #dcfce7;
-$active-text: #166534;
-$completed-bg: #dbeafe;
-$completed-text: #F69C08;
-$inactive-bg: #f3f4f6;
-$inactive-text: #374151;
+
+// Brand Design Tokens
+$font: "Poppins", "Inter", sans-serif;
+$primary: #a435f0;
+$primary-light: rgba(164, 53, 240, 0.08);
+$accent: #f69c08;
+$accent-light: rgba(246, 156, 8, 0.1);
+$text-dark: #0f172a;
+$text-muted: #64748b;
+$border: #edf2f7;
+$bg-gradient: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+$card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+$card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
 
 .student-progress-layout {
   display: flex;
   font-family: $font;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .student-progress-page {
   width: 100%;
-  padding: 20px;
-  background: $bg;
-  max-width: 1180px;
+  padding: 30px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
@@ -29,80 +30,168 @@ $inactive-text: #374151;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid rgba(164, 53, 240, 0.1);
+  padding-bottom: 16px;
 
-  p {
-    font-size: 16px;
-    color: $text-muted;
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  h2.sp-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: $text-dark;
+    margin: 0;
+  }
+
+  p.course-pill {
+    font-size: 13px;
+    font-weight: 600;
+    color: $primary;
+    background: $primary-light;
+    padding: 5px 14px;
+    border-radius: 99px;
+    letter-spacing: 0.3px;
+    margin: 0;
+    align-self: flex-start;
   }
 }
 
 .export-btn {
-  background: $primary;
+  background: linear-gradient(135deg, $primary 0%, #8b2df0 100%);
   color: white;
   border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 13.5px;
   cursor: pointer;
+  box-shadow: 0 4px 12px rgba(164, 53, 240, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(164, 53, 240, 0.35);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
 }
 
 .sp-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-bottom: 20px;
+  gap: 20px;
+  margin-bottom: 28px;
 }
 
 .sp-stat-card {
-  background: $white;
-  border: 1px solid $border;
-  padding: 16px;
-  border-radius: 12px;
+  background: white;
+  border: 1px solid rgba(164, 53, 240, 0.08);
+  padding: 22px 24px;
+  border-radius: 16px;
+  box-shadow: $card-shadow;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, $primary, $accent);
+    opacity: 0.8;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+    border-color: rgba(164, 53, 240, 0.2);
+  }
 
   svg {
-    color: #A435F0;
+    color: $primary;
+    background: $primary-light;
+    padding: 8px;
+    border-radius: 12px;
+    width: 40px;
+    height: 40px;
+    box-sizing: border-box;
+    margin-bottom: 4px;
   }
 
   span {
     display: block;
     font-size: 13px;
+    font-weight: 500;
     color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   strong {
-    font-size: 22px;
+    font-size: 26px;
+    font-weight: 700;
     color: $text-dark;
   }
 }
 
 .sp-search-box {
-  background: $white;
-  border: 1px solid $border;
-  padding: 10px 12px;
-  border-radius: 8px;
+  background: white;
+  border: 1.5px solid #edf2f7;
+  padding: 12px 16px;
+  border-radius: 12px;
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.01);
+  transition: all 0.3s ease;
+
+  svg {
+    color: $text-muted;
+  }
 
   input {
     border: none;
     outline: none;
     width: 100%;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: $text-dark;
+    background: transparent;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+  }
+
+  &:focus-within {
+    border-color: $primary;
+    box-shadow: 0 0 0 4px rgba(164, 53, 240, 0.12);
   }
 }
 
 .table-card {
-  background: $white;
-  border: 1px solid $border;
-  border-radius: 10px;
+  background: white;
+  border: 1px solid rgba(164, 53, 240, 0.08);
+  border-radius: 16px;
   overflow: hidden;
+  box-shadow: $card-shadow;
 }
 
 table {
@@ -112,42 +201,76 @@ table {
 
 th,
 td {
-  padding: 14px;
-  border-bottom: 1px solid $border;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f5f9;
   text-align: left;
   font-size: 14px;
 }
 
 th {
-  background: #f3f4f6;
-  font-weight: 600;
+  background: #f8fafc;
+  font-weight: 650;
   color: $text-dark;
+  text-transform: uppercase;
+  font-size: 11.5px;
+  letter-spacing: 0.8px;
+  border-bottom: 2px solid rgba(164, 53, 240, 0.08);
 }
 
-td svg {
-  vertical-align: middle;
+tr {
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #faf5ff;
+  }
+}
+
+td {
+  color: #334155;
+
+  strong {
+    color: $text-dark;
+    font-size: 14.5px;
+  }
+
+  small {
+    color: $text-muted;
+    font-size: 12px;
+  }
+
+  svg {
+    vertical-align: middle;
+    margin-right: 6px;
+    color: $text-muted;
+  }
 }
 
 .sp-status {
-  padding: 4px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 5px 12px;
+  border-radius: 99px;
+  font-size: 11.5px;
+  font-weight: 600;
+  text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
 
   &.active,
   &.in-progress {
-    background: $active-bg;
-    color: $active-text;
+    background: rgba(164, 53, 240, 0.08);
+    color: $primary;
+    border: 1px solid rgba(164, 53, 240, 0.15);
   }
 
   &.completed {
-    background: $completed-bg;
-    color: $completed-text;
+    background: rgba(246, 156, 8, 0.08);
+    color: $accent;
+    border: 1px solid rgba(246, 156, 8, 0.15);
   }
 
   &.inactive {
-    background: $inactive-bg;
-    color: $inactive-text;
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #e2e8f0;
   }
 }
 

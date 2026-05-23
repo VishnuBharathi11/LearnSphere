@@ -1,7 +1,7 @@
 .download-certificate-page {
-  background: #f6f8fc;
+  background: linear-gradient(135deg, #f6f8fc 0%, #f0f4f9 100%);
   min-height: 100vh;
-  padding: 20px;
+  padding: 32px 20px;
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
@@ -9,31 +9,68 @@
 .download-certificate-header {
   display: flex;
   align-items: center;
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 20px;
+  margin-bottom: 36px;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.download-certificate-header::before {
+  content: "✓";
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: linear-gradient(135deg, #A435F0 0%, #8A2BE2 100%);
+  color: white;
+  border-radius: 50%;
+  font-size: 32px;
+  font-weight: bold;
+  flex-shrink: 0;
+  box-shadow: 0 10px 30px rgba(164, 53, 240, 0.25);
+}
+
+.download-certificate-header > div {
+  flex: 1;
+  min-width: 0;
 }
 
 .download-certificate-header h2 {
   margin: 0;
-  font-size: 42px;
-  line-height: 1.15;
+  font-size: clamp(28px, 5vw, 48px);
+  line-height: 1.2;
   font-weight: 700;
   color: #0f172a;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .download-certificate-layout {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
-  gap: 20px;
+  gap: 28px;
   align-items: start;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .download-certificate-preview {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 14px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  transition: all 0.3s ease;
+}
+
+.download-certificate-preview:hover {
+  border-color: #A435F0;
+  box-shadow: 0 24px 48px rgba(164, 53, 240, 0.15);
 }
 
 .download-certificate-template {
@@ -96,17 +133,28 @@
 
 .download-certificate-actions {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  padding: 18px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  height: fit-content;
+  position: sticky;
+  top: 32px;
+  transition: all 0.3s ease;
+}
+
+.download-certificate-actions:hover {
+  border-color: #A435F0;
+  box-shadow: 0 24px 48px rgba(164, 53, 240, 0.15);
 }
 
 .download-cert-meta {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 .download-cert-meta p {
@@ -114,72 +162,266 @@
   font-size: 14px;
   color: #334155;
   display: grid;
-  grid-template-columns: 84px minmax(0, 1fr);
-  gap: 10px;
+  grid-template-columns: 90px minmax(0, 1fr);
+  gap: 12px;
   align-items: start;
 }
 
 .download-cert-meta span {
   color: #64748b;
-  font-weight: 500;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
 }
 
 .download-cert-meta strong {
   color: #1e293b;
   text-align: left;
   word-break: break-word;
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .download-cert-action-row {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 10px;
+  gap: 12px;
 }
 
 .download-cert-btn,
 .download-cert-share-btn {
   width: 100%;
-  min-height: 44px;
-  padding: 10px 14px;
-  border-radius: 10px;
-  font-size: 14px;
-  line-height: 1.2;
+  min-height: 48px;
+  padding: 12px 18px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.4;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 .download-cert-btn {
   border: none;
-  background: #A435F0;
+  background: linear-gradient(135deg, #A435F0 0%, #8A2BE2 100%);
   color: #ffffff;
+  box-shadow: 0 10px 25px rgba(164, 53, 240, 0.3);
 }
 
 .download-cert-btn:hover {
-  background: #8A2BE2;
+  background: linear-gradient(135deg, #8A2BE2 0%, #7B1FA2 100%);
+  box-shadow: 0 15px 35px rgba(164, 53, 240, 0.4);
+  transform: translateY(-2px);
+}
+
+.download-cert-btn:active {
+  transform: translateY(0);
 }
 
 .download-cert-share-btn {
-  border: 1px solid #cbd5e1;
+  border: 2px solid #A435F0;
   background-color: #ffffff;
-  color: #334155;
+  color: #A435F0;
 }
 
 .download-cert-share-btn:hover {
-  background-color: #f8fafc;
+  background-color: #f3e5ff;
+  border-color: #8A2BE2;
+  color: #8A2BE2;
+}
+
+.download-certificate-locked-state {
+  background: #ffffff;
+  border: 2px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 60px 40px;
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.download-certificate-lock-icon {
+  font-size: 64px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.download-certificate-locked-state h3 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.download-certificate-locked-state p {
+  margin: 0;
+  font-size: 15px;
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.unlock-requirements {
+  list-style: none;
+  padding: 20px 0;
+  margin: 0;
+  text-align: left;
+  display: inline-block;
+}
+
+.unlock-requirements li {
+  padding: 10px 0;
+  padding-left: 30px;
+  position: relative;
+  font-size: 15px;
+  color: #334155;
+}
+
+.unlock-requirements li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: #A435F0;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.current-status {
+  margin-top: 16px !important;
+  font-style: italic;
+  color: #7c3aed;
+  font-weight: 500;
 }
 
 @media (max-width: 1200px) {
   .download-certificate-header h2 {
     font-size: 36px;
   }
+
+  .download-certificate-layout {
+    gap: 24px;
+  }
 }
 
 @media (max-width: 980px) {
+  .download-certificate-page {
+    padding: 24px 16px;
+  }
+
+  .download-certificate-header {
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+
+  .download-certificate-header h2 {
+    font-size: 28px;
+  }
+
   .download-certificate-layout {
     grid-template-columns: 1fr;
+    gap: 20px;
   }
 
   .download-certificate-actions {
-    order: 2;
+    position: static;
+    top: auto;
+    padding: 20px;
+  }
+
+  .download-certificate-locked-state {
+    padding: 40px 24px;
+  }
+
+  .download-certificate-locked-state h3 {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .download-certificate-page {
+    padding: 16px 12px;
+  }
+
+  .download-certificate-header {
+    flex-direction: column;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .download-certificate-header::before {
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+  }
+
+  .download-certificate-header h2 {
+    font-size: 22px;
+  }
+
+  .download-certificate-preview {
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .download-certificate-actions {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .download-cert-meta {
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+  }
+
+  .download-cert-meta p {
+    grid-template-columns: 70px minmax(0, 1fr);
+    gap: 8px;
+    font-size: 13px;
+  }
+
+  .download-cert-meta span {
+    font-size: 11px;
+  }
+
+  .download-cert-btn,
+  .download-cert-share-btn {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+
+  .download-certificate-locked-state {
+    padding: 32px 16px;
+    gap: 16px;
+  }
+
+  .download-certificate-lock-icon {
+    font-size: 56px;
+  }
+
+  .download-certificate-locked-state h3 {
+    font-size: 20px;
+  }
+
+  .download-certificate-locked-state p {
+    font-size: 14px;
   }
 }

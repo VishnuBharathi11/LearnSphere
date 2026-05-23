@@ -246,7 +246,7 @@ export function LoadingProvider({ children }) {
     if (routeLoading) return getModeMeta("route", false);
     if (networkLoading) return getModeMeta("network", false);
     return getModeMeta("initial", false);
-  }, [currentManualLoad, initialLoadComplete, isOffline, networkLoading, routeLoading]);
+  }, [currentManualLoad, initialLoadComplete, isOffline, routeLoading, networkLoading]);
 
   const value = useMemo(
     () => ({

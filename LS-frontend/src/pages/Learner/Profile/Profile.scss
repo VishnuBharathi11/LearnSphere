@@ -1,14 +1,18 @@
+// Design Tokens & Core Variables (Adhering strictly to LearnSphere Branding)
 $profile-font-primary: "Inter", sans-serif;
-$profile-font-heading: "Poppins", sans-serif;
+$profile-font-display: "Poppins", sans-serif;
 $profile-white: #ffffff;
-$profile-text-dark: #111827;
-$profile-text-muted: #6b7280;
-$profile-primary: #A435F0;
-$profile-primary-hover: #8A2BE2;
-$profile-border-light: #e5e7eb;
-$profile-bg-disabled: #f3f4f6;
-$profile-bg-soft: #eef2ff;
-$profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+$profile-text-dark: #1e293b;
+$profile-text-muted: #64748b;
+$profile-primary: #a435f0;       // Royal Purple
+$profile-primary-hover: #8222c8;
+$profile-accent: #f69c08;        // Luxury Gold
+$profile-accent-hover: #dd8800;
+$profile-border-light: #e2e8f0;
+$profile-bg-disabled: #f8fafc;
+$profile-bg-soft: rgba(164, 53, 240, 0.05);
+$profile-shadow: 0 10px 35px rgba(30, 41, 59, 0.05), 0 1px 3px rgba(30, 41, 59, 0.02);
+$profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164, 53, 240, 0.03);
 
 @mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
   display: flex;
@@ -17,264 +21,83 @@ $profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
   align-items: $align;
 }
 
-@mixin flex-column($gap: 0) {
-  display: flex;
-  flex-direction: column;
-  gap: $gap;
-}
-
-@mixin card-base($padding: 28px, $radius: 18px) {
+@mixin card-base($radius: 20px) {
   background: $profile-white;
-  padding: $padding;
   border-radius: $radius;
   box-shadow: $profile-shadow;
-}
-
-@mixin button-primary($padding: 10px 30px) {
-  background: $profile-primary;
-  color: $profile-white;
-  border: none;
-  padding: $padding;
-  border-radius: 10px;
-  font-size: 14px;
-  cursor: pointer;
-
-  &:hover {
-    background: $profile-primary-hover;
-  }
-}
-
-* {
-  box-sizing: border-box;
-  font-family: $profile-font-primary;
+  border: 1px solid $profile-border-light;
 }
 
 .profile-content {
   width: 100%;
-  padding: 20px;
+  padding: 32px;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: $profile-font-primary;
 }
 
-.profile-title {
-  font-family: $profile-font-heading;
-  font-size: 26px;
-  font-weight: 600;
-}
-
-.profile-subtitle {
-  font-size: 15px;
-  color: $profile-text-muted;
-  margin-bottom: 28px;
-}
-
+// 1. Immersive Premium Header Summary Card
 .profile-summary {
-  @include card-base(15px 36px 2px);
-  border: 1px solid #dbe2f0;
-  box-shadow: 0 10px 26px rgba(42, 54, 105, 0.08);
+  @include card-base;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.summary-banner {
+  height: 140px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #a435f0 60%, #f69c08 100%);
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.15;
+    background-image: radial-gradient(circle at 20% 30%, #ffffff 1px, transparent 1px),
+                      radial-gradient(circle at 75% 60%, #ffffff 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
 }
 
 .summary-top {
-  @include flex-row(space-between, space-between, center);
+  @include flex-row(32px, space-between, flex-end);
+  padding: 0 40px 24px 40px;
+  position: relative;
+  z-index: 5;
 }
 
 .summary-left {
-  @include flex-row(22px, flex-start, center);
-
-  h3 {
-    font-size: 19px;
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-
-  p {
-    font-size: 14px;
-    color: $profile-text-muted;
-  }
+  @include flex-row(24px, flex-start, flex-end);
 }
 
 .profile-image-wrapper {
   position: relative;
-  width: 90px;
-  height: 90px;
+  width: 110px;
+  height: 110px;
   border-radius: 50%;
   cursor: pointer;
+  margin-top: -55px; // Overlaps the banner beautifully
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.03);
+
+    .edit-icon {
+      background: $profile-accent;
+      transform: scale(1.1);
+    }
+  }
 
   img {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    border: 3px solid $profile-primary;
+    border: 4px solid $profile-white;
     object-fit: cover;
-  }
-}
-
-.edit-icon {
-  position: absolute;
-  bottom: 4px;
-  right: 4px;
-  width: 26px;
-  height: 26px;
-  background: $profile-primary;
-  color: $profile-white;
-  border-radius: 50%;
-  font-size: 13px;
-  @include flex-row(0, center, center);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-}
-
-.role-badge {
-  display: inline-block;
-  margin-top: 6px;
-  background: $profile-bg-soft;
-  color: $profile-primary;
-  font-size: 12px;
-  padding: 4px 14px;
-  border-radius: 20px;
-}
-
-.edit-profile-btn {
-  @include button-primary(10px 30px);
-}
-
-.summary-divider {
-  height: 1px;
-  background: $profile-border-light;
-  margin: 15px 0;
-}
-
-.summary-stats {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  text-align: center;
-
-  div {
-    position: relative;
-    padding: 10px 0;
-
-    &:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      right: 0;
-      top: -1%;
-      height: 80%;
-      width: 1px;
-      background: $profile-border-light;
-    }
-  }
-
-  span {
-    display: block;
-    font-size: 14px;
-    color: $profile-text-muted;
-    margin-bottom: 6px;
-    margin-top: -10px;
-  }
-
-  strong {
-    font-size: 32px;
-    font-weight: 600;
-    color: $profile-text-dark;
-  }
-}
-
-.profile-highlights {
-  margin-top: 16px;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.highlight-card {
-  @include card-base(14px, 14px);
-  border: 1px solid #dbe2f0;
-  box-shadow: 0 8px 20px rgba(42, 54, 105, 0.07);
-  @include flex-row(12px, flex-start, center);
-
-  svg {
-    color: #A435F0;
-    flex-shrink: 0;
-  }
-
-  span {
-    display: block;
-    font-size: 12px;
-    color: $profile-text-muted;
-  }
-
-  strong {
-    font-size: 15px;
-    color: $profile-text-dark;
-    font-weight: 600;
-  }
-}
-
-.profile-bottom {
-  display: grid;
-  grid-template-columns: 2.2fr 1fr;
-  gap: 32px;
-  margin-top: 32px;
-}
-
-.personal-info {
-  @include card-base;
-
-  h3 {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-
-  label {
-    display: block;
-    font-size: 14px;
-    margin-bottom: 6px;
-    color: $profile-text-dark;
-  }
-
-  input,
-  textarea {
-    width: 100%;
-    padding: 12px 14px;
-    border-radius: 10px;
-    border: 1px solid $profile-border-light;
-    font-size: 14px;
-    margin-bottom: 18px;
-    outline: none;
-
-    &:disabled {
-      background: $profile-bg-disabled;
-      color: $profile-text-muted;
-    }
-  }
-}
-
-.save-btn {
-  @include button-primary(11px 30px);
-}
-
-.achievements {
-  @include card-base;
-
-  h3 {
-    font-size: 17px;
-    font-weight: 600;
-    margin-bottom: 20px;
-  }
-}
-
-.achievement-card {
-  @include flex-row(14px);
-  padding: 14px;
-  border: 1px solid $profile-border-light;
-  border-radius: 12px;
-  margin-bottom: 16px;
-
-  strong {
-    font-size: 14px;
-  }
-
-  p {
-    font-size: 13px;
-    color: $profile-text-muted;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 }
 
@@ -282,50 +105,510 @@ $profile-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 3px solid $profile-primary;
+  border: 4px solid $profile-white;
   display: grid;
   place-items: center;
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 32px;
+  font-weight: 800;
+  font-family: $profile-font-display;
   color: #ffffff;
-  background: linear-gradient(135deg, #0ea5e9, #A435F0);
+  background: linear-gradient(135deg, #a435f0 0%, #f69c08 100%);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.achievement-icon {
-  min-width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: #eef2ff;
-  color: #A435F0;
+.edit-icon {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 32px;
+  height: 32px;
+  background: $profile-primary;
+  color: $profile-white;
+  border-radius: 50%;
+  border: 2px solid $profile-white;
   @include flex-row(0, center, center);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  transition: all 0.25s ease;
+}
+
+.profile-meta {
+  margin-bottom: 6px;
+
+  .name-row {
+    @include flex-row(12px, flex-start, center);
+    margin-bottom: 4px;
+
+    h3 {
+      font-family: $profile-font-display;
+      font-size: 24px;
+      font-weight: 800;
+      color: $profile-text-dark;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 500;
+    color: $profile-text-muted;
+    margin: 0;
+  }
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: $profile-bg-soft;
+  color: $profile-primary;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.edit-profile-btn {
+  @include flex-row(8px, center, center);
+  background: $profile-primary;
+  color: $profile-white;
+  border: 1px solid $profile-primary;
+  padding: 10px 24px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 6px;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: $profile-primary-hover;
+    border-color: $profile-primary-hover;
+    box-shadow: 0 4px 12px rgba($profile-primary, 0.2);
+  }
+
+  &.edit-active {
+    background: $profile-accent;
+    border-color: $profile-accent;
+
+    &:hover {
+      background: $profile-accent-hover;
+      border-color: $profile-accent-hover;
+      box-shadow: 0 4px 12px rgba($profile-accent, 0.2);
+    }
+  }
+}
+
+.summary-divider {
+  height: 1px;
+  background: $profile-border-light;
+  margin: 0 40px;
+}
+
+.summary-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  padding: 24px 40px;
+  text-align: center;
+
+  div {
+    position: relative;
+
+    &:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      right: 0;
+      top: 15%;
+      height: 70%;
+      width: 1px;
+      background: $profile-border-light;
+    }
+  }
+
+  span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $profile-text-muted;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  strong {
+    display: block;
+    font-size: 28px;
+    font-weight: 800;
+    font-family: $profile-font-display;
+    color: $profile-text-dark;
+  }
+}
+
+// 2. Gamified Highlights grid
+.profile-highlights {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.highlight-card {
+  @include card-base(16px);
+  padding: 18px 24px;
+  @include flex-row(16px, flex-start, center);
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: $profile-shadow-hover;
+    border-color: rgba($profile-primary, 0.12);
+  }
+
+  .highlight-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    @include flex-row(0, center, center);
+    flex-shrink: 0;
+
+    &.fire {
+      background: rgba(239, 68, 68, 0.1);
+      color: #ef4444; // Orange-red streak flame
+    }
+
+    &.target {
+      background: rgba($profile-primary, 0.1);
+      color: $profile-primary;
+    }
+
+    &.medal {
+      background: rgba($profile-accent, 0.1);
+      color: $profile-accent;
+    }
+  }
+
+  span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: $profile-text-muted;
+    letter-spacing: 0.05em;
+  }
+
+  strong {
+    display: block;
+    font-size: 16px;
+    font-weight: 700;
+    color: $profile-text-dark;
+    margin-top: 2px;
+  }
+}
+
+// 3. Two Column Dashboard Layout
+.profile-bottom {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 28px;
+  margin-top: 28px;
+}
+
+.personal-info,
+.achievements {
+  @include card-base;
+  padding: 32px;
+
+  .section-header {
+    @include flex-row(10px, flex-start, center);
+    margin-bottom: 24px;
+    border-bottom: 1.5px solid $profile-border-light;
+    padding-bottom: 12px;
+
+    .header-icon {
+      color: $profile-primary;
+    }
+
+    h3 {
+      font-family: $profile-font-display;
+      font-size: 17px;
+      font-weight: 800;
+      color: $profile-text-dark;
+      margin: 0;
+    }
+  }
+}
+
+// 3.1 Input Forms & Labels
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full-width {
+    grid-column: span 2;
+  }
+
+  label {
+    font-size: 12px;
+    font-weight: 700;
+    color: $profile-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid $profile-border-light;
+    background: #ffffff;
+    color: $profile-text-dark;
+    outline: none;
+    transition: all 0.3s ease;
+
+    &:disabled {
+      background: $profile-bg-disabled;
+      color: $profile-text-muted;
+      cursor: not-allowed;
+    }
+
+    &:focus:not(:disabled) {
+      border-color: $profile-primary;
+      box-shadow: 0 0 0 4px rgba($profile-primary, 0.12);
+    }
+  }
+
+  textarea {
+    resize: none;
+    line-height: 1.5;
+  }
+}
+
+.save-btn {
+  @include flex-row(8px, center, center);
+  background: $profile-primary;
+  color: $profile-white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 24px;
+  transition: all 0.25s ease;
+
+  &:hover {
+    background: $profile-primary-hover;
+    box-shadow: 0 4px 12px rgba($profile-primary, 0.2);
+  }
+}
+
+// 3.2 Trophy achievements section
+.achievements-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.achievement-card {
+  @include flex-row(16px, flex-start, center);
+  padding: 14px 18px;
+  background: $profile-bg-disabled;
+  border: 1px solid $profile-border-light;
+  border-radius: 14px;
+  transition: all 0.3s ease;
+
+  &.animate-hover:hover {
+    background: $profile-white;
+    border-color: rgba($profile-accent, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba($profile-accent, 0.08);
+
+    .achievement-icon {
+      background: rgba($profile-accent, 0.15);
+      color: $profile-accent;
+    }
+  }
+
+  .achievement-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba($profile-primary, 0.08);
+    color: $profile-primary;
+    @include flex-row(0, center, center);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
+
+  .achievement-details {
+    strong {
+      display: block;
+      font-size: 13.5px;
+      font-weight: 700;
+      color: $profile-text-dark;
+      line-height: 1.35;
+    }
+
+    p {
+      font-size: 12px;
+      font-weight: 600;
+      color: $profile-text-muted;
+      margin: 4px 0 0 0;
+    }
+  }
+}
+
+.empty-achievements {
+  text-align: center;
+  padding: 30px 20px;
+  color: $profile-text-muted;
+
+  svg {
+    opacity: 0.15;
+    color: $profile-text-muted;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 700;
+    color: $profile-text-dark;
+    margin: 0;
+  }
+
+  small {
+    display: block;
+    font-size: 12px;
+    margin-top: 4px;
+  }
 }
 
 .achievement-tip {
   background: $profile-bg-soft;
-  border-radius: 12px;
-  padding: 14px;
-  font-size: 14px;
-  color: #374151;
-}
+  border-radius: 16px;
+  padding: 18px;
+  border: 1px solid rgba($profile-primary, 0.08);
 
-@media (max-width: 980px) {
-  .profile-highlights {
-    grid-template-columns: 1fr;
+  .tip-header {
+    @include flex-row(6px, flex-start, center);
+    color: $profile-primary;
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
   }
 
+  p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #475569;
+    margin: 0;
+    font-weight: 500;
+  }
+}
+
+// 4. Responsive Queries
+@mixin bottom-desktop {
+  @media (max-width: 1024px) { @content; }
+}
+
+@mixin bottom-mobile {
+  @media (max-width: 768px) { @content; }
+}
+
+@include bottom-desktop {
   .profile-bottom {
     grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@include bottom-mobile {
+  .profile-content {
+    padding: 16px;
+  }
+
+  .summary-banner {
+    height: 110px;
+  }
+
+  .summary-top {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 20px 20px 20px;
     gap: 16px;
+  }
+
+  .summary-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-image-wrapper {
+    margin-top: -45px;
+    width: 90px;
+    height: 90px;
+  }
+
+  .profile-meta .name-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .edit-profile-btn {
+    width: 100%;
+    margin-bottom: 0;
+  }
+
+  .summary-divider {
+    margin: 0 20px;
   }
 
   .summary-stats {
     grid-template-columns: repeat(2, 1fr);
-    gap: 8px;
+    padding: 16px 20px;
+    gap: 12px;
 
     div {
+      padding: 6px 0;
+
       &:not(:last-child)::after {
         display: none;
       }
     }
+  }
+
+  .profile-highlights {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .personal-info,
+  .achievements {
+    padding: 24px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .form-group.full-width {
+    grid-column: span 1;
   }
 }

@@ -217,7 +217,7 @@ function CourseAnalytics() {
   const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
 
   if (loadingCourse) {
-    return <p style={{ padding: 40 }}>Loading analytics...</p>;
+    return null;
   }
   if (!isInstructorRole) {
     return <p style={{ padding: 40 }}>Access denied. Analytics is available only for instructor accounts.</p>;

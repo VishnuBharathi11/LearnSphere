@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
+import { FiBell, FiCheck, FiEdit3, FiTrash2, FiX } from "react-icons/fi";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import "./TopNavBarAdmin.scss";
@@ -69,7 +69,9 @@ function TopNavBarAdmin() {
           threadId: item.threadId || "",
           timeLabel: formatRelativeTime(item.createdAt),
         }));
-        setNotifications(formatted);
+        const storageKey = `cleared_notifications_${userId}`;
+        const clearedIds = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        setNotifications(formatted.filter((item) => !clearedIds.includes(String(item.id))));
       } catch {
         if (!active) return;
         setNotifications([]);
@@ -121,6 +123,20 @@ function TopNavBarAdmin() {
     setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
 
+  const clearReadNotifications = () => {
+    const userId = currentUser?.id || currentUser?.userId;
+    if (!userId) return;
+    const readIds = notifications.filter((item) => item.read).map((item) => item.id);
+    if (!readIds.length) return;
+
+    const storageKey = `cleared_notifications_${userId}`;
+    const existingCleared = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    const updatedCleared = Array.from(new Set([...existingCleared, ...readIds.map(String)]));
+    localStorage.setItem(storageKey, JSON.stringify(updatedCleared));
+
+    setNotifications((prev) => prev.filter((item) => !readIds.includes(item.id)));
+  };
+
   return (
     <div className="dashboard-header">
       <div className="header-left">
@@ -141,7 +157,8 @@ function TopNavBarAdmin() {
             <div className="notification-head">
               <span>Notifications</span>
               <div className="head-actions">
-                <button type="button" onClick={(event) => { event.stopPropagation(); markAllAsRead(); }}><FiCheck /></button>
+                <button type="button" onClick={(event) => { event.stopPropagation(); markAllAsRead(); }} title="Mark all as read"><FiCheck /></button>
+                <button type="button" onClick={(event) => { event.stopPropagation(); clearReadNotifications(); }} title="Clear seen notifications"><FiTrash2 /></button>
                 <button type="button" onClick={(event) => { event.stopPropagation(); setOpenNotifications(false); }}><FiX /></button>
               </div>
             </div>
@@ -152,6 +169,7 @@ function TopNavBarAdmin() {
                 {notifications.map((item) => (
                   <div key={item.id} className={`notification-item ${item.read ? "read" : "unread"}`}>
                     <p className="n-title"><FiEdit3 size={14} />{item.title}</p>
+                    {item.message ? <p className="n-message">{item.message}</p> : null}
                     <p className="n-time">{item.timeLabel}</p>
                     <button
                       type="button"

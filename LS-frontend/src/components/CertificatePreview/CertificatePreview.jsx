@@ -1,12 +1,15 @@
 import { Download, ExternalLink, ShieldCheck } from "lucide-react";
-import { getCertificateDownloadUrl } from "../api/certificateApi";
+import { getCertificateDownloadUrl } from "../../services/certificateApi";
 import { CertificateTemplateRenderer } from "./CertificateTemplateRegistry";
-import styles from "../styles/CertificateDashboard.module.scss";
+import styles from "../../pages/Learner/Certificates/CertificateDashboard.module.scss";
 
 function CertificatePreview({ certificate, compact = false }) {
   if (!certificate) {
     return <div className={styles.emptyState}>No certificate selected.</div>;
   }
+
+  const canVerify = Boolean(certificate.verificationUrl);
+  const canDownload = Boolean(certificate.id);
 
   return (
     <section className={`${styles.previewShell} ${compact ? styles.compact : ""}`}>
@@ -16,14 +19,18 @@ function CertificatePreview({ certificate, compact = false }) {
           <h2>{certificate.courseTitle}</h2>
         </div>
         <div className={styles.toolbarActions}>
-          <a href={certificate.verificationUrl} target="_blank" rel="noreferrer">
-            <ExternalLink size={16} />
-            Verify
-          </a>
-          <a href={getCertificateDownloadUrl(certificate.id)}>
-            <Download size={16} />
-            PDF
-          </a>
+          {canVerify && (
+            <a href={certificate.verificationUrl} target="_blank" rel="noreferrer">
+              <ExternalLink size={16} />
+              Verify
+            </a>
+          )}
+          {canDownload && (
+            <a href={getCertificateDownloadUrl(certificate.id)}>
+              <Download size={16} />
+              PDF
+            </a>
+          )}
         </div>
       </div>
 
