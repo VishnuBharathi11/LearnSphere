@@ -62,7 +62,7 @@ const Categories = () => {
   };
 
   return (
-    <div className="admin-layout">
+    <div className="categories-layout">
       <div className="categories-page">
         {error && <p className="admin-error">{error}</p>}
         <div className="category-grid">

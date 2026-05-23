@@ -46,7 +46,7 @@ function Loader({
                 reducedMotion
                   ? { y: 0, rotate: 0, opacity: 0.92 }
                   : {
-                      y: [0, -8, 0, 7, 0],
+                      y: 0,
                       rotate: item.key === "gear" ? [0, 90, 180, 270, 360] : [-5, 4, -3, 5, -5],
                       opacity: [0.78, 1, 0.82, 1, 0.78],
                     }
@@ -99,37 +99,19 @@ function Loader({
             <div className="loader__data-ring loader__data-ring--one" />
             <div className="loader__data-ring loader__data-ring--two" />
 
-            <motion.div
-              className="loader__sphere-wrap"
-              animate={
-                reducedMotion
-                  ? { y: 0 }
-                  : {
-                      y: [0, -12, 0, 9, 0],
-                      rotateX: [8, 14, 8],
-                      rotateY: [-12, 12, -12],
-                    }
-              }
-              transition={{ duration: reducedMotion ? 0 : 6.4, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <motion.div
-                className="loader__sphere"
-                animate={
-                  reducedMotion
-                    ? { rotateZ: 0 }
-                    : { rotateX: [0, 16, 0], rotateY: [0, 180, 360], rotateZ: [0, 8, 0] }
-                }
-                transition={{ duration: reducedMotion ? 0 : 14, repeat: Infinity, ease: "linear" }}
-              >
+            <div className="loader__sphere-wrap">
+              <div className="loader__sphere">
                 <div className="loader__sphere-surface" />
-                <div className="loader__sphere-depth loader__sphere-depth--one" />
-                <div className="loader__sphere-depth loader__sphere-depth--two" />
-                <div className="loader__sphere-depth loader__sphere-depth--three" />
-                <div className="loader__sphere-symbols">{symbols}</div>
-                <div className="loader__sphere-core" />
+                <div className="loader__sphere-motion">
+                  <div className="loader__sphere-depth loader__sphere-depth--one" />
+                  <div className="loader__sphere-depth loader__sphere-depth--two" />
+                  <div className="loader__sphere-depth loader__sphere-depth--three" />
+                  <div className="loader__sphere-symbols">{symbols}</div>
+                  <div className="loader__sphere-core" />
+                </div>
                 <div className="loader__sphere-glint" />
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
 
           <motion.div
@@ -139,15 +121,6 @@ function Loader({
             transition={{ delay: reducedMotion ? 0 : 1.05, duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
           >
             <h1 className="loader__title">Learnsphere</h1>
-            <p className="loader__subtitle">{subtitle}</p>
-
-            {showProgress ? (
-              <div className="loader__progress" aria-hidden="true">
-                <div className="loader__progress-track">
-                  <div className="loader__progress-bar" />
-                </div>
-              </div>
-            ) : null}
           </motion.div>
         </motion.div>
       </motion.div>

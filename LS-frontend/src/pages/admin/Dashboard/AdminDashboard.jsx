@@ -1,5 +1,5 @@
 import "./AdminDashboard.scss";
-import { Users, GraduationCap, BookOpen, IndianRupee, AlertCircle, Clock } from "lucide-react";
+import { Users, GraduationCap, BookOpen, IndianRupee, AlertCircle, Clock, TrendingUp, Sparkles } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -102,13 +102,14 @@ function AdminDashboard() {
 
   const stats = useMemo(
     () => [
-      { label: "Active Learners", value: dashboard?.activeLearners || 0, icon: Users },
-      { label: "Active Instructors", value: dashboard?.activeInstructors || 0, icon: GraduationCap },
-      { label: "Active Courses", value: activeCourses, icon: BookOpen },
+      { label: "Active Learners", value: dashboard?.activeLearners || 0, icon: Users, theme: "purple" },
+      { label: "Active Instructors", value: dashboard?.activeInstructors || 0, icon: GraduationCap, theme: "gold" },
+      { label: "Active Courses", value: activeCourses, icon: BookOpen, theme: "emerald" },
       {
         label: "Platform Revenue",
         value: `INR ${Number(dashboard?.platformRevenue || 0).toLocaleString()}`,
         icon: IndianRupee,
+        theme: "gold-glow",
       },
     ],
     [dashboard, activeCourses]
@@ -129,23 +130,41 @@ function AdminDashboard() {
   }, [dashboard?.pendingTasks, pendingReviewCourses]);
 
   if (!currentUser || currentUser.role !== "admin") {
-    return <p style={{ padding: 40 }}>Access denied. This page is available only for admin accounts.</p>;
+    return (
+      <div className="admin-access-denied">
+        <AlertCircle size={40} />
+        <p>Access denied. This page is available only for admin accounts.</p>
+      </div>
+    );
   }
 
   if (loading) {
-    return <p style={{ padding: 40 }}>Loading admin analytics...</p>;
+    return null;
   }
 
   return (
-    <div className="admin-dasboard-layout">
+    <div className="admin-dashboard-layout">
       <div className="admin-dashboard">
+        <header className="dashboard-header">
+          <div>
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back, Admin. Here is the operational status of LearnSphere.</p>
+          </div>
+          <div className="system-tag">
+            <Sparkles size={16} />
+            <span>Admin Control Panel</span>
+          </div>
+        </header>
+
         {error && <p className="admin-error">{error}</p>}
 
         <div className="status-grid">
           {stats.map((s) => (
-            <div key={s.label} className="stat-card">
-              <s.icon size={22} />
-              <div>
+            <div key={s.label} className={`stat-card ${s.theme}`}>
+              <div className="icon-wrapper">
+                <s.icon size={22} />
+              </div>
+              <div className="stat-content">
                 <p className="stat-value">{s.value}</p>
                 <p className="stat-label">{s.label}</p>
               </div>
@@ -155,7 +174,7 @@ function AdminDashboard() {
 
         <div className="pending-box">
           <h3>
-            <AlertCircle size={18} /> Pending Tasks
+            <AlertCircle size={18} /> Required Operations (Pending Tasks)
           </h3>
           <div className="task-grid">
             {pendingTasks.map((task, idx) => (
@@ -169,66 +188,116 @@ function AdminDashboard() {
 
         <div className="charts-grid">
           <div className="chart-card">
-            <h3>User Growth (Registration / Login)</h3>
-            <ResponsiveContainer width="100%" height={260}>
-              <LineChart data={dashboard?.userGrowth || []}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Line dataKey="registrations" stroke="#A435F0" strokeWidth={2} />
-                <Line dataKey="logins" stroke="#10b981" strokeWidth={2} />
-              </LineChart>
-            </ResponsiveContainer>
+            <div className="chart-header">
+              <TrendingUp size={16} />
+              <h3>User Growth Trends</h3>
+            </div>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={dashboard?.userGrowth || []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                  <XAxis dataKey="month" stroke="var(--ui-text-muted)" fontSize={11} tickLine={false} />
+                  <YAxis allowDecimals={false} stroke="var(--ui-text-muted)" fontSize={11} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "rgba(28, 29, 31, 0.95)",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      borderRadius: "8px",
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+                      color: "#fff",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Line type="monotone" dataKey="registrations" stroke="#a435f0" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="logins" stroke="#f69c08" strokeWidth={3} dot={{ r: 4, strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           <div className="chart-card">
-            <h3>Revenue Trend (Gross / Commission)</h3>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={dashboard?.revenueTrend || []}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Bar dataKey="grossRevenue" fill="#7F1FC9" radius={[6, 6, 0, 0]} />
-                <Bar dataKey="commissionRevenue" fill="#F69C08" radius={[6, 6, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            <div className="chart-header">
+              <TrendingUp size={16} />
+              <h3>Revenue Performance</h3>
+            </div>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={dashboard?.revenueTrend || []} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                  <XAxis dataKey="month" stroke="var(--ui-text-muted)" fontSize={11} tickLine={false} />
+                  <YAxis stroke="var(--ui-text-muted)" fontSize={11} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "rgba(28, 29, 31, 0.95)",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      borderRadius: "8px",
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+                      color: "#fff",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Bar dataKey="grossRevenue" fill="#a435f0" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="commissionRevenue" fill="#f69c08" radius={[6, 6, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
           </div>
 
           <div className="chart-card">
-            <h3>Courses by Category</h3>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={categories}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar
-                  dataKey="count"
-                  fill="#8A2BE2"
-                  radius={[6, 6, 0, 0]}
-                  onClick={handleCategorySelect}
-                  cursor="pointer"
-                />
-              </BarChart>
-            </ResponsiveContainer>
-            <p className="selected-category-label">
-              {selectedCategory ? `Selected Category: ${selectedCategory}` : "Click a category bar to view its label"}
-            </p>
+            <div className="chart-header">
+              <BookOpen size={16} />
+              <h3>Catalog Distribution</h3>
+            </div>
+            <div className="chart-container">
+              <ResponsiveContainer width="100%" height={260}>
+                <BarChart data={categories} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                  <XAxis dataKey="name" stroke="var(--ui-text-muted)" fontSize={11} tickLine={false} />
+                  <YAxis allowDecimals={false} stroke="var(--ui-text-muted)" fontSize={11} tickLine={false} />
+                  <Tooltip
+                    contentStyle={{
+                      background: "rgba(28, 29, 31, 0.95)",
+                      border: "1px solid rgba(255, 255, 255, 0.15)",
+                      borderRadius: "8px",
+                      boxShadow: "0 10px 20px rgba(0,0,0,0.3)",
+                      color: "#fff",
+                      fontSize: "12px",
+                    }}
+                  />
+                  <Bar
+                    dataKey="count"
+                    fill="url(#categoryGradient)"
+                    radius={[6, 6, 0, 0]}
+                    onClick={handleCategorySelect}
+                    cursor="pointer"
+                  />
+                  <defs>
+                    <linearGradient id="categoryGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#a435f0" />
+                      <stop offset="100%" stopColor="#f69c08" />
+                    </linearGradient>
+                  </defs>
+                </BarChart>
+              </ResponsiveContainer>
+              <p className="selected-category-label">
+                {selectedCategory ? `Selected: ${selectedCategory}` : "Click a category bar to target"}
+              </p>
+            </div>
           </div>
         </div>
 
         <div className="activity-box">
-          <h3>Recent Activity</h3>
+          <h3>Recent Audit Trail</h3>
           {!dashboard?.recentActivity?.length ? (
-            <p>No activity yet</p>
+            <p className="empty-trail">No recent administrative logs found.</p>
           ) : (
             <ul>
               {dashboard.recentActivity.map((activity, idx) => (
                 <li key={`${activity.type}-${idx}`}>
-                  <Clock size={14} />
-                  {prettifyActivityMessage(activity.message)}
+                  <div className="activity-icon">
+                    <Clock size={12} />
+                  </div>
+                  <span className="activity-message">{prettifyActivityMessage(activity.message)}</span>
                 </li>
               ))}
             </ul>
@@ -240,4 +309,3 @@ function AdminDashboard() {
 }
 
 export default AdminDashboard;
-

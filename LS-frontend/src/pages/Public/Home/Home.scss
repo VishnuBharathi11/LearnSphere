@@ -94,7 +94,7 @@ $font-inter: "Inter", sans-serif;
 }
 
 .hero-gradient-text {
-  background: linear-gradient(90deg, #7ad8ff 0%, #45b8ff 35%, #2f84ff 70%, #1e5bf0 100%);
+  background: linear-gradient(90deg, #a435f0 0%, #c46efc 35%, #ffb834 70%, #f69c08 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -341,8 +341,8 @@ $font-inter: "Inter", sans-serif;
 .home-contact {
   margin: 34px 40px 50px;
   border-radius: 24px;
-  border: 1px solid #d5e3ff;
-  background: linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+  border: 1px solid #e9d5ff;
+  background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 100%);
   padding: 34px 30px 36px;
 
   &__header {
@@ -383,7 +383,7 @@ $font-inter: "Inter", sans-serif;
 
   &__item {
     background: #ffffff;
-    border: 1px solid #e2ecff;
+    border: 1px solid #f3e8ff;
     border-radius: 14px;
     padding: 16px 14px;
     display: flex;
@@ -419,7 +419,7 @@ $font-inter: "Inter", sans-serif;
     gap: 24px;
     align-items: stretch;
     border-radius: 18px;
-    background: linear-gradient(170deg, #e8f1ff 0%, #dfe9f9 100%);
+    background: linear-gradient(170deg, #f3e8ff 0%, #fae8ff 100%);
     padding: 22px;
     position: relative;
     overflow: hidden;
@@ -448,7 +448,7 @@ $font-inter: "Inter", sans-serif;
 
   &__content {
     background: #ffffff;
-    border: 1px solid #deebff;
+    border: 1px solid #f3e8ff;
     border-radius: 16px;
     padding: 26px;
     z-index: 1;
@@ -525,7 +525,7 @@ $font-inter: "Inter", sans-serif;
 
   &__form {
     background: #ffffff;
-    border: 1px solid #deebff;
+    border: 1px solid #f3e8ff;
     border-radius: 16px;
     padding: 18px;
     display: grid;
@@ -541,7 +541,7 @@ $font-inter: "Inter", sans-serif;
 
     input,
     textarea {
-      border: 1px solid #d8e1f3;
+      border: 1px solid #e9d5ff;
       border-radius: 8px;
       padding: 11px 12px;
       font-family: $font-inter;
@@ -549,7 +549,8 @@ $font-inter: "Inter", sans-serif;
       outline: none;
 
       &:focus {
-        border-color: #9ab0ff;
+        border-color: #c084fc;
+        box-shadow: 0 0 0 3px rgba(164, 53, 240, 0.12);
       }
     }
 

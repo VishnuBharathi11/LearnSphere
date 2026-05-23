@@ -8,6 +8,7 @@ import {
   Layers,
   UserCog,
   BadgeCheck,
+  Award,
   Settings,
   LogOut,
 } from "lucide-react";
@@ -90,6 +91,14 @@ function SidebarAdmin() {
         >
           <Settings size={18} />
           Settings
+        </Link>
+
+        <Link
+          to="/admin-layout/certificate-templates"
+          className={isActive("/admin-layout/certificate-templates")}
+        >
+          <Award size={18} />
+          Certificate Templates
         </Link>
 
         <Link

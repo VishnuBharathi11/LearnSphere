@@ -129,10 +129,31 @@ function DownloadCertificate() {
 
   if (!certificate) {
     return (
-      <div style={{ padding: 40 }}>
-        <h2>Certificate Locked</h2>
-        <p>You must complete 100% lessons and pass final assessment.</p>
-        <button onClick={() => navigate("/student-layout/my-courses")}>Go to My Courses</button>
+      <div className="download-certificate-page">
+        <div className="download-certificate-header">
+          <div>
+            <h2>Certificate Locked</h2>
+          </div>
+        </div>
+        <div className="download-certificate-layout" style={{ gridTemplateColumns: "1fr" }}>
+          <div className="download-certificate-locked-state">
+            <div className="download-certificate-lock-icon">🔒</div>
+            <h3>Certificate Not Yet Available</h3>
+            <p>To unlock your certificate, you need to:</p>
+            <ul className="unlock-requirements">
+              <li>Complete <strong>100% of all lessons</strong></li>
+              <li>Pass the <strong>final assessment</strong></li>
+            </ul>
+            <p className="current-status">Keep up the great work! You're making progress.</p>
+            <button 
+              className="download-cert-btn" 
+              onClick={() => navigate("/student-layout/my-courses")}
+              style={{ marginTop: "24px" }}
+            >
+              Continue Learning
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
@@ -177,8 +198,8 @@ function DownloadCertificate() {
           </div>
 
           <div className="download-cert-action-row">
-            <button className="download-cert-btn" onClick={handleDownload}>
-              Download Certificate
+            <button className="download-cert-btn" onClick={handleDownload} title="Download certificate as PNG image">
+              📥 Download Certificate
             </button>
             <button
               className="download-cert-share-btn"
@@ -188,8 +209,9 @@ function DownloadCertificate() {
                   "_blank"
                 )
               }
+              title="Share your achievement on LinkedIn"
             >
-              Share on LinkedIn
+              💼 Share on LinkedIn
             </button>
           </div>
         </div>

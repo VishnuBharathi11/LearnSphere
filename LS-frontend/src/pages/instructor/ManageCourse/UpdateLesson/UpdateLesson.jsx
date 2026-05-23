@@ -64,7 +64,7 @@ function UpdateLesson() {
   }, [id]);
 
   if (loadingCourse) {
-    return <p style={{ padding: 40 }}>Loading course...</p>;
+    return null;
   }
 
   if (!currentUser || currentRole !== "instructor" || !course) {

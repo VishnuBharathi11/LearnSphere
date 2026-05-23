@@ -1,5 +1,5 @@
 import { Link, NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, BookOpen, BarChart3, Award, User, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, Award, User, LogOut } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import { logoutUser } from "../../services/userProfileStore";
 import "./SidebarStudent.scss";
@@ -31,11 +31,6 @@ function SidebarStudent() {
         <NavLink to={withPreview("/student-layout/my-courses")} className="nav-item">
           <BookOpen size={20} />
           <span>My Courses</span>
-        </NavLink>
-
-        <NavLink to={withPreview("/student-layout/progress")} className="nav-item">
-          <BarChart3 size={20} />
-          <span>Progress</span>
         </NavLink>
 
         <NavLink to={withPreview("/student-layout/certificate")} className="nav-item">

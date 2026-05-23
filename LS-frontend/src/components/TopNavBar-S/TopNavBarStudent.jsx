@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { FiBell, FiCheck, FiEdit3, FiX } from "react-icons/fi";
+import { FiBell, FiCheck, FiEdit3, FiTrash2, FiX } from "react-icons/fi";
 import { useCurrentUser } from "../../hooks/useCurrentUser";
 import { getNotifications, markNotificationRead } from "../../services/discussionApi";
 import { getEnrollmentsByUser } from "../../services/enrollmentApi";
@@ -141,14 +141,24 @@ function TopNavBarStudent() {
           createdAt: item.createdAt || new Date().toISOString(),
         }));
 
+        const storageKey = `cleared_notifications_${userId}`;
+        const clearedIds = JSON.parse(localStorage.getItem(storageKey) || "[]");
+
         setNotifications(
           [...localNotifications, ...discussionNotifications]
+            .filter((item) => !clearedIds.includes(String(item.id)))
             .sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime())
             .slice(0, 12)
         );
       } catch {
         if (!active) return;
-        setNotifications(getLocalNotificationsByUser(String(userId), "learner").slice(0, 12));
+        const storageKey = `cleared_notifications_${userId}`;
+        const clearedIds = JSON.parse(localStorage.getItem(storageKey) || "[]");
+        setNotifications(
+          getLocalNotificationsByUser(String(userId), "learner")
+            .filter((item) => !clearedIds.includes(String(item.id)))
+            .slice(0, 12)
+        );
       }
     };
 
@@ -322,6 +332,21 @@ function TopNavBarStudent() {
     setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
 
+  const clearReadNotifications = () => {
+    if (isAdminPreview) return;
+    const userId = currentUser?.id || currentUser?.userId;
+    if (!userId) return;
+    const readIds = notifications.filter((item) => item.read).map((item) => item.id);
+    if (!readIds.length) return;
+
+    const storageKey = `cleared_notifications_${userId}`;
+    const existingCleared = JSON.parse(localStorage.getItem(storageKey) || "[]");
+    const updatedCleared = Array.from(new Set([...existingCleared, ...readIds.map(String)]));
+    localStorage.setItem(storageKey, JSON.stringify(updatedCleared));
+
+    setNotifications((prev) => prev.filter((item) => !readIds.includes(item.id)));
+  };
+
   return (
     <div className="dashboard-header">
       <div className="header-left">
@@ -347,7 +372,8 @@ function TopNavBarStudent() {
             <div className="notification-head">
               <span>Notifications</span>
               <div className="head-actions">
-                <button type="button" onClick={(event) => { event.stopPropagation(); markAllAsRead(); }}><FiCheck /></button>
+                <button type="button" onClick={(event) => { event.stopPropagation(); markAllAsRead(); }} title="Mark all as read"><FiCheck /></button>
+                <button type="button" onClick={(event) => { event.stopPropagation(); clearReadNotifications(); }} title="Clear seen notifications"><FiTrash2 /></button>
                 <button type="button" onClick={(event) => { event.stopPropagation(); setOpenNotifications(false); }}><FiX /></button>
               </div>
             </div>

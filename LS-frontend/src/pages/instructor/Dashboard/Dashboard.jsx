@@ -145,19 +145,30 @@ function Dashboard() {
   }, [coursePerformance]);
 
   if (loading) {
-    return <p style={{ padding: 40 }}>Loading dashboard...</p>;
+    return null;
   }
 
   return (
     <div className="instructor-dashboard-layout">
       <div className="instructor-dashboard">
+        <div className="dashboard-hero">
+          <div className="hero-welcome">
+            <span className="hero-eyebrow">Instructor Suite</span>
+            <h1>Welcome back, {currentUser?.name || "Instructor"}</h1>
+            <p>
+              Monitor your academy growth, examine recent course enrollments, evaluate student 
+              discussion threads, and control your online classroom materials.
+            </p>
+          </div>
+        </div>
+
         <div className="status-grid">
           {stats.map((item, index) => {
             const Icon = item.icon;
             return (
               <div className={`status-card status-${item.color}`} key={index}>
                 <div className="status-icon">
-                  <Icon size={22} />
+                  <Icon size={22} strokeWidth={2} />
                 </div>
                 <div className="status-content">
                   <strong>{item.value}</strong>
@@ -172,7 +183,7 @@ function Dashboard() {
           <div className="chart-card">
             <div className="chart-header">
               <div className="chart-title">
-                <TrendingUp size={20} />
+                <TrendingUp size={20} strokeWidth={2.2} />
                 <h3>Enrollment Growth</h3>
               </div>
             </div>
@@ -185,10 +196,10 @@ function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="4 4" stroke="#e2e8f0" />
-                <XAxis dataKey="month" tick={{ fontSize: 12 }} />
-                <YAxis tick={{ fontSize: 12 }} allowDecimals={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fontWeight: 500, fill: "#64748b" }} />
+                <YAxis tick={{ fontSize: 11, fontWeight: 500, fill: "#64748b" }} allowDecimals={false} />
                 <Tooltip />
-                <Area type="monotone" dataKey="students" stroke="#7F1FC9" fill="url(#enrollFill)" strokeWidth={2.5} />
+                <Area type="monotone" dataKey="students" stroke="#A435F0" fill="url(#enrollFill)" strokeWidth={2.5} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -196,7 +207,7 @@ function Dashboard() {
           <div className="chart-card">
             <div className="chart-header">
               <div className="chart-title">
-                <Activity size={20} />
+                <Activity size={20} strokeWidth={2.2} />
                 <h3>Course Performance Index</h3>
               </div>
             </div>
@@ -225,12 +236,16 @@ function Dashboard() {
               </div>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
-                <BarChart data={coursePerformance} layout="vertical" margin={{ left: 10, right: 12, top: 8, bottom: 8 }}>
+                <BarChart data={coursePerformance} margin={{ left: -10, right: 10, top: 10, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#edf2f7" />
-                  <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11 }} />
-                  <YAxis type="category" dataKey="course" width={150} tick={{ fontSize: 11 }} />
+                  <XAxis
+                    dataKey="course"
+                    tick={{ fontSize: 10, fontWeight: 500, fill: "#64748b" }}
+                    tickFormatter={(value) => (value.length > 15 ? `${value.substring(0, 12)}...` : value)}
+                  />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 11, fontWeight: 500, fill: "#64748b" }} allowDecimals={false} />
                   <Tooltip />
-                  <Bar dataKey="score" radius={[0, 8, 8, 0]} fill="#8A2BE2" />
+                  <Bar dataKey="score" radius={[8, 8, 0, 0]} fill="#A435F0" barSize={24} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -240,17 +255,19 @@ function Dashboard() {
         <div className="activity-card">
           <h3>Recent Activity</h3>
           {recentActivities.length === 0 ? (
-            <p>No recent activity</p>
+            <p className="activity-empty">No recent course activities found.</p>
           ) : (
-            recentActivities.map((activity, index) => (
-              <div className="activity-item" key={index}>
-                <span className="dot"></span>
-                <div>
-                  <p>{activity.text}</p>
-                  <small>{activity.time}</small>
+            <div className="activity-list">
+              {recentActivities.map((activity, index) => (
+                <div className="activity-item" key={index}>
+                  <span className="dot"></span>
+                  <div className="activity-details">
+                    <p>{activity.text}</p>
+                    <small>{activity.time}</small>
+                  </div>
                 </div>
-              </div>
-            ))
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -259,4 +276,3 @@ function Dashboard() {
 }
 
 export default Dashboard;
-

@@ -209,7 +209,7 @@ function Discussion() {
   }
 
   if (loading) {
-    return <p style={{ padding: 40 }}>Loading discussions...</p>;
+    return null;
   }
 
   return (

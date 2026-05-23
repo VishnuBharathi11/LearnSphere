@@ -39,22 +39,31 @@ $shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
 
   .course-card-module {
     display: flex;
-    gap: 20px;
+    gap: 12px;
     margin-top: 10px;
     font-size: 13px;
     font-weight: 450;
     color: $text-gray;
     align-items: center;
+    line-height: 1;
 
     .course-card-instructor {
       font-size: 14px;
       font-weight: 500;
       color: $text-dark;
+      line-height: 1;
     }
 
     .divider {
-      margin-top: -4px;
-      font-size: larger;
+      margin-top: 0;
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .course-card-module {
+      display: block;
+      margin-top: 0;
+      line-height: 1;
     }
   }
 

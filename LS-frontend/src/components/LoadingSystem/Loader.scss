@@ -114,7 +114,6 @@
   aspect-ratio: 1;
   transform-style: preserve-3d;
   filter: drop-shadow(0 26px 46px rgba(37, 99, 235, 0.18));
-  will-change: transform;
 }
 
 .loader__sphere {
@@ -124,7 +123,6 @@
   place-items: center;
   border-radius: 50%;
   transform-style: preserve-3d;
-  will-change: transform;
 }
 
 .loader__sphere-surface {
@@ -143,6 +141,15 @@
     0 34px 76px rgba(15, 23, 42, 0.12);
   backdrop-filter: blur(20px) saturate(1.35);
   -webkit-backdrop-filter: blur(20px) saturate(1.35);
+}
+
+.loader__sphere-motion {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  transform-style: preserve-3d;
 }
 
 .loader__sphere-depth {
@@ -175,7 +182,12 @@
 }
 
 .loader__symbol {
+  --symbol-x: 0rem;
+  --symbol-y: 0rem;
+  --symbol-z: 40px;
   position: absolute;
+  top: 50%;
+  left: 50%;
   display: grid;
   place-items: center;
   width: 4rem;
@@ -189,43 +201,43 @@
   box-shadow: 0 0 24px rgba(14, 165, 233, 0.28), inset 0 0 18px rgba(255, 255, 255, 0.42);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  transform: translate3d(calc(-50% + var(--symbol-x)), calc(-50% + var(--symbol-y)), var(--symbol-z));
   will-change: transform, opacity;
 }
 
 .loader__symbol svg {
+  display: block;
   filter: drop-shadow(0 0 10px rgba(14, 165, 233, 0.48));
 }
 
 .loader__symbol-glyph {
   display: grid;
   place-items: center;
+  width: 100%;
+  height: 100%;
   will-change: transform, opacity;
 }
 
 .loader__symbol--cap {
-  top: 18%;
-  left: 50%;
-  transform: translate3d(-50%, 0, 46px);
+  --symbol-y: -4rem;
+  --symbol-z: 46px;
 }
 
 .loader__symbol--code {
-  top: 48%;
-  right: 11%;
   color: #4338ca;
-  transform: translate3d(0, -50%, 38px);
+  --symbol-x: 4.4rem;
+  --symbol-z: 38px;
 }
 
 .loader__symbol--book {
-  bottom: 17%;
-  left: 50%;
-  transform: translate3d(-50%, 0, 32px);
+  --symbol-y: 4rem;
+  --symbol-z: 32px;
 }
 
 .loader__symbol--gear {
-  top: 48%;
-  left: 11%;
   color: #2563eb;
-  transform: translate3d(0, -50%, 40px);
+  --symbol-x: -4.4rem;
+  --symbol-z: 40px;
 }
 
 .loader__sphere-core {

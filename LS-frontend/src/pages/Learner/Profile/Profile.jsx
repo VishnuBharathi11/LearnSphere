@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
-import { Flame, Medal, Target, Trophy } from "lucide-react";
+import { Flame, Medal, Target, Trophy, Mail, Phone, User, BookOpen, Clock, Shield, Sparkles, Save, Edit3 } from "lucide-react";
 import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
@@ -316,10 +316,12 @@ function Profile() {
 
   return (
     <div className="profile-content">
+      {/* Immersive Premium Profile Banner Card */}
       <div className="profile-summary" ref={summaryRef}>
+        <div className="summary-banner" />
         <div className="summary-top">
           <div className="summary-left">
-            <div className="profile-image-wrapper" onClick={handleImageClick}>
+            <div className="profile-image-wrapper" onClick={handleImageClick} title="Change Profile Avatar">
               {profile.image ? (
                 <img src={profile.image} alt="profile" />
               ) : (
@@ -338,15 +340,33 @@ function Profile() {
               />
             </div>
 
-            <div>
-              <h3>{profile.name || "Learner"}</h3>
+            <div className="profile-meta">
+              <div className="name-row">
+                <h3>{profile.name || "Learner"}</h3>
+                <span className="role-badge"><Shield size={12} /> Learner</span>
+              </div>
               <p>{profile.email || "-"}</p>
-              <span className="role-badge">Learner</span>
             </div>
           </div>
 
-          <button className="edit-profile-btn" onClick={handleEdit}>
-            {isAdminPreview ? "Read Only View" : "Edit Profile"}
+          <button 
+            className={`edit-profile-btn ${isEditing ? "edit-active" : ""}`} 
+            onClick={isEditing ? handleSave : handleEdit}
+            disabled={isAdminPreview}
+          >
+            {isAdminPreview ? (
+              <span>Read Only View</span>
+            ) : isEditing ? (
+              <>
+                <Save size={15} />
+                <span>Save Portfolio</span>
+              </>
+            ) : (
+              <>
+                <Edit3 size={15} />
+                <span>Edit Profile</span>
+              </>
+            )}
           </button>
         </div>
 
@@ -370,73 +390,104 @@ function Profile() {
           </div>
         </div>
       </div>
+
+      {/* Gamified Highlights Section */}
       <div className="profile-highlights">
         <div className="highlight-card">
-          <Flame size={18} />
+          <div className="highlight-icon-box fire"><Flame size={20} /></div>
           <div>
             <span>Learning Streak</span>
             <strong>{Math.max(1, Math.min(30, completedCount * 2 + 1))} days</strong>
           </div>
         </div>
         <div className="highlight-card">
-          <Target size={18} />
+          <div className="highlight-icon-box target"><Target size={20} /></div>
           <div>
             <span>Goal Completion</span>
             <strong>{enrolledCount ? Math.round((completedCount / enrolledCount) * 100) : 0}%</strong>
           </div>
         </div>
         <div className="highlight-card">
-          <Medal size={18} />
+          <div className="highlight-icon-box medal"><Medal size={20} /></div>
           <div>
-            <span>Top Badge</span>
-            <strong>{certificatesCount > 0 ? "Certified Learner" : "In Progress"}</strong>
+            <span>Academic Rank</span>
+            <strong>{certificatesCount > 0 ? "Elite Graduate" : "Active Scholar"}</strong>
           </div>
         </div>
       </div>
 
+      {/* Two Column Grid */}
       <div className="profile-bottom">
+        {/* Left Column - Personal Info Input Fields */}
         <div className="personal-info" ref={infoRef}>
-          <h3>Personal Information</h3>
+          <div className="section-header">
+            <User size={18} className="header-icon" />
+            <h3>Personal Information</h3>
+          </div>
 
-          <label>Full Name</label>
-          <input name="name" value={formData.name || ""} disabled={!isEditing} onChange={handleChange} />
+          <div className="form-grid">
+            <div className="form-group">
+              <label>Full Name</label>
+              <input name="name" value={isEditing ? formData.name || "" : profile.name || ""} disabled={!isEditing} onChange={handleChange} placeholder="e.g. John Doe" />
+            </div>
 
-          <label>Email</label>
-          <input name="email" value={formData.email || ""} disabled={!isEditing} onChange={handleChange} />
+            <div className="form-group">
+              <label>Email Address</label>
+              <input name="email" value={isEditing ? formData.email || "" : profile.email || ""} disabled={!isEditing} onChange={handleChange} placeholder="e.g. john.doe@example.com" />
+            </div>
 
-          <label>Phone Number</label>
-          <input name="phone" value={formData.phone || ""} disabled={!isEditing} onChange={handleChange} />
+            <div className="form-group">
+              <label>Phone Number</label>
+              <input name="phone" value={isEditing ? formData.phone || "" : profile.phone || ""} disabled={!isEditing} onChange={handleChange} placeholder="e.g. +1 (555) 019-2834" />
+            </div>
 
-          <label>Bio</label>
-          <textarea rows="4" name="bio" value={formData.bio || ""} disabled={!isEditing} onChange={handleChange} />
+            <div className="form-group full-width">
+              <label>Short Bio</label>
+              <textarea rows="4" name="bio" value={isEditing ? formData.bio || "" : profile.bio || ""} disabled={!isEditing} onChange={handleChange} placeholder="Tell us about yourself, your learning aspirations, and skills..." />
+            </div>
+          </div>
 
           {isEditing && !isAdminPreview && (
             <button className="save-btn" onClick={handleSave}>
-              Save Changes
+              <Save size={16} />
+              Save Portfolio Changes
             </button>
           )}
         </div>
 
+        {/* Right Column - Hall of Fame / Achievements */}
         <div className="achievements">
-          <h3>Achievements</h3>
+          <div className="section-header">
+            <Trophy size={18} className="header-icon" />
+            <h3>Hall of Fame</h3>
+          </div>
 
-          {achievements.length === 0 ? (
-            <p>No achievements yet</p>
-          ) : (
-            achievements.map((item, index) => (
-              <div className="achievement-card" key={`${item.title}-${index}`}>
-                <span className="achievement-icon"><Trophy size={18} /></span>
-                <div>
-                  <strong>{item.title}</strong>
-                  <p>Completed {item.date}</p>
-                </div>
+          <div className="achievements-list">
+            {achievements.length === 0 ? (
+              <div className="empty-achievements">
+                <Trophy size={36} />
+                <p>No certificates earned yet</p>
+                <small>Complete assessments to unlock awards.</small>
               </div>
-            ))
-          )}
+            ) : (
+              achievements.map((item, index) => (
+                <div className="achievement-card animate-hover" key={`${item.title}-${index}`}>
+                  <span className="achievement-icon"><Trophy size={18} /></span>
+                  <div className="achievement-details">
+                    <strong>{item.title}</strong>
+                    <p>Earned {item.date}</p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
 
           <div className="achievement-tip">
-            Keep progressing consistently.
-            <p>Complete lessons and assessments to unlock more certificates.</p>
+            <div className="tip-header">
+              <Sparkles size={14} />
+              <span>Next Milestone Tips</span>
+            </div>
+            <p>Keep study intervals balanced. Finish active course assessments to unlock verifiable digital credentials.</p>
           </div>
         </div>
       </div>

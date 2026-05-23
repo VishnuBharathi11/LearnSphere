@@ -7,13 +7,19 @@ export default defineConfig({
   server: {
     host: "0.0.0.0",
     port: 5173,
+    strictPort: true,
+    hmr: {
+      protocol: "ws",
+      host: "127.0.0.1",
+      clientPort: 5173,
+    },
     proxy: {
       "^/api/courses/.+/threads.*": {
         target: "http://localhost:9094",
         changeOrigin: true,
       },
       "/api/auth": {
-        target: "http://localhost:9097",
+        target: "http://localhost:9098",
         changeOrigin: true,
       },
       "/api/courses": {
@@ -30,6 +36,10 @@ export default defineConfig({
       },
       "/api/progress": {
         target: "http://localhost:9093",
+        changeOrigin: true,
+      },
+      "/api/certificates": {
+        target: "http://localhost:9099",
         changeOrigin: true,
       },
       "/api/admin": {
