@@ -1,127 +1,155 @@
-$font: "Inter", sans-serif;
-$bg: #eef2f7;
-$white: #ffffff;
+
+// Brand Design Tokens
+$font: "Poppins", "Inter", sans-serif;
+$primary: #a435f0;
+$primary-hover: #8b2df0;
+$primary-light: rgba(164, 53, 240, 0.08);
+$accent: #f69c08;
+$accent-light: rgba(246, 156, 8, 0.08);
 $text-dark: #0f172a;
 $text-muted: #64748b;
-$green: #16a34a;
-$blue: #A435F0;
-$amber: #d97706;
-$indigo: #A435F0;
-$danger: #ef4444;
-$warning: #f59e0b;
-$border: #dbe3ee;
-$shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
-
-* {
-  box-sizing: border-box;
-  font-family: $font;
-}
+$border: #edf2f7;
+$shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+$green: #10b981;
+$green-light: rgba(16, 185, 129, 0.08);
+$blue: #3b82f6;
+$blue-light: rgba(59, 130, 246, 0.08);
+$yellow: #f59e0b;
+$yellow-light: rgba(245, 158, 11, 0.08);
 
 .analytics-layout {
   display: flex;
+  font-family: $font;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .analytics-page {
   width: 100%;
-  padding: 20px;
-  background: $bg;
-  max-width: 1240px;
+  padding: 30px;
+  background: #f8fafc;
+  max-width: 1200px;
   margin: 0 auto;
 
   p {
-    font-size: 14px;
+    font-size: 14.5px;
+    font-weight: 500;
     color: $text-muted;
-    margin-bottom: 14px;
+    margin-bottom: 16px;
   }
 }
 
 .analytics-stats-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
 }
 
 .analytics-stat-card {
-  display: grid;
-  grid-template-columns: 44px 1fr;
-  gap: 16px;
+  display: flex;
   align-items: center;
-  background: $white;
-  border-radius: 14px;
-  padding: 16px;
+  gap: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(164, 53, 240, 0.08);
+  border-radius: 16px;
+  padding: 22px 24px;
   box-shadow: $shadow;
-  border: 1px solid $border;
-  min-height: 110px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+    border-color: rgba(164, 53, 240, 0.15);
+  }
+
+  .stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    flex-shrink: 0;
+
+    &.green {
+      background: $green;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    }
+
+    &.blue {
+      background: $blue;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+    }
+
+    &.yellow {
+      background: $yellow;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    }
+
+    &.purple {
+      background: $primary;
+      box-shadow: 0 4px 12px rgba(164, 53, 240, 0.2);
+    }
+  }
 
   .stat-content {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
     gap: 4px;
 
     h2 {
       margin: 0;
-      font-size: 26px;
+      font-size: 24px;
       font-weight: 700;
       color: $text-dark;
-      line-height: 1;
+      line-height: 1.1;
     }
 
     p {
       margin: 0;
-      font-size: 14px;
+      font-size: 13px;
+      font-weight: 600;
       color: $text-muted;
-      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
-  }
-}
-
-.stat-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-
-  &.green {
-    background: $green;
-  }
-
-  &.blue {
-    background: $blue;
-  }
-
-  &.yellow {
-    background: $amber;
-  }
-
-  &.purple {
-    background: $indigo;
   }
 }
 
 .analytics-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
 }
 
 .analytics-card {
-  background: $white;
-  border-radius: 14px;
-  padding: 18px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
   box-shadow: $shadow;
-  border: 1px solid $border;
+  border: 1px solid rgba(164, 53, 240, 0.08);
+  transition: all 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.06);
+  }
 
   h3 {
     font-size: 16px;
     font-weight: 700;
-    margin-bottom: 10px;
+    margin-bottom: 16px;
     color: $text-dark;
+    border-bottom: 1.5px dashed $border;
+    padding-bottom: 10px;
+  }
+
+  p {
+    font-size: 13px;
+    font-weight: 500;
+    color: $text-muted;
+    margin-bottom: 16px;
   }
 
   .recharts-responsive-container {
@@ -131,54 +159,65 @@ $shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 
 .recharts-tooltip-label,
 .recharts-tooltip-item {
-  font-size: 12px;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
 .recharts-cartesian-axis-tick text {
-  font-size: 12px;
+  font-size: 11px;
   fill: $text-muted;
+  font-weight: 500;
 }
 
 .lesson-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.02);
+
+  &:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+  }
 
   span {
-    width: 160px;
+    width: 180px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    color: #334155;
-    font-size: 13px;
+    color: $text-dark;
+    font-size: 13.5px;
+    font-weight: 600;
   }
 
   small {
-    width: 40px;
+    width: 45px;
     text-align: right;
-    color: #334155;
-    font-size: 12px;
-    font-weight: 600;
+    color: $primary;
+    font-size: 13px;
+    font-weight: 700;
   }
 }
 
 .analytics-progress {
   flex: 1;
-  height: 10px;
-  background: #e2e8f0;
-  border-radius: 6px;
+  height: 8px;
+  background: #f1f5f9;
+  border-radius: 99px;
+  overflow: hidden;
 }
 
 .analytics-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #8A2BE2, #A435F0);
-  border-radius: 6px;
+  background: linear-gradient(90deg, $primary, $accent);
+  border-radius: 99px;
 }
 
 @media (max-width: 1080px) {
   .analytics-stats-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
   .analytics-grid {
@@ -191,15 +230,7 @@ $shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
     grid-template-columns: 1fr;
   }
 
-  .analytics-stat-card .stat-content h2 {
-    font-size: 26px;
-  }
-
-  .analytics-stat-card .stat-content p {
-    font-size: 14px;
-  }
-
   .lesson-row span {
-    width: 120px;
+    width: 130px;
   }
 }

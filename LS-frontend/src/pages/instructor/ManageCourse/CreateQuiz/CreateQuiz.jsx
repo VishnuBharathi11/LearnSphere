@@ -138,7 +138,7 @@ function CreateQuiz() {
   }, [assessmentType, lessonId, existingQuizzes]);
 
   if (loadingCourse) {
-    return <p style={{ padding: 40 }}>Loading course...</p>;
+    return null;
   }
 
   if (currentRole !== "instructor" || !course) {

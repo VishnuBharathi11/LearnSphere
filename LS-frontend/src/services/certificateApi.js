@@ -1,5 +1,5 @@
 import axios from "axios";
-import { appStore } from "../../../services/appStore";
+import { appStore } from "./appStore";
 
 const CERTIFICATE_API_BASE_URL =
   import.meta.env.VITE_CERTIFICATE_API_BASE_URL || "/api/certificates";

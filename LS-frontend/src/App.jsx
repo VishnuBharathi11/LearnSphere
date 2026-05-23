@@ -17,16 +17,15 @@ import PaymentSuccess from "./pages/Checkout/PaymentSuccess/PaymentSuccess.jsx";
 import StudentLayout from "./pages/Learner/StudentLayout/StudentLayout.jsx";
 import StudentDashboard from "./pages/Learner/Dashboard/Dashboard.jsx";
 import MyCourses from "./pages/Learner/MyCourses/Mycourses.jsx";
-import Progress from "./pages/Learner/Progress/Progress.jsx";
 import StudentProfile from "./pages/Learner/Profile/Profile.jsx";
 import LearnCourse from "./pages/Learner/LearnCourse/LearnCourse.jsx";
 import TestTaking from "./pages/Learner/TestTaking/TestTaking.jsx";
 import AssesmentResult from "./pages/Learner/ResultPage/AssesmentResult.jsx";
-import StudentCertificatesPage from "./features/certificates/pages/StudentCertificatesPage.jsx";
-import CertificateDownloadPage from "./features/certificates/pages/CertificateDownloadPage.jsx";
-import CertificateVerificationPage from "./features/certificates/pages/CertificateVerificationPage.jsx";
-import CertificateRenderPage from "./features/certificates/pages/CertificateRenderPage.jsx";
-import AdminTemplateManagerPage from "./features/certificates/pages/AdminTemplateManagerPage.jsx";
+import StudentCertificatesPage from "./pages/Learner/Certificates/StudentCertificatesPage.jsx";
+import CertificateDownloadPage from "./pages/Learner/DownloadCertificate/CertificateDownloadPage.jsx";
+import CertificateVerificationPage from "./pages/Public/CertificateVerification/CertificateVerificationPage.jsx";
+import CertificateRenderPage from "./pages/Public/CertificateRender/CertificateRenderPage.jsx";
+import AdminTemplateManagerPage from "./pages/admin/CertificateTemplates/AdminTemplateManagerPage.jsx";
 import InstructorLayout from "./pages/instructor/InstructorLayout/InstructorLayout.jsx";
 import InstructorDashboard from "./pages/instructor/Dashboard/Dashboard.jsx";
 import CreateCourse from "./pages/instructor/CreateCourse/Createcourse.jsx";
@@ -82,7 +81,6 @@ function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<StudentDashboard />} />
           <Route path="my-courses" element={<MyCourses />} />
-          <Route path="progress" element={<Progress />} />
           <Route path="profile" element={<StudentProfile />} />
           <Route path="learn/:id" element={<LearnCourse />} />
           <Route path="test/:courseId" element={<TestTaking />} />

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Upload, User, BookOpen, Users, CheckCircle, Clock } from "lucide-react";
+import { Upload, User, BookOpen, Users, CheckCircle, Clock, Camera, Globe, Award } from "lucide-react";
 import "./InstructorProfile.scss";
 import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { setCurrentUser } from "../../../services/userProfileStore";
@@ -266,134 +266,161 @@ function InstructorProfile() {
   return (
     <div className="instructor-profile-layout">
       <div className="instructor-profile-page">
-        <div className="instructor-profile-stats">
-          <StatCard icon={BookOpen} label="Total Courses" value={stats.totalCourses} tone="blue" />
-          <StatCard icon={Clock} label="In Review" value={stats.inReview} tone="yellow" />
-          <StatCard icon={CheckCircle} label="Published" value={stats.published} tone="green" />
-          <StatCard icon={Users} label="Total Learners" value={stats.totalLearners} tone="purple" />
-        </div>
-        <div className="instructor-profile-content">
-          <div className="instructor-profile-form">
-            <div className="profile-form-head">
-              <div className="profile-head-copy">
-                <h2>Instructor Profile</h2>
-                <p>{isEditing ? "Editing enabled. Save to persist in database." : "Profile is read-only. Click edit to update your information."}</p>
+        {/* Immersive Premium Header Summary Card */}
+        <div className="instructor-profile-summary">
+          <div className="summary-banner"></div>
+          <div className="summary-top">
+            <div className="summary-left">
+              <div className="profile-image-wrapper">
+                {viewData.image ? (
+                  <img src={viewData.image} alt="profile" />
+                ) : (
+                  <div className="profile-image-fallback">
+                    {viewData.fullName ? viewData.fullName.charAt(0).toUpperCase() : <User size={40} />}
+                  </div>
+                )}
+                {isEditing && (
+                  <label className="edit-icon-overlay">
+                    <Camera size={16} />
+                    <input type="file" hidden accept="image/*" onChange={handleProfilePictureChange} />
+                  </label>
+                )}
               </div>
-              <div className="profile-actions">
+              <div className="profile-meta">
+                <div className="name-row">
+                  <h3>{viewData.fullName || "Instructor"}</h3>
+                  <span className="role-badge">Instructor</span>
+                </div>
+                <p>{viewData.email}</p>
+              </div>
+            </div>
+            <div className="profile-actions">
+              {!isEditing ? (
                 <button
                   type="button"
                   className="profile-edit-btn"
                   onClick={handleEdit}
-                  disabled={isEditing || isAdminPreview}
+                  disabled={isAdminPreview}
                 >
-                  {isAdminPreview ? "Read Only View" : isEditing ? "Editing" : "Edit Profile"}
+                  Edit Profile
                 </button>
-                {isEditing && (
-                  <>
-                    <button type="button" className="profile-cancel-btn" onClick={handleCancel}>
-                      Cancel
-                    </button>
-                    <button type="button" className="profile-save-btn" onClick={handleSave} disabled={isSaving}>
-                      {isSaving ? "Saving..." : "Save Changes"}
-                    </button>
-                  </>
-                )}
-              </div>
+              ) : (
+                <>
+                  <button type="button" className="profile-cancel-btn" onClick={handleCancel}>
+                    Cancel
+                  </button>
+                  <button type="button" className="profile-save-btn" onClick={handleSave} disabled={isSaving}>
+                    {isSaving ? "Saving..." : "Save Changes"}
+                  </button>
+                </>
+              )}
             </div>
+          </div>
+        </div>
 
+        {/* Achievements Stat Grid */}
+        <div className="instructor-profile-stats">
+          <StatCard icon={BookOpen} label="Total Courses" value={stats.totalCourses} tone="blue" description="Courses Created" />
+          <StatCard icon={Clock} label="In Review" value={stats.inReview} tone="yellow" description="Awaiting Approval" />
+          <StatCard icon={CheckCircle} label="Published" value={stats.published} tone="green" description="Live & Active" />
+          <StatCard icon={Users} label="Total Learners" value={stats.totalLearners} tone="purple" description="Enrolled Students" />
+        </div>
+
+        {/* Form Details Grid */}
+        <div className="profile-bottom-grid">
+          {/* Personal Information */}
+          <div className="profile-card personal-info">
+            <div className="profile-card-header">
+              <User size={18} className="header-icon" />
+              <h3>Personal Information</h3>
+            </div>
+            
             {error && <p className="error-text">{error}</p>}
-
-            <div className="profile-pic-row">
-              <div className="profile-pic">
-                {viewData.image ? <img src={viewData.image} alt="profile" /> : <User size={40} />}
-              </div>
-              <label className={`profile-upload-button ${!isEditing ? "disabled" : ""}`}>
-                <p>
-                  <Upload size={16} />
-                  Upload Photo
-                </p>
-                <input type="file" hidden accept="image/*" onChange={handleProfilePictureChange} disabled={!isEditing} />
-              </label>
-            </div>
-
-            <div className="form-row">
-              <div>
+            
+            <div className="form-grid">
+              <div className="form-group">
                 <label>Full Name *</label>
                 <input
                   name="fullName"
                   value={viewData.fullName}
                   onChange={handleChange}
                   disabled={!isEditing}
+                  placeholder="Enter your full name"
                 />
               </div>
-              <div>
+
+              <div className="form-group">
                 <label>Email *</label>
                 <input value={viewData.email} disabled />
               </div>
-            </div>
 
-            <div className="form-row">
-              <div>
+              <div className="form-group">
                 <label>Phone</label>
                 <input
                   name="phone"
                   value={viewData.phone}
                   onChange={handleChange}
                   disabled={!isEditing}
+                  placeholder="Enter phone number"
                 />
               </div>
-              <div>
-                <label>Experience</label>
+
+              <div className="form-group">
+                <label>Teaching Experience</label>
                 <input
                   name="experience"
                   value={viewData.experience}
                   onChange={handleChange}
-                  placeholder="e.g., 4 years in Full-Stack Development"
+                  placeholder="e.g., 5+ years in Software Engineering"
                   disabled={!isEditing}
                 />
               </div>
-            </div>
 
-            <div className="form-row single">
-              <div>
-                <label>Bio</label>
-                <textarea
-                  name="bio"
-                  value={viewData.bio}
-                  onChange={handleChange}
-                  placeholder="Write a short introduction about your teaching focus."
-                  disabled={!isEditing}
-                />
-              </div>
-            </div>
-
-            <div className="form-row single">
-              <div>
+              <div className="form-group full-width">
                 <label>Area of Expertise</label>
                 <input
                   name="expertise"
                   value={viewData.expertise}
                   onChange={handleChange}
-                  placeholder="e.g., Java, Spring Boot, React, AI"
+                  placeholder="e.g., React, Node.js, Cloud Architecture"
+                  disabled={!isEditing}
+                />
+              </div>
+
+              <div className="form-group full-width">
+                <label>Bio</label>
+                <textarea
+                  name="bio"
+                  value={viewData.bio}
+                  onChange={handleChange}
+                  placeholder="Tell your students about your professional background, teaching philosophy, or interests."
                   disabled={!isEditing}
                 />
               </div>
             </div>
+          </div>
 
-            <h3>Professional Links</h3>
-            <div className="form-row">
-              <div>
-                <label>LinkedIn</label>
+          {/* Professional Links */}
+          <div className="profile-card professional-links">
+            <div className="profile-card-header">
+              <Globe size={18} className="header-icon" />
+              <h3>Professional Profiles</h3>
+            </div>
+            
+            <div className="form-grid">
+              <div className="form-group full-width">
+                <label>LinkedIn Profile</label>
                 <input
                   name="linkedin"
                   value={viewData.linkedin}
                   onChange={handleChange}
-                  placeholder="https://linkedin.com/in/..."
+                  placeholder="https://linkedin.com/in/username"
                   disabled={!isEditing}
                 />
               </div>
-              <div>
-                <label>Portfolio</label>
+
+              <div className="form-group full-width">
+                <label>Personal Portfolio</label>
                 <input
                   name="portfolio"
                   value={viewData.portfolio}
@@ -402,18 +429,27 @@ function InstructorProfile() {
                   disabled={!isEditing}
                 />
               </div>
-            </div>
 
-            <div className="form-row single">
-              <div>
-                <label>Other Professional Website</label>
+              <div className="form-group full-width">
+                <label>GitHub or Other Professional URL</label>
                 <input
                   name="professionalWebsite"
                   value={viewData.professionalWebsite}
                   onChange={handleChange}
-                  placeholder="https://github.com/..., medium.com/@..."
+                  placeholder="https://github.com/username"
                   disabled={!isEditing}
                 />
+              </div>
+
+              {/* Teaching Tips or Additional Content to populate spaces */}
+              <div className="teaching-tips-card">
+                <div className="tip-header">
+                  <Award size={14} />
+                  <span>Instructor Tip</span>
+                </div>
+                <p>
+                  Keep your bio and expertise updated to attract more learners! Students love detailed bios with real-world project portfolios and experience.
+                </p>
               </div>
             </div>
           </div>
@@ -423,16 +459,17 @@ function InstructorProfile() {
   );
 }
 
-function StatCard({ icon, label, value, tone }) {
+function StatCard({ icon, label, value, tone, description }) {
   const Icon = icon;
   return (
     <div className={`instructor-stat-card ${tone}`}>
       <div className="instructor-stat-icon">
-        <Icon size={18} />
+        <Icon size={20} />
       </div>
-      <div>
+      <div className="instructor-stat-details">
         <span>{label}</span>
         <strong>{value}</strong>
+        {description && <small className="stat-desc">{description}</small>}
       </div>
     </div>
   );

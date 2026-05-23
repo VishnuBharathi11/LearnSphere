@@ -36,6 +36,7 @@
     display: flex;
     flex-direction: column;
     gap: 6px;
+    flex: 1;
 
     a {
       position: relative;
@@ -81,16 +82,25 @@
           background: #ffffff;
         }
       }
+
+      &.nav-item-logout {
+        margin-top: auto !important;
+        color: #ffe3e3 !important;
+
+        &:hover {
+          background: rgba(255, 95, 95, 0.25) !important;
+          color: #ffffff !important;
+          transform: translateX(6px);
+        }
+
+        svg {
+          color: #ffe3e3 !important;
+        }
+
+        &::before {
+          display: none !important;
+        }
+      }
     }
-  }
-}
-
-.nav-item-logout {
-  margin-top: auto !important;
-  color: #ffe3e3 !important;
-
-  &:hover {
-    background: rgba(255, 95, 95, 0.25) !important;
-    color: #ffffff !important;
   }
 }

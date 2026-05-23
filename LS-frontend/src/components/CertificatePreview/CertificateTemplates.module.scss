@@ -1,0 +1,938 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Montserrat:wght@400;500;600;700;800&family=Alex+Brush&family=Cinzel:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap');
+
+// Design Tokens & Variables (Matching Website's Official Color Theme)
+$primary: #a435f0;     // LearnSphere Royal Purple
+$accent: #f69c08;      // LearnSphere Luxury Gold
+$dark: #121620;        // Deep Slate Charcoal
+$text-dark: #1c1d1f;   // Rich black/dark charcoal
+$text-muted: #5d6a7e;  // Clean gray-slate
+$gold-grad: linear-gradient(135deg, #ffe082 0%, #f69c08 50%, #b27a00 100%);
+$purple-grad: linear-gradient(135deg, #d39cff 0%, #a435f0 50%, #6200a3 100%);
+$dark-bg: linear-gradient(145deg, #090e18 0%, #151e2e 50%, #060910 100%);
+$light-bg: linear-gradient(135deg, #fcfdfe 0%, #f4f7fc 60%, #FAF6EE 100%);
+
+.certificate {
+  position: relative;
+  width: min(100%, 1120px);
+  aspect-ratio: 1.414 / 1;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: clamp(20px, 5.5cqw, 64px) clamp(24px, 6.5cqw, 76px);
+  border-radius: 8px;
+  isolation: isolate;
+  color: $text-dark;
+  box-shadow: 0 32px 90px rgba(16, 24, 40, 0.16);
+  container-type: size;
+  background: $light-bg;
+  font-family: 'Inter', system-ui, sans-serif;
+  user-select: none;
+}
+
+// Classical Guilloche / Watermark Pattern Background
+.watermark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.035;
+
+  svg {
+    width: 60%;
+    height: 60%;
+    animation: rotateWatermark 180s linear infinite;
+  }
+}
+
+@keyframes rotateWatermark {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Security & Header Info Strip
+.securityStrip {
+  position: absolute;
+  top: 3cqh;
+  left: 5cqw;
+  right: 5cqw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: clamp(8px, 1.1cqw, 10.5px);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: rgba($text-muted, 0.65);
+  border-bottom: 1.5px solid rgba(229, 231, 235, 0.4);
+  padding-bottom: 0.8cqh;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &:nth-child(2) {
+      color: $primary;
+      font-weight: 800;
+    }
+  }
+}
+
+// Certificate Typography Layout: Optimized vertical rhythm to cover the space perfectly
+.certificateBody {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center; // Dynamic centered alignment
+  align-items: center;
+  text-align: center;
+  padding-top: 4.5cqh;
+  padding-bottom: 1cqh;
+  box-sizing: border-box;
+  gap: 1cqh; // Perfectly covers the empty spaces in the center
+}
+
+.kicker {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(9px, 1.3cqw, 13px);
+  font-weight: 800;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: $accent;
+  margin-top: 0.5cqh;
+}
+
+.certificate h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(26px, 5.2cqw, 58px);
+  font-weight: 700;
+  line-height: 1.05;
+  color: $text-dark;
+  margin: 1cqh 0 0.5cqh;
+  letter-spacing: -0.01em;
+  position: relative;
+  
+  &::after {
+    content: "";
+    display: block;
+    width: 80px;
+    height: 3px;
+    background: $gold-grad;
+    margin: 1cqh auto 0;
+    border-radius: 2px;
+  }
+}
+
+.statement {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(9px, 1.4cqw, 14px);
+  font-weight: 500;
+  color: $text-muted;
+  max-width: 85%;
+  line-height: 1.5;
+  margin: 0.8cqh 0;
+}
+
+.certificate h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(16px, 2.8cqw, 32px);
+  font-weight: 800;
+  color: $primary;
+  margin: 0.5cqh 0;
+  max-width: 85%;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+}
+
+// Google/Coursera Certificate detailed course description to fill the space perfectly
+.courseDescription {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(8.5px, 1.35cqw, 13px);
+  font-weight: 500;
+  color: $text-muted;
+  max-width: 78%;
+  line-height: 1.55;
+  margin: 0.5cqh auto 1.2cqh;
+  font-style: italic;
+}
+
+.issued {
+  font-family: 'Montserrat', sans-serif;
+  font-size: clamp(8.5px, 1.2cqw, 12px);
+  font-weight: 600;
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+// Footer signatures and seal spacing
+.footerRow {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: flex-end;
+  justify-items: center;
+  margin-top: auto;
+  padding-top: 1cqh;
+  gap: 2cqw;
+}
+
+.signature {
+  width: 100%;
+  max-width: 180px;
+  text-align: center;
+  border-top: 1.5px solid rgba($text-muted, 0.25);
+  padding-top: 1cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .signatureLine {
+    font-family: 'Alex Brush', cursive;
+    font-size: clamp(24px, 4cqw, 42px);
+    color: rgba($primary, 0.9);
+    line-height: 0.7;
+    margin-bottom: 0.4cqh;
+    min-height: 4.5cqh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(8.5px, 1.2cqw, 12px);
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  small {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(7.5px, 1cqw, 9.5px);
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 0.2cqh;
+  }
+}
+
+// Embellished credential footnotes to fill the bottom beautifully
+.academicFootnotes {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5cqw;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 600;
+  font-size: clamp(8px, 1.15cqw, 11px);
+  color: $text-muted;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 1cqh;
+
+  .dividerDot {
+    color: $accent;
+    font-weight: 800;
+  }
+}
+
+// Verified Seal/Badge Styling
+.seal {
+  position: relative;
+  width: clamp(56px, 9cqw, 96px);
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff2c7, #c99a42 58%, #76581e);
+  color: #fffdf5;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(18px, 3cqw, 32px);
+  font-weight: 800;
+  box-shadow: 
+    inset 0 0 0 6px rgba(255, 255, 255, 0.2), 
+    0 14px 30px rgba(155, 105, 28, 0.2);
+  
+  &::before {
+    content: "★ ★";
+    position: absolute;
+    bottom: 8%;
+    font-size: clamp(6px, 0.9cqw, 8px);
+    color: rgba(255, 255, 255, 0.75);
+    letter-spacing: 0.3em;
+  }
+
+  span {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.silver {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #aeb8c6 58%, #4c5969);
+  box-shadow: 
+    inset 0 0 0 6px rgba(255, 255, 255, 0.2), 
+    0 14px 30px rgba(76, 89, 105, 0.16);
+}
+
+// QR Code and verification links
+.qrBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.6cqh;
+
+  img,
+  .qrPlaceholder {
+    width: clamp(48px, 7cqw, 72px);
+    aspect-ratio: 1;
+    border-radius: 6px;
+    padding: 3px;
+    background: #fff;
+    border: 1.5px solid rgba($primary, 0.12);
+  }
+
+  .qrPlaceholder {
+    background: repeating-linear-gradient(45deg, #f3f6fa, #f3f6fa 8px, #ffffff 8px, #ffffff 16px);
+  }
+
+  span {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(7.5px, 0.95cqw, 9.5px);
+    font-weight: 700;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 0.5cqh 0;
+  
+  span {
+    font-family: 'Montserrat', sans-serif;
+    padding: 3.5px 9px;
+    border-radius: 999px;
+    background: rgba($primary, 0.06);
+    border: 1px solid rgba($primary, 0.1);
+    color: $primary;
+    font-size: clamp(7.5px, 1.15cqw, 10.5px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+// ==========================================================================
+// TEMPLATE VARIANT 1: Horizontal Luxury (Stanford/Google Centered layout with Hexagon reference)
+// ==========================================================================
+.horizontalLuxury {
+  background: 
+    radial-gradient(circle at 5% 5%, rgba($primary, 0.035), transparent 28%),
+    radial-gradient(circle at 95% 95%, rgba($accent, 0.045), transparent 35%),
+    $light-bg;
+  
+  // Luxury gold outer frame
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 2.2cqh 2.2cqw;
+    border: 2px solid $accent;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  // Thin navy blue inner border
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 3.5cqh 3.5cqw;
+    border: 1px solid rgba($primary, 0.18);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  // Symmetric elegant background decorations matching brand colors
+  .geometricLeft,
+  .geometricRight {
+    position: absolute;
+    top: 3.5cqh;
+    bottom: 3.5cqh;
+    width: 3.2cqw;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.95;
+  }
+
+  .geometricLeft {
+    left: 3.5cqw;
+  }
+
+  .geometricRight {
+    right: 3.5cqw;
+  }
+
+  .certificateBody {
+    padding-left: 8cqw;
+    padding-right: 8cqw;
+    z-index: 5;
+  }
+
+  .issuedDateSub {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(8.5px, 1.25cqw, 12px);
+    font-weight: 600;
+    color: $text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-top: 0.2cqh;
+  }
+
+  .skillsPanel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5cqh;
+    padding: 1cqh 2.5cqw;
+    border-radius: 8px;
+    background: rgba($primary, 0.02);
+    border: 1px dashed rgba($primary, 0.12);
+    margin: 0.4cqh auto 1.4cqh auto;
+    max-width: 85%;
+  }
+
+  .skillsPanelTitle {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(7.5px, 1cqw, 9.5px);
+    font-weight: 800;
+    color: $accent;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .dividerLine {
+    width: 75%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba($primary, 0.2) 20%, rgba($accent, 0.3) 50%, rgba($primary, 0.2) 80%, transparent);
+    margin: 1cqh auto;
+  }
+}
+
+// ==========================================================================
+// TEMPLATE VARIANT 2: Vertical Executive (Corporate Executive Portrait Diploma)
+// ==========================================================================
+.verticalExecutive {
+  aspect-ratio: 1 / 1.414;
+  width: min(100%, 760px);
+  padding: clamp(20px, 7cqw, 76px);
+  
+  .certificateBody {
+    padding-top: 6cqh;
+    gap: 1.5cqh;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 2cqh 2cqw;
+    border: 3px double $primary;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 3.2cqh 3.2cqw;
+    border: 1.5px solid rgba($accent, 0.4);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .securityStrip {
+    top: 2.8cqh;
+  }
+
+  .kicker {
+    font-size: clamp(9.5px, 1.7cqw, 14px);
+    border-bottom: 2px solid $accent;
+    padding-bottom: 0.8cqh;
+    margin-bottom: 1.5cqh;
+    display: inline-block;
+  }
+
+  .statement {
+    margin: 1cqh 0;
+  }
+
+  .verticalFooter {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4cqw;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-bottom: 1.5cqh;
+  }
+
+  .executiveBadgeRow {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 1.5cqh 0 2cqh;
+  }
+}
+
+// ==========================================================================
+// TEMPLATE VARIANT 3: Dark Premium (Fintech Glassmorphism Neon Mode)
+// ==========================================================================
+.darkPremium {
+  color: #f6f8fa;
+  background: $dark-bg;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 80% 20%, rgba($primary, 0.12), transparent 45%),
+      radial-gradient(circle at 20% 80%, rgba($accent, 0.08), transparent 45%);
+    z-index: -1;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 2.2cqh 2.2cqw;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.005));
+    backdrop-filter: blur(10px);
+    pointer-events: none;
+    z-index: -1;
+    border-radius: 6px;
+  }
+
+  .neonBorder {
+    position: absolute;
+    inset: 1.2cqh 1.2cqw;
+    border: 1px solid rgba($primary, 0.2);
+    pointer-events: none;
+    z-index: 1;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: -1px; left: 10%; right: 10%; height: 2px;
+      background: linear-gradient(90deg, transparent, $primary, $accent, transparent);
+    }
+  }
+
+  .securityStrip {
+    color: rgba(255, 255, 255, 0.45);
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    
+    span:nth-child(2) {
+      color: $accent;
+    }
+  }
+
+  .certificate h1 {
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba($primary, 0.25);
+    
+    &::after {
+      background: $purple-grad;
+    }
+  }
+
+  .certificate h2 {
+    color: $accent;
+    text-shadow: 0 0 15px rgba($accent, 0.15);
+  }
+
+  .statement {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .signature {
+    border-top-color: rgba(255, 255, 255, 0.12);
+
+    .signatureLine {
+      color: rgba($accent, 0.9);
+    }
+
+    span {
+      color: #ffffff;
+    }
+
+    small {
+      color: rgba(255, 255, 255, 0.45);
+    }
+  }
+
+  .qrBlock {
+    img, .qrPlaceholder {
+      background: #111827;
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    span {
+      color: rgba(255, 255, 255, 0.45);
+    }
+  }
+
+  .watermark {
+    opacity: 0.02;
+    svg path {
+      fill: #ffffff;
+    }
+  }
+}
+
+// ==========================================================================
+// TEMPLATE VARIANT 4: Glass Future (Coursera Left-Aligned SaaS Ribbon Reference)
+// ==========================================================================
+.glassFuture {
+  background: 
+    radial-gradient(circle at 100% 0%, rgba($primary, 0.05), transparent 35%),
+    #fafbfe;
+  padding-right: 28cqw; // Reserve space for Coursera vertical ribbon
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  text-align: left;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 3cqh 3cqw;
+    border: 1px solid rgba($primary, 0.08);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .securityStrip {
+    position: static;
+    width: 100%;
+    margin-top: 0.5cqh;
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 2cqh;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .brandHeader {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 3cqh;
+
+    .logoMark {
+      width: clamp(28px, 4cqw, 48px);
+      height: clamp(28px, 4cqw, 48px);
+    }
+
+    .brandTitleText {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(14px, 2.2cqw, 24px);
+      color: $dark;
+      letter-spacing: -0.02em;
+
+      span {
+        color: $primary;
+      }
+    }
+  }
+
+  .saasBody {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 1cqh;
+    width: 100%;
+  }
+
+  .kicker {
+    margin-top: 0;
+    font-size: clamp(8.5px, 1.2cqw, 11.5px);
+    color: $primary;
+  }
+
+  .certificate h1 {
+    margin: 0.2cqh 0;
+    text-align: left;
+    font-size: clamp(24px, 4.8cqw, 48px);
+    letter-spacing: -0.02em;
+    color: $text-dark;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  .statement {
+    max-width: 95%;
+    font-size: clamp(9.5px, 1.4cqw, 13.5px);
+    line-height: 1.45;
+  }
+
+  .certificate h2 {
+    text-align: left;
+    max-width: 100%;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 800;
+    font-size: clamp(15px, 2.5cqw, 28px);
+    color: $text-dark;
+    margin: 0.2cqh 0 1cqh;
+  }
+
+  .saasFooter {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: auto;
+    padding-bottom: 0.5cqh;
+  }
+
+  .saasSignatures {
+    display: flex;
+    gap: 4cqw;
+    align-items: flex-end;
+    
+    .signature {
+      max-width: 150px;
+      align-items: flex-start;
+      text-align: left;
+      
+      .signatureLine {
+        justify-content: flex-start;
+      }
+    }
+  }
+
+  .saasVerification {
+    display: flex;
+    align-items: flex-end;
+    gap: 3cqw;
+
+    .verifyDetails {
+      display: flex;
+      flex-direction: column;
+      text-align: right;
+      font-family: 'Montserrat', sans-serif;
+      font-size: clamp(7px, 0.9cqw, 9px);
+      color: $text-muted;
+      line-height: 1.35;
+
+      span:first-child {
+        font-weight: 700;
+        color: $text-dark;
+      }
+    }
+
+    .qrBlock img,
+    .qrBlock .qrPlaceholder {
+      width: clamp(44px, 5.8cqw, 58px);
+    }
+  }
+
+  .hangingRibbon {
+    position: absolute;
+    top: 0;
+    right: 5cqw;
+    width: 14cqw;
+    height: 60cqh;
+    background: linear-gradient(180deg, rgba($primary, 0.08) 0%, rgba($primary, 0.03) 100%);
+    border-left: 1.5px solid rgba($primary, 0.15);
+    border-right: 1.5px solid rgba($primary, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3cqh 0 4cqh;
+    z-index: 10;
+    box-sizing: border-box;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -3cqh;
+      left: -1.5px;
+      width: calc(100% + 3px);
+      height: 3cqh;
+      background: inherit;
+      clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+      border-left: 1.5px solid rgba($primary, 0.15);
+      border-right: 1.5px solid rgba($primary, 0.15);
+    }
+
+    .ribbonText {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 800;
+      font-size: clamp(8px, 1cqw, 10.5px);
+      color: $primary;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      writing-mode: vertical-rl;
+      text-orientation: mixed;
+      margin-top: 1cqh;
+    }
+
+    .ribbonSeal {
+      width: 8.5cqw;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: $gold-grad;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba($accent, 0.35);
+      border: 2px solid #ffffff;
+
+      svg {
+        width: 50%;
+        height: 50%;
+        fill: #ffffff;
+      }
+    }
+  }
+}
+
+// ==========================================================================
+// TEMPLATE VARIANT 5: Academic Luxury (MIT/Traditional Crest Diploma)
+// ==========================================================================
+.academicLuxury {
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(#fbf8f0, 0.7), rgba(#fffdf9, 0.95)),
+    repeating-linear-gradient(45deg, rgba($primary, 0.005) 0 2px, transparent 2px 10px),
+    repeating-linear-gradient(-45deg, rgba($primary, 0.005) 0 2px, transparent 2px 10px);
+  
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 2.2cqh 2.2cqw;
+    border: 1px solid rgba($text-dark, 0.25);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 3.2cqh 3.2cqw;
+    border: 2.5px solid rgba($accent, 0.6);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .kicker {
+    font-family: 'Cinzel', serif;
+    font-weight: 700;
+    color: $text-dark;
+    letter-spacing: 0.15em;
+  }
+
+  .academicCrest {
+    width: clamp(48px, 7.5cqw, 82px);
+    aspect-ratio: 1;
+    margin-bottom: 1cqh;
+    opacity: 0.95;
+    fill: $primary;
+
+    svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
+  .statement {
+    font-family: Georgia, serif;
+    font-style: italic;
+  }
+
+  .certificate h1 {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: clamp(28px, 5.8cqw, 62px);
+    
+    &::after {
+      background: $accent;
+      width: 100px;
+      height: 1px;
+    }
+  }
+
+  .certificate h2 {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(15px, 2.8cqw, 30px);
+    font-weight: 700;
+    color: $text-dark;
+  }
+
+  .footerRow {
+    border-top: 1px solid rgba($text-dark, 0.08);
+    padding-top: 2cqh;
+    margin-top: auto;
+  }
+}
+
+// Print and Page PDF exports optimization rules
+@page {
+  size: A4 landscape;
+  margin: 0;
+}
+
+@media print {
+  .certificate {
+    width: 297mm;
+    height: 210mm;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 20mm !important;
+    page-break-inside: avoid;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .verticalExecutive {
+    width: 210mm;
+    height: 297mm;
+  }
+}
+
+// Mobile and small screen responsiveness
+@media (max-width: 768px) {
+  .certificate {
+    padding: 16px;
+    border-radius: 4px;
+    box-shadow: 0 10px 24px rgba(16, 24, 40, 0.08);
+  }
+
+  .securityStrip {
+    left: 4cqw;
+    right: 4cqw;
+  }
+
+  .glassFuture {
+    padding-right: 4cqw;
+    .hangingRibbon {
+      display: none;
+    }
+  }
+}

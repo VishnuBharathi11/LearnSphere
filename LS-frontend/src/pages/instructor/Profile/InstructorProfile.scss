@@ -1,297 +1,559 @@
-$font: "Inter", sans-serif;
-$bg: #f8fafc;
-$white: #ffffff;
-$text-dark: #111827;
-$text-muted: #64748b;
-$border: #dbe3ee;
-$primary: #A435F0;
-$primary-hover: #8A2BE2;
+// Design Tokens & Core Variables for LearnSphere Instructor Profile Redesign
+$profile-font-primary: "Inter", sans-serif;
+$profile-font-display: "Poppins", sans-serif;
+$profile-white: #ffffff;
+$profile-text-dark: #121620;
+$profile-text-muted: #64748b;
+$profile-primary: #a435f0;       // Royal Purple
+$profile-primary-hover: #8222c8;
+$profile-accent: #f69c08;        // Luxury Gold
+$profile-accent-hover: #dd8800;
+$profile-border-light: #e2e8f0;
+$profile-bg-dark: #0f172a;
+$profile-bg-soft: rgba(164, 53, 240, 0.04);
+$profile-shadow: 0 10px 30px rgba(18, 22, 32, 0.04), 0 1px 3px rgba(18, 22, 32, 0.02);
+$profile-shadow-hover: 0 20px 40px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164, 53, 240, 0.03);
+
+@mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
+  display: flex;
+  gap: $gap;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+@mixin card-base($radius: 20px) {
+  background: $profile-white;
+  border-radius: $radius;
+  box-shadow: $profile-shadow;
+  border: 1px solid $profile-border-light;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
 
 .instructor-profile-layout {
   width: 100%;
-  font-family: $font;
+  font-family: $profile-font-primary;
+  background: #f8fafc;
+  min-height: 100vh;
 }
 
 .instructor-profile-page {
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 8px 0 24px;
-  background: $bg;
+  padding: 16px 20px 48px;
 }
 
-.instructor-profile-stats {
+// 1. Immersive Premium Header Summary Card
+.instructor-profile-summary {
+  @include card-base(24px);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 24px;
+
+  &:hover {
+    box-shadow: 0 15px 35px rgba(18, 22, 32, 0.06);
+  }
+}
+
+.summary-banner {
+  height: 160px;
+  background: linear-gradient(135deg, #1e1b4b 0%, #a435f0 50%, #f69c08 100%);
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0.12;
+    background-image: radial-gradient(circle at 15% 25%, #ffffff 1px, transparent 1px),
+                      radial-gradient(circle at 80% 70%, #ffffff 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
+
+.summary-top {
+  @include flex-row(32px, space-between, flex-end);
+  padding: 0 40px 28px;
+  position: relative;
+  z-index: 5;
+}
+
+.summary-left {
+  @include flex-row(24px, flex-start, flex-end);
+}
+
+.profile-image-wrapper {
+  position: relative;
+  width: 116px;
+  height: 116px;
+  border-radius: 50%;
+  margin-top: -58px; // beautiful overlap of the avatar itself
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+
+  &:hover {
+    transform: scale(1.03);
+
+    .edit-icon-overlay {
+      background: $profile-accent;
+      transform: scale(1.08);
+      color: $profile-white;
+    }
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 5px solid $profile-white;
+    object-fit: cover;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.profile-image-fallback {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 5px solid $profile-white;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.instructor-stat-card {
-  background: $white;
-  border-radius: 12px;
-  border: 1px solid #e5eaf2;
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-
-  div {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  span {
-    font-size: 12px;
-    color: $text-muted;
-    font-weight: 500;
-  }
-
-  strong {
-    font-size: 20px;
-    font-weight: 700;
-    color: $text-dark;
-  }
-
-  &.blue .instructor-stat-icon {
-    background: #A435F0;
-  }
-
-  &.green .instructor-stat-icon {
-    background: #22c55e;
-  }
-
-  &.yellow .instructor-stat-icon {
-    background: #f59e0b;
-  }
-
-  &.purple .instructor-stat-icon {
-    background: #8b5cf6;
-  }
-}
-
-.instructor-stat-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  place-items: center;
+  font-size: 38px;
+  font-weight: 800;
+  font-family: $profile-font-display;
   color: #ffffff;
+  background: linear-gradient(135deg, #a435f0 0%, #f69c08 100%);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-.instructor-profile-content {
-  width: 100%;
+.edit-icon-overlay {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 34px;
+  height: 34px;
+  background: $profile-primary;
+  color: $profile-white;
+  border-radius: 50%;
+  border: 3px solid $profile-white;
+  @include flex-row(0, center, center);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.instructor-profile-form {
-  width: 100%;
-  background: $white;
-  padding: 22px;
-  border-radius: 14px;
-  border: 1px solid #e5eaf2;
-}
+.profile-meta {
+  margin-bottom: 8px;
 
-.profile-form-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
+  .name-row {
+    @include flex-row(12px, flex-start, center);
+    margin-bottom: 4px;
 
-  h2 {
+    h3 {
+      font-family: $profile-font-display;
+      font-size: 24px;
+      font-weight: 800;
+      color: $profile-text-dark;
+      margin: 0;
+      letter-spacing: -0.015em;
+    }
+  }
+
+  p {
+    font-size: 14px;
+    font-weight: 500;
+    color: $profile-text-muted;
     margin: 0;
-    font-size: 20px;
-    color: $text-dark;
   }
 }
 
-.profile-head-copy p {
-  margin: 6px 0 0;
-  font-size: 13px;
-  color: #475569;
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  background: rgba(246, 156, 8, 0.12);
+  color: $profile-accent;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 20px;
+  border: 1px solid rgba(246, 156, 8, 0.2);
 }
 
 .profile-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
+  @include flex-row(8px, flex-end, center);
+  margin-bottom: 8px;
 }
 
 .profile-edit-btn,
 .profile-save-btn,
 .profile-cancel-btn {
   border: none;
-  border-radius: 10px;
-  padding: 9px 14px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 12px;
+  padding: 10px 22px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .profile-edit-btn,
 .profile-save-btn {
-  background: linear-gradient(135deg, #8A2BE2, #A435F0);
-  color: #ffffff;
-  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.22);
+  background: linear-gradient(135deg, $profile-primary 0%, #8b5cf6 100%);
+  color: $profile-white;
+  box-shadow: 0 4px 14px rgba(164, 53, 240, 0.25);
+
+  &:hover {
+    transform: translateY(-1.5px);
+    box-shadow: 0 6px 20px rgba(164, 53, 240, 0.35);
+    background: linear-gradient(135deg, $profile-primary-hover 0%, #7c3aed 100%);
+  }
+
+  &:disabled {
+    background: #cbd5e1;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+    transform: none;
+  }
 }
 
-.profile-edit-btn:hover,
-.profile-save-btn:hover {
-  background: linear-gradient(135deg, #F69C08, #8A2BE2);
-}
+.profile-save-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  box-shadow: 0 4px 14px rgba(16, 185, 129, 0.25);
 
-.profile-edit-btn:disabled,
-.profile-save-btn:disabled {
-  background: #94a3b8;
-  cursor: not-allowed;
-  box-shadow: none;
+  &:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+  }
 }
 
 .profile-cancel-btn {
-  background: #eef2f7;
-  color: #1e293b;
-  border: 1px solid #dbe3ee;
-}
+  background: #f1f5f9;
+  color: #334155;
+  border: 1px solid #e2e8f0;
 
-.error-text {
-  margin: 0 0 14px;
-  color: #b91c1c;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.profile-pic-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 12px;
-  border: 1px dashed #d8e3f2;
-  border-radius: 12px;
-  margin-bottom: 18px;
-  background: #f8fbff;
-}
-
-.profile-pic {
-  width: 84px;
-  height: 84px;
-  border-radius: 999px;
-  background: #e5e7eb;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  color: #94a3b8;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  &:hover {
+    background: #e2e8f0;
+    color: #1e293b;
   }
 }
 
-.profile-upload-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
+// 2. Achievements Stat Grid
+.instructor-profile-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
 
-  p {
-    margin: 0;
-    padding: 8px 12px;
-    border-radius: 9px;
-    background: #e8f0ff;
-    color: #8A2BE2;
-    font-size: 13px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+.instructor-stat-card {
+  @include card-base(18px);
+  padding: 16px 20px;
+  @include flex-row(16px, flex-start, center);
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: $profile-shadow-hover;
+    border-color: rgba($profile-primary, 0.15);
+
+    &.blue {
+      border-color: rgba(59, 130, 246, 0.25);
+      .instructor-stat-icon { background: rgba(59, 130, 246, 0.15); }
+    }
+    &.yellow {
+      border-color: rgba(246, 156, 8, 0.25);
+      .instructor-stat-icon { background: rgba(246, 156, 8, 0.15); }
+    }
+    &.green {
+      border-color: rgba(16, 185, 129, 0.25);
+      .instructor-stat-icon { background: rgba(16, 185, 129, 0.15); }
+    }
+    &.purple {
+      border-color: rgba(139, 92, 246, 0.25);
+      .instructor-stat-icon { background: rgba(139, 92, 246, 0.15); }
+    }
   }
 
-  &.disabled {
-    cursor: not-allowed;
+  .instructor-stat-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
+    @include flex-row(0, center, center);
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+  }
 
-    p {
-      background: #edf2f7;
+  .instructor-stat-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+
+    span {
+      font-size: 11px;
+      font-weight: 700;
+      color: $profile-text-muted;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    strong {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: $profile-font-display;
+      color: $profile-text-dark;
+      line-height: 1.2;
+    }
+
+    .stat-desc {
+      font-size: 11px;
+      font-weight: 500;
       color: #64748b;
+      margin-top: 1px;
+    }
+  }
+
+  &.blue {
+    .instructor-stat-icon {
+      background: rgba(59, 130, 246, 0.08);
+      color: #3b82f6;
+    }
+  }
+
+  &.yellow {
+    .instructor-stat-icon {
+      background: rgba(246, 156, 8, 0.08);
+      color: $profile-accent;
+    }
+  }
+
+  &.green {
+    .instructor-stat-icon {
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
+    }
+  }
+
+  &.purple {
+    .instructor-stat-icon {
+      background: rgba(139, 92, 246, 0.08);
+      color: #8b5cf6;
     }
   }
 }
 
-.form-row {
+// 3. Bottom Grid Layout
+.profile-bottom-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-bottom: 12px;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 24px;
+}
 
-  &.single {
-    grid-template-columns: 1fr;
+.profile-card {
+  @include card-base(20px);
+  padding: 32px;
+
+  .profile-card-header {
+    @include flex-row(10px, flex-start, center);
+    margin-bottom: 24px;
+    border-bottom: 1.5px solid #edf2f7;
+    padding-bottom: 14px;
+
+    .header-icon {
+      color: $profile-primary;
+    }
+
+    h3 {
+      font-family: $profile-font-display;
+      font-size: 18px;
+      font-weight: 800;
+      color: $profile-text-dark;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
   }
 }
 
-.instructor-profile-form label {
-  display: block;
-  margin-bottom: 6px;
-  font-size: 12px;
-  color: $text-muted;
+.error-text {
+  margin: 0 0 18px;
+  color: #ef4444;
+  font-size: 13.5px;
   font-weight: 600;
-}
-
-.instructor-profile-form h3 {
-  margin: 12px 0 10px;
-  font-size: 15px;
-  color: $text-dark;
-}
-
-.instructor-profile-form input,
-.instructor-profile-form textarea {
-  width: 100%;
-  border: 1px solid $border;
+  background: rgba(239, 68, 68, 0.06);
+  padding: 10px 14px;
   border-radius: 10px;
-  padding: 11px 12px;
-  font-size: 14px;
-  color: #0f172a;
-  background: #ffffff;
+  border-left: 4px solid #ef4444;
 }
 
-.instructor-profile-form textarea {
-  min-height: 100px;
-  resize: vertical;
+// 4. Form Elements & Clean Slate Inputs (Adhering to No-Icon constraints inside Textboxes)
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
 }
 
-.instructor-profile-form input:focus,
-.instructor-profile-form textarea:focus {
-  outline: none;
-  border-color: #9bb7ef;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &.full-width {
+    grid-column: span 2;
+  }
+
+  label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $profile-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  input,
+  textarea {
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid #dbe3ee;
+    background: #ffffff;
+    color: $profile-text-dark;
+    outline: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    font-family: $profile-font-primary;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+
+    &:disabled {
+      background: #f8fafc;
+      color: #64748b;
+      cursor: not-allowed;
+      border-color: #e2e8f0;
+    }
+
+    // Active gold outline focus
+    &:focus:not(:disabled) {
+      border-color: $profile-accent;
+      box-shadow: 0 0 0 4px rgba(246, 156, 8, 0.15);
+      background: #ffffff;
+    }
+  }
+
+  textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.5;
+  }
 }
 
-.instructor-profile-form input:disabled,
-.instructor-profile-form textarea:disabled {
-  background: #f1f5f9;
-  color: #64748b;
-  cursor: not-allowed;
+// 5. Instruction tips card
+.teaching-tips-card {
+  grid-column: span 2;
+  background: $profile-bg-soft;
+  border-radius: 16px;
+  padding: 18px 20px;
+  border: 1px dashed rgba($profile-primary, 0.15);
+  margin-top: 8px;
+
+  .tip-header {
+    @include flex-row(8px, flex-start, center);
+    color: $profile-primary;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  p {
+    font-size: 13px;
+    line-height: 1.5;
+    color: #475569;
+    margin: 0;
+    font-weight: 500;
+  }
 }
 
-@media (max-width: 960px) {
+// 6. Responsive Queries
+@media (max-width: 1024px) {
   .instructor-profile-stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .profile-form-head {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .form-row {
+  .profile-bottom-grid {
     grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .instructor-profile-page {
+    padding: 12px 14px 32px;
+  }
+
+  .summary-banner {
+    height: 130px;
+  }
+
+  .summary-top {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0 24px 20px;
+    gap: 18px;
+    margin-top: -30px;
+  }
+
+  .summary-left {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .profile-image-wrapper {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-meta .name-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .profile-actions {
+    justify-content: center;
+    width: 100%;
+
+    button {
+      flex: 1;
+      text-align: center;
+    }
+  }
+
+  .profile-card {
+    padding: 24px 20px;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .form-group.full-width {
+    grid-column: span 1;
+  }
+
+  .teaching-tips-card {
+    grid-column: span 1;
+  }
+}
+
+@media (max-width: 480px) {
   .instructor-profile-stats {
     grid-template-columns: 1fr;
   }

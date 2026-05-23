@@ -819,6 +819,16 @@ export const rawCourses= [
     price: 0,
     lessons: 8,
   },
+  {
+    id: 81,
+    courseName: "Decentralized Application (DApp) Development",
+    instructor: "Michael Lee",
+    category: "Blockchain",
+    level: "Intermediate",
+    rating: 4.8,
+    price: 899,
+    lessons: 5,
+  },
 ];
 const randomBetween = (min, max) =>
   Math.floor(Math.random() * (max - min + 1)) + min;
