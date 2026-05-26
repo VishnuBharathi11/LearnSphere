@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { Bold, Italic, List } from "lucide-react";
-
 const sanitizeEditor = (value) =>
   String(value || "")
     .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
@@ -58,5 +57,4 @@ const RichTextEditor = ({ value, onChange, placeholder = "Type here..." }) => {
     </div>
   );
 };
-
 export default RichTextEditor;

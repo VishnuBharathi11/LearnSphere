@@ -1,8 +1,6 @@
 import "./GlobalNetworkLoader.scss";
-
 function GlobalNetworkLoader({ active = false }) {
   if (!active) return null;
-
   return (
     <div className="global-network-loader" role="status" aria-live="polite">
       <div className="learnsphere-loader" aria-label="Loading LearnSphere">
@@ -13,5 +11,4 @@ function GlobalNetworkLoader({ active = false }) {
     </div>
   );
 }
-
 export default GlobalNetworkLoader;

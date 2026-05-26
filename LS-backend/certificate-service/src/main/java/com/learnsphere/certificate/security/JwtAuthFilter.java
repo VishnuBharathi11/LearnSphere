@@ -1,5 +1,4 @@
 package com.learnsphere.certificate.security;
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -13,16 +12,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
     @Value("${spring.security.oauth2.resourceserver.jwt.secret-key}")
     private String secretKey;
-
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {

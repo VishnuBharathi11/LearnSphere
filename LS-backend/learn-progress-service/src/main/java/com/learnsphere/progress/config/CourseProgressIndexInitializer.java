@@ -1,8 +1,6 @@
 package com.learnsphere.progress.config;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.springframework.boot.ApplicationArguments;
@@ -11,23 +9,18 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.stereotype.Component;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class CourseProgressIndexInitializer implements ApplicationRunner {
-
     private final MongoTemplate mongoTemplate;
-
     @Override
     public void run(ApplicationArguments args) {
         deduplicateCourseProgress();
         ensureUniqueIndex();
     }
-
     private void deduplicateCourseProgress() {
         List<Document> duplicates = mongoTemplate.getCollection("course_progress")
                 .aggregate(List.of(
@@ -42,11 +35,9 @@ public class CourseProgressIndexInitializer implements ApplicationRunner {
                                 .append("count", new Document("$sum", 1))),
                         new Document("$match", new Document("count", new Document("$gt", 1))))
                 ).into(new ArrayList<>());
-
         if (duplicates.isEmpty()) {
             return;
         }
-
         List<ObjectId> staleIds = new ArrayList<>();
         for (Document duplicate : duplicates) {
             ObjectId keepId = duplicate.get("keepId", ObjectId.class);
@@ -61,7 +52,6 @@ public class CourseProgressIndexInitializer implements ApplicationRunner {
                 }
             }
         }
-
         if (!staleIds.isEmpty()) {
             long deleted = mongoTemplate.getCollection("course_progress")
                     .deleteMany(new Document("_id", new Document("$in", staleIds)))
@@ -69,7 +59,6 @@ public class CourseProgressIndexInitializer implements ApplicationRunner {
             log.warn("Deduplicated course_progress records at startup. Removed {} stale documents.", deleted);
         }
     }
-
     private void ensureUniqueIndex() {
         Index index = new Index()
                 .on("userId", Sort.Direction.ASC)

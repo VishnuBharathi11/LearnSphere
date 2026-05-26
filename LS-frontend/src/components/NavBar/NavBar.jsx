@@ -1,6 +1,5 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../../assets/Logo/logo.png'
 import './NavBar.scss' 
 import { useCurrentUser } from '../../hooks/useCurrentUser';
 function NavBar({ transparent = false }) {
@@ -12,7 +11,6 @@ function NavBar({ transparent = false }) {
         section.scrollIntoView({behavior:'smooth'});
       }
     }
-
   const handleProfileClick = () => {
     const role = String(currentUser?.role || "").toLowerCase();
     if (role === "admin") {
@@ -29,7 +27,6 @@ function NavBar({ transparent = false }) {
     <>
     <nav className={`navbar${transparent ? " navbar--overlay" : ""}`}>
       <Link to="/" className="logo-section" aria-label="LearnSphere Home">
-          <img src={logo} className="logo"/>
           <div className="logo-page-name">LearnSphere</div>
           </Link>
           <div className="nav-links">
@@ -37,7 +34,6 @@ function NavBar({ transparent = false }) {
           <span onClick={()=>scrollToSection("about")}>About</span>
           <span onClick={()=>scrollToSection("contact")}>Contact</span>
           </div>
-    
           <div className="nav-actions">
           {currentUser ? (
             <button type="button" className="profile-pill" onClick={handleProfileClick}>
@@ -55,5 +51,4 @@ function NavBar({ transparent = false }) {
           </>
   )
 }
-
 export default NavBar

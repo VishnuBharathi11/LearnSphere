@@ -1,14 +1,10 @@
 package com.learnsphere.progress.dto;
-
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-
 import com.learnsphere.progress.entity.AssessmentResult;
-
 import lombok.Builder;
 import lombok.Data;
-
 @Data
 @Builder
 public class CourseProgressResponse {

@@ -1,13 +1,10 @@
 package com.learnsphere.course.controller;
-
 import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import com.learnsphere.course.entity.Category;
 import com.learnsphere.course.service.CategoryService;
-
 @RestController
 @RequestMapping("/api/categories")
 public class CategoryController {

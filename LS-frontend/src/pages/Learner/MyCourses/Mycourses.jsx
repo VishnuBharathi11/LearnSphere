@@ -11,9 +11,7 @@ import { buildCourseLearningStateFromApi } from "../../../services/learnerProgre
 import { getProgressByCourses } from "../../../services/progressApi";
 import "./MyCourses.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-
 const MY_COURSE_PLACEHOLDERS = 6;
-
 function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen }) {
   if (isSkeleton || !course) {
     return (
@@ -30,10 +28,8 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
       </div>
     );
   }
-
   const category = course.category || "Development";
   const level = course.level || "Beginner";
-
   return (
     <div className="mycourse-card">
       <div className="mycourse-media">
@@ -62,7 +58,6 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
             </div>
             <h3 className="mycourse-title" title={course.courseName}>{course.courseName}</h3>
             <div className="mycourse-instructor">Instructed by <strong>{course.instructor || "LearnSphere Faculty"}</strong></div>
-            
             <div className="mycourse-progress-row">
               <span className="mycourse-progress-label">Overall Progress</span>
               <span className="mycourse-progress-value">{course.progress}%</span>
@@ -104,7 +99,6 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
     </div>
   );
 }
-
 function MyCourses() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("all");
@@ -118,19 +112,15 @@ function MyCourses() {
   const [loading, setLoading] = useState(true);
   const [lessonsLoading, setLessonsLoading] = useState(true);
   const [progressLoading, setProgressLoading] = useState(true);
-
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
-
   useEffect(() => {
     if (!userId) {
       setCourses([]);
       setEnrollments([]);
       return;
     }
-
     let active = true;
-
     async function load() {
       setLoading(true);
       try {
@@ -138,7 +128,6 @@ function MyCourses() {
         if (!active) return;
         const safeEnrollments = Array.isArray(mine) ? mine : [];
         setEnrollments(safeEnrollments);
-
         const activeCourseIds = safeEnrollments
           .filter(
             (enrollment) =>
@@ -157,13 +146,11 @@ function MyCourses() {
         if (active) setLoading(false);
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [userId]);
-
   useEffect(() => {
     let active = true;
     async function loadLessons() {
@@ -208,7 +195,6 @@ function MyCourses() {
       active = false;
     };
   }, [enrollments, userId]);
-
   useEffect(() => {
     let active = true;
     async function loadProgress() {
@@ -244,23 +230,19 @@ function MyCourses() {
       active = false;
     };
   }, [enrollments, userId]);
-
   useEffect(() => {
     setCurrentPage(1);
   }, [activeTab, searchQuery]);
-
   const myCourses = useMemo(() => {
     const backendActive = enrollments.filter(
       (enrollment) =>
         String(enrollment.userId) === String(userId) &&
         String(enrollment.status || "").toUpperCase() === "ACTIVE"
     );
-
     return backendActive
       .map((enrollment) => {
         const course = courses.find((item) => String(item.id) === String(enrollment.courseId));
         if (!course) return null;
-
         const lessons = lessonMap[String(course.id)] || [];
         const progress = progressMap[String(course.id)] || null;
         const state = buildCourseLearningStateFromApi(lessons, progress);
@@ -274,8 +256,6 @@ function MyCourses() {
       })
       .filter(Boolean);
   }, [courses, enrollments, lessonMap, progressMap, userId]);
-
-  // Statistics derived dynamically
   const stats = useMemo(() => {
     const total = myCourses.length;
     const completed = myCourses.filter((c) => c.progress === 100).length;
@@ -283,30 +263,22 @@ function MyCourses() {
     const avgProgress = total ? Math.round(myCourses.reduce((sum, c) => sum + c.progress, 0) / total) : 0;
     return { total, completed, inProgress, avgProgress };
   }, [myCourses]);
-
   const filteredCourses = useMemo(() => {
     let result = myCourses;
-
-    // Apply active tab
     if (activeTab === "pending") {
       result = result.filter((course) => course.progress < 100);
     } else if (activeTab === "completed") {
       result = result.filter((course) => course.progress === 100);
     }
-
-    // Apply search filter
     if (searchQuery.trim()) {
       result = result.filter((course) =>
         course.courseName.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
-
     return result;
   }, [myCourses, activeTab, searchQuery]);
-
   const isPageLoading = loading || lessonsLoading || progressLoading;
   const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
-
   const renderedCards = useMemo(() => {
     if (isPageLoading) {
       return Array.from({ length: MY_COURSE_PLACEHOLDERS }, (_, index) => ({
@@ -314,20 +286,16 @@ function MyCourses() {
         type: "skeleton",
       }));
     }
-
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const slice = filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-
     return slice.map((course) => ({
       key: String(course.id),
       type: "course",
       course,
     }));
   }, [filteredCourses, isPageLoading, currentPage]);
-
   return (
     <div className="mycourses-container">
-      {/* Dynamic Summary Stats Header */}
       <header className="mycourses-hero">
         <div className="hero-welcome">
           <span className="hero-eyebrow"><Sparkles size={14} /> LEARNER PORTAL</span>
@@ -358,8 +326,6 @@ function MyCourses() {
           </div>
         </div>
       </header>
-
-      {/* Modern Filter Toolbar */}
       <div className="mycourses-toolbar">
         <div className="tabs-pill">
           <button className={activeTab === "all" ? "active" : ""} onClick={() => setActiveTab("all")}>
@@ -382,8 +348,6 @@ function MyCourses() {
           />
         </div>
       </div>
-
-      {/* Main Course Grid */}
       {renderedCards.length > 0 ? (
         <>
           <div className="mycourse-grid">
@@ -423,5 +387,4 @@ function MyCourses() {
     </div>
   );
 }
-
 export default MyCourses;

@@ -1,11 +1,8 @@
 package com.learnsphere.auth.dto;
-
 import lombok.Builder;
 import lombok.Data;
-
 import java.time.Instant;
 import java.time.LocalDate;
-
 @Data
 @Builder
 public class InstructorApplicationResponse {

@@ -50,7 +50,6 @@ import RoleManagement from "./pages/admin/RoleManagement/RoleManagement.jsx";
 import Settings from "./pages/admin/Settings/Settings.jsx";
 import InstructorApplications from "./pages/admin/InstructorApplications/InstructorApplications.jsx";
 import { LoadingProvider } from "./components/LoadingSystem/LoadingProvider.jsx";
-
 function App() {
   const routes = useMemo(
     () => (
@@ -65,19 +64,15 @@ function App() {
         <Route path="/course/:id" element={<CourseDetail />} />
         <Route path="/verify-certificate/:token" element={<CertificateVerificationPage />} />
         <Route path="/certificate-render/:certificateId" element={<CertificateRenderPage />} />
-
         <Route element={<ForumRoleLayout />}>
           <Route path="/courses/:courseId/forum" element={<ForumPage />} />
           <Route path="/forum/topic/:topicId" element={<TopicPage />} />
         </Route>
-
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-
         <Route path="/buy/:id" element={<PaymentPage />} />
         <Route path="/payment-success" element={<PaymentSuccess />} />
-
         <Route path="/student-layout" element={<StudentLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<StudentDashboard />} />
@@ -89,7 +84,6 @@ function App() {
           <Route path="certificate" element={<StudentCertificatesPage />} />
           <Route path="download-certificate/:id" element={<CertificateDownloadPage />} />
         </Route>
-
         <Route path="/instructor-layout" element={<InstructorLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<InstructorDashboard />} />
@@ -104,7 +98,6 @@ function App() {
           <Route path="withdrawals" element={<Withdrawal />} />
           <Route path="profile" element={<InstructorProfile />} />
         </Route>
-
         <Route path="/admin-layout" element={<AdminLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<AdminDashboard />} />
@@ -123,8 +116,6 @@ function App() {
     ),
     []
   );
-
   return <LoadingProvider>{routes}</LoadingProvider>;
 }
-
 export default App;

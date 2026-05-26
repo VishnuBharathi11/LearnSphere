@@ -1,5 +1,4 @@
 package com.learnsphere.enrollment.service.impl;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.Instant;
@@ -7,13 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
 import com.learnsphere.enrollment.client.CourseClient;
 import com.learnsphere.enrollment.config.RazorpayConfig;
 import com.learnsphere.enrollment.dto.*;
@@ -26,13 +22,10 @@ import com.learnsphere.enrollment.enums.PaymentStatus;
 import com.learnsphere.enrollment.enums.WithdrawalStatus;
 import com.learnsphere.enrollment.service.EnrollmentService;
 import com.razorpay.*;
-
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class EnrollmentServiceImpl implements EnrollmentService{
-	
 	private final RazorpayClient razorpayClient;
 	private final PaymentRepository paymentRepository;
 	private final EnrollmentRepository enrollmentRepository;
@@ -43,7 +36,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 	private int instructorSharePercent;
 	@Value("${withdrawal.minimum-amount:500}")
 	private BigDecimal minimumWithdrawalAmount;
-
 	@Override
 	public String createOrder(CreateOrderRequest request) {
 		try {
@@ -61,7 +53,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			orderReq.put("currency", "INR");
 			orderReq.put("receipt","rcpt_"+System.currentTimeMillis());
 			Order order=razorpayClient.orders.create(orderReq);
-			
 			Payment payment=Payment.builder()
 					.userId(request.getUserId())
 					.courseId(request.getCourseId())
@@ -73,7 +64,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 					.build();
 			paymentRepository.save(payment);
 			return order.get("id");
-			
 		} catch (Exception e) {
 			throw new RuntimeException("Failed to create razorpay order: " + e.getMessage());
 		}
@@ -94,7 +84,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			payment.setStatus(PaymentStatus.SUCCESS);
 			payment.setRazorpaymentId(request.getRazorpayPaymentId());
 			paymentRepository.save(payment);
-
 			Enrollment enrollment = enrollmentRepository
 					.findByUserIdAndCourseId(payment.getUserId(), request.getCourseId())
 					.orElseGet(() -> Enrollment.builder()
@@ -116,7 +105,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			throw new RuntimeException("Payment verification failed");
 		}
 	}
-
 	@Override
 	public EnrollmentResponse enrollFree(FreeEnrollRequest request) {
 		Enrollment existing = enrollmentRepository
@@ -128,7 +116,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 					.enrollmentId(existing.getId())
 					.build();
 		}
-
 		Enrollment enrollment = existing != null ? existing : Enrollment.builder()
 				.userId(request.getUserId())
 				.courseId(request.getCourseId())
@@ -139,13 +126,11 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 			enrollment.setEnrolledAt(Instant.now());
 		}
 		enrollmentRepository.save(enrollment);
-
 		return EnrollmentResponse.builder()
 				.message("Enrollment Successful")
 				.enrollmentId(enrollment.getId())
 				.build();
 	}
-
 	@Override
 	public boolean isEnrolled(String userId, String courseId) {
 		return enrollmentRepository
@@ -153,12 +138,10 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.map(e -> e.getStatus() == EnrollmentStatus.ACTIVE)
 				.orElse(false);
 	}
-
 	@Override
 	public List<Enrollment> getByCourseId(String courseId) {
 		return enrollmentRepository.findByCourseId(courseId);
 	}
-
 	@Override
 	public List<Enrollment> getByCourseIds(List<String> courseIds) {
 		if (courseIds == null || courseIds.isEmpty()) {
@@ -166,7 +149,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		}
 		return enrollmentRepository.findByCourseIdIn(courseIds);
 	}
-
 	@Override
 	public List<Enrollment> getByUserId(String userId) {
 		if (userId == null || userId.isBlank()) {
@@ -174,14 +156,12 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		}
 		return enrollmentRepository.findByUserId(userId.trim());
 	}
-
 	@Override
 	public WithdrawalSummaryResponse getWithdrawalSummary(String instructorId, List<String> courseIds) {
 		List<String> safeCourseIds = normalizeCourseIds(courseIds);
 		BigDecimal grossRevenue = calculateGrossRevenue(safeCourseIds);
 		BigDecimal netEarnings = percent(grossRevenue, safeInstructorSharePercent());
 		BigDecimal platformFee = grossRevenue.subtract(netEarnings).setScale(2, RoundingMode.HALF_UP);
-
 		List<WithdrawalRequest> withdrawals = withdrawalRequestRepository.findByInstructorId(safeInstructorId(instructorId));
 		BigDecimal pending = sumWithdrawals(withdrawals, Set.of(
 				WithdrawalStatus.PENDING,
@@ -191,7 +171,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		BigDecimal paid = sumWithdrawals(withdrawals, Set.of(WithdrawalStatus.PAID));
 		BigDecimal available = netEarnings.subtract(pending).subtract(paid).max(BigDecimal.ZERO)
 				.setScale(2, RoundingMode.HALF_UP);
-
 		return WithdrawalSummaryResponse.builder()
 				.instructorId(safeInstructorId(instructorId))
 				.currency("INR")
@@ -205,7 +184,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.instructorSharePercent(safeInstructorSharePercent())
 				.build();
 	}
-
 	@Override
 	public List<WithdrawalResponse> getWithdrawals(String instructorId, int limit) {
 		int safeLimit = Math.max(1, Math.min(limit, 100));
@@ -215,7 +193,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.map(this::toWithdrawalResponse)
 				.toList();
 	}
-
 	@Override
 	public WithdrawalResponse requestWithdrawal(String instructorId, WithdrawalRequestDto request) {
 		String safeInstructorId = safeInstructorId(instructorId);
@@ -225,7 +202,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		if (amount.compareTo(minimum) < 0) {
 			throw new RuntimeException("Minimum withdrawal amount is INR " + minimum.stripTrailingZeros().toPlainString());
 		}
-
 		String payoutMethod = safeText(request.getPayoutMethod()).toUpperCase();
 		if (!Set.of("BANK", "UPI").contains(payoutMethod)) {
 			throw new RuntimeException("Unsupported payout method");
@@ -241,12 +217,10 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		if ("UPI".equals(payoutMethod) && safeText(request.getUpiId()).isBlank()) {
 			throw new RuntimeException("UPI ID is required");
 		}
-
 		BigDecimal available = getWithdrawalSummary(safeInstructorId, safeCourseIds).getAvailableBalance();
 		if (amount.compareTo(available) > 0) {
 			throw new RuntimeException("Withdrawal amount exceeds available balance");
 		}
-
 		WithdrawalRequest withdrawal = WithdrawalRequest.builder()
 				.instructorId(safeInstructorId)
 				.amount(amount)
@@ -263,10 +237,8 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.requestedAt(Instant.now())
 				.updatedAt(Instant.now())
 				.build();
-
 		return toWithdrawalResponse(withdrawalRequestRepository.save(withdrawal));
 	}
-
 	private String hmacSHA256(String data,String secret) throws Exception{
 		javax.crypto.Mac mac=javax.crypto.Mac.getInstance("HmacSHA256");
 		javax.crypto.spec.SecretKeySpec secretKey=
@@ -279,7 +251,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		}
 		return hexString.toString();
 	}
-
 	private List<String> normalizeCourseIds(List<String> courseIds) {
 		if (courseIds == null) {
 			return List.of();
@@ -290,7 +261,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.distinct()
 				.collect(Collectors.toCollection(ArrayList::new));
 	}
-
 	private BigDecimal calculateGrossRevenue(List<String> courseIds) {
 		if (courseIds == null || courseIds.isEmpty()) {
 			return BigDecimal.ZERO.setScale(2, RoundingMode.HALF_UP);
@@ -301,7 +271,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.reduce(BigDecimal.ZERO, BigDecimal::add)
 				.setScale(2, RoundingMode.HALF_UP);
 	}
-
 	private BigDecimal sumWithdrawals(List<WithdrawalRequest> withdrawals, Set<WithdrawalStatus> statuses) {
 		return withdrawals.stream()
 				.filter(withdrawal -> statuses.contains(withdrawal.getStatus()))
@@ -309,7 +278,6 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.reduce(BigDecimal.ZERO, BigDecimal::add)
 				.setScale(2, RoundingMode.HALF_UP);
 	}
-
 	private WithdrawalResponse toWithdrawalResponse(WithdrawalRequest withdrawal) {
 		return WithdrawalResponse.builder()
 				.id(withdrawal.getId())
@@ -327,20 +295,16 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 				.updatedAt(withdrawal.getUpdatedAt())
 				.build();
 	}
-
 	private BigDecimal percent(BigDecimal amount, int percent) {
 		return amount.multiply(BigDecimal.valueOf(percent))
 				.divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
 	}
-
 	private BigDecimal scaled(BigDecimal amount) {
 		return (amount == null ? BigDecimal.ZERO : amount).setScale(2, RoundingMode.HALF_UP);
 	}
-
 	private int safeInstructorSharePercent() {
 		return Math.max(1, Math.min(instructorSharePercent, 100));
 	}
-
 	private String safeInstructorId(String instructorId) {
 		String safe = safeText(instructorId);
 		if (safe.isBlank()) {
@@ -348,15 +312,12 @@ public class EnrollmentServiceImpl implements EnrollmentService{
 		}
 		return safe;
 	}
-
 	private String safeText(String value) {
 		return value == null ? "" : value.trim();
 	}
-
 	private String maskUnsafeSpacing(String value) {
 		return safeText(value).replaceAll("\\s+", "");
 	}
-
 	private String maskAccountNumber(String accountNumber) {
 		String safe = maskUnsafeSpacing(accountNumber);
 		if (safe.length() <= 4) {

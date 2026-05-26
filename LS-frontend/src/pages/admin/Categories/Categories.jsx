@@ -3,14 +3,12 @@ import { Plus, Trash2, BookOpen } from "lucide-react";
 import { createCategory, deleteCategory, getAdminCourses, getCategories } from "../../../services/courseApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./Categories.scss";
-
 const Categories = () => {
   const [categories, setCategories] = useState([]);
   const [courses, setCourses] = useState([]);
   const [showAdd, setShowAdd] = useState(false);
   const [form, setForm] = useState({ name: "", description: "" });
   const [error, setError] = useState("");
-
   const loadData = async () => {
     try {
       const [categoryList, courseList] = await Promise.all([getCategories(), getAdminCourses()]);
@@ -22,11 +20,9 @@ const Categories = () => {
       setError(getFriendlyErrorMessage(apiError, "Failed to load categories"));
     }
   };
-
   useEffect(() => {
     loadData();
   }, []);
-
   const categoryCoursesCount = useMemo(() => {
     const map = new Map();
     courses.forEach((course) => {
@@ -35,7 +31,6 @@ const Categories = () => {
     });
     return map;
   }, [courses]);
-
   const addCategory = async (event) => {
     event.preventDefault();
     try {
@@ -50,7 +45,6 @@ const Categories = () => {
       setError(getFriendlyErrorMessage(apiError, "Failed to create category"));
     }
   };
-
   const removeCategory = async (category) => {
     if (!window.confirm(`Delete category "${category.name}"?`)) return;
     try {
@@ -60,7 +54,6 @@ const Categories = () => {
       setError(getFriendlyErrorMessage(apiError, "Failed to delete category"));
     }
   };
-
   return (
     <div className="categories-layout">
       <div className="categories-page">
@@ -71,18 +64,15 @@ const Categories = () => {
               <button className="edit-btn delete" onClick={() => removeCategory(category)} title="Delete Category">
                 <Trash2 size={16} />
               </button>
-
               <div className="icon">{String(category.name || "?").slice(0, 1).toUpperCase()}</div>
               <h3>{category.name}</h3>
               <p>{category.description || "No description"}</p>
-
               <div className="courses">
                 <BookOpen size={16} />
                 <span>{categoryCoursesCount.get(String(category.id)) || 0} Courses</span>
               </div>
             </div>
           ))}
-
           <button className="add-card" onClick={() => setShowAdd(true)}>
             <Plus size={28} />
             <span>Add Category</span>
@@ -93,7 +83,6 @@ const Categories = () => {
         <div className="modal-overlay">
           <div className="modal">
             <h3>Add Category</h3>
-
             <form onSubmit={addCategory}>
               <input
                 placeholder="Category Name"
@@ -107,7 +96,6 @@ const Categories = () => {
                 required
                 onChange={(event) => setForm({ ...form, description: event.target.value })}
               />
-
               <div className="modal-actions">
                 <button type="submit">Save</button>
                 <button type="button" className="cancel" onClick={() => setShowAdd(false)}>
@@ -121,5 +109,4 @@ const Categories = () => {
     </div>
   );
 };
-
 export default Categories;

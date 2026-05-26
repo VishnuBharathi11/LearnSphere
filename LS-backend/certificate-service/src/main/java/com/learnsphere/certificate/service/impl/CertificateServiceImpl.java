@@ -1,5 +1,4 @@
 package com.learnsphere.certificate.service.impl;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.learnsphere.certificate.config.CertificateProperties;
@@ -23,12 +22,10 @@ import com.learnsphere.certificate.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Base64;
 import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class CertificateServiceImpl implements CertificateService {
@@ -41,7 +38,6 @@ public class CertificateServiceImpl implements CertificateService {
     private final CertificateProperties properties;
     private final ObjectMapper objectMapper;
     private final SecureRandom secureRandom = new SecureRandom();
-
     @Override
     @Transactional
     public CertificateResponse generate(CertificateGenerateRequest request) {
@@ -50,13 +46,11 @@ public class CertificateServiceImpl implements CertificateService {
                 .map(this::toResponse)
                 .orElseGet(() -> generateNew(request));
     }
-
     private CertificateResponse generateNew(CertificateGenerateRequest request) {
         CertificateTemplate template = resolveTemplate(request.getTemplateCode());
         String token = createToken();
         String verificationUrl = properties.getPublicBaseUrl() + "/verify-certificate/" + token;
         String badgesJson = writeJson(request.getSkillBadges() == null ? List.of() : request.getSkillBadges());
-
         Certificate certificate = Certificate.builder()
                 .studentUserId(request.getStudentUserId())
                 .studentName(request.getStudentName().trim())
@@ -74,7 +68,6 @@ public class CertificateServiceImpl implements CertificateService {
                 .status(CertificateStatus.ISSUED)
                 .issuedAt(Instant.now())
                 .build();
-
         Certificate saved = certificateRepository.saveAndFlush(certificate);
         byte[] pdf = pdfGenerationService.renderCertificate(saved);
         String storageKey = storageService.savePdf(saved.getId(), pdf);
@@ -82,13 +75,11 @@ public class CertificateServiceImpl implements CertificateService {
         saved.setPdfDownloadUrl(properties.getPublicBaseUrl() + "/api/certificates/" + saved.getId() + "/download");
         return toResponse(certificateRepository.save(saved));
     }
-
     @Override
     @Transactional(readOnly = true)
     public CertificateResponse get(String certificateId) {
         return toResponse(findCertificate(certificateId));
     }
-
     @Override
     @Transactional(readOnly = true)
     public List<CertificateResponse> getByStudent(String studentUserId) {
@@ -97,7 +88,6 @@ public class CertificateServiceImpl implements CertificateService {
                 .map(this::toResponse)
                 .toList();
     }
-
     @Override
     @Transactional
     public VerificationResponse verify(String token, String ipAddress, String userAgent) {
@@ -110,7 +100,6 @@ public class CertificateServiceImpl implements CertificateService {
                 .ipAddress(ipAddress)
                 .userAgent(userAgent == null ? null : userAgent.substring(0, Math.min(userAgent.length(), 512)))
                 .build());
-
         if (!valid) {
             return VerificationResponse.builder()
                     .valid(false)
@@ -128,19 +117,16 @@ public class CertificateServiceImpl implements CertificateService {
                 .message("Certificate verified by LearnSphere")
                 .build();
     }
-
     @Override
     @Transactional(readOnly = true)
     public byte[] downloadPdf(String certificateId) {
         return storageService.read(findCertificate(certificateId).getPdfStorageKey());
     }
-
     @Override
     public String generateQr(String token) {
         String verificationUrl = properties.getPublicBaseUrl() + "/verify-certificate/" + token;
         return qrCodeService.createQrCodeDataUri(verificationUrl);
     }
-
     @Override
     @Transactional(readOnly = true)
     public List<TemplateResponse> templates() {
@@ -149,7 +135,6 @@ public class CertificateServiceImpl implements CertificateService {
                 .map(this::toTemplateResponse)
                 .toList();
     }
-
     @Override
     @Transactional
     public TemplateResponse upsertTemplate(TemplateRequest request) {
@@ -165,7 +150,6 @@ public class CertificateServiceImpl implements CertificateService {
         template.setDesignConfigJson(request.getDesignConfigJson());
         return toTemplateResponse(templateRepository.save(template));
     }
-
     private CertificateTemplate resolveTemplate(String templateCode) {
         if (templateCode != null && !templateCode.isBlank()) {
             return templateRepository.findByCode(templateCode)
@@ -174,18 +158,15 @@ public class CertificateServiceImpl implements CertificateService {
         return templateRepository.findFirstByDefaultTemplateTrueAndActiveTrueOrderByUpdatedAtDesc()
                 .orElseThrow(() -> new ResourceNotFoundException("Default certificate template not configured"));
     }
-
     private Certificate findCertificate(String certificateId) {
         return certificateRepository.findById(certificateId)
                 .orElseThrow(() -> new ResourceNotFoundException("Certificate not found"));
     }
-
     private String createToken() {
         byte[] bytes = new byte[32];
         secureRandom.nextBytes(bytes);
         return Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
     }
-
     private String writeJson(List<String> values) {
         try {
             return objectMapper.writeValueAsString(values);
@@ -193,7 +174,6 @@ public class CertificateServiceImpl implements CertificateService {
             return "[]";
         }
     }
-
     private List<String> readBadges(String json) {
         try {
             if (json == null || json.isBlank()) return List.of();
@@ -202,7 +182,6 @@ public class CertificateServiceImpl implements CertificateService {
             return List.of();
         }
     }
-
     private CertificateResponse toResponse(Certificate certificate) {
         CertificateTemplate template = certificate.getTemplate();
         return CertificateResponse.builder()
@@ -227,7 +206,6 @@ public class CertificateServiceImpl implements CertificateService {
                 .issuedAt(certificate.getIssuedAt())
                 .build();
     }
-
     private TemplateResponse toTemplateResponse(CertificateTemplate template) {
         return TemplateResponse.builder()
                 .id(template.getId())

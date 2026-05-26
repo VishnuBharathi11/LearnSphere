@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../../../components/NavBar/NavBar";
 import Footer from "../../../components/Footer/Footer";
 import { normalizeApiError, submitInstructorApplication } from "../../../services/authApi";
-
 function InstructorApplication() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -19,32 +18,26 @@ function InstructorApplication() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [submitting, setSubmitting] = useState(false);
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleFileChange = (event) => {
     const file = event.target.files?.[0] || null;
     setResumeFile(file);
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError("");
     setSuccess("");
-
     if (!form.name || !form.expertise || !form.email || !form.phone || !form.dateOfBirth || !form.linkedin) {
       setError("Please complete all required fields.");
       return;
     }
-
     if (!resumeFile) {
       setError("Please upload your resume.");
       return;
     }
-
     try {
       setSubmitting(true);
       await submitInstructorApplication({
@@ -67,7 +60,6 @@ function InstructorApplication() {
       setSubmitting(false);
     }
   };
-
   return (
     <>
       <NavBar />
@@ -88,12 +80,10 @@ function InstructorApplication() {
             Back
           </button>
         </div>
-
         <div className="instructor-application__content">
           <form className="instructor-application__form" onSubmit={handleSubmit}>
             {error && <div className="instructor-application__alert">{error}</div>}
             {success && <div className="instructor-application__success">{success}</div>}
-
             <div className="instructor-application__grid">
               <label>
                 Full Name*
@@ -161,7 +151,6 @@ function InstructorApplication() {
                 />
               </label>
             </div>
-
             <div className="instructor-application__upload">
               <label>
                 Resume (PDF/DOC/DOCX)*
@@ -169,14 +158,12 @@ function InstructorApplication() {
               </label>
               <p>Make sure your resume includes your teaching or industry experience.</p>
             </div>
-
             <div className="instructor-application__actions">
               <button type="submit" disabled={submitting}>
                 {submitting ? "Submitting..." : "Send Application"}
               </button>
             </div>
           </form>
-
           <div className="instructor-application__tips">
             <h3>What happens next?</h3>
             <p>We verify your expertise, review your resume, and may request a short demo lesson.</p>
@@ -192,5 +179,4 @@ function InstructorApplication() {
     </>
   );
 }
-
 export default InstructorApplication;

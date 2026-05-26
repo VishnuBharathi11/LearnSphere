@@ -12,23 +12,16 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
-import logo from "../../assets/Logo/logo.png";
 import "./SidebarAdmin.scss";
-
 function SidebarAdmin() {
   const location = useLocation();
-
   const isActive = (path) => (location.pathname === path ? "active" : "");
-
   return (
     <nav className="admin-navbar">
       <Link to="/" className="admin-logo" aria-label="LearnSphere Home">
-        <img src={logo} alt="LearnSphere" />
         <span>LearnSphere</span>
       </Link>
-
       <div className="admin-menu">
-
         <Link
           to="/admin-layout/dashboard"
           className={isActive("/admin-layout/dashboard")}
@@ -36,7 +29,6 @@ function SidebarAdmin() {
           <LayoutDashboard size={18} />
           Dashboard
         </Link>
-
         <Link
           to="/admin-layout/users"
           className={isActive("/admin-layout/users")}
@@ -44,7 +36,6 @@ function SidebarAdmin() {
           <Users size={18} />
           Manage Users
         </Link>
-
         <Link
           to="/admin-layout/courses"
           className={isActive("/admin-layout/courses")}
@@ -52,7 +43,6 @@ function SidebarAdmin() {
           <BookOpen size={18} />
           Manage Courses
         </Link>
-
         <Link
           to="/admin-layout/approve-courses"
           className={isActive("/admin-layout/approve-courses")}
@@ -60,7 +50,6 @@ function SidebarAdmin() {
           <CheckCircle size={18} />
           Approve Courses
         </Link>
-
         <Link
           to="/admin-layout/categories"
           className={isActive("/admin-layout/categories")}
@@ -68,7 +57,6 @@ function SidebarAdmin() {
           <Layers size={18} />
           Categories
         </Link>
-
         <Link
           to="/admin-layout/roles"
           className={isActive("/admin-layout/roles")}
@@ -76,7 +64,6 @@ function SidebarAdmin() {
           <UserCog size={18} />
           Role Management
         </Link>
-
         <Link
           to="/admin-layout/instructor-applications"
           className={isActive("/admin-layout/instructor-applications")}
@@ -84,7 +71,6 @@ function SidebarAdmin() {
           <BadgeCheck size={18} />
           Instructor Registration
         </Link>
-
         <Link
           to="/admin-layout/settings"
           className={isActive("/admin-layout/settings")}
@@ -92,7 +78,6 @@ function SidebarAdmin() {
           <Settings size={18} />
           Settings
         </Link>
-
         <Link
           to="/admin-layout/certificate-templates"
           className={isActive("/admin-layout/certificate-templates")}
@@ -100,7 +85,6 @@ function SidebarAdmin() {
           <Award size={18} />
           Certificate Templates
         </Link>
-
         <Link
           to="/login"
           className="nav-item-logout"
@@ -108,10 +92,8 @@ function SidebarAdmin() {
           <LogOut size={18} />
           Logout
         </Link>
-      
       </div>
     </nav>
   );
 }
-
 export default SidebarAdmin;

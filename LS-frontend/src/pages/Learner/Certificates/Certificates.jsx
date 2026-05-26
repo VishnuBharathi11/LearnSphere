@@ -8,20 +8,16 @@ import { getProgressByCourses } from "../../../services/progressApi";
 import certificateImage from "../../../assets/Learner/certificate.png";
 import "./Certificates.scss";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
-
 function Certificates() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [lessonMap, setLessonMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
-
   const { currentUser } = useCurrentUser();
   const userId = String(currentUser?.id || currentUser?.userId || "");
-
   useEffect(() => {
     if (!userId) return;
-
     let active = true;
     async function load() {
       try {
@@ -38,20 +34,17 @@ function Certificates() {
         setEnrollments([]);
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [userId]);
-
   useEffect(() => {
     if (!userId || enrollments.length === 0) {
       setLessonMap({});
       setProgressMap({});
       return;
     }
-
     const activeEnrollments = enrollments.filter(
       (enrollment) =>
         String(enrollment.userId) === userId && String(enrollment.status || "").toUpperCase() === "ACTIVE"
@@ -62,7 +55,6 @@ function Certificates() {
       setProgressMap({});
       return;
     }
-
     let active = true;
     async function loadProgress() {
       try {
@@ -83,16 +75,13 @@ function Certificates() {
         setProgressMap({});
       }
     }
-
     loadProgress();
     return () => {
       active = false;
     };
   }, [enrollments, userId]);
-
   const certificateCards = useMemo(() => {
     if (!userId) return [];
-
     return enrollments
       .filter(
         (enrollment) =>
@@ -101,7 +90,6 @@ function Certificates() {
       .map((enrollment) => {
         const course = courses.find((c) => String(c.id) === String(enrollment.courseId));
         if (!course) return null;
-
         const state = buildCourseLearningStateFromApi(
           lessonMap[String(course.id)] || [],
           progressMap[String(course.id)]
@@ -117,7 +105,6 @@ function Certificates() {
       })
       .filter(Boolean);
   }, [courses, enrollments, lessonMap, progressMap, userId]);
-
   if (!certificateCards.length) {
     return (
       <div className="certificates-page">
@@ -128,7 +115,6 @@ function Certificates() {
       </div>
     );
   }
-
   return (
     <div className="certificates-page">
       <div className="certificates-header">
@@ -185,6 +171,4 @@ function Certificates() {
     </div>
   );
 }
-
 export default Certificates;
-

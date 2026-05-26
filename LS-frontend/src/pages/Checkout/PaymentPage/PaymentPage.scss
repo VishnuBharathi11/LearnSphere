@@ -8,18 +8,15 @@ $payment-primary-btn: #A435F0;
 $payment-bg-light: #f8f9ff;
 $payment-bg-hover: #f1f5f9;
 $payment-text-muted: #6b7280;
-
 @mixin flex-column($gap: 0) {
   display: flex;
   flex-direction: column;
   gap: $gap;
 }
-
 @mixin flex-row($gap: 0) {
   display: flex;
   gap: $gap;
 }
-
 @mixin input-base {
   width: 100%;
   font-family: $payment-font;
@@ -27,7 +24,6 @@ $payment-text-muted: #6b7280;
   border: 1px solid $payment-border-light;
   background: $payment-white;
 }
-
 @mixin button-base {
   cursor: pointer;
   font-size: 14px;
@@ -35,14 +31,12 @@ $payment-text-muted: #6b7280;
   border-radius: 8px;
   transition: all 0.2s ease;
 }
-
 .payment-page {
   font-family: $payment-font;
   display: flex;
   flex-direction: column;
   gap: 24px;
   margin-bottom: 30px;
-
   h2 {
     font-size: 20px;
     border-bottom: 1px solid $payment-border-light;
@@ -50,13 +44,11 @@ $payment-text-muted: #6b7280;
     background: $payment-white;
   }
 }
-
 .payment-summary {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
-
 .card {
   width: 100%;
   max-width: 1200px;
@@ -65,19 +57,16 @@ $payment-text-muted: #6b7280;
   background: $payment-white;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
-
 .paycard {
   display: flex;
   flex-direction: column;
   gap: 18px;
-
   p {
     text-align: center;
     font-size: 12px;
     color: $payment-text-muted;
   }
 }
-
 .payment-error {
   color: #b91c1c !important;
   background: #fef2f2;
@@ -86,7 +75,6 @@ $payment-text-muted: #6b7280;
   padding: 10px 12px;
   text-align: left !important;
 }
-
 .order-summary {
   margin-top: 30px;
   padding: 20px;
@@ -94,16 +82,13 @@ $payment-text-muted: #6b7280;
   border-radius: 8px;
   box-shadow: none;
 }
-
 .payment-methods {
   display: flex;
   gap: 36px;
-
   button:hover {
     cursor: pointer;
   }
 }
-
 .method-btn {
   flex: 1;
   padding: 18px 16px;
@@ -114,11 +99,9 @@ $payment-text-muted: #6b7280;
   font-size: 14px;
   font-weight: 500;
   transition: all 0.2s ease;
-
   &:hover {
     background: $payment-bg-hover;
   }
-
   &.active {
     border-color: $payment-primary;
     background: $payment-primary-light;
@@ -126,7 +109,6 @@ $payment-text-muted: #6b7280;
     font-weight: 600;
   }
 }
-
 .payment-form,
 .row-column {
   display: flex;
@@ -135,7 +117,6 @@ $payment-text-muted: #6b7280;
   font-weight: 600;
   gap: 10px;
 }
-
 .payment-form {
   input,
   select {
@@ -146,27 +127,22 @@ $payment-text-muted: #6b7280;
     border: 1px solid $payment-border-light;
     background: $payment-white;
   }
-
   select {
     padding: 15px;
   }
-
   ::placeholder {
     font-size: 12px;
     font-family: $payment-font;
     font-weight: 500;
   }
 }
-
 .row {
   display: flex;
   gap: 24px;
 }
-
 .row-column {
   width: 100%;
 }
-
 .pay-btn {
   flex: 1;
   padding: 12px 16px;
@@ -177,7 +153,6 @@ $payment-text-muted: #6b7280;
   font-size: 14px;
   font-weight: 500;
   color: $payment-white;
-
   &:disabled {
     opacity: 0.7;
     cursor: not-allowed;

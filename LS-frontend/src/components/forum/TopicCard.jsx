@@ -3,7 +3,6 @@ import { MessageCircle, ThumbsUp, Trash2 } from "lucide-react";
 function stripHtml(value) {
   return String(value || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
-
 const TopicCard = ({ topic, onLike, isLiked, canManage = false, onDeleteTopic, onReply, isFocused = false }) => {
   const location = useLocation();
   const totalReplies = Number(topic.replyCount || 0);
@@ -14,18 +13,14 @@ const TopicCard = ({ topic, onLike, isLiked, canManage = false, onDeleteTopic, o
     if (location.pathname.startsWith("/instructor-layout/")) {
       return `/instructor-layout/forum/topic/${topic.id}`;
     }
-
     if (location.pathname.startsWith("/admin-layout/")) {
       return `/admin-layout/forum/topic/${topic.id}`;
     }
-
     if (location.pathname.startsWith("/student-layout/")) {
       return `/student-layout/forum/topic/${topic.id}`;
     }
-
     return `/forum/topic/${topic.id}`;
   };
-
   return (
     <article className={`forum-topic-card ${isFocused ? "is-focused" : ""}`} id={`topic-${topic.id}`}>
       <div className="forum-topic-card-main">
@@ -34,9 +29,7 @@ const TopicCard = ({ topic, onLike, isLiked, canManage = false, onDeleteTopic, o
             <h3>{topic.title}</h3>
           </Link>
         ) : null}
-
         <p className="forum-topic-preview" dangerouslySetInnerHTML={{ __html: topic.content }} />
-
         <div className="forum-meta-row">
           <span className="forum-pill">{topic.author}</span>
           <span className="forum-pill">{new Date(topic.createdAt).toLocaleString()}</span>
@@ -44,7 +37,6 @@ const TopicCard = ({ topic, onLike, isLiked, canManage = false, onDeleteTopic, o
           {topic.isLocked ? <span className="forum-pill">Locked</span> : null}
         </div>
       </div>
-
       <div className="forum-topic-actions">
         {canManage ? (
           <button
@@ -82,5 +74,4 @@ const TopicCard = ({ topic, onLike, isLiked, canManage = false, onDeleteTopic, o
     </article>
   );
 };
-
 export default TopicCard;

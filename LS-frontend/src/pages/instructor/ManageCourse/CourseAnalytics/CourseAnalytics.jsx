@@ -21,7 +21,6 @@ import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
 import { listThreads } from "../../../../services/discussionApi";
 import { getCourseProgress } from "../../../../services/progressApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
-
 function CourseAnalytics() {
   const { courseId } = useParams();
   const id = String(courseId);
@@ -34,12 +33,10 @@ function CourseAnalytics() {
   const userId = currentUser?.id || currentUser?.userId || "";
   const currentRole = String(currentUser?.role || "").toLowerCase();
   const isInstructorRole = currentRole.includes("instructor");
-
   useEffect(() => {
     async function loadCourse() {
       try {
         let selectedCourse = null;
-
         if (userId) {
           let myCourses = [];
           try {
@@ -52,13 +49,10 @@ function CourseAnalytics() {
               (courseItem) => String(courseItem.id) === id
             ) || null;
         }
-
         if (!selectedCourse) {
           selectedCourse = await getCourseById(id);
         }
-
         setCourse(selectedCourse || null);
-
         const [list, threadData, lessons] = await Promise.all([
           getEnrollmentsByCourse(id),
           listThreads(id, { page: 0, size: 200 }),
@@ -79,13 +73,11 @@ function CourseAnalytics() {
     loadCourse();
   }, [id, userId]);
   const [lessonList, setLessonList] = useState([]);
-
   useEffect(() => {
     if (!id || enrollments.length === 0) {
       setProgressByUser({});
       return;
     }
-
     let active = true;
     async function loadProgress() {
       try {
@@ -104,13 +96,11 @@ function CourseAnalytics() {
         setProgressByUser({});
       }
     }
-
     loadProgress();
     return () => {
       active = false;
     };
   }, [id, enrollments]);
-
   const {
     totalRevenue,
     totalEnrollments,
@@ -131,9 +121,7 @@ function CourseAnalytics() {
         lessons: [],
       };
     }
-
     const courseEnrollments = enrollments.filter((e) => String(e.courseId) === id);
-
     const totalEnrollments = courseEnrollments.length;
     const price = Number(course.price) || 0;
     const totalRevenue = totalEnrollments * price;
@@ -144,7 +132,6 @@ function CourseAnalytics() {
     const avgRating = scoredAssessments.length
       ? (scoredAssessments.reduce((sum, value) => sum + value, 0) / scoredAssessments.length).toFixed(1)
       : "0.0";
-
     const monthMap = {};
     courseEnrollments.forEach((e) => {
       if (!e.enrolledAt) return;
@@ -153,7 +140,6 @@ function CourseAnalytics() {
       const key = `${stamp.getFullYear()}-${stamp.getMonth()}`;
       monthMap[key] = (monthMap[key] || 0) + 1;
     });
-
     const now = new Date();
     const enrollmentData = Array.from({ length: 6 }).map((_, idx) => {
       const stamp = new Date(now.getFullYear(), now.getMonth() - (5 - idx), 1);
@@ -167,11 +153,9 @@ function CourseAnalytics() {
       month: d.month,
       value: d.value * price,
     }));
-
     let completed = 0;
     let inProgress = 0;
     let notStarted = 0;
-
     courseEnrollments.forEach((e) => {
       const userProgress = progressByUser[String(e.userId)] || null;
       const completedLessons = Array.isArray(userProgress?.completedLessonIds)
@@ -183,13 +167,11 @@ function CourseAnalytics() {
       else if (percent > 0 || String(e.status || "").toUpperCase() === "ACTIVE") inProgress += 1;
       else notStarted += 1;
     });
-
     const completionData = [
       { name: "Completed", value: completed },
       { name: "In Progress", value: inProgress },
       { name: "Not Started", value: notStarted },
     ];
-
     const lessons = (Array.isArray(lessonList) ? lessonList : []).map((lesson, idx) => {
       const completedCount = courseEnrollments.reduce((sum, enrollment) => {
         const completedIds = progressByUser[String(enrollment.userId)]?.completedLessonIds;
@@ -202,7 +184,6 @@ function CourseAnalytics() {
         value,
       };
     });
-
     return {
       totalRevenue,
       totalEnrollments,
@@ -213,9 +194,7 @@ function CourseAnalytics() {
       lessons,
     };
   }, [id, course, enrollments, lessonList, progressByUser]);
-
   const COLORS = ["#22c55e", "#f59e0b", "#ef4444"];
-
   if (loadingCourse) {
     return null;
   }
@@ -225,7 +204,6 @@ function CourseAnalytics() {
   if (!course) {
     return <p style={{ padding: 40 }}>Unable to load analytics for this course right now.</p>;
   }
-
   return (
     <div className="analytics-layout">
       <div className="analytics-page">
@@ -237,7 +215,6 @@ function CourseAnalytics() {
               <p>Total Revenue</p>
             </div>
           </div>
-
           <div className="analytics-stat-card enroll" style={{ flex: 1 }}>
             <div className="stat-icon blue"><Users size={22} /></div>
             <div className="stat-content">
@@ -245,7 +222,6 @@ function CourseAnalytics() {
               <p>Total Enrollments</p>
             </div>
           </div>
-
           <div className="analytics-stat-card reviews" style={{ flex: 1 }}>
             <div className="stat-icon purple"><MessageSquare size={22} /></div>
             <div className="stat-content">
@@ -254,7 +230,6 @@ function CourseAnalytics() {
             </div>
           </div>
         </div>
-
         <div className="analytics-grid">
           <div className="analytics-card">
             <h3>Enrollment Trend</h3>
@@ -272,7 +247,6 @@ function CourseAnalytics() {
               </ResponsiveContainer>
             )}
           </div>
-
           <div className="analytics-card">
             <h3>Revenue Trend</h3>
             {revenueData.length === 0 ? (
@@ -288,7 +262,6 @@ function CourseAnalytics() {
               </ResponsiveContainer>
             )}
           </div>
-
           <div className="analytics-card completion-card">
             <h3>Student Completion Status</h3>
             <ResponsiveContainer width="100%" height={260}>
@@ -301,7 +274,6 @@ function CourseAnalytics() {
               </PieChart>
             </ResponsiveContainer>
           </div>
-
           <div className="analytics-card">
             <h3>Lesson Engagement</h3>
             <p>Completion ratio for each lesson based on learner progress data.</p>
@@ -324,6 +296,4 @@ function CourseAnalytics() {
     </div>
   );
 }
-
 export default CourseAnalytics;
-

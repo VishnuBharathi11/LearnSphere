@@ -1,5 +1,4 @@
 package com.learnsphere.certificate.config;
-
 import com.learnsphere.certificate.dto.TemplateRequest;
 import com.learnsphere.certificate.entity.TemplateFormat;
 import com.learnsphere.certificate.repository.CertificateTemplateRepository;
@@ -7,15 +6,12 @@ import com.learnsphere.certificate.service.CertificateService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
-
 @Component
 @RequiredArgsConstructor
 public class CertificateTemplateSeeder implements CommandLineRunner {
     private final CertificateTemplateRepository templateRepository;
     private final CertificateService certificateService;
-
     @Override
     public void run(String... args) {
         if (templateRepository.count() > 0) return;
@@ -39,7 +35,6 @@ public class CertificateTemplateSeeder implements CommandLineRunner {
             certificateService.upsertTemplate(request);
         });
     }
-
     private record SeedTemplate(String code, String name, String componentKey, TemplateFormat format, String theme, boolean defaultTemplate) {
     }
 }

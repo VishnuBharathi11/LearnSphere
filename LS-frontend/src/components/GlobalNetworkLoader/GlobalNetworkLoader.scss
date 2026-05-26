@@ -9,13 +9,11 @@
   height: 100vh;
   background: #ffffff;
 }
-
 .learnsphere-loader {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-
 .learnsphere-loader-letter {
   position: relative;
   display: inline-block;
@@ -25,7 +23,6 @@
   letter-spacing: -0.08em;
   color: #a3a3a3;
 }
-
 .learnsphere-loader-letter::after {
   content: "L";
   position: absolute;
@@ -38,12 +35,10 @@
   background-clip: text;
   animation: learnsphere-loader-sweep 1.15s linear infinite;
 }
-
 @keyframes learnsphere-loader-sweep {
   0% {
     background-position: 50% -120%;
   }
-
   100% {
     background-position: 50% 220%;
   }

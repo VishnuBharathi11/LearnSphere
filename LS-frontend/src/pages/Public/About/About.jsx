@@ -11,13 +11,11 @@ function About() {
         <div className="ab-title">About Us</div>
         <div className="about-content">
           <div className="ab-cont-sub">About LearnSphere</div>
-
           <div className="ab-mainhead-stats">
             <div className="ab-cont-mainhead">
               Empowering Learners with Skills <br />
               That Shape the Future
             </div>
-
             <div className="ab-stats">
               <div className="ab-stats-al">
                 <div className="ab-stats-c">10k+</div>
@@ -41,12 +39,10 @@ function About() {
             skills.
           </p>
         </div>
-
         <div className="ab-img-box">
           <div className="ab-image">
             <img src={aboutimg} alt="studentlearning" />
           </div>
-
           <div className="ab-box">
             <div className="ab-box-small">
               <div className="ab-card highlight">
@@ -78,7 +74,6 @@ function About() {
                 </div>
               </div>
             </div>
-
             <div className="ab-card large">
               <div className="ab-box-t">Career Growth & Certification</div>
               <div className="ab-box-c">
@@ -99,5 +94,4 @@ function About() {
     </>
   );
 }
-
 export default About;

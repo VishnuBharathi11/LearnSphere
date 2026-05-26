@@ -1,5 +1,4 @@
 package com.learnsphere.auth.controller;
-
 import com.learnsphere.auth.dto.ApproveInstructorRequest;
 import com.learnsphere.auth.dto.InstructorApplicationResponse;
 import com.learnsphere.auth.entity.InstructorApplication;
@@ -17,7 +16,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.io.IOException;
 import java.security.Principal;
 import java.time.Instant;
@@ -27,26 +25,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class InstructorApplicationController {
-
     private static final Set<String> ALLOWED_RESUME_TYPES = Set.of(
             "application/pdf",
             "application/msword",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
     );
-
     private final InstructorApplicationRepository repository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JavaMailSender mailSender;
-
     @org.springframework.beans.factory.annotation.Value("${app.mail.from:LearnSphere}")
     private String fromMail;
-
     @PostMapping(value = "/instructor-applications", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, Object>> submitApplication(
             @RequestParam String name,
@@ -58,7 +51,6 @@ public class InstructorApplicationController {
             @RequestParam("resume") MultipartFile resume
     ) {
         String normalizedEmail = normalize(email);
-
         if (!StringUtils.hasText(name)
                 || !StringUtils.hasText(expertise)
                 || !StringUtils.hasText(normalizedEmail)
@@ -67,21 +59,16 @@ public class InstructorApplicationController {
                 || !StringUtils.hasText(linkedin)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "All fields are required.");
         }
-
         if (resume == null || resume.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Resume is required.");
         }
-
         if (!ALLOWED_RESUME_TYPES.contains(resume.getContentType())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Resume must be PDF or DOC/DOCX.");
         }
-
         if (repository.existsByEmailAndStatus(normalizedEmail, "PENDING")) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You already have a pending application.");
         }
-
         byte[] resumeData = readResumeData(resume);
-
         InstructorApplication application = InstructorApplication.builder()
                 .name(name.trim())
                 .expertise(expertise.trim())
@@ -94,15 +81,12 @@ public class InstructorApplicationController {
                 .resumeData(resumeData)
                 .createdAt(Instant.now())
                 .build();
-
         InstructorApplication saved = repository.save(application);
-
         return ResponseEntity.ok(Map.of(
                 "message", "Application submitted successfully.",
                 "applicationId", saved.getId()
         ));
     }
-
     @GetMapping("/instructor-applications")
     public List<InstructorApplicationResponse> getApplications(Principal principal) {
         requireAdmin(principal);
@@ -112,27 +96,22 @@ public class InstructorApplicationController {
                 .map(this::toResponse)
                 .toList();
     }
-
     @GetMapping("/instructor-applications/{id}/resume")
     public ResponseEntity<byte[]> getResume(@PathVariable Long id, Principal principal) {
         requireAdmin(principal);
         InstructorApplication application = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found"));
-
         if (application.getResumeData() == null || application.getResumeData().length == 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Resume not found");
         }
-
         String filename = StringUtils.hasText(application.getResumeFileName())
                 ? application.getResumeFileName()
                 : "resume";
-
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(Optional.ofNullable(application.getResumeContentType()).orElse(MediaType.APPLICATION_OCTET_STREAM_VALUE)))
                 .header("Content-Disposition", "inline; filename=\"" + filename + "\"")
                 .body(application.getResumeData());
     }
-
     @PostMapping("/instructor-applications/{id}/approve")
     public ResponseEntity<Map<String, Object>> approveApplication(
             @PathVariable Long id,
@@ -142,11 +121,9 @@ public class InstructorApplicationController {
         String adminEmail = requireAdmin(principal);
         InstructorApplication application = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found"));
-
         if (!"PENDING".equalsIgnoreCase(application.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Application is already reviewed");
         }
-
         String email = normalize(request.getEmail());
         if (!StringUtils.hasText(email)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email is required");
@@ -154,7 +131,6 @@ public class InstructorApplicationController {
         if (!StringUtils.hasText(request.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Password is required");
         }
-
         User user = userRepository.findByEmail(email).orElseGet(User::new);
         user.setEmail(email);
         user.setName(application.getName());
@@ -169,46 +145,37 @@ public class InstructorApplicationController {
         }
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-
         application.setStatus("APPROVED");
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(adminEmail);
         repository.save(application);
-
         sendApprovalEmail(email, request.getPassword());
-
         return ResponseEntity.ok(Map.of(
                 "message", "Application approved and instructor account created."
         ));
     }
-
     @PostMapping("/instructor-applications/{id}/reject")
     public ResponseEntity<Map<String, Object>> rejectApplication(@PathVariable Long id, Principal principal) {
         String adminEmail = requireAdmin(principal);
         InstructorApplication application = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found"));
-
         if (!"PENDING".equalsIgnoreCase(application.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Application is already reviewed");
         }
-
         application.setStatus("REJECTED");
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(adminEmail);
         repository.save(application);
-
         return ResponseEntity.ok(Map.of(
                 "message", "Application rejected."
         ));
     }
-
     private String normalize(String value) {
         if (!StringUtils.hasText(value)) {
             return "";
         }
         return value.trim().toLowerCase();
     }
-
     private byte[] readResumeData(MultipartFile resume) {
         try {
             return resume.getBytes();
@@ -216,7 +183,6 @@ public class InstructorApplicationController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Failed to read resume file.");
         }
     }
-
     private InstructorApplicationResponse toResponse(InstructorApplication application) {
         return InstructorApplicationResponse.builder()
                 .id(application.getId())
@@ -232,7 +198,6 @@ public class InstructorApplicationController {
                 .reviewedBy(application.getReviewedBy())
                 .build();
     }
-
     private String requireAdmin(Principal principal) {
         if (principal == null || !StringUtils.hasText(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized");
@@ -245,7 +210,6 @@ public class InstructorApplicationController {
         }
         return user.getEmail();
     }
-
     private void sendApprovalEmail(String email, String password) {
         SimpleMailMessage message = new SimpleMailMessage();
         if (StringUtils.hasText(fromMail)) {

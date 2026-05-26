@@ -2,15 +2,12 @@ import { Download, ExternalLink, ShieldCheck } from "lucide-react";
 import { getCertificateDownloadUrl } from "../../services/certificateApi";
 import { CertificateTemplateRenderer } from "./CertificateTemplateRegistry";
 import styles from "../../pages/Learner/Certificates/CertificateDashboard.module.scss";
-
 function CertificatePreview({ certificate, compact = false }) {
   if (!certificate) {
     return <div className={styles.emptyState}>No certificate selected.</div>;
   }
-
   const canVerify = Boolean(certificate.verificationUrl);
   const canDownload = Boolean(certificate.id);
-
   return (
     <section className={`${styles.previewShell} ${compact ? styles.compact : ""}`}>
       <div className={styles.previewToolbar}>
@@ -33,11 +30,9 @@ function CertificatePreview({ certificate, compact = false }) {
           )}
         </div>
       </div>
-
       <div className={styles.certificateStage}>
         <CertificateTemplateRenderer certificate={certificate} />
       </div>
-
       <div className={styles.trustBar}>
         <ShieldCheck size={18} />
         <span>UUID issued, QR verified, duplicate protected</span>
@@ -45,5 +40,4 @@ function CertificatePreview({ certificate, compact = false }) {
     </section>
   );
 }
-
 export default CertificatePreview;

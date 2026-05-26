@@ -1,9 +1,7 @@
 package com.learnsphere.certificate.dto;
-
 import com.learnsphere.certificate.entity.TemplateFormat;
 import lombok.Builder;
 import lombok.Getter;
-
 @Getter
 @Builder
 public class TemplateResponse {

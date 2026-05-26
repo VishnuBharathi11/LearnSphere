@@ -9,7 +9,6 @@ import { getAdminSettings } from "../../services/adminApi";
 import { normalizeForumRole } from "../../utils/forumRole";
 import "./forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
-
 const ForumPage = () => {
   const { courseId } = useParams();
   const location = useLocation();
@@ -19,18 +18,15 @@ const ForumPage = () => {
   const currentRole = normalizeForumRole(currentUser?.role);
   const searchParams = new URLSearchParams(location.search);
   const focusedThreadId = String(searchParams.get("threadId") || "");
-
   const [courseOptions, setCourseOptions] = useState([]);
   const [activeCourseId, setActiveCourseId] = useState(courseId || "");
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("latest");
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
-
   const isInstructor = location.pathname.startsWith("/instructor-layout/") || currentRole === "instructor";
   const isAdmin = location.pathname.startsWith("/admin-layout/") || currentRole === "admin";
   const canCreate = currentRole === "learner" || currentRole === "instructor" || currentRole === "admin";
-
   const {
     topics,
     loading,
@@ -44,7 +40,6 @@ const ForumPage = () => {
     threadMeta,
     countReplies,
   } = useForum(activeCourseId, currentUser);
-
   useEffect(() => {
     let active = true;
     async function loadFeatureSettings() {
@@ -62,10 +57,8 @@ const ForumPage = () => {
       active = false;
     };
   }, []);
-
   useEffect(() => {
     let active = true;
-
     async function loadCourses() {
       try {
         let courses = [];
@@ -74,16 +67,12 @@ const ForumPage = () => {
         } else {
           courses = await getPublishedCourses(0, 100);
         }
-
         if (!active) return;
-
         const normalized = (Array.isArray(courses) ? courses : []).map((item) => ({
           id: String(item.id),
           name: item.courseName || item.title || `Course ${item.id}`,
         }));
-
         setCourseOptions(normalized);
-
         if (!activeCourseId && normalized.length > 0) {
           setActiveCourseId(normalized[0].id);
         }
@@ -92,41 +81,31 @@ const ForumPage = () => {
         setCourseOptions([]);
       }
     }
-
     loadCourses();
-
     return () => {
       active = false;
     };
   }, [activeCourseId, currentUser?.id, isInstructor]);
-
   useEffect(() => {
     setThreadPage(0);
   }, [activeCourseId, setThreadPage]);
-
   useEffect(() => {
     refresh();
   }, [refresh, threadPage]);
-
   const filteredTopics = useMemo(() => {
     const searchTerm = search.trim().toLowerCase();
-
     let nextTopics = topics.filter((topic) => topic.title.toLowerCase().includes(searchTerm));
-
     if (filter === "mostLiked") {
       nextTopics = [...nextTopics].sort((a, b) => (b.likes || 0) - (a.likes || 0));
     }
-
     if (filter === "unanswered") {
       nextTopics = nextTopics.filter((topic) => countReplies(topic.replies || []) === 0 && Number(topic.replyCount || 0) === 0);
     }
-
     if (filter === "latest") {
       nextTopics = [...nextTopics].sort(
         (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
       );
     }
-
     if (focusedThreadId) {
       nextTopics = [...nextTopics].sort((a, b) => {
         const aFocused = String(a.id) === focusedThreadId ? 1 : 0;
@@ -134,10 +113,8 @@ const ForumPage = () => {
         return bFocused - aFocused;
       });
     }
-
     return nextTopics;
   }, [countReplies, filter, focusedThreadId, search, topics]);
-
   const handleDeleteTopic = async (topicId) => {
     if (!window.confirm("Delete this topic and all its replies?")) {
       return;
@@ -145,7 +122,6 @@ const ForumPage = () => {
     await deleteTopic(topicId);
     await refresh();
   };
-
   if (!discussionEnabled) {
     return (
       <section className="forum-page-shell">
@@ -153,7 +129,6 @@ const ForumPage = () => {
       </section>
     );
   }
-
   return (
     <section className="forum-page-shell">
       <div className="forum-toolbar">
@@ -169,7 +144,6 @@ const ForumPage = () => {
             </option>
           ))}
         </select>
-
         <input
           className="forum-input"
           type="text"
@@ -177,7 +151,6 @@ const ForumPage = () => {
           value={search}
           onChange={(event) => setSearch(event.target.value)}
         />
-
         <select
           className="forum-input"
           value={filter}
@@ -187,7 +160,6 @@ const ForumPage = () => {
           <option value="mostLiked">Most Liked</option>
           <option value="unanswered">Unanswered</option>
         </select>
-
         {canCreate && activeCourseId ? (
           <button
             className="forum-btn forum-btn-primary forum-btn-icon"
@@ -200,9 +172,7 @@ const ForumPage = () => {
           </button>
         ) : null}
       </div>
-
       {error ? <p className="forum-error">{error}</p> : null}
-
       <div className="forum-topic-list">
         {loading ? (
           <div className="forum-empty-state">Loading discussions...</div>
@@ -228,7 +198,6 @@ const ForumPage = () => {
           ))
         )}
       </div>
-
       <div className="forum-pagination">
         <button
           className="forum-btn ghost"
@@ -250,7 +219,6 @@ const ForumPage = () => {
           Next
         </button>
       </div>
-
       <CreateTopicModal
         isOpen={isCreateOpen}
         onClose={() => setIsCreateOpen(false)}
@@ -259,6 +227,4 @@ const ForumPage = () => {
     </section>
   );
 };
-
 export default ForumPage;
-

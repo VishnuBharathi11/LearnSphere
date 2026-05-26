@@ -1,32 +1,24 @@
 import { useState } from "react";
 import { SendHorizontal } from "lucide-react";
 import RichTextEditor from "./RichTextEditor";
-
 const ReplyBox = ({ onSubmit, placeholder = "Write a reply...", buttonLabel = "Reply" }) => {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
-
   const plain = String(value || "").replace(/<[^>]*>/g, "").trim();
-
   const handleSubmit = async (event) => {
     event.preventDefault();
-
     if (!plain) {
       setError("Reply cannot be empty.");
       return;
     }
-
     const result = await onSubmit(value.trim());
-
     if (result?.ok) {
       setValue("");
       setError("");
       return;
     }
-
     setError(result?.error || "Unable to post reply.");
   };
-
   return (
     <form className="forum-reply-box" onSubmit={handleSubmit}>
       <RichTextEditor value={value} onChange={setValue} placeholder={placeholder} />
@@ -44,5 +36,4 @@ const ReplyBox = ({ onSubmit, placeholder = "Write a reply...", buttonLabel = "R
     </form>
   );
 };
-
 export default ReplyBox;

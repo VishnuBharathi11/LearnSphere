@@ -1,10 +1,7 @@
 package com.learnsphere.enrollment.exception;
-
 import java.util.Map;
-
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(RuntimeException.class)
@@ -13,5 +10,4 @@ public class GlobalExceptionHandler {
 				.status(HttpStatus.BAD_REQUEST)
 				.body(Map.of("error",ex.getMessage()));
 	}
-
 }

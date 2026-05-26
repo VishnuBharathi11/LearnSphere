@@ -12,7 +12,6 @@ import { buildCourseLearningStateFromApi } from "../../../services/learnerProgre
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import CertificatePreview from "../../../components/CertificatePreview/CertificatePreview";
 import styles from "./CertificateDashboard.module.scss";
-
 function StudentCertificatesPage() {
   const { currentUser, loading } = useCurrentUser();
   const currentUserId = currentUser?.id || currentUser?.userId;
@@ -21,27 +20,22 @@ function StudentCertificatesPage() {
   const [loadingCards, setLoadingCards] = useState(true);
   const [issuingId, setIssuingId] = useState("");
   const [error, setError] = useState("");
-
   useEffect(() => {
     const userId = currentUserId;
     if (!userId || loading) return;
-
     let active = true;
-
     async function loadCertificates() {
       try {
         const [enrollments, issuedCertificates] = await Promise.all([
           getEnrollmentsByUser(String(userId)),
           getStudentCertificates(String(userId)).catch(() => []),
         ]);
-
         const activeEnrollments = (Array.isArray(enrollments) ? enrollments : []).filter(
           (enrollment) => String(enrollment.status || "").toUpperCase() === "ACTIVE"
         );
         const courseIds = Array.from(
           new Set(activeEnrollments.map((enrollment) => String(enrollment.courseId || "")).filter(Boolean))
         );
-
         if (courseIds.length === 0) {
           if (!active) return;
           setCards([]);
@@ -49,13 +43,11 @@ function StudentCertificatesPage() {
           setLoadingCards(false);
           return;
         }
-
         const [courses, lessonPairs, progressItems] = await Promise.all([
           getCoursesByIds(courseIds),
           Promise.all(courseIds.map(async (courseId) => [courseId, await getCourseLessons(courseId).catch(() => [])])),
           getProgressByCourses(String(userId), courseIds).catch(() => []),
         ]);
-
         const courseMap = new Map((Array.isArray(courses) ? courses : []).map((course) => [String(course.id), course]));
         const lessonMap = new Map(lessonPairs);
         const progressMap = new Map(
@@ -67,17 +59,14 @@ function StudentCertificatesPage() {
             normalizeCertificate(certificate),
           ])
         );
-
         const nextCards = courseIds
           .map((courseId) => {
             const course = courseMap.get(courseId);
             if (!course) return null;
-
             const learningState = buildCourseLearningStateFromApi(
               lessonMap.get(courseId) || [],
               progressMap.get(courseId)
             );
-
             return {
               id: courseId,
               course,
@@ -92,7 +81,6 @@ function StudentCertificatesPage() {
           })
           .filter(Boolean)
           .sort((a, b) => Number(b.unlocked) - Number(a.unlocked) || a.course.courseName.localeCompare(b.course.courseName));
-
         if (!active) return;
         setCards(nextCards);
         setSelectedId((current) => current || nextCards[0]?.id || "");
@@ -109,25 +97,19 @@ function StudentCertificatesPage() {
         if (active) setLoadingCards(false);
       }
     }
-
     loadCertificates();
-
     return () => {
       active = false;
     };
   }, [currentUserId, loading]);
-
   const selected = cards.find((card) => card.id === selectedId) || cards[0] || null;
   const selectedCertificate =
     selected?.certificate || (selected?.unlocked ? buildPreviewCertificate(selected, currentUser) : null);
-
   async function issueCertificate(card) {
     if (!card || !card.unlocked || issuingId) return;
-
     const userId = String(currentUserId || "");
     setIssuingId(card.id);
     setError("");
-
     try {
       const certificate = normalizeCertificate(
         await generateCertificate({
@@ -140,7 +122,6 @@ function StudentCertificatesPage() {
           skillBadges: [card.course.category, card.course.level].filter(Boolean),
         })
       );
-
       setCards((current) =>
         current.map((item) => (item.id === card.id ? { ...item, certificate } : item))
       );
@@ -153,7 +134,6 @@ function StudentCertificatesPage() {
       setIssuingId("");
     }
   }
-
   return (
     <main className={styles.certificateWorkspace}>
       <section className={styles.collectionPanel}>
@@ -236,7 +216,6 @@ function StudentCertificatesPage() {
     </main>
   );
 }
-
 function normalizeCertificate(certificate) {
   if (!certificate) return null;
   return {
@@ -248,7 +227,6 @@ function normalizeCertificate(certificate) {
       (certificate.verificationToken ? `/verify-certificate/${certificate.verificationToken}` : ""),
   };
 }
-
 function buildPreviewCertificate(card, currentUser) {
   return {
     id: "",
@@ -264,5 +242,4 @@ function buildPreviewCertificate(card, currentUser) {
     qrCodeDataUri: "",
   };
 }
-
 export default StudentCertificatesPage;

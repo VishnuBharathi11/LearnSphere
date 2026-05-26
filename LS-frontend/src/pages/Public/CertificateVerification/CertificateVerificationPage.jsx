@@ -3,12 +3,10 @@ import { useParams } from "react-router-dom";
 import { BadgeCheck, CircleAlert, ShieldCheck } from "lucide-react";
 import { verifyCertificate } from "../../../services/certificateApi";
 import styles from "./CertificateVerification.module.scss";
-
 function CertificateVerificationPage() {
   const { token } = useParams();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
     setLoading(true);
     verifyCertificate(token)
@@ -16,7 +14,6 @@ function CertificateVerificationPage() {
       .catch(() => setResult({ valid: false, message: "Verification service unavailable" }))
       .finally(() => setLoading(false));
   }, [token]);
-
   return (
     <main className={styles.verifyPage}>
       <section className={`${styles.verifyCard} ${result?.valid ? styles.valid : styles.invalid}`}>
@@ -60,5 +57,4 @@ function CertificateVerificationPage() {
     </main>
   );
 }
-
 export default CertificateVerificationPage;

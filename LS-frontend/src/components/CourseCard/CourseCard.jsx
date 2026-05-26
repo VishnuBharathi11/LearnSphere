@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import courseImg from "../../assets/Featured Courses/1.jpg";
 import ProgressiveImage from "../ProgressiveImage/ProgressiveImage.jsx";
 import Skeleton from "../Skeleton/Skeleton.jsx";
-
 function CourseCard({
   course = null,
   showText = true,
@@ -12,7 +11,6 @@ function CourseCard({
   isSkeleton = false,
 }) {
   const navigate = useNavigate();
-
   if (isSkeleton || !course) {
     return (
       <div className="browse-course-card browse-course-card--skeleton" aria-hidden="true">
@@ -35,7 +33,6 @@ function CourseCard({
       </div>
     );
   }
-
   return (
     <div className="browse-course-card">
       <div className="course-card-image">
@@ -88,5 +85,4 @@ function CourseCard({
     </div>
   );
 }
-
 export default CourseCard;

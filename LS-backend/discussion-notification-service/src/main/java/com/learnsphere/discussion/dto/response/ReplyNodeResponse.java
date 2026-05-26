@@ -1,14 +1,11 @@
 package com.learnsphere.discussion.dto.response;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,7 +22,6 @@ public class ReplyNodeResponse {
     private long upvoteCount;
     private boolean upvotedByCurrentUser;
     private long reportCount;
-
     @Builder.Default
     private List<ReplyNodeResponse> children = new ArrayList<>();
 }

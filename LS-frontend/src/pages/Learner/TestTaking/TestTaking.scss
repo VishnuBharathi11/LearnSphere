@@ -7,7 +7,6 @@
     linear-gradient(140deg, #5a36f0, #7357f4 45%, #7c67ee 100%);
   padding: 36px;
 }
-
 .assessment-attempt-card {
   max-width: 1100px;
   margin: 0 auto;
@@ -16,7 +15,6 @@
   padding: 26px;
   box-shadow: 0 20px 50px rgba(23, 14, 73, 0.28);
 }
-
 .attempt-topbar {
   display: grid;
   grid-template-columns: 1.4fr 1fr auto auto;
@@ -25,20 +23,17 @@
   border-bottom: 1px solid #ececf2;
   padding-bottom: 18px;
 }
-
 .attempt-title {
   h3 {
     margin: 0;
     font-size: 22px;
     color: #1f2937;
   }
-
   span {
     color: #6b7280;
     font-size: 13px;
   }
 }
-
 .attempt-progress-wrap {
   span {
     display: inline-block;
@@ -47,21 +42,18 @@
     color: #6b7280;
   }
 }
-
 .attempt-progress-track {
   height: 8px;
   border-radius: 999px;
   background: #e8e6fa;
   overflow: hidden;
 }
-
 .attempt-progress-fill {
   height: 100%;
   border-radius: inherit;
   background: linear-gradient(90deg, #5a36f0, #7d66f6);
   transition: width 0.25s ease;
 }
-
 .review-btn {
   border: 1px solid #d9d6f9;
   border-radius: 999px;
@@ -70,14 +62,12 @@
   padding: 8px 14px;
   font-size: 12px;
   cursor: pointer;
-
   &.active {
     background: #5a36f0;
     border-color: #5a36f0;
     color: #ffffff;
   }
 }
-
 .attempt-timer {
   display: inline-flex;
   align-items: center;
@@ -86,7 +76,6 @@
   font-size: 13px;
   font-weight: 600;
 }
-
 .attempt-question-shell {
   margin-top: 20px;
   background: #f8f8fc;
@@ -94,24 +83,20 @@
   border-radius: 14px;
   padding: 24px;
 }
-
 .question-index {
   margin: 0 0 8px;
   font-size: 13px;
   color: #7c7f90;
 }
-
 .attempt-question-shell h4 {
   margin: 0 0 18px;
   font-size: 20px;
   color: #1f2937;
 }
-
 .attempt-options {
   display: grid;
   gap: 12px;
 }
-
 .attempt-option {
   border: 1px solid #d7d8e3;
   background: #ffffff;
@@ -123,37 +108,31 @@
   justify-content: space-between;
   cursor: pointer;
   transition: all 0.15s ease;
-
   span {
     text-align: left;
     color: #334155;
     font-size: 15px;
   }
-
   .radio-dot {
     width: 15px;
     height: 15px;
     border-radius: 50%;
     border: 2px solid #6b7280;
   }
-
   &.selected {
     border-color: #5a36f0;
     box-shadow: inset 3px 0 0 #5a36f0;
-
     .radio-dot {
       border-color: #5a36f0;
       box-shadow: inset 0 0 0 3px #ffffff, 0 0 0 8px #5a36f0;
     }
   }
 }
-
 .attempt-actions {
   margin-top: 22px;
   display: flex;
   justify-content: space-between;
 }
-
 .nav-btn,
 .finish-btn {
   border: none;
@@ -167,27 +146,22 @@
   font-size: 14px;
   cursor: pointer;
 }
-
 .nav-btn {
   background: #f2f1fb;
   color: #4b5563;
-
   &.next {
     background: #e8e4ff;
     color: #5a36f0;
   }
-
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 }
-
 .finish-btn {
   background: #5a36f0;
   color: #ffffff;
 }
-
 .test-loading,
 .test-empty {
   min-height: 320px;
@@ -195,7 +169,6 @@
   place-items: center;
   text-align: center;
 }
-
 .test-empty button {
   margin-top: 12px;
   border: none;
@@ -205,22 +178,18 @@
   padding: 10px 16px;
   cursor: pointer;
 }
-
 @media (max-width: 960px) {
   .assessment-attempt-page {
     padding: 12px;
     border-radius: 14px;
   }
-
   .assessment-attempt-card {
     padding: 16px;
   }
-
   .attempt-topbar {
     grid-template-columns: 1fr;
     gap: 10px;
   }
-
   .attempt-question-shell h4 {
     font-size: 17px;
   }

@@ -1,20 +1,16 @@
 package com.learnsphere.certificate.service.impl;
-
 import com.learnsphere.certificate.config.CertificateProperties;
 import com.learnsphere.certificate.exception.ResourceNotFoundException;
 import com.learnsphere.certificate.service.StorageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-
 @Service
 @RequiredArgsConstructor
 public class LocalStorageService implements StorageService {
     private final CertificateProperties properties;
-
     @Override
     public String savePdf(String certificateId, byte[] content) {
         try {
@@ -27,7 +23,6 @@ public class LocalStorageService implements StorageService {
             throw new IllegalStateException("Unable to store certificate PDF", ex);
         }
     }
-
     @Override
     public byte[] read(String storageKey) {
         try {
@@ -40,7 +35,6 @@ public class LocalStorageService implements StorageService {
             throw new ResourceNotFoundException("Certificate PDF not found");
         }
     }
-
     @Override
     public String publicUrl(String storageKey) {
         return storageKey;

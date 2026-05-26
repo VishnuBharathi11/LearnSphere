@@ -1,5 +1,4 @@
 @use "sass:color";
-
 $font: "Inter", sans-serif;
 $font-body: "Inter", sans-serif;
 $primary: #a435f0;
@@ -12,7 +11,6 @@ $text-muted: #6a6f73;
 $border-glass: rgba(164, 53, 240, 0.12);
 $card-glass: rgba(255, 255, 255, 0.65);
 $card-glass-hover: rgba(255, 255, 255, 0.88);
-
 .instructor-applications-page {
   font-family: $font-body;
   padding: 24px;
@@ -25,14 +23,12 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   flex-direction: column;
   gap: 20px;
 }
-
 .ia-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 20px;
   margin-bottom: 8px;
-
   h2 {
     font-family: $font;
     margin: 0;
@@ -42,7 +38,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
   }
-
   p {
     margin: 6px 0 0;
     color: $text-muted;
@@ -50,7 +45,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     font-weight: 500;
   }
 }
-
 .ia-search {
   display: flex;
   align-items: center;
@@ -63,11 +57,9 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   min-width: 320px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.01);
   transition: all 0.25s ease;
-
   svg {
     color: $primary;
   }
-
   input {
     border: none;
     outline: none;
@@ -76,25 +68,21 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     font-weight: 500;
     color: $text-dark;
     background: transparent;
-
     &::placeholder {
       color: #9ca3af;
     }
   }
-
   &:focus-within {
     border-color: $accent;
     background: #ffffff;
     box-shadow: 0 0 0 4px rgba($accent, 0.12);
   }
 }
-
 .ia-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
-
 .ia-stat-card {
   background: $card-glass;
   backdrop-filter: blur(14px);
@@ -106,14 +94,12 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   gap: 8px;
   box-shadow: 0 10px 20px rgba(28, 29, 31, 0.02);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
   &:hover {
     background: $card-glass-hover;
     border-color: rgba($primary, 0.25);
     transform: translateY(-2px);
     box-shadow: 0 12px 24px rgba(164, 53, 240, 0.08);
   }
-
   span {
     color: $text-muted;
     font-size: 13px;
@@ -121,32 +107,27 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-
   strong {
     font-family: $font;
     font-size: 26px;
     font-weight: 700;
     color: $text-dark;
   }
-
   &.highlight {
     border-color: rgba($accent, 0.3);
     background: rgba($accent, 0.05);
-
     strong {
       color: color.adjust($accent, $lightness: -5%);
       background: linear-gradient(135deg, $accent, color.adjust($accent, $lightness: -15%));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
     &:hover {
       border-color: rgba($accent, 0.55);
       box-shadow: 0 12px 24px rgba($accent, 0.1);
     }
   }
 }
-
 .ia-table {
   background: $card-glass;
   backdrop-filter: blur(14px);
@@ -156,17 +137,14 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   box-shadow: 0 10px 24px rgba(28, 29, 31, 0.02);
   margin-top: 8px;
 }
-
 .ia-table table {
   width: 100%;
   border-collapse: collapse;
 }
-
 .ia-table thead {
   background: rgba($primary, 0.03);
   border-bottom: 1px solid $border-glass;
 }
-
 .ia-table th,
 .ia-table td {
   padding: 16px 20px;
@@ -175,7 +153,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   font-size: 14px;
   border-bottom: 1px solid rgba($primary, 0.06);
 }
-
 .ia-table th {
   font-family: $font;
   font-size: 13px;
@@ -184,19 +161,15 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
-
 .ia-table tr {
   transition: all 0.2s ease;
-
   &:hover {
     background: rgba($primary, 0.02);
   }
-
   &:last-child td {
     border-bottom: none;
   }
 }
-
 .status {
   font-family: $font;
   font-weight: 700;
@@ -210,21 +183,18 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   border-radius: 99px;
   font-size: 11px;
   border: 1px solid transparent;
-
   &.pending {
     color: #d97706;
     background: rgba(217, 119, 6, 0.08);
     border-color: rgba(217, 119, 6, 0.2);
     box-shadow: 0 2px 8px rgba(217, 119, 6, 0.05);
   }
-
   &.approved {
     color: $success;
     background: rgba($success, 0.08);
     border-color: rgba($success, 0.2);
     box-shadow: 0 2px 8px rgba($success, 0.05);
   }
-
   &.rejected {
     color: $danger;
     background: rgba($danger, 0.08);
@@ -232,22 +202,18 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     box-shadow: 0 2px 8px rgba($danger, 0.05);
   }
 }
-
 .status-col,
 .status-cell,
 .review-col,
 .review-cell {
   text-align: center !important;
 }
-
 .status-cell {
   min-width: 130px;
 }
-
 .review-cell {
   min-width: 120px;
 }
-
 .review-btn {
   border: 1px solid $border-glass;
   background: #ffffff;
@@ -264,28 +230,23 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   color: $primary;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-
   svg {
     color: $primary;
     transition: transform 0.2s ease;
   }
-
   &:hover {
     border-color: $primary;
     background: rgba($primary, 0.03);
     box-shadow: 0 4px 12px rgba($primary, 0.1);
     transform: translateY(-1px);
-
     svg {
       transform: scale(1.15);
     }
   }
-
   &:active {
     transform: scale(0.97);
   }
 }
-
 .empty {
   text-align: center;
   padding: 60px 40px;
@@ -293,13 +254,11 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   font-family: $font;
   font-size: 15px;
   font-weight: 600;
-
   svg {
     color: rgba($primary, 0.2);
     margin-bottom: 12px;
   }
 }
-
 .ia-modal-overlay {
   position: fixed;
   inset: 0;
@@ -312,7 +271,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   padding: 20px;
   animation: fadeIn 0.3s ease;
 }
-
 .ia-modal {
   background: #ffffff;
   border: 1px solid rgba($primary, 0.08);
@@ -325,14 +283,12 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   flex-direction: column;
   gap: 20px;
 }
-
 .ia-modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid rgba($primary, 0.08);
   padding-bottom: 16px;
-
   h3 {
     font-family: $font;
     margin: 0;
@@ -340,7 +296,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     font-weight: 700;
     color: $text-dark;
   }
-
   button {
     border: none;
     background: transparent;
@@ -352,25 +307,21 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     padding: 6px 12px;
     border-radius: 99px;
     transition: all 0.2s ease;
-
     &:hover {
       background: rgba(0, 0, 0, 0.05);
       color: $text-dark;
     }
   }
 }
-
 .ia-modal-body {
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
-
 .ia-details {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
-
   div {
     background: #f8fafc;
     border: 1px solid rgba(0, 0, 0, 0.02);
@@ -380,12 +331,10 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     flex-direction: column;
     gap: 4px;
     transition: border-color 0.2s ease;
-
     &:hover {
       border-color: rgba($primary, 0.15);
     }
   }
-
   span {
     font-size: 11px;
     font-weight: 700;
@@ -393,14 +342,12 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     letter-spacing: 0.5px;
     color: $text-muted;
   }
-
   strong {
     font-size: 14px;
     font-weight: 600;
     color: $text-dark;
   }
 }
-
 .resume-btn {
   display: inline-flex;
   align-items: center;
@@ -417,21 +364,18 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   cursor: pointer;
   width: 100%;
   transition: all 0.2s ease;
-
   &:hover {
     background: rgba($primary, 0.06);
     border-style: solid;
     box-shadow: 0 4px 12px rgba($primary, 0.05);
   }
 }
-
 .ia-modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   border-top: 1px solid rgba($primary, 0.08);
   padding-top: 20px;
-
   button {
     border-radius: 99px;
     padding: 10px 24px;
@@ -442,37 +386,30 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     font-weight: 700;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-
   .reject {
     background: rgba($danger, 0.08);
     color: $danger;
-
     &:hover {
       background: rgba($danger, 0.15);
       transform: translateY(-1px);
     }
-
     &:active {
       transform: scale(0.97);
     }
   }
-
   .approve {
     background: linear-gradient(135deg, $primary, color.adjust($primary, $lightness: -8%));
     color: #ffffff;
     box-shadow: 0 4px 12px rgba($primary, 0.2);
-
     &:hover {
       box-shadow: 0 6px 18px rgba($primary, 0.35);
       transform: translateY(-1px);
     }
-
     &:active {
       transform: scale(0.97);
     }
   }
 }
-
 .ia-modal-body label {
   display: flex;
   flex-direction: column;
@@ -481,7 +418,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   font-size: 13px;
   font-weight: 700;
   color: $text-dark;
-
   input {
     border: 1px solid $border-glass;
     border-radius: 12px;
@@ -493,7 +429,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     background: rgba(255, 255, 255, 0.85);
     outline: none;
     transition: all 0.25s ease;
-
     &:focus {
       border-color: $primary;
       background: #ffffff;
@@ -501,7 +436,6 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     }
   }
 }
-
 .hint {
   font-size: 12px;
   font-weight: 500;
@@ -511,12 +445,10 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
   border-radius: 8px;
   padding: 10px 14px;
 }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-
 @keyframes slideUp {
   from {
     opacity: 0;
@@ -527,37 +459,30 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
     transform: translateY(0);
   }
 }
-
 @media (max-width: 1024px) {
   .ia-stats {
     grid-template-columns: repeat(2, 1fr);
   }
-
   .ia-details {
     grid-template-columns: 1fr;
   }
 }
-
 @media (max-width: 768px) {
   .ia-header {
     flex-direction: column;
     align-items: flex-start;
   }
-
   .ia-search {
     width: 100%;
     min-width: unset;
   }
 }
-
 @media (max-width: 480px) {
   .ia-stats {
     grid-template-columns: 1fr;
   }
-
   .ia-modal-actions {
     flex-direction: column;
-
     button {
       width: 100%;
     }

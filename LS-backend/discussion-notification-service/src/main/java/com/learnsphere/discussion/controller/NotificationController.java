@@ -1,7 +1,5 @@
 package com.learnsphere.discussion.controller;
-
 import java.util.List;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -11,20 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.learnsphere.discussion.dto.NotificationRequest;
 import com.learnsphere.discussion.dto.response.NotificationResponse;
 import com.learnsphere.discussion.service.NotificationService;
-
 import lombok.RequiredArgsConstructor;
-
 @RestController
 @RequestMapping("/notifications")
 @RequiredArgsConstructor
 public class NotificationController {
-
     private final NotificationService notificationService;
-
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody NotificationRequest request) {
         notificationService.createNotification(
@@ -36,12 +29,10 @@ public class NotificationController {
         );
         return ResponseEntity.noContent().build();
     }
-
     @GetMapping("/{userId}")
     public ResponseEntity<List<NotificationResponse>> get(@PathVariable String userId) {
         return ResponseEntity.ok(notificationService.getUserNotifications(userId));
     }
-
     @PatchMapping("/{notificationId}/read")
     public ResponseEntity<Void> markRead(@PathVariable String notificationId, @RequestParam String userId) {
         notificationService.markNotificationRead(notificationId, userId);

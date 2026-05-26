@@ -1,5 +1,4 @@
 package com.learnsphere.admin.service.impl;
-
 import com.learnsphere.admin.dto.*;
 import com.learnsphere.admin.entity.*;
 import com.learnsphere.admin.repository.*;
@@ -11,7 +10,6 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -19,13 +17,10 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import static org.springframework.http.HttpStatus.NOT_FOUND;
-
 @Service
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
-
     private final AdminUserRepository userRepo;
     private final AdminEnrollmentRepository enrollmentRepo;
     private final AdminPaymentRepository paymentRepo;
@@ -33,44 +28,35 @@ public class AdminServiceImpl implements AdminService {
     private final RolePermissionRepository rolePermissionRepo;
     private final JavaMailSender mailSender;
     private static final Pattern PERM_SPLIT = Pattern.compile("\\s*\\|\\|\\s*");
-
     @Value("${app.mail.from:LearnSphere}")
     private String fromMail;
-
     @Override
     public DashboardResponse getDashboard() {
         AdminSetting settings = getOrCreateSettings();
         double feePercent = settings.getPlatformFeePercent() == null ? 15.0 : settings.getPlatformFeePercent();
-
         List<AdminUser> users = userRepo.findByDeletedAtIsNull();
         List<AdminEnrollment> enrollments = enrollmentRepo.findAll();
         List<AdminPayment> payments = paymentRepo.findAll();
-
         List<AdminUser> activeUsers = users.stream()
                 .filter(user -> Boolean.TRUE.equals(user.getActive()) && !Boolean.TRUE.equals(user.getSuspended()))
                 .toList();
-
         long activeLearners = activeUsers.stream()
                 .filter(user -> "learner".equalsIgnoreCase(user.getRole()))
                 .count();
         long activeInstructors = activeUsers.stream()
                 .filter(user -> "instructor".equalsIgnoreCase(user.getRole()))
                 .count();
-
         List<AdminPayment> successPayments = payments.stream()
                 .filter(payment -> "SUCCESS".equalsIgnoreCase(payment.getStatus()))
                 .toList();
-
         double grossRevenue = successPayments.stream()
                 .mapToDouble(payment -> safeAmount(payment.getAmount()))
                 .sum();
         double platformRevenue = grossRevenue * (feePercent / 100.0);
-
         List<DashboardResponse.UserGrowthPoint> userGrowth = buildUserGrowth(users);
         List<DashboardResponse.RevenueTrendPoint> revenueTrend = buildRevenueTrend(successPayments, enrollments, feePercent);
         List<DashboardResponse.PendingTask> pendingTasks = buildPendingTasks(users);
         List<DashboardResponse.RecentActivity> recentActivities = buildRecentActivities(users, enrollments, successPayments);
-
         return DashboardResponse.builder()
                 .activeLearners(activeLearners)
                 .activeInstructors(activeInstructors)
@@ -85,7 +71,6 @@ public class AdminServiceImpl implements AdminService {
                 .recentActivity(recentActivities)
                 .build();
     }
-
     @Override
     public List<AdminUserResponse> getUsers() {
         return userRepo.findByDeletedAtIsNull().stream()
@@ -93,7 +78,6 @@ public class AdminServiceImpl implements AdminService {
                 .map(this::toUserResponse)
                 .toList();
     }
-
     @Override
     @Transactional
     public AdminUserResponse setUserSuspended(Long userId, boolean suspended) {
@@ -111,7 +95,6 @@ public class AdminServiceImpl implements AdminService {
                         : "Your LearnSphere account is active again.");
         return toUserResponse(saved);
     }
-
     @Override
     @Transactional
     public void softDeleteUser(Long userId) {
@@ -125,7 +108,6 @@ public class AdminServiceImpl implements AdminService {
         userRepo.save(user);
         sendMail(user.getEmail(), "Account Removed", "Your LearnSphere account has been removed by admin.");
     }
-
     @Override
     @Transactional
     public AdminUserResponse updateUserRole(Long userId, String role) {
@@ -142,17 +124,14 @@ public class AdminServiceImpl implements AdminService {
         sendMail(saved.getEmail(), "Role Updated", "Your role was changed to " + safeRole + ".");
         return toUserResponse(saved);
     }
-
     @Override
     public AdminSettingResponse getSettings() {
         return toSettingResponse(getOrCreateSettings());
     }
-
     @Override
     @Transactional
     public AdminSettingResponse saveSettings(AdminSettingRequest request) {
         validateSettings(request);
-
         AdminSetting setting = getOrCreateSettings();
         setting.setSiteName(defaultString(request.getSiteName(), setting.getSiteName()));
         setting.setSiteEmail(defaultString(request.getSiteEmail(), setting.getSiteEmail()));
@@ -171,7 +150,6 @@ public class AdminServiceImpl implements AdminService {
         setting.setUpdatedAt(Instant.now());
         return toSettingResponse(settingRepo.save(setting));
     }
-
     private void validateSettings(AdminSettingRequest request) {
         if (request.getPlatformFeePercent() != null) {
             double fee = request.getPlatformFeePercent();
@@ -179,10 +157,8 @@ public class AdminServiceImpl implements AdminService {
                 throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Platform fee must be between 0 and 100.");
             }
         }
-
         Integer minPrice = request.getMinCoursePrice();
         Integer maxPrice = request.getMaxCoursePrice();
-
         if (minPrice != null && minPrice < 0) {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Minimum course price cannot be negative.");
         }
@@ -193,17 +169,14 @@ public class AdminServiceImpl implements AdminService {
             throw new ResponseStatusException(org.springframework.http.HttpStatus.BAD_REQUEST, "Minimum course price cannot be greater than maximum course price.");
         }
     }
-
     @Override
     public List<RolePermissionResponse> getRolePermissions() {
         ensureDefaultRolePermissions();
-
         Map<String, Long> usersByRole = userRepo.findByDeletedAtIsNull().stream()
                 .collect(Collectors.groupingBy(
                         user -> String.valueOf(user.getRole()).toLowerCase(),
                         Collectors.counting()
                 ));
-
         return rolePermissionRepo.findAll().stream()
                 .map(rolePermission -> RolePermissionResponse.builder()
                         .role(rolePermission.getRole())
@@ -213,7 +186,6 @@ public class AdminServiceImpl implements AdminService {
                 .sorted(Comparator.comparing(RolePermissionResponse::getRole))
                 .toList();
     }
-
     @Override
     @Transactional
     public RolePermissionResponse saveRolePermissions(RolePermissionRequest request) {
@@ -235,7 +207,6 @@ public class AdminServiceImpl implements AdminService {
                 .users(users)
                 .build();
     }
-
     @Override
     public List<CourseMetricResponse> getCourseMetrics(List<String> courseIds) {
         if (courseIds == null || courseIds.isEmpty()) {
@@ -243,24 +214,19 @@ public class AdminServiceImpl implements AdminService {
         }
         Set<String> safeIds = courseIds.stream().filter(Objects::nonNull).map(String::trim).filter(id -> !id.isBlank()).collect(Collectors.toSet());
         if (safeIds.isEmpty()) return List.of();
-
         AdminSetting settings = getOrCreateSettings();
         double feePercent = settings.getPlatformFeePercent() == null ? 15.0 : settings.getPlatformFeePercent();
-
         List<AdminEnrollment> enrollments = enrollmentRepo.findByCourseIdIn(new ArrayList<>(safeIds));
         List<AdminPayment> successPayments = paymentRepo.findByCourseIdIn(new ArrayList<>(safeIds)).stream()
                 .filter(payment -> "SUCCESS".equalsIgnoreCase(payment.getStatus()))
                 .toList();
-
         Map<String, Long> learnersByCourse = enrollments.stream()
                 .collect(Collectors.groupingBy(AdminEnrollment::getCourseId, Collectors.counting()));
-
         Map<String, Double> revenueByCourse = successPayments.stream()
                 .collect(Collectors.groupingBy(
                         AdminPayment::getCourseId,
                         Collectors.summingDouble(payment -> safeAmount(payment.getAmount()))
                 ));
-
         return safeIds.stream()
                 .map(courseId -> {
                     double gross = revenueByCourse.getOrDefault(courseId, 0.0);
@@ -273,7 +239,6 @@ public class AdminServiceImpl implements AdminService {
                 })
                 .toList();
     }
-
     private List<DashboardResponse.UserGrowthPoint> buildUserGrowth(List<AdminUser> users) {
         Map<String, DashboardResponse.UserGrowthPoint.UserGrowthPointBuilder> map = new LinkedHashMap<>();
         LocalDate now = LocalDate.now(ZoneOffset.UTC).withDayOfMonth(1);
@@ -282,7 +247,6 @@ public class AdminServiceImpl implements AdminService {
             String month = monthStart.getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
             map.put(month, DashboardResponse.UserGrowthPoint.builder().month(month).registrations(0).logins(0));
         }
-
         users.forEach(user -> {
             if (user.getCreatedAt() != null) {
                 String month = user.getCreatedAt().atZone(ZoneOffset.UTC).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
@@ -307,10 +271,8 @@ public class AdminServiceImpl implements AdminService {
                 }
             }
         });
-
         return map.values().stream().map(DashboardResponse.UserGrowthPoint.UserGrowthPointBuilder::build).toList();
     }
-
     private List<DashboardResponse.RevenueTrendPoint> buildRevenueTrend(
             List<AdminPayment> payments,
             List<AdminEnrollment> enrollments,
@@ -325,21 +287,18 @@ public class AdminServiceImpl implements AdminService {
             grossByMonth.put(month, 0.0);
             enrollByMonth.put(month, 0L);
         }
-
         payments.forEach(payment -> {
             if (payment.getCreatedAt() == null) return;
             String month = payment.getCreatedAt().atZone(ZoneOffset.UTC).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
             if (!grossByMonth.containsKey(month)) return;
             grossByMonth.put(month, grossByMonth.get(month) + safeAmount(payment.getAmount()));
         });
-
         enrollments.forEach(enrollment -> {
             if (enrollment.getEnrolledAt() == null) return;
             String month = enrollment.getEnrolledAt().atZone(ZoneOffset.UTC).getMonth().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
             if (!enrollByMonth.containsKey(month)) return;
             enrollByMonth.put(month, enrollByMonth.get(month) + 1);
         });
-
         return grossByMonth.keySet().stream()
                 .map(month -> {
                     double gross = grossByMonth.get(month);
@@ -352,7 +311,6 @@ public class AdminServiceImpl implements AdminService {
                 })
                 .toList();
     }
-
     private List<DashboardResponse.PendingTask> buildPendingTasks(List<AdminUser> users) {
         long suspended = users.stream().filter(user -> Boolean.TRUE.equals(user.getSuspended())).count();
         long noLoginYet = users.stream()
@@ -371,14 +329,12 @@ public class AdminServiceImpl implements AdminService {
                         .build()
         );
     }
-
     private List<DashboardResponse.RecentActivity> buildRecentActivities(
             List<AdminUser> users,
             List<AdminEnrollment> enrollments,
             List<AdminPayment> payments
     ) {
         List<DashboardResponse.RecentActivity> activity = new ArrayList<>();
-
         users.stream()
                 .filter(user -> user.getCreatedAt() != null)
                 .sorted(Comparator.comparing(AdminUser::getCreatedAt).reversed())
@@ -388,7 +344,6 @@ public class AdminServiceImpl implements AdminService {
                         .message("User registered: " + defaultString(user.getName(), user.getEmail()))
                         .timestamp(user.getCreatedAt())
                         .build()));
-
         users.stream()
                 .filter(user -> user.getLastLoginAt() != null)
                 .sorted(Comparator.comparing(AdminUser::getLastLoginAt).reversed())
@@ -398,7 +353,6 @@ public class AdminServiceImpl implements AdminService {
                         .message("User logged in: " + defaultString(user.getName(), user.getEmail()))
                         .timestamp(user.getLastLoginAt())
                         .build()));
-
         enrollments.stream()
                 .filter(enrollment -> enrollment.getEnrolledAt() != null)
                 .sorted(Comparator.comparing(AdminEnrollment::getEnrolledAt).reversed())
@@ -408,7 +362,6 @@ public class AdminServiceImpl implements AdminService {
                         .message("New enrollment in course " + enrollment.getCourseId())
                         .timestamp(enrollment.getEnrolledAt())
                         .build()));
-
         payments.stream()
                 .filter(payment -> payment.getCreatedAt() != null)
                 .sorted(Comparator.comparing(AdminPayment::getCreatedAt).reversed())
@@ -418,18 +371,15 @@ public class AdminServiceImpl implements AdminService {
                         .message("Payment success for course " + payment.getCourseId())
                         .timestamp(payment.getCreatedAt())
                         .build()));
-
         return activity.stream()
                 .sorted(Comparator.comparing(DashboardResponse.RecentActivity::getTimestamp, Comparator.nullsLast(Comparator.reverseOrder())))
                 .limit(10)
                 .toList();
     }
-
     private AdminUser getUser(Long userId) {
         return userRepo.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "User not found"));
     }
-
     private AdminUserResponse toUserResponse(AdminUser user) {
         String status;
         if (user.getDeletedAt() != null) {
@@ -439,7 +389,6 @@ public class AdminServiceImpl implements AdminService {
         } else {
             status = "active";
         }
-
         return AdminUserResponse.builder()
                 .id(user.getId())
                 .name(user.getName())
@@ -451,7 +400,6 @@ public class AdminServiceImpl implements AdminService {
                 .lastLoginAt(user.getLastLoginAt())
                 .build();
     }
-
     private AdminSetting getOrCreateSettings() {
         return settingRepo.findById(1L).orElseGet(() ->
                 settingRepo.save(AdminSetting.builder()
@@ -474,7 +422,6 @@ public class AdminServiceImpl implements AdminService {
                         .build())
         );
     }
-
     private AdminSettingResponse toSettingResponse(AdminSetting settings) {
         return AdminSettingResponse.builder()
                 .siteName(settings.getSiteName())
@@ -493,7 +440,6 @@ public class AdminServiceImpl implements AdminService {
                 .maintenanceMode(settings.getMaintenanceMode())
                 .build();
     }
-
     private List<String> parsePermissions(String permissionsJson) {
         if (permissionsJson == null || permissionsJson.isBlank()) return List.of();
         return Arrays.stream(PERM_SPLIT.split(permissionsJson))
@@ -501,7 +447,6 @@ public class AdminServiceImpl implements AdminService {
                 .filter(value -> !value.isBlank())
                 .toList();
     }
-
     private void ensureDefaultRolePermissions() {
         if (rolePermissionRepo.count() > 0) return;
         saveRolePermissionsInternal("admin", List.of(
@@ -527,7 +472,6 @@ public class AdminServiceImpl implements AdminService {
         ));
         saveRolePermissionsInternal("learner", List.of("View Dashboard"));
     }
-
     private void saveRolePermissionsInternal(String role, List<String> permissions) {
         RolePermission rolePermission = RolePermission.builder()
                 .role(role)
@@ -536,7 +480,6 @@ public class AdminServiceImpl implements AdminService {
                 .build();
         rolePermissionRepo.save(rolePermission);
     }
-
     private String writePermissions(List<String> permissions) {
         if (permissions == null || permissions.isEmpty()) return "";
         return permissions.stream()
@@ -546,7 +489,6 @@ public class AdminServiceImpl implements AdminService {
                 .distinct()
                 .collect(Collectors.joining("||"));
     }
-
     private void sendMail(String to, String subject, String text) {
         if (to == null || to.isBlank()) return;
         try {
@@ -561,20 +503,16 @@ public class AdminServiceImpl implements AdminService {
         } catch (Exception ignored) {
         }
     }
-
     private String defaultString(String value, String fallback) {
         return (value == null || value.isBlank()) ? fallback : value;
     }
-
     private Boolean booleanOrDefault(Boolean value, Boolean fallback) {
         return value == null ? fallback : value;
     }
-
     private double safeAmount(Integer amount) {
         if (amount == null) return 0.0;
         return amount / 100.0;
     }
-
     private double round(double value) {
         return Math.round(value * 100.0) / 100.0;
     }

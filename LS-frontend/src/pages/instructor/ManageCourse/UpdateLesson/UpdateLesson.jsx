@@ -27,7 +27,6 @@ function UpdateLesson() {
   const [loadingLessons, setLoadingLessons] = useState(true);
   const [lessonError, setLessonError] = useState("");
   const [message, setMessage] = useState({ type: "", text: "" });
-
   useEffect(() => {
     async function loadCourse() {
       try {
@@ -45,7 +44,6 @@ function UpdateLesson() {
     }
     loadCourse();
   }, [id, currentUser?.id]);
-
   useEffect(() => {
     async function loadLessons() {
       setLoadingLessons(true);
@@ -62,11 +60,9 @@ function UpdateLesson() {
     }
     loadLessons();
   }, [id]);
-
   if (loadingCourse) {
     return null;
   }
-
   if (!currentUser || currentRole !== "instructor" || !course) {
     return (
       <p style={{ padding: 40 }}>
@@ -74,7 +70,6 @@ function UpdateLesson() {
       </p>
     );
   }
-
   const deleteLesson = (lessonId) => {
     deleteCourseLesson(id, lessonId)
       .then(() => {
@@ -92,7 +87,6 @@ function UpdateLesson() {
     if (type === "pdf") return <FileText size={22} />;
     return <File size={22} />;
   };
-
   return (
     <div className="upload-lesson-layout">
       <div className="upload-lessons-page">
@@ -104,7 +98,6 @@ function UpdateLesson() {
             <Plus size={16} /> Add New Lesson
           </button>
         </div>
-
         <div className="course-banner">
           <div>
             <span className="course-label">Course</span>
@@ -181,4 +174,3 @@ function UpdateLesson() {
   );
 }
 export default UpdateLesson;
-

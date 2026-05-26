@@ -11,7 +11,6 @@ $line-strong: #cbd5e1;
 $danger: #ef4444;
 $shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.05);
 $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
-
 .forum-page-shell {
   width: 100%;
   height: 100%;
@@ -25,14 +24,12 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   font-family: $font-primary;
   color: $text-strong;
 }
-
 .forum-toolbar {
   display: grid;
   grid-template-columns: 1fr 170px auto;
   gap: 10px;
   margin-bottom: 14px;
 }
-
 .forum-input {
   width: 100%;
   padding: 10px 12px;
@@ -42,18 +39,15 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   color: $text-strong;
   font-size: 13px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
   &::placeholder {
     color: #94a3b8;
   }
-
   &:focus {
     outline: none;
     border-color: #a5b4fc;
     box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
   }
 }
-
 .forum-btn {
   display: inline-flex;
   align-items: center;
@@ -67,54 +61,45 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   line-height: 1.2;
   cursor: pointer;
   transition: all 0.2s ease;
-
   &:disabled {
     opacity: 0.6;
     cursor: not-allowed;
   }
 }
-
 .forum-btn-primary,
 .forum-btn-like {
   color: #fff;
   background: $primary;
   box-shadow: 0 5px 12px rgba(79, 110, 247, 0.25);
-
   &:hover:not(:disabled) {
     background: $primary-600;
     transform: translateY(-1px);
     box-shadow: 0 7px 16px rgba(79, 110, 247, 0.32);
   }
 }
-
 .forum-btn-like {
   min-width: 92px;
 }
-
 .forum-btn-icon {
   min-width: 34px;
   height: 34px;
   padding: 0 10px;
 }
-
 .forum-btn-count {
   font-size: 12px;
   font-weight: 700;
   line-height: 1;
 }
-
 .forum-like-wrap {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-
 .forum-vote-wrap {
   display: inline-flex;
   align-items: center;
   gap: 4px;
 }
-
 .forum-like-icon-btn {
   display: inline-flex;
   align-items: center;
@@ -127,57 +112,46 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   cursor: pointer;
   padding: 0;
   transition: color 0.2s ease, transform 0.15s ease;
-
   &:hover {
     color: #64748b;
     transform: translateY(-1px);
   }
-
   &:active {
     transform: translateY(0);
   }
 }
-
 .forum-like-icon-btn.is-active {
   color: #A435F0;
 }
-
 .forum-downvote-btn.is-active {
   color: #ef4444;
 }
-
 .forum-danger-icon-btn {
   color: #ef4444;
-
   &:hover {
     color: #dc2626;
   }
 }
-
 .forum-like-count {
   font-size: 12px;
   font-weight: 600;
   color: #64748b;
   min-width: 16px;
 }
-
 .ghost {
   border-color: $line;
   color: #475569;
   background: #fff;
-
   &:hover:not(:disabled) {
     background: #f1f5f9;
     border-color: $line-strong;
   }
 }
-
 .forum-topic-list,
 .forum-replies-list {
   display: grid;
   gap: 10px;
 }
-
 .forum-topic-card,
 .forum-topic-detail {
   display: flex;
@@ -189,25 +163,20 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   background: $surface;
   padding: 12px;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
   &:hover {
     border-color: $line-strong;
     box-shadow: $shadow-sm;
   }
 }
-
 .forum-topic-card.is-focused {
   border-color: #c7d2fe;
   box-shadow: 0 0 0 2px rgba(164, 53, 240, 0.14);
 }
-
 .forum-topic-card-main {
   min-width: 0;
 }
-
 .forum-topic-title-link {
   text-decoration: none;
-
   h3 {
     margin: 0;
     color: $text-strong;
@@ -216,12 +185,10 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
     line-height: 1.3;
     letter-spacing: 0.1px;
   }
-
   &:hover h3 {
     color: $primary-600;
   }
 }
-
 .forum-topic-detail h1 {
   margin: 0;
   font-size: 18px;
@@ -229,7 +196,6 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   color: $text-strong;
   letter-spacing: 0.1px;
 }
-
 .forum-topic-preview,
 .forum-reply-content {
   margin: 8px 0 0;
@@ -240,14 +206,12 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   direction: ltr;
   unicode-bidi: plaintext;
 }
-
 .forum-meta-row {
   margin-top: 10px;
   display: flex;
   flex-wrap: wrap;
   gap: 7px;
 }
-
 .forum-pill {
   display: inline-flex;
   align-items: center;
@@ -260,13 +224,11 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   font-size: 11px;
   font-weight: 600;
 }
-
 .forum-pill-accent {
   border-color: #c7d2fe;
   background: #eef2ff;
   color: #8A2BE2;
 }
-
 .forum-topic-actions {
   display: flex;
   align-items: flex-start;
@@ -274,23 +236,19 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   gap: 8px;
   flex-shrink: 0;
 }
-
 .forum-back-link-row {
   margin-bottom: 10px;
 }
-
 .forum-back-link {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   gap: 6px;
 }
-
 .forum-replies-section {
   margin-top: 12px;
   display: grid;
   gap: 10px;
-
   h2 {
     margin: 0;
     font-size: 20px;
@@ -298,14 +256,12 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
     color: $text-strong;
   }
 }
-
 .forum-reply-box {
   border: 1px solid $line;
   border-radius: 12px;
   background: $surface-soft;
   padding: 10px;
 }
-
 .forum-reply-box-actions,
 .forum-modal-actions,
 .forum-reply-actions {
@@ -314,14 +270,12 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   gap: 8px;
   margin-top: 10px;
 }
-
 .forum-reply-item {
   border: 1px solid $line;
   border-radius: 12px;
   background: linear-gradient(180deg, #ffffff, #fbfdff);
   padding: 10px;
 }
-
 .forum-reply-header {
   display: flex;
   align-items: center;
@@ -330,7 +284,6 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   color: $text-muted;
   font-size: 11px;
 }
-
 .forum-reply-author {
   display: inline-flex;
   align-items: center;
@@ -339,13 +292,11 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   font-size: 14px;
   font-weight: 600;
 }
-
 .forum-reply-children {
   margin-top: 10px;
   display: grid;
   gap: 8px;
 }
-
 .forum-empty-state {
   border: 1px dashed $line;
   border-radius: 12px;
@@ -356,14 +307,12 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   font-size: 13px;
   font-weight: 500;
 }
-
 .forum-error {
   margin: 8px 0 0;
   color: $danger;
   font-size: 12px;
   font-weight: 500;
 }
-
 .forum-modal-backdrop {
   position: fixed;
   inset: 0;
@@ -374,7 +323,6 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   background: rgba(15, 23, 42, 0.48);
   backdrop-filter: blur(2px);
 }
-
 .forum-modal {
   width: min(600px, 95vw);
   border-radius: 14px;
@@ -382,19 +330,16 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   background: $surface;
   box-shadow: $shadow-md;
   padding: 16px;
-
   h3 {
     margin: 0 0 10px;
     font-size: 18px;
     font-weight: 700;
     color: $text-strong;
   }
-
   form {
     display: grid;
     gap: 8px;
   }
-
   label {
     font-size: 11px;
     font-weight: 600;
@@ -402,21 +347,17 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
-
 }
-
 .forum-rich-editor {
   border: 1px solid $line;
   border-radius: 10px;
   background: #fff;
   overflow: hidden;
 }
-
 .forum-rich-editor.is-focused {
   border-color: #a5b4fc;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
 }
-
 .forum-rich-toolbar {
   display: flex;
   align-items: center;
@@ -425,7 +366,6 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   border-bottom: 1px solid $line;
   background: #f8fafc;
 }
-
 .forum-rich-toolbar button {
   width: 28px;
   height: 28px;
@@ -436,7 +376,6 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   place-items: center;
   cursor: pointer;
 }
-
 .forum-rich-input {
   min-height: 86px;
   padding: 10px 12px;
@@ -447,12 +386,10 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   direction: ltr;
   unicode-bidi: plaintext;
 }
-
 .forum-rich-input:empty::before {
   content: attr(data-placeholder);
   color: #94a3b8;
 }
-
 .forum-pagination,
 .forum-load-more {
   display: flex;
@@ -463,25 +400,20 @@ $shadow-md: 0 10px 24px rgba(15, 23, 42, 0.08);
   color: $text-muted;
   font-size: 12px;
 }
-
 @media (max-width: 900px) {
   .forum-page-shell {
     margin: 0;
     padding: 20px;
   }
-
   .forum-toolbar {
     grid-template-columns: 1fr;
   }
-
   .forum-topic-card,
   .forum-topic-detail {
     flex-direction: column;
   }
-
   .forum-topic-actions {
     width: 100%;
-
     .forum-btn {
       width: 100%;
     }

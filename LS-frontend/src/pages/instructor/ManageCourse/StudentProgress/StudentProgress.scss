@@ -1,5 +1,3 @@
-
-// Brand Design Tokens
 $font: "Poppins", "Inter", sans-serif;
 $primary: #a435f0;
 $primary-light: rgba(164, 53, 240, 0.08);
@@ -11,21 +9,18 @@ $border: #edf2f7;
 $bg-gradient: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
 $card-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.04), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
 $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
-
 .student-progress-layout {
   display: flex;
   font-family: $font;
   background: #f8fafc;
   min-height: 100vh;
 }
-
 .student-progress-page {
   width: 100%;
   padding: 30px;
   max-width: 1200px;
   margin: 0 auto;
 }
-
 .sp-page-header {
   display: flex;
   justify-content: space-between;
@@ -33,20 +28,17 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
   margin-bottom: 24px;
   border-bottom: 1px solid rgba(164, 53, 240, 0.1);
   padding-bottom: 16px;
-
   .header-left {
     display: flex;
     flex-direction: column;
     gap: 6px;
   }
-
   h2.sp-title {
     font-size: 24px;
     font-weight: 700;
     color: $text-dark;
     margin: 0;
   }
-
   p.course-pill {
     font-size: 13px;
     font-weight: 600;
@@ -59,7 +51,6 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
     align-self: flex-start;
   }
 }
-
 .export-btn {
   background: linear-gradient(135deg, $primary 0%, #8b2df0 100%);
   color: white;
@@ -71,28 +62,23 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(164, 53, 240, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-
   display: flex;
   align-items: center;
   gap: 8px;
-
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(164, 53, 240, 0.35);
   }
-
   &:active {
     transform: translateY(0);
   }
 }
-
 .sp-stats-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 28px;
 }
-
 .sp-stat-card {
   background: white;
   border: 1px solid rgba(164, 53, 240, 0.08);
@@ -105,7 +91,6 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
   position: relative;
   overflow: hidden;
   transition: all 0.3s ease;
-
   &::before {
     content: "";
     position: absolute;
@@ -116,13 +101,11 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
     background: linear-gradient(90deg, $primary, $accent);
     opacity: 0.8;
   }
-
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
     border-color: rgba(164, 53, 240, 0.2);
   }
-
   svg {
     color: $primary;
     background: $primary-light;
@@ -133,7 +116,6 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
     box-sizing: border-box;
     margin-bottom: 4px;
   }
-
   span {
     display: block;
     font-size: 13px;
@@ -142,14 +124,12 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-
   strong {
     font-size: 26px;
     font-weight: 700;
     color: $text-dark;
   }
 }
-
 .sp-search-box {
   background: white;
   border: 1.5px solid #edf2f7;
@@ -161,11 +141,9 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
   margin-bottom: 24px;
   box-shadow: 0 2px 6px rgba(15, 23, 42, 0.01);
   transition: all 0.3s ease;
-
   svg {
     color: $text-muted;
   }
-
   input {
     border: none;
     outline: none;
@@ -174,18 +152,15 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
     font-weight: 500;
     color: $text-dark;
     background: transparent;
-
     &::placeholder {
       color: #94a3b8;
     }
   }
-
   &:focus-within {
     border-color: $primary;
     box-shadow: 0 0 0 4px rgba(164, 53, 240, 0.12);
   }
 }
-
 .table-card {
   background: white;
   border: 1px solid rgba(164, 53, 240, 0.08);
@@ -193,12 +168,10 @@ $card-glow: 0 0 0 1px rgba(164, 53, 240, 0.08);
   overflow: hidden;
   box-shadow: $card-shadow;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
 }
-
 th,
 td {
   padding: 16px 20px;
@@ -206,7 +179,6 @@ td {
   text-align: left;
   font-size: 14px;
 }
-
 th {
   background: #f8fafc;
   font-weight: 650;
@@ -216,35 +188,28 @@ th {
   letter-spacing: 0.8px;
   border-bottom: 2px solid rgba(164, 53, 240, 0.08);
 }
-
 tr {
   transition: background-color 0.2s ease;
-
   &:hover {
     background-color: #faf5ff;
   }
 }
-
 td {
   color: #334155;
-
   strong {
     color: $text-dark;
     font-size: 14.5px;
   }
-
   small {
     color: $text-muted;
     font-size: 12px;
   }
-
   svg {
     vertical-align: middle;
     margin-right: 6px;
     color: $text-muted;
   }
 }
-
 .sp-status {
   padding: 5px 12px;
   border-radius: 99px;
@@ -253,36 +218,30 @@ td {
   text-transform: capitalize;
   display: inline-flex;
   align-items: center;
-
   &.active,
   &.in-progress {
     background: rgba(164, 53, 240, 0.08);
     color: $primary;
     border: 1px solid rgba(164, 53, 240, 0.15);
   }
-
   &.completed {
     background: rgba(246, 156, 8, 0.08);
     color: $accent;
     border: 1px solid rgba(246, 156, 8, 0.15);
   }
-
   &.inactive {
     background: #f1f5f9;
     color: #475569;
     border: 1px solid #e2e8f0;
   }
 }
-
 @media (max-width: 980px) {
   .sp-stats-grid {
     grid-template-columns: 1fr;
   }
-
   .table-card {
     overflow-x: auto;
   }
-
   table {
     min-width: 760px;
   }

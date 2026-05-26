@@ -1,13 +1,9 @@
 package com.learnsphere.enrollment.dto;
-
 import java.math.BigDecimal;
 import java.time.Instant;
-
 import com.learnsphere.enrollment.enums.WithdrawalStatus;
-
 import lombok.Builder;
 import lombok.Getter;
-
 @Getter
 @Builder
 public class WithdrawalResponse {

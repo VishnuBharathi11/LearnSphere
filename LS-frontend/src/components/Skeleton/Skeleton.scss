@@ -4,7 +4,6 @@
   background: var(--loader-skeleton-base, #e6e9ef);
   border-radius: 12px;
 }
-
 .ui-skeleton::after {
   content: "";
   position: absolute;
@@ -18,13 +17,11 @@
   );
   animation: ui-skeleton-shimmer 1.3s ease-in-out infinite;
 }
-
 @keyframes ui-skeleton-shimmer {
   100% {
     transform: translateX(100%);
   }
 }
-
 @media (prefers-reduced-motion: reduce) {
   .ui-skeleton::after {
     animation: none;

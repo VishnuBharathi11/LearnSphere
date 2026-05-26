@@ -8,7 +8,6 @@
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.06),
     0 8px 20px rgba(0, 0, 0, 0.08);
-
   .log-form-card {
     display: flex;
     flex-direction: column;
@@ -18,7 +17,6 @@
     border-radius: 10px;
     padding: 40px;
     text-align: center;
-
     .log-page-name {
       font-family: "Poppins", sans-serif;
       font-size: 30px;
@@ -28,12 +26,10 @@
       text-decoration: none;
       cursor: pointer;
     }
-
     .log-form-welcome {
       font-family: "Poppins", sans-serif;
       font-weight: 600;
       font-size: 30px;
-
       p {
         font-size: 16px;
         font-weight: 400;
@@ -43,33 +39,27 @@
         transform: translateY(-8px);
       }
     }
-
     .log-form-input-box {
       padding: 10px;
-
       input {
         width: 300px;
         height: 45px;
         border: 1px solid #e5e7eb;
         border-radius: 8px;
         padding-left: 10px;
-
         &:focus {
           outline: none;
           border-color: #e5e7eb;
         }
-
         &::placeholder {
           font-family: "Inter", sans-serif;
         }
       }
     }
-
     .log-btn-forgot {
       display: flex;
       flex-direction: column;
       padding: 15px;
-
       .log-form-btn {
         width: 300px;
         height: 45px;
@@ -82,7 +72,6 @@
         font-size: 16px;
         cursor: pointer;
       }
-
       .log-form-forgot {
         color: #A435F0;
         font-size: 15px;
@@ -90,12 +79,10 @@
         margin-top: 10px;
       }
     }
-
     .log-form-register {
       margin-top: 5px;
       font-family: "Inter", sans-serif;
       font-size: 15px;
-
       .log-reg-text {
         color: #A435F0;
         text-decoration: none;

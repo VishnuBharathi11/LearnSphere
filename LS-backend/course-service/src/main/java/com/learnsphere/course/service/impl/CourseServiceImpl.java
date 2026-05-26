@@ -1,5 +1,4 @@
 package com.learnsphere.course.service.impl;
-
 import java.time.Instant;
 import java.util.Comparator;
 import java.util.List;
@@ -7,7 +6,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
 import com.learnsphere.course.entity.Course;
 import com.learnsphere.course.entity.CourseStatus;
 import com.learnsphere.course.exception.BadRequestException;
@@ -17,20 +15,13 @@ import com.learnsphere.course.client.AdminSettingsSnapshot;
 import com.learnsphere.course.repository.CategoryRepository;
 import com.learnsphere.course.repository.CourseRepository;
 import com.learnsphere.course.service.CourseService;
-
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class CourseServiceImpl implements CourseService{
 	private final CourseRepository courseRepository;
 	private final CategoryRepository categoryRepository;
 	private final AdminSettingsClient adminSettingsClient;
-	
-//	public CourseServiceImpl(CourseRepository courseRepository,CategoryRepository categoryRepository) {
-//		this.courseRepository=courseRepository;
-//		this.categoryRepository=categoryRepository;
-//	}
 	private Course getCourse(String id) {
 		return courseRepository.findById(id)
 				.orElseThrow(()->new ResourseNotFoundException("Course not found:"+id));
@@ -47,7 +38,6 @@ public class CourseServiceImpl implements CourseService{
 		course.setModerationNote(null);
 		return courseRepository.save(course);
 	}
-
 	@Override
 	public Course updateCourse(String id, Course request) {
 		Course course = getCourse(id);
@@ -66,21 +56,17 @@ public class CourseServiceImpl implements CourseService{
 		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
-
 	private void validateCoursePrice(Double price) {
 		double safePrice = price == null ? 0.0 : price;
 		if (safePrice < 0) {
 			throw new BadRequestException("Course price cannot be negative");
 		}
-
 		AdminSettingsSnapshot settings = adminSettingsClient.getSettings().orElse(null);
 		if (settings == null) {
 			return;
 		}
-
 		Integer minPrice = settings.getMinCoursePrice();
 		Integer maxPrice = settings.getMaxCoursePrice();
-
 		if (minPrice != null && safePrice < minPrice) {
 			throw new BadRequestException("Course price must be at least INR " + minPrice);
 		}
@@ -88,12 +74,10 @@ public class CourseServiceImpl implements CourseService{
 			throw new BadRequestException("Course price must be at most INR " + maxPrice);
 		}
 	}
-	
 	@Override
 	public Course getById(String id) {
 		return getCourse(id);
 	}
-
 	@Override
 	public void deleteCourse(String id) {
 		if(!courseRepository.existsById(id)) {
@@ -137,7 +121,6 @@ public class CourseServiceImpl implements CourseService{
 		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}
-
 	@Override
 	public Course activateCourse(String id) {
 		Course course = getCourse(id);
@@ -162,12 +145,10 @@ public class CourseServiceImpl implements CourseService{
 	public Page<Course> byInstructor(String instructorId, int page, int size) {
 		return courseRepository.findByInstructorId(instructorId, PageRequest.of(page, size));
 	}
-
 	@Override
 	public List<Course> adminList(String status, String search) {
 		String safeStatus = status == null ? "" : status.trim().toUpperCase();
 		String safeSearch = search == null ? "" : search.trim().toLowerCase();
-
 		return courseRepository.findAll().stream()
 				.filter(course -> {
 					if (safeStatus.isBlank()) return true;

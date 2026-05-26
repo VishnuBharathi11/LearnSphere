@@ -8,12 +8,10 @@
   background: #fff;
   container-type: inline-size;
 }
-
 @page {
   size: A4 landscape;
   margin: 0;
 }
-
 @media print {
   .renderPage {
     min-height: auto;

@@ -1,15 +1,11 @@
 package com.learnsphere.enrollment.config;
-
 import org.springframework.context.annotation.*;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
 import com.learnsphere.enrollment.security.JwtAuthFilter;
-
 import lombok.RequiredArgsConstructor;
-
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {

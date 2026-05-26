@@ -12,7 +12,6 @@ import "./Managecourse.scss";
 import { useNavigate } from "react-router-dom";
 import { getInstructorCourses, submitCourseForReview } from "../../../services/courseApi";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-
 function Managecourse() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -20,21 +19,18 @@ function Managecourse() {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [submittingId, setSubmittingId] = useState(null);
-
   let currentUser = null;
   try {
     currentUser = getCurrentUser();
   } catch {
     currentUser = null;
   }
-
   useEffect(() => {
     const role = String(currentUser?.role || "").toLowerCase();
     if (!currentUser || role !== "instructor") {
       navigate("/login", { replace: true });
       return;
     }
-
     async function loadCourses() {
       try {
         const response = await getInstructorCourses(String(currentUser.id), 0, 200);
@@ -45,10 +41,8 @@ function Managecourse() {
         setLoading(false);
       }
     }
-
     loadCourses();
   }, [currentUser, navigate]);
-
   const filteredCourses = useMemo(() => {
     return courses.filter((course) => {
       const name = (course.courseName || "").toLowerCase();
@@ -60,7 +54,6 @@ function Managecourse() {
       return matchesSearch && matchesStatus;
     });
   }, [courses, searchQuery, filterStatus]);
-
   const onSubmitForReview = async (courseId) => {
     setSubmittingId(courseId);
     try {
@@ -76,22 +69,18 @@ function Managecourse() {
       setSubmittingId(null);
     }
   };
-
   if (loading) {
     return null;
   }
-
   const statusTabs = [
     { label: "All Courses", value: "all" },
     { label: "Published", value: "published" },
     { label: "In Review", value: "review" },
     { label: "Drafts", value: "draft" }
   ];
-
   return (
     <div className="manage-course-layout">
       <div className="manage-courses-page">
-        {/* Sleek Welcome Header */}
         <div className="page-header">
           <button
             className="create-btn"
@@ -101,8 +90,6 @@ function Managecourse() {
             Create Course
           </button>
         </div>
-
-        {/* Interactive Filter Toolbar with modern search and glassmorphic tabs */}
         <div className="manage-course-meta">
           <div className="filter-card">
             <div className="filter-search">
@@ -114,7 +101,6 @@ function Managecourse() {
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-
             <div className="filter-tabs">
               {statusTabs.map((tab) => (
                 <button
@@ -129,8 +115,6 @@ function Managecourse() {
             </div>
           </div>
         </div>
-
-        {/* Courses Cards Listing */}
         {filteredCourses.length === 0 ? (
           <div className="empty-box">
             <div className="empty-icon-wrapper">
@@ -149,12 +133,10 @@ function Managecourse() {
                       <span className="course-category-badge">{course.category || "General"}</span>
                       <h3>{course.courseName}</h3>
                     </div>
-
                     <span className={`status ${(course.status || "").toLowerCase()}`}>
                       {course.status}
                     </span>
                   </div>
-
                   <div className="course-actions">
                     <button
                       type="button"
@@ -165,7 +147,6 @@ function Managecourse() {
                     >
                       <Upload size={14} /> Lessons
                     </button>
-
                     <button
                       type="button"
                       className="action-pill-btn"
@@ -176,7 +157,6 @@ function Managecourse() {
                       <FileText size={14} />
                       Quiz
                     </button>
-
                     <button
                       type="button"
                       className="action-pill-btn"
@@ -186,7 +166,6 @@ function Managecourse() {
                     >
                       <Users size={14} /> Students
                     </button>
-
                     <button
                       type="button"
                       className="action-pill-btn"
@@ -196,7 +175,6 @@ function Managecourse() {
                     >
                       <BarChart3 size={14} /> Analytics
                     </button>
-
                     {String(course.status || "").toUpperCase() === "DRAFT" && (
                       <button
                         type="button"
@@ -209,7 +187,6 @@ function Managecourse() {
                     )}
                   </div>
                 </div>
-
                 <div className="manage-actions">
                   <button
                     type="button"
@@ -227,6 +204,4 @@ function Managecourse() {
     </div>
   );
 }
-
 export default Managecourse;
-

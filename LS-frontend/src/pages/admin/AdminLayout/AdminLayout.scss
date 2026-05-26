@@ -5,7 +5,6 @@
   overflow: hidden;
   background: var(--ui-bg);
 }
-
 .admin-main {
   flex: 1;
   display: flex;
@@ -14,7 +13,6 @@
   background: var(--ui-bg);
   overflow: hidden;
 }
-
 .admin-main .dashboard-body {
   flex: 1;
   min-height: 0;
@@ -23,7 +21,6 @@
   padding: 16px;
   overflow: hidden;
 }
-
 .admin-main .page-content {
   flex: 1;
   min-width: 0;
@@ -31,24 +28,20 @@
   overflow-x: hidden;
   padding: 0;
 }
-
 @media (max-width: 1200px) {
   .admin-main .dashboard-body {
     padding: 12px;
   }
 }
-
 @media (max-width: 900px) {
   .admin-layout {
     height: auto;
     min-height: 100vh;
     overflow: visible;
   }
-
   .admin-main .dashboard-body {
     overflow: visible;
   }
-
   .admin-main .page-content {
     overflow: visible;
   }

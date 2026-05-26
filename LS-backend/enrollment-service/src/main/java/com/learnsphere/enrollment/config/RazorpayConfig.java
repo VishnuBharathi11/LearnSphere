@@ -1,13 +1,9 @@
 package com.learnsphere.enrollment.config;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.razorpay.RazorpayClient;
-
 import lombok.Getter;
-
 @Configuration
 @Getter
 public class RazorpayConfig {
@@ -19,5 +15,4 @@ public class RazorpayConfig {
 	public RazorpayClient razorpayClient() throws Exception{
 		return new RazorpayClient(key, secret);
 	}
-	
 }

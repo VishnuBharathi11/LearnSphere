@@ -7,23 +7,18 @@ import { getCourseProgress } from "../../../services/progressApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import styles from "../Certificates/CertificateDashboard.module.scss";
-
 function CertificateDownloadPage() {
   const { id } = useParams();
   const { currentUser, loading: userLoading } = useCurrentUser();
   const [certificate, setCertificate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-
   useEffect(() => {
     if (!id || userLoading) return;
-
     let active = true;
-
     async function loadCertificate() {
       setLoading(true);
       setError("");
-
       try {
         const existingCertificate = await getCertificate(id);
         if (active) setCertificate(existingCertificate);
@@ -33,7 +28,6 @@ function CertificateDownloadPage() {
           throw requestError;
         }
       }
-
       const userId = String(currentUser?.id || currentUser?.userId || "");
       const courseId = String(id);
       const [course, lessons, progress] = await Promise.all([
@@ -41,12 +35,10 @@ function CertificateDownloadPage() {
         getCourseLessons(courseId),
         getCourseProgress(userId, courseId),
       ]);
-
       const learningState = buildCourseLearningStateFromApi(lessons, progress);
       if (!learningState.certificateUnlocked) {
         throw new Error("Certificate is locked until all lessons are complete and the final assessment is passed.");
       }
-
       const generatedCertificate = await generateCertificate({
         studentUserId: userId,
         studentName: currentUser?.name || currentUser?.username || currentUser?.email || "Learner",
@@ -56,10 +48,8 @@ function CertificateDownloadPage() {
         templateCode: "minimal-luxury",
         skillBadges: [course?.category, course?.level].filter(Boolean),
       });
-
       if (active) setCertificate(generatedCertificate);
     }
-
     loadCertificate()
       .catch((requestError) => {
         if (!active) return;
@@ -73,12 +63,10 @@ function CertificateDownloadPage() {
       .finally(() => {
         if (active) setLoading(false);
       });
-
     return () => {
       active = false;
     };
   }, [id, currentUser, userLoading]);
-
   if (loading || userLoading) {
     return (
       <main className={styles.certificateWorkspace}>
@@ -86,7 +74,6 @@ function CertificateDownloadPage() {
       </main>
     );
   }
-
   if (error) {
     return (
       <main className={styles.certificateWorkspace}>
@@ -94,18 +81,15 @@ function CertificateDownloadPage() {
       </main>
     );
   }
-
   return (
     <main className={styles.certificateWorkspace}>
       <CertificatePreview certificate={certificate} />
     </main>
   );
 }
-
 function isUuid(value) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
     String(value || "")
   );
 }
-
 export default CertificateDownloadPage;

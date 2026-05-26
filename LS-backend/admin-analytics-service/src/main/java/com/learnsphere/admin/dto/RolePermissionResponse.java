@@ -1,9 +1,6 @@
 package com.learnsphere.admin.dto;
-
 import lombok.*;
-
 import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -13,4 +10,3 @@ public class RolePermissionResponse {
     private List<String> permissions;
     private long users;
 }
-

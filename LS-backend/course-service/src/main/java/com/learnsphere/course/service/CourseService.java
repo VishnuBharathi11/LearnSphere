@@ -1,10 +1,7 @@
 package com.learnsphere.course.service;
-
 import java.util.List;
 import org.springframework.data.domain.Page;
-
 import com.learnsphere.course.entity.Course;
-
 public interface CourseService {
 	Course createCourse(Course course);
 	Course updateCourse(String id, Course course);

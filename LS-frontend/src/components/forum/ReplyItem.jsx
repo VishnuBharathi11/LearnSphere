@@ -2,7 +2,6 @@ import { useState } from "react";
 import { ChevronDown, ChevronRight, Flag, Reply, ThumbsUp, Trash2, X } from "lucide-react";
 import ReplyBox from "./ReplyBox";
 import ReportModal from "./ReportModal";
-
 const ReplyItem = ({
   reply,
   topicId,
@@ -18,28 +17,21 @@ const ReplyItem = ({
   const [isExpanded, setIsExpanded] = useState(true);
   const [reportOpen, setReportOpen] = useState(false);
   const userVote = reply.votedBy?.["self"] || (reply.votedBy?.[currentUserId] ?? null);
-
   const handleNestedReply = async (content) => {
     const result = await onReply(topicId, { content, parentReplyId: reply.id });
-
     if (result?.ok) {
       setIsReplying(false);
     }
-
     return result;
   };
-
   const hasChildren = Array.isArray(reply.replies) && reply.replies.length > 0;
-
   return (
     <div className="forum-reply-item" style={{ marginLeft: `${depth * 18}px` }}>
       <div className="forum-reply-header">
         <strong className="forum-reply-author">{reply.author}</strong>
         <span>{new Date(reply.createdAt).toLocaleString()}</span>
       </div>
-
       <p className="forum-reply-content" dangerouslySetInnerHTML={{ __html: reply.content }} />
-
       <div className="forum-reply-actions">
         <div className="forum-vote-wrap">
           <button
@@ -53,7 +45,6 @@ const ReplyItem = ({
           </button>
           <span className="forum-like-count">{reply.upvotes ?? reply.likes ?? 0}</span>
         </div>
-
         <button
           type="button"
           className="forum-btn ghost forum-btn-icon"
@@ -63,7 +54,6 @@ const ReplyItem = ({
         >
           <Flag size={14} />
         </button>
-
         {canManage ? (
           <button
             type="button"
@@ -75,7 +65,6 @@ const ReplyItem = ({
             <Trash2 size={14} />
           </button>
         ) : null}
-
         <button
           type="button"
           className="forum-btn ghost forum-btn-icon"
@@ -85,7 +74,6 @@ const ReplyItem = ({
         >
           {isReplying ? <X size={14} /> : <Reply size={14} />}
         </button>
-
         {hasChildren ? (
           <button
             type="button"
@@ -98,11 +86,9 @@ const ReplyItem = ({
           </button>
         ) : null}
       </div>
-
       {isReplying ? (
         <ReplyBox onSubmit={handleNestedReply} placeholder="Write a nested reply..." buttonLabel="Post" />
       ) : null}
-
       {hasChildren && isExpanded ? (
         <div className="forum-reply-children">
           {reply.replies.map((child) => (
@@ -121,7 +107,6 @@ const ReplyItem = ({
           ))}
         </div>
       ) : null}
-
       <ReportModal
         isOpen={reportOpen}
         onClose={() => setReportOpen(false)}
@@ -130,5 +115,4 @@ const ReplyItem = ({
     </div>
   );
 };
-
 export default ReplyItem;

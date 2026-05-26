@@ -1,9 +1,6 @@
 package com.learnsphere.admin.dto;
-
 import lombok.*;
-
 import java.time.Instant;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -18,4 +15,3 @@ public class AdminUserResponse {
     private Instant createdAt;
     private Instant lastLoginAt;
 }
-

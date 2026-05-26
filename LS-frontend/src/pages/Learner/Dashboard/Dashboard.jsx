@@ -25,11 +25,9 @@ import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { getProgressByCourses } from "../../../services/progressApi";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 import "./Dashboard.scss";
-
 function getCourseKey(course) {
   return String(course?.id ?? course?.courseId ?? "");
 }
-
 function buildLearningState(lessons = [], progress = null) {
   const safeLessons = Array.isArray(lessons) ? lessons.filter(Boolean) : [];
   const completedLessonIds = new Set(
@@ -45,7 +43,6 @@ function buildLearningState(lessons = [], progress = null) {
   const progressPercentage =
     totalLessons === 0 ? 0 : Math.min(100, Math.floor((completedLessons / totalLessons) * 100));
   const finalPassed = Boolean(progress?.finalAssessment?.passed);
-
   return {
     completedLessonIds,
     completedLessons,
@@ -55,30 +52,24 @@ function buildLearningState(lessons = [], progress = null) {
     certificateUnlocked: progressPercentage >= 100 && finalPassed,
   };
 }
-
 function buildMonthDays(date) {
   const year = date.getFullYear();
   const month = date.getMonth();
   const firstDay = new Date(year, month, 1).getDay();
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-
   return [
     ...Array.from({ length: firstDay }, () => null),
     ...Array.from({ length: daysInMonth }, (_, index) => index + 1),
   ];
 }
-
 function getCourseInitial(courseName = "Course") {
   return String(courseName).trim().charAt(0).toUpperCase() || "C";
 }
-
 function formatLessonType(type = "lesson") {
   return String(type).replaceAll("_", " ").toLowerCase();
 }
-
 function CircularMetric({ value, label, tone = "primary" }) {
   const safeValue = Math.max(0, Math.min(100, Number(value) || 0));
-
   return (
     <div className={`metric-ring metric-ring--${tone}`} style={{ "--metric-value": `${safeValue}%` }}>
       <div className="metric-ring__chart">
@@ -88,12 +79,10 @@ function CircularMetric({ value, label, tone = "primary" }) {
     </div>
   );
 }
-
 const MonthlyCalendar = memo(function MonthlyCalendar({ viewDate, today, onPrevious, onNext }) {
   const days = useMemo(() => buildMonthDays(viewDate), [viewDate]);
   const isCurrentMonth =
     viewDate.getFullYear() === today.getFullYear() && viewDate.getMonth() === today.getMonth();
-
   return (
     <section className="monthly-calendar" aria-label="Monthly calendar">
       <div className="monthly-calendar__head">
@@ -107,7 +96,6 @@ const MonthlyCalendar = memo(function MonthlyCalendar({ viewDate, today, onPrevi
           <p>{today.toLocaleDateString("en-US", { weekday: "long" })}</p>
         </div>
       </div>
-
       <div className="monthly-calendar__month">
         <div>
           <strong>
@@ -126,7 +114,6 @@ const MonthlyCalendar = memo(function MonthlyCalendar({ viewDate, today, onPrevi
           </button>
         </div>
       </div>
-
       <div className="monthly-calendar__week">
         {["S", "M", "T", "W", "T", "F", "S"].map((day, index) => (
           <span key={`${day}-${index}`}>{day}</span>
@@ -146,7 +133,6 @@ const MonthlyCalendar = memo(function MonthlyCalendar({ viewDate, today, onPrevi
     </section>
   );
 });
-
 const ContinueCourseCard = memo(function ContinueCourseCard({ course, onOpen }) {
   return (
     <button className="learning-course-card" type="button" onClick={() => onOpen(course.id)}>
@@ -169,7 +155,6 @@ const ContinueCourseCard = memo(function ContinueCourseCard({ course, onOpen }) 
     </button>
   );
 });
-
 const NextLessonRow = memo(function NextLessonRow({ lesson, onOpen }) {
   return (
     <button className="next-lesson-row" type="button" onClick={() => onOpen(lesson.courseId)}>
@@ -185,7 +170,6 @@ const NextLessonRow = memo(function NextLessonRow({ lesson, onOpen }) {
     </button>
   );
 });
-
 const RecommendedCourseCard = memo(function RecommendedCourseCard({ course, onOpen }) {
   return (
     <button className="recommended-course-card" type="button" onClick={() => onOpen(course.id)}>
@@ -198,7 +182,6 @@ const RecommendedCourseCard = memo(function RecommendedCourseCard({ course, onOp
     </button>
   );
 });
-
 function Dashboard() {
   const navigate = useNavigate();
   const [today] = useState(() => new Date());
@@ -212,7 +195,6 @@ function Dashboard() {
   }, []);
   const userId = currentUser?.id || currentUser?.userId || "";
   const learnerName = currentUser?.username || currentUser?.name || "Learner";
-
   const [publishedCourses, setPublishedCourses] = useState([]);
   const [enrolledCourses, setEnrolledCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
@@ -220,7 +202,6 @@ function Dashboard() {
   const [detailsLoading, setDetailsLoading] = useState(true);
   const [lessonMap, setLessonMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
-
   const myActiveEnrollments = useMemo(
     () =>
       enrollments.filter(
@@ -230,18 +211,15 @@ function Dashboard() {
       ),
     [enrollments, userId]
   );
-
   const activeCourseIds = useMemo(
     () => myActiveEnrollments.map((item) => String(item.courseId)),
     [myActiveEnrollments]
   );
-
   useEffect(() => {
     if (!userId) {
       navigate("/login", { replace: true });
       return;
     }
-
     let active = true;
     async function load() {
       setLoading(true);
@@ -250,12 +228,10 @@ function Dashboard() {
           getEnrollmentsByUser(String(userId)),
           getPublishedCourses(0, 120),
         ]);
-
         if (!active) return;
         const safeEnrollments = Array.isArray(myEnrollments) ? myEnrollments : [];
         setEnrollments(safeEnrollments);
         setPublishedCourses(Array.isArray(published) ? published : []);
-
         const activeIds = safeEnrollments
           .filter(
             (enrollment) =>
@@ -263,7 +239,6 @@ function Dashboard() {
               String(enrollment.status || "").toUpperCase() === "ACTIVE"
           )
           .map((item) => String(item.courseId));
-
         const enrolled = await getCoursesByIds(activeIds);
         if (!active) return;
         setEnrolledCourses(Array.isArray(enrolled) ? enrolled : []);
@@ -276,13 +251,11 @@ function Dashboard() {
         if (active) setLoading(false);
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [navigate, userId]);
-
   useEffect(() => {
     let active = true;
     async function loadLessonsAndProgress() {
@@ -293,7 +266,6 @@ function Dashboard() {
         setDetailsLoading(false);
         return;
       }
-
       try {
         const [lessonsList, progressList] = await Promise.all([
           Promise.all(
@@ -326,13 +298,11 @@ function Dashboard() {
         if (active) setDetailsLoading(false);
       }
     }
-
     loadLessonsAndProgress();
     return () => {
       active = false;
     };
   }, [activeCourseIds, userId]);
-
   const enrolledCourseMap = useMemo(() => {
     const map = new Map();
     enrolledCourses.forEach((course) => {
@@ -340,7 +310,6 @@ function Dashboard() {
     });
     return map;
   }, [enrolledCourses]);
-
   const myCourses = useMemo(() => {
     return myActiveEnrollments
       .map((enrollment) => {
@@ -348,7 +317,6 @@ function Dashboard() {
         const course = enrolledCourseMap.get(courseId);
         if (!course) return null;
         const state = buildLearningState(lessonMap[courseId] || [], progressMap[courseId] || null);
-
         return {
           ...course,
           id: course.id ?? courseId,
@@ -362,14 +330,12 @@ function Dashboard() {
       })
       .filter(Boolean);
   }, [enrolledCourseMap, lessonMap, myActiveEnrollments, progressMap]);
-
   const recommendedCourses = useMemo(() => {
     const myCourseIds = new Set(activeCourseIds);
     return publishedCourses
       .filter((course) => !myCourseIds.has(String(course.id)))
       .slice(0, 4);
   }, [activeCourseIds, publishedCourses]);
-
   const nextLessons = useMemo(() => {
     return myCourses
       .map((course) => {
@@ -387,7 +353,6 @@ function Dashboard() {
       .filter(Boolean)
       .slice(0, 4);
   }, [lessonMap, myCourses]);
-
   const dashboardStats = useMemo(() => {
     const completedLessons = myCourses.reduce((total, course) => total + course.completedLessons, 0);
     const totalLessons = myCourses.reduce((total, course) => total + course.totalLessons, 0);
@@ -396,7 +361,6 @@ function Dashboard() {
         ? 0
         : Math.round(myCourses.reduce((total, course) => total + course.progress, 0) / myCourses.length);
     const certificatesReady = myCourses.filter((course) => course.certificateUnlocked).length;
-
     return {
       activeCourses: myCourses.length,
       completedLessons,
@@ -405,7 +369,6 @@ function Dashboard() {
       certificatesReady,
     };
   }, [myCourses]);
-
   const inProgressCourses = myCourses.filter((course) => !course.certificateUnlocked).slice(0, 4);
   const topCourse = myCourses[0] || null;
   const goalPercent = dashboardStats.totalLessons
@@ -414,25 +377,20 @@ function Dashboard() {
   const completedPercent = dashboardStats.averageProgress;
   const totalStudyMinutes = Math.max(30, dashboardStats.completedLessons * 18);
   const isPageLoading = loading || detailsLoading;
-
   const handlePreviousMonth = useCallback(() => {
     setCalendarDate((date) => new Date(date.getFullYear(), date.getMonth() - 1, 1));
   }, []);
-
   const handleNextMonth = useCallback(() => {
     setCalendarDate((date) => new Date(date.getFullYear(), date.getMonth() + 1, 1));
   }, []);
-
   const handleOpenLearningCourse = useCallback(
     (courseId) => navigate(`/student-layout/learn/${courseId}`),
     [navigate]
   );
-
   const handleOpenRecommendedCourse = useCallback(
     (courseId) => navigate(`/course/${courseId}`),
     [navigate]
   );
-
   const handlePrimaryAction = useCallback(() => {
     if (myCourses.length > 0) {
       handleOpenLearningCourse(myCourses[0].id);
@@ -440,7 +398,6 @@ function Dashboard() {
     }
     navigate("/courses");
   }, [handleOpenLearningCourse, myCourses, navigate]);
-
   return (
     <div className="learner-dashboard">
       <div className="learner-dashboard__main">
@@ -458,7 +415,6 @@ function Dashboard() {
           <span className="dashboard-hero__note dashboard-hero__note--two">UI</span>
           <Sparkles className="dashboard-hero__sparkle" size={24} aria-hidden="true" />
         </section>
-
         <section className="dashboard-metrics">
           <div className="dashboard-panel metric-card">
             <div className="metric-card__head">
@@ -625,10 +581,8 @@ function Dashboard() {
             </div>
           )}
         </section>
-
       </aside>
     </div>
   );
 }
-
 export default Dashboard;

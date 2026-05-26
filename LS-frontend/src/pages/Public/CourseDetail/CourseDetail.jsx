@@ -15,9 +15,7 @@ import {
 import { pushLocalNotification } from "../../../services/activityNotificationStore";
 import "./CourseDetail.scss";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
-
 const RAZORPAY_SCRIPT = "https://checkout.razorpay.com/v1/checkout.js";
-
 function DetailCardSkeleton({ lessonRows = 0 }) {
   return (
     <div className="card card--skeleton" aria-hidden="true">
@@ -34,7 +32,6 @@ function DetailCardSkeleton({ lessonRows = 0 }) {
     </div>
   );
 }
-
 function SidebarSkeleton() {
   return (
     <div className="price-card price-card--skeleton" aria-hidden="true">
@@ -44,12 +41,10 @@ function SidebarSkeleton() {
     </div>
   );
 }
-
 function CourseDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const initialLoadComplete = useInitialLoadComplete();
-
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -58,17 +53,14 @@ function CourseDetail() {
   const [actionLoading, setActionLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
   const paymentOpeningRef = useRef(false);
-
   const { currentUser, loading: userLoading } = useCurrentUser();
   const resolvedUserId = currentUser?.id || currentUser?.userId || "";
   const coursePrice = Number(course?.price || 0);
   const formattedPrice = new Intl.NumberFormat("en-IN").format(coursePrice);
-
   useEffect(() => {
     let active = true;
     setLoading(true);
     setError("");
-
     getCourseById(String(id))
       .then((data) => {
         if (!active) return;
@@ -82,19 +74,16 @@ function CourseDetail() {
         if (!active) return;
         setLoading(false);
       });
-
     return () => {
       active = false;
     };
   }, [id]);
-
   useEffect(() => {
     if (userLoading) return;
     if (!resolvedUserId) {
       setIsEnrolled(false);
       return;
     }
-
     let active = true;
     checkEnrollmentStatus(String(resolvedUserId), String(id))
       .then((value) => {
@@ -105,25 +94,21 @@ function CourseDetail() {
         if (!active) return;
         setIsEnrolled(false);
       });
-
     return () => {
       active = false;
     };
   }, [id, resolvedUserId, userLoading]);
-
   const curriculum = useMemo(() => {
     const lessonCount = Math.max(1, Number(course?.lessons || 0));
     const groupOne = Math.min(3, lessonCount);
     const groupTwo = Math.min(3, Math.max(lessonCount - groupOne, 0));
     const groupThree = Math.min(3, Math.max(lessonCount - groupOne - groupTwo, 0));
-
     const makeLesson = (index, preview = false) => ({
       title: `Lesson ${index + 1}`,
       duration: `${12 + (index % 4) * 3} min`,
       preview,
       youtubeId: preview ? "YrOkVD_YUro" : undefined,
     });
-
     let cursor = 0;
     return [
       {
@@ -152,7 +137,6 @@ function CourseDetail() {
       },
     ].filter((section) => section.lessons.length > 0);
   }, [course?.lessons]);
-
   const reveal = useProgressiveReveal({
     isLoading: loading,
     hasData: Boolean(course),
@@ -160,14 +144,12 @@ function CourseDetail() {
     totalItems: 3,
     initialCount: 1,
   });
-
   const enrollFreeCourse = async () => {
     if (userLoading) return;
     if (!currentUser) {
       navigate("/login", { state: { from: `/course/${id}` } });
       return;
     }
-
     setActionLoading(true);
     setMessage({ type: "", text: "" });
     try {
@@ -203,14 +185,12 @@ function CourseDetail() {
       setActionLoading(false);
     }
   };
-
   const ensureRazorpayScript = () =>
     new Promise((resolve) => {
       if (window.Razorpay) {
         resolve(true);
         return;
       }
-
       const script = document.createElement("script");
       script.src = RAZORPAY_SCRIPT;
       script.async = true;
@@ -218,30 +198,24 @@ function CourseDetail() {
       script.onerror = () => resolve(false);
       document.body.appendChild(script);
     });
-
   const handlePaidEnrollment = async () => {
     if (!course || !resolvedUserId) return;
     if (paymentOpeningRef.current) return;
-
     paymentOpeningRef.current = true;
     setActionLoading(true);
     setMessage({ type: "", text: "" });
-
     try {
       const [scriptLoaded, key, orderId] = await Promise.all([
         ensureRazorpayScript(),
         getRazorpayPublicKey(),
         createEnrollmentOrder(String(resolvedUserId), String(id), coursePrice),
       ]);
-
       if (!scriptLoaded) {
         throw new Error("Unable to load Razorpay checkout.");
       }
-
       if (!key) {
         throw new Error("Unable to fetch Razorpay key.");
       }
-
       const rzp = new window.Razorpay({
         key,
         amount: Math.round(Number(course.price || 0) * 100),
@@ -268,7 +242,6 @@ function CourseDetail() {
               userId: String(resolvedUserId),
               courseId: String(id),
             });
-
             navigate("/payment-success", {
               replace: true,
               state: {
@@ -310,7 +283,6 @@ function CourseDetail() {
           },
         },
       });
-
       rzp.open();
     } catch (apiError) {
       const msg =
@@ -332,7 +304,6 @@ function CourseDetail() {
       paymentOpeningRef.current = false;
     }
   };
-
   const handlePrimaryAction = () => {
     if (!course) return;
     if (userLoading) return;
@@ -340,21 +311,16 @@ function CourseDetail() {
       enrollFreeCourse();
       return;
     }
-
     if (!currentUser || !resolvedUserId) {
       navigate("/login", { state: { from: `/course/${id}` } });
       return;
     }
-
     handlePaidEnrollment();
   };
-
   const visibleMainCards = reveal.showAllContainers ? 3 : reveal.showText ? 1 : 0;
-
   return (
     <>
       <NavBar />
-
       <div className="course-detail">
         {loading ? (
           <>
@@ -364,7 +330,6 @@ function CourseDetail() {
               <Skeleton className="detail-line-skeleton" />
               <Skeleton className="detail-line-skeleton detail-line-skeleton--short" />
             </div>
-
             <div className="course-detail-grid">
               <div className="course-main">
                 <DetailCardSkeleton />
@@ -401,7 +366,6 @@ function CourseDetail() {
                 </>
               )}
             </div>
-
             <div className="course-detail-grid">
               <div className="course-main">
                 {previewVideo ? (
@@ -418,7 +382,6 @@ function CourseDetail() {
                     </div>
                   </div>
                 ) : null}
-
                 {visibleMainCards >= 1 ? (
                   <div className="card">
                     <h3>Course Overview</h3>
@@ -427,7 +390,6 @@ function CourseDetail() {
                 ) : (
                   <DetailCardSkeleton />
                 )}
-
                 {visibleMainCards >= 2 ? (
                   <div className="card">
                     <h3>What You Will Learn</h3>
@@ -441,7 +403,6 @@ function CourseDetail() {
                 ) : (
                   <DetailCardSkeleton />
                 )}
-
                 {visibleMainCards >= 3 ? (
                   <div className="card">
                     <h3>Curriculum</h3>
@@ -477,7 +438,6 @@ function CourseDetail() {
                   <DetailCardSkeleton lessonRows={3} />
                 )}
               </div>
-
               <div className="course-sidebar">
                 {reveal.showText ? (
                   isEnrolled ? (
@@ -493,7 +453,6 @@ function CourseDetail() {
                   ) : (
                     <div className="price-card">
                       <h2 className="price-value">{coursePrice === 0 ? "Free" : `INR ${formattedPrice}`}</h2>
-
                       <button className="cd-primary-btn" onClick={handlePrimaryAction} disabled={actionLoading}>
                         {coursePrice === 0
                           ? actionLoading
@@ -503,9 +462,7 @@ function CourseDetail() {
                             ? "Opening Payment..."
                             : "Buy Now"}
                       </button>
-
                       <p className="guarantee">Secure enrollment and lifetime access</p>
-
                       {message.text ? <p className={`cd-message ${message.type}`}>{message.text}</p> : null}
                     </div>
                   )
@@ -520,5 +477,4 @@ function CourseDetail() {
     </>
   );
 }
-
 export default CourseDetail;

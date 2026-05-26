@@ -8,17 +8,14 @@ import cy from "../../../assets/Popular Categories/cyber-security.png";
 import data from "../../../assets/Popular Categories/data-science.png";
 import applicationImg from "../../../assets/Home/application.png";
 import heroVideo from "../../../assets/Home/Hero section.mp4";
-
 import { FaSearch } from "react-icons/fa";
 import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 import Footer from "../../../components/Footer/Footer";
 import NavBar from "../../../components/NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import About from "../About/About";
-
 function Home() {
   const navigate = useNavigate();
-
   return (
     <>
       <NavBar transparent />
@@ -41,17 +38,6 @@ function Home() {
               <br /> <span className="hero-gradient-text">Potential</span> with
               <br /> Online Learning
             </div>
-
-            {/*<div className="search">*/}
-            {/*  <input*/}
-            {/*    type="search"*/}
-            {/*    name="search"*/}
-            {/*    placeholder="Search for Courses,Instructors..."*/}
-            {/*  />*/}
-            {/*  <div>*/}
-            {/*    <FaSearch />*/}
-            {/*  </div>*/}
-            {/*</div>*/}
             <div className="btn-get-browse">
               <button className="btn-get" onClick={() => navigate("/free-courses")}>
                 Get Started for Free
@@ -63,10 +49,8 @@ function Home() {
           </div>
         </div>
       </section>
-
       <div className="pop-cat">
         <div className="pop-cat-head">Popular Categories</div>
-
         <div className="pop-cat-box">
           <div className="pop-cat-cont">
             <div className="pop-cat-font">
@@ -79,7 +63,6 @@ function Home() {
               </div>
             </div>
           </div>
-
           <div className="pop-cat-cont">
             <div className="pop-cat-font">
               <img src={ui} />
@@ -91,7 +74,6 @@ function Home() {
               </div>
             </div>
           </div>
-
           <div className="pop-cat-cont">
             <div className="pop-cat-font">
               <img src={data} />
@@ -104,7 +86,6 @@ function Home() {
               </div>
             </div>
           </div>
-
           <div className="pop-cat-cont">
             <div className="pop-cat-font">
               <img src={mobile} />
@@ -116,7 +97,6 @@ function Home() {
               </div>
             </div>
           </div>
-
           <div className="pop-cat-cont">
             <div className="pop-cat-font">
               <img src={ai} />
@@ -128,7 +108,6 @@ function Home() {
               </div>
             </div>
           </div>
-
           <div className="pop-cat-cont">
             <div className="pop-cat-font">
               <img src={cy} />
@@ -142,7 +121,6 @@ function Home() {
           </div>
         </div>
       </div>
-
       <div className="instructor-cta">
         <div className="instructor-cta__card">
           <div className="instructor-cta__image">
@@ -168,10 +146,8 @@ function Home() {
           </div>
         </div>
       </div>
-
       <div className="why-learn">
         <div className="pop-cat-head">Why LearnSphere</div>
-
         <div className="why-learn-box">
           <div className="why-learn-cont">
             <img src={web} />
@@ -181,7 +157,6 @@ function Home() {
               across multiple domains.
             </div>
           </div>
-
           <div className="why-learn-cont">
             <img src={web} />
             <div className="why-learn-title">
@@ -193,7 +168,6 @@ function Home() {
               advanced levels efficiently.
             </div>
           </div>
-
           <div className="why-learn-cont">
             <img src={web} />
             <div className="why-learn-title">
@@ -205,7 +179,6 @@ function Home() {
               skills.
             </div>
           </div>
-
           <div className="why-learn-cont">
             <img src={web} />
             <div className="why-learn-title">Certified Courses</div>
@@ -214,7 +187,6 @@ function Home() {
               your resume.
             </div>
           </div>
-
           <div className="why-learn-cont">
             <img src={web} />
             <div className="why-learn-title">Personalized Learning</div>
@@ -286,5 +258,4 @@ function Home() {
     </>
   );
 }
-
 export default Home;

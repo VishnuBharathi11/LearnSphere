@@ -1,7 +1,5 @@
 package com.learnsphere.admin.dto;
-
 import lombok.*;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -22,4 +20,3 @@ public class AdminSettingResponse {
     private Boolean guestBrowsing;
     private Boolean maintenanceMode;
 }
-

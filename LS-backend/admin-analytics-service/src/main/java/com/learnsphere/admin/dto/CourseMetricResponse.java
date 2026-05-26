@@ -1,7 +1,5 @@
 package com.learnsphere.admin.dto;
-
 import lombok.*;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,4 +10,3 @@ public class CourseMetricResponse {
     private double grossRevenue;
     private double platformRevenue;
 }
-

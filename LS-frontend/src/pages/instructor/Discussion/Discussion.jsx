@@ -12,11 +12,9 @@ import "./Discussion.scss";
 import { getInstructorCourses } from "../../../services/courseApi";
 import { createDiscussionPost, getCourseDiscussions } from "../../../services/discussionApi";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-
 function Discussion() {
   const currentUser = getCurrentUser() || {};
   const currentRole = String(currentUser?.role || "").toLowerCase();
-
   const [activeFilter, setActiveFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [threads, setThreads] = useState([]);
@@ -24,11 +22,9 @@ function Discussion() {
   const [replyText, setReplyText] = useState("");
   const [loading, setLoading] = useState(true);
   const [metaById, setMetaById] = useState({});
-
   const persistMeta = (next) => {
     setMetaById(next);
   };
-
   const deriveStatus = (thread) => {
     const meta = metaById[thread.id] || {};
     if (meta.flagged) return "flagged";
@@ -36,7 +32,6 @@ function Discussion() {
     if (meta.viewed) return "viewed";
     return "pending";
   };
-
   const markViewed = (threadId) => {
     const current = metaById[threadId] || {};
     if (current.viewed) return;
@@ -45,28 +40,23 @@ function Discussion() {
       [threadId]: { ...current, viewed: true },
     });
   };
-
   useEffect(() => {
     if (currentRole !== "instructor" || !currentUser?.id) {
       setThreads([]);
       setLoading(false);
       return;
     }
-
     let active = true;
-
     async function loadThreads() {
       setLoading(true);
       try {
         const courses = await getInstructorCourses(String(currentUser.id), 0, 300);
         if (!active) return;
-
         const courseMap = new Map((courses || []).map((c) => [String(c.id), c.courseName]));
         const postsByCourse = await Promise.all(
           (courses || []).map((course) => getCourseDiscussions(course.id).catch(() => []))
         );
         if (!active) return;
-
         const allPosts = postsByCourse.flat();
         const topLevel = allPosts.filter((p) => p.parentId == null);
         const repliesByParentId = allPosts
@@ -77,7 +67,6 @@ function Discussion() {
             acc[key].push(post);
             return acc;
           }, {});
-
         const normalizedThreads = topLevel
           .map((post) => {
             const replies = (repliesByParentId[String(post.id)] || [])
@@ -88,7 +77,6 @@ function Discussion() {
                 role: Number(r.userId) === Number(currentUser.id) ? "instructor" : "learner",
                 text: r.message || "",
               }));
-
             return {
               id: post.id,
               courseId: post.courseId,
@@ -103,7 +91,6 @@ function Discussion() {
             };
           })
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
         setThreads(normalizedThreads);
         setSelected((prev) => {
           if (!prev) return normalizedThreads[0] || null;
@@ -117,14 +104,11 @@ function Discussion() {
         if (active) setLoading(false);
       }
     }
-
     loadThreads();
-
     return () => {
       active = false;
     };
   }, [currentRole, currentUser?.id]);
-
   const stats = useMemo(() => {
     const statusList = threads.map((t) => deriveStatus(t));
     return {
@@ -135,7 +119,6 @@ function Discussion() {
       answered: statusList.filter((s) => s === "answered").length,
     };
   }, [threads, metaById]);
-
   const filteredThreads = useMemo(() => {
     return threads.filter((d) => {
       const matchFilter = activeFilter === "all" || deriveStatus(d) === activeFilter;
@@ -148,7 +131,6 @@ function Discussion() {
       return matchFilter && matchSearch;
     });
   }, [threads, activeFilter, search, metaById]);
-
   const toggleFlag = (threadId) => {
     const current = metaById[threadId] || {};
     persistMeta({
@@ -160,11 +142,9 @@ function Discussion() {
       },
     });
   };
-
   const sendReply = async () => {
     const text = replyText.trim();
     if (!selected || !text) return;
-
     try {
       await createDiscussionPost({
         courseId: selected.courseId,
@@ -172,14 +152,12 @@ function Discussion() {
         message: text,
         parentId: selected.id,
       });
-
       const addedReply = {
         id: Date.now(),
         author: "You",
         role: "instructor",
         text,
       };
-
       const updatedThreads = threads.map((thread) => {
         if (thread.id !== selected.id) return thread;
         const replies = Array.isArray(thread.repliesData) ? thread.repliesData : [];
@@ -190,16 +168,13 @@ function Discussion() {
           hasInstructorReply: true,
         };
       });
-
       setThreads(updatedThreads);
       setSelected(updatedThreads.find((thread) => thread.id === selected.id) || null);
       setReplyText("");
       markViewed(selected.id);
     } catch {
-      // Keep current page state if network fails.
     }
   };
-
   if (currentRole !== "instructor") {
     return (
       <p style={{ padding: 40 }}>
@@ -207,11 +182,9 @@ function Discussion() {
       </p>
     );
   }
-
   if (loading) {
     return null;
   }
-
   return (
     <div className="discussion-layout">
       <div className="discussion-page">
@@ -222,7 +195,6 @@ function Discussion() {
           <Stat icon={AlertTriangle} label="Flagged" value={stats.flagged} color="red" />
           <Stat icon={CheckCircle} label="Answered" value={stats.answered} color="green" />
         </div>
-
         <div className="discussion-controls">
           <div className="discussion-search-box">
             <Search size={18} />
@@ -244,7 +216,6 @@ function Discussion() {
             ))}
           </div>
         </div>
-
         <div className="discussion-list">
           {filteredThreads.length === 0 ? (
             <p>No discussions found</p>
@@ -283,7 +254,6 @@ function Discussion() {
             ))
           )}
         </div>
-
         {selected && (
           <div className="discussion-thread-panel">
             <h3>Thread: {selected.subject}</h3>
@@ -291,14 +261,12 @@ function Discussion() {
               {selected.student} | {selected.courseName}
             </p>
             <div className="thread-message">{selected.message}</div>
-
             {(selected.repliesData || []).map((reply) => (
               <div key={reply.id} className="thread-reply">
                 <strong>{reply.author}</strong>
                 <p>{reply.text}</p>
               </div>
             ))}
-
             <div className="thread-reply-box">
               <textarea
                 value={replyText}
@@ -315,7 +283,6 @@ function Discussion() {
     </div>
   );
 }
-
 function Stat({ icon, label, value, color }) {
   const Icon = icon;
   return (
@@ -330,6 +297,4 @@ function Stat({ icon, label, value, color }) {
     </div>
   );
 }
-
 export default Discussion;
-

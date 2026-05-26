@@ -5,21 +5,17 @@ import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import "./Assesment.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 import { getCourseQuizzesByCourseId, getProgressByCourses } from "../../../services/progressApi";
-
 function Assessment() {
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
-
   const [selectedResultCourse, setSelectedResultCourse] = useState(null);
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [quizzesByCourseId, setQuizzesByCourseId] = useState({});
   const [progressMap, setProgressMap] = useState({});
-
   useEffect(() => {
     if (!userId) return;
-
     let active = true;
     async function load() {
       try {
@@ -27,7 +23,6 @@ function Assessment() {
         if (!active) return;
         const safeCourses = Array.isArray(published) ? published : [];
         setCourses(safeCourses);
-
         const ids = safeCourses.map((course) => String(course.id));
         const list = await getEnrollmentsByCourses(ids);
         if (!active) return;
@@ -38,13 +33,11 @@ function Assessment() {
         setEnrollments([]);
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [userId]);
-
   useEffect(() => {
     if (!userId) return;
     const activeEnrollments = enrollments.filter(
@@ -57,10 +50,8 @@ function Assessment() {
       setProgressMap({});
       return;
     }
-
     let active = true;
     const courseIds = activeEnrollments.map((entry) => String(entry.courseId));
-
     async function loadProgress() {
       try {
         const results = await getProgressByCourses(userId, courseIds);
@@ -75,7 +66,6 @@ function Assessment() {
         setProgressMap({});
       }
     }
-
     async function loadQuizzes() {
       const pairs = await Promise.all(
         activeEnrollments.map(async (entry) => {
@@ -101,7 +91,6 @@ function Assessment() {
       active = false;
     };
   }, [enrollments, userId]);
-
   const { assessmentCourses, totalAssessments, completed, pending, avgScore } = useMemo(() => {
     const backendEnrollments = enrollments.filter(
       (entry) =>
@@ -109,19 +98,14 @@ function Assessment() {
         String(entry.status || "").toUpperCase() === "ACTIVE"
     );
     const myEnrollments = backendEnrollments;
-
     const assessmentCourses = myEnrollments
       .map((entry) => {
         const course = courses.find((item) => String(item.id) === String(entry.courseId));
         if (!course) return null;
-
         const quiz = quizzesByCourseId[String(course.id)];
         if (!quiz) return null;
-
         const result = progressMap[String(course.id)]?.finalAssessment || null;
-
         const status = result ? "Completed" : "Pending";
-
         return {
           id: course.id,
           courseName: course.courseName,
@@ -131,10 +115,8 @@ function Assessment() {
         };
       })
       .filter(Boolean);
-
     const completed = assessmentCourses.filter((item) => item.status === "Completed").length;
     const pending = assessmentCourses.filter((item) => item.status === "Pending").length;
-
     const scored = assessmentCourses.filter((item) => item.result);
     const avgScore =
       scored.length === 0
@@ -143,7 +125,6 @@ function Assessment() {
             scored.reduce((sum, item) => sum + (item.result.score / item.result.total) * 100, 0) /
               scored.length
           );
-
     return {
       assessmentCourses,
       totalAssessments: assessmentCourses.length,
@@ -152,16 +133,12 @@ function Assessment() {
       avgScore,
     };
   }, [courses, enrollments, quizzesByCourseId, progressMap, userId]);
-
   const selectedResultData = useMemo(() => {
     if (!selectedResultCourse) return null;
-
     const course = courses.find((item) => String(item.id) === String(selectedResultCourse));
     const result = progressMap[String(selectedResultCourse)]?.finalAssessment || null;
     const quiz = quizzesByCourseId[String(selectedResultCourse)];
-
     if (!result || !course || !quiz) return null;
-
     const percentage = Math.floor((result.score / result.total) * 100);
     return {
       courseName: course.courseName,
@@ -172,7 +149,6 @@ function Assessment() {
       passingScore: quiz.passingScore,
     };
   }, [selectedResultCourse, courses, quizzesByCourseId, progressMap, userId]);
-
   return (
     <div className="assessment-container">
       <div className="assessment-status">
@@ -193,11 +169,9 @@ function Assessment() {
           <p>Average Score</p>
         </div>
       </div>
-
       <div className="assessment-layout">
         <div className="assessment-left">
           <h3>Available Assessments</h3>
-
           {assessmentCourses.length === 0 ? (
             <p>No assessments available.</p>
           ) : (
@@ -210,14 +184,12 @@ function Assessment() {
                     {course.quiz.timeLimit} mins | {course.quiz.questions.length} questions
                   </div>
                 </div>
-
                 <div className="assessment-card-right">
                   {course.status === "Pending" && (
                     <button className="primary-btn" onClick={() => navigate(`/student-layout/test/${course.id}`)}>
                       Start Test
                     </button>
                   )}
-
                   {course.status === "Completed" && (
                     <>
                       <button className="secondary-btn" onClick={() => setSelectedResultCourse(course.id)}>
@@ -235,7 +207,6 @@ function Assessment() {
             ))
           )}
         </div>
-
         <div className="assessment-right">
           <div className="assessment-rules">
             <h4>Assessment Rules</h4>
@@ -245,19 +216,15 @@ function Assessment() {
               <li>Passing score: 60%</li>
             </ul>
           </div>
-
           {selectedResultData && (
             <div className="result-summary">
               <h4>Result Summary</h4>
               <p className="result-course">{selectedResultData.courseName}</p>
-
               <h2>{selectedResultData.percentage}%</h2>
               <p>Score</p>
-
               <span className={`result-status ${selectedResultData.passed ? "passed" : "failed"}`}>
                 {selectedResultData.passed ? "Passed" : "Failed"}
               </span>
-
               <div className="result-breakdown">
                 <span>
                   Correct: {selectedResultData.score}/{selectedResultData.total}
@@ -274,6 +241,4 @@ function Assessment() {
     </div>
   );
 }
-
 export default Assessment;
-

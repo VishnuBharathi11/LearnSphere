@@ -8,7 +8,6 @@ import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { getInstructorCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import { getCourseDiscussions } from "../../../services/discussionApi";
-
 function InstructorProfile() {
   const [searchParams] = useSearchParams();
   const { currentUser } = useCurrentUser();
@@ -47,7 +46,6 @@ function InstructorProfile() {
     [isAdminPreview, previewUserName, previewUserEmail, currentUser?.id, currentUser?.name, currentUser?.email, currentUser?.phone, currentUser?.image]
   );
   const loadedProfileUserIdRef = useRef(null);
-
   const [profileData, setProfileData] = useState(initialProfile);
   const [draftData, setDraftData] = useState(initialProfile);
   const [isEditing, setIsEditing] = useState(false);
@@ -59,20 +57,16 @@ function InstructorProfile() {
     published: 0,
     totalLearners: 0,
   });
-
   useEffect(() => {
     if (!userId) return;
     if (isAdminPreview) return;
     if (loadedProfileUserIdRef.current === userId) return;
     loadedProfileUserIdRef.current = userId;
-
     let isMounted = true;
-
     async function loadProfile() {
       try {
         const response = await getMyProfile();
         if (!isMounted) return;
-
         const normalized = {
           fullName: response?.name || initialProfile.fullName,
           email: response?.email || initialProfile.email,
@@ -85,26 +79,19 @@ function InstructorProfile() {
           professionalWebsite: response?.professionalWebsite || "",
           image: response?.profileImage || null,
         };
-
         setProfileData(normalized);
         setDraftData(normalized);
-
       } catch {
-        // Keep default values if profile API is unavailable.
       }
     }
-
     loadProfile();
-
     return () => {
       isMounted = false;
     };
   }, [userId, initialProfile, isAdminPreview]);
-
   useEffect(() => {
     if (!userId) return;
     let active = true;
-
     async function loadStats() {
       try {
         const courses = await getInstructorCourses(String(userId), 0, 300);
@@ -116,11 +103,9 @@ function InstructorProfile() {
           safeCourses.map((course) => getCourseDiscussions(course.id).catch(() => []))
         );
         if (!active) return;
-
         const topLevelDiscussionCount = discussionLists
           .flat()
           .filter((post) => post.parentId == null).length;
-
         setStats({
           totalCourses: safeCourses.length,
           inReview: safeCourses.filter((course) => String(course.status).toUpperCase() === "REVIEW")
@@ -143,39 +128,33 @@ function InstructorProfile() {
         });
       }
     }
-
     loadStats();
     return () => {
       active = false;
     };
   }, [userId]);
-
   const handleEdit = () => {
     if (isAdminPreview) return;
     setDraftData(profileData);
     setIsEditing(true);
     setError("");
   };
-
   const handleCancel = () => {
     if (isAdminPreview) return;
     setDraftData(profileData);
     setIsEditing(false);
     setError("");
   };
-
   const handleSave = async () => {
     if (isAdminPreview) return;
     if (!userId) return;
     setError("");
     setIsSaving(true);
-
     const sanitized = {
       ...draftData,
       fullName: draftData.fullName.trim(),
       email: profileData.email,
     };
-
     try {
       const response = await updateMyProfile({
         name: sanitized.fullName,
@@ -188,7 +167,6 @@ function InstructorProfile() {
         professionalWebsite: sanitized.professionalWebsite,
         profileImage: sanitized.image,
       });
-
       const saved = {
         ...sanitized,
         fullName: response?.name || sanitized.fullName,
@@ -203,7 +181,6 @@ function InstructorProfile() {
           response?.professionalWebsite || sanitized.professionalWebsite,
         image: response?.profileImage || sanitized.image,
       };
-
       const baseUser = currentUser || {};
       setCurrentUser({
         ...baseUser,
@@ -221,7 +198,6 @@ function InstructorProfile() {
       setIsSaving(false);
     }
   };
-
   const handleChange = (e) => {
     if (isAdminPreview) return;
     if (!isEditing) return;
@@ -231,13 +207,11 @@ function InstructorProfile() {
       [name]: value,
     }));
   };
-
   const handleProfilePictureChange = (e) => {
     if (isAdminPreview) return;
     if (!isEditing) return;
     const file = e.target.files?.[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onloadend = () => {
       setDraftData((prev) => ({
@@ -247,7 +221,6 @@ function InstructorProfile() {
     };
     reader.readAsDataURL(file);
   };
-
   if (!currentUser) {
     return (
       <div className="instructor-profile-layout">
@@ -260,13 +233,10 @@ function InstructorProfile() {
       </div>
     );
   }
-
   const viewData = isEditing ? draftData : profileData;
-
   return (
     <div className="instructor-profile-layout">
       <div className="instructor-profile-page">
-        {/* Immersive Premium Header Summary Card */}
         <div className="instructor-profile-summary">
           <div className="summary-banner"></div>
           <div className="summary-top">
@@ -317,26 +287,19 @@ function InstructorProfile() {
             </div>
           </div>
         </div>
-
-        {/* Achievements Stat Grid */}
         <div className="instructor-profile-stats">
           <StatCard icon={BookOpen} label="Total Courses" value={stats.totalCourses} tone="blue" description="Courses Created" />
           <StatCard icon={Clock} label="In Review" value={stats.inReview} tone="yellow" description="Awaiting Approval" />
           <StatCard icon={CheckCircle} label="Published" value={stats.published} tone="green" description="Live & Active" />
           <StatCard icon={Users} label="Total Learners" value={stats.totalLearners} tone="purple" description="Enrolled Students" />
         </div>
-
-        {/* Form Details Grid */}
         <div className="profile-bottom-grid">
-          {/* Personal Information */}
           <div className="profile-card personal-info">
             <div className="profile-card-header">
               <User size={18} className="header-icon" />
               <h3>Personal Information</h3>
             </div>
-            
             {error && <p className="error-text">{error}</p>}
-            
             <div className="form-grid">
               <div className="form-group">
                 <label>Full Name *</label>
@@ -348,12 +311,10 @@ function InstructorProfile() {
                   placeholder="Enter your full name"
                 />
               </div>
-
               <div className="form-group">
                 <label>Email *</label>
                 <input value={viewData.email} disabled />
               </div>
-
               <div className="form-group">
                 <label>Phone</label>
                 <input
@@ -364,7 +325,6 @@ function InstructorProfile() {
                   placeholder="Enter phone number"
                 />
               </div>
-
               <div className="form-group">
                 <label>Teaching Experience</label>
                 <input
@@ -375,7 +335,6 @@ function InstructorProfile() {
                   disabled={!isEditing}
                 />
               </div>
-
               <div className="form-group full-width">
                 <label>Area of Expertise</label>
                 <input
@@ -386,7 +345,6 @@ function InstructorProfile() {
                   disabled={!isEditing}
                 />
               </div>
-
               <div className="form-group full-width">
                 <label>Bio</label>
                 <textarea
@@ -399,14 +357,11 @@ function InstructorProfile() {
               </div>
             </div>
           </div>
-
-          {/* Professional Links */}
           <div className="profile-card professional-links">
             <div className="profile-card-header">
               <Globe size={18} className="header-icon" />
               <h3>Professional Profiles</h3>
             </div>
-            
             <div className="form-grid">
               <div className="form-group full-width">
                 <label>LinkedIn Profile</label>
@@ -418,7 +373,6 @@ function InstructorProfile() {
                   disabled={!isEditing}
                 />
               </div>
-
               <div className="form-group full-width">
                 <label>Personal Portfolio</label>
                 <input
@@ -429,7 +383,6 @@ function InstructorProfile() {
                   disabled={!isEditing}
                 />
               </div>
-
               <div className="form-group full-width">
                 <label>GitHub or Other Professional URL</label>
                 <input
@@ -440,8 +393,6 @@ function InstructorProfile() {
                   disabled={!isEditing}
                 />
               </div>
-
-              {/* Teaching Tips or Additional Content to populate spaces */}
               <div className="teaching-tips-card">
                 <div className="tip-header">
                   <Award size={14} />
@@ -458,7 +409,6 @@ function InstructorProfile() {
     </div>
   );
 }
-
 function StatCard({ icon, label, value, tone, description }) {
   const Icon = icon;
   return (
@@ -474,5 +424,4 @@ function StatCard({ icon, label, value, tone, description }) {
     </div>
   );
 }
-
 export default InstructorProfile;

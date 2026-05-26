@@ -8,19 +8,16 @@ import { getAdminSettings } from "../../services/adminApi";
 import { normalizeForumRole } from "../../utils/forumRole";
 import "./forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
-
 const TopicPage = () => {
   const { topicId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
-
   const currentRole = normalizeForumRole(currentUser?.role);
   const isInstructor = location.pathname.startsWith("/instructor-layout/") || currentRole === "instructor";
   const isAdmin = location.pathname.startsWith("/admin-layout/") || currentRole === "admin";
   const canManage = isInstructor || isAdmin;
   const currentUserId = String(currentUser?.id || currentUser?.userId || currentUser?.email || "anonymous");
-
   const {
     threadDetail,
     replyMeta,
@@ -35,14 +32,12 @@ const TopicPage = () => {
     deleteReply,
     toggleThreadLock,
   } = useForum(undefined, currentUser);
-
   const [actionError, setActionError] = useState("");
   const [discussionEnabled, setDiscussionEnabled] = useState(true);
   const replyBottomRef = useRef(null);
   const plainTitle = String(threadDetail?.title || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   const plainContent = String(threadDetail?.content || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   const showTitle = plainTitle && plainTitle.toLowerCase() !== plainContent.toLowerCase();
-
   useEffect(() => {
     let active = true;
     async function loadFeatureSettings() {
@@ -60,68 +55,54 @@ const TopicPage = () => {
       active = false;
     };
   }, []);
-
   useEffect(() => {
     fetchThreadById(topicId, 0, false);
   }, [fetchThreadById, topicId]);
-
   useEffect(() => {
     if (replyBottomRef.current) {
       replyBottomRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
     }
   }, [threadDetail?.replies]);
-
   const totalReplies = useMemo(() => Number(threadDetail?.replyCount || 0), [threadDetail?.replyCount]);
   const topicLikedByUser = Boolean(threadDetail?.likedBy?.includes("self") || threadDetail?.likedBy?.includes(currentUserId));
-
   const backToForumPath = useMemo(() => {
     if (location.pathname.startsWith("/instructor-layout/")) {
       return "/instructor-layout/forum";
     }
-
     if (location.pathname.startsWith("/admin-layout/")) {
       return "/admin-layout/forum";
     }
-
     if (location.pathname.startsWith("/student-layout/")) {
       return "/student-layout/forum";
     }
-
     return `/courses/${threadDetail?.courseId || "general"}/forum`;
   }, [location.pathname, threadDetail?.courseId]);
-
   const handleDeleteTopic = async () => {
     if (!window.confirm("Delete this topic and all its replies?")) {
       return;
     }
-
     const result = await deleteTopic(topicId);
     if (result?.ok) {
       navigate(backToForumPath, { replace: true });
       return;
     }
-
     setActionError(result?.error || "Unable to delete topic");
   };
-
   const handleDeleteReply = async (targetTopicId, replyId) => {
     if (!window.confirm("Delete this reply?")) {
       return;
     }
-
     const result = await deleteReply(targetTopicId, replyId);
     if (!result?.ok) {
       setActionError(result?.error || "Unable to delete reply");
     }
   };
-
   const handleToggleLock = async () => {
     const result = await toggleThreadLock(topicId, !threadDetail?.isLocked);
     if (!result?.ok) {
       setActionError(result?.error || "Unable to change lock state");
     }
   };
-
   if (loading && !threadDetail) {
     return (
       <section className="forum-page-shell">
@@ -129,7 +110,6 @@ const TopicPage = () => {
       </section>
     );
   }
-
   if (!threadDetail) {
     return (
       <section className="forum-page-shell">
@@ -144,7 +124,6 @@ const TopicPage = () => {
       </section>
     );
   }
-
   return (
     <section className="forum-page-shell">
       <div className="forum-back-link-row">
@@ -157,18 +136,15 @@ const TopicPage = () => {
           <ArrowLeft size={15} />
         </Link>
       </div>
-
       <article className="forum-topic-detail">
         {showTitle ? <h1>{threadDetail.title}</h1> : null}
         <p className="forum-topic-preview" dangerouslySetInnerHTML={{ __html: threadDetail.content }} />
-
         <div className="forum-meta-row">
           <span className="forum-pill">{threadDetail.author}</span>
           <span className="forum-pill">{new Date(threadDetail.createdAt).toLocaleString()}</span>
           <span className="forum-pill forum-pill-accent">{totalReplies} replies</span>
           {threadDetail.isLocked ? <span className="forum-pill">Locked</span> : null}
         </div>
-
         <div className="forum-topic-actions">
           {canManage ? (
             <>
@@ -206,10 +182,8 @@ const TopicPage = () => {
           </div>
         </div>
       </article>
-
       <section className="forum-replies-section">
         <h2>Replies</h2>
-
         {threadDetail.isLocked ? (
           <div className="forum-empty-state">Thread is locked by moderator.</div>
         ) : (
@@ -219,9 +193,7 @@ const TopicPage = () => {
             buttonLabel="Reply"
           />
         )}
-
         {actionError || error ? <p className="forum-error">{actionError || error}</p> : null}
-
         {threadDetail.replies?.length ? (
           <div className="forum-replies-list">
             {threadDetail.replies.map((reply) => (
@@ -242,7 +214,6 @@ const TopicPage = () => {
         ) : (
           <div className="forum-empty-state">No replies yet. Start the discussion.</div>
         )}
-
         {replyMeta.page + 1 < replyMeta.totalPages ? (
           <div className="forum-load-more">
             <button
@@ -258,6 +229,4 @@ const TopicPage = () => {
     </section>
   );
 };
-
 export default TopicPage;
-

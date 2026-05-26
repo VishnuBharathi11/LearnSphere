@@ -9,7 +9,6 @@ import {
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import Pagination from "../../../components/Pagination/Pagination";
 import "./Manageuser.scss";
-
 function Manageusers() {
   const [users, setUsers] = useState([]);
   const [activeTab, setActiveTab] = useState("All");
@@ -19,7 +18,6 @@ function Manageusers() {
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
   const navigate = useNavigate();
-
   const loadUsers = async () => {
     try {
       const list = await getAdminUsers();
@@ -29,18 +27,15 @@ function Manageusers() {
       setError(getFriendlyErrorMessage(apiError, "Failed to load users"));
     }
   };
-
   useEffect(() => {
     loadUsers();
   }, []);
-
   const filteredUsers = useMemo(() => {
     return users.filter((user) => {
       if (activeTab === "Learners" && String(user.role).toLowerCase() !== "learner") return false;
       if (activeTab === "Instructors" && String(user.role).toLowerCase() !== "instructor") return false;
       if (activeTab === "Suspended" && String(user.status).toLowerCase() !== "suspended") return false;
       if (roleFilter !== "All" && String(user.role).toLowerCase() !== roleFilter.toLowerCase()) return false;
-
       const term = search.toLowerCase();
       return (
         String(user.name || "").toLowerCase().includes(term) ||
@@ -48,18 +43,14 @@ function Manageusers() {
       );
     });
   }, [users, activeTab, search, roleFilter]);
-
   useEffect(() => {
     setCurrentPage(1);
   }, [search, activeTab, roleFilter]);
-
   const paginatedUsers = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [filteredUsers, currentPage]);
-
   const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
-
   const toggleUserStatus = async (user) => {
     try {
       const suspend = String(user.status).toLowerCase() !== "suspended";
@@ -69,7 +60,6 @@ function Manageusers() {
       setError(getFriendlyErrorMessage(apiError, "Failed to update user status"));
     }
   };
-
   const deleteUser = async (id) => {
     if (!window.confirm("Delete this user account?")) return;
     try {
@@ -79,7 +69,6 @@ function Manageusers() {
       setError(getFriendlyErrorMessage(apiError, "Failed to delete user"));
     }
   };
-
   const openUserPortal = (user) => {
     const role = String(user.role || "").toLowerCase();
     const params = new URLSearchParams({
@@ -89,24 +78,20 @@ function Manageusers() {
       adminUserEmail: String(user.email || ""),
       adminUserRole: role,
     });
-
     if (role === "admin") {
       navigate(`/admin-layout/dashboard?${params.toString()}`);
       return;
     }
-
     if (role === "instructor") {
       navigate(`/instructor-layout/dashboard?${params.toString()}`);
       return;
     }
     navigate(`/student-layout/dashboard?${params.toString()}`);
   };
-
   return (
     <div className="manage-users-layout">
       <div className="manage-users">
         {error && <p className="admin-error">{error}</p>}
-
         <div className="tabs">
           {["All", "Learners", "Instructors", "Suspended"].map((tab) => (
             <button
@@ -118,7 +103,6 @@ function Manageusers() {
             </button>
           ))}
         </div>
-
         <div className="filters">
           <div className="search-box">
             <Search size={16} />
@@ -135,7 +119,6 @@ function Manageusers() {
             <option value="admin">Admin</option>
           </select>
         </div>
-
         <div className="table-wrapper">
           <table>
             <thead>
@@ -225,5 +208,4 @@ function Manageusers() {
     </div>
   );
 }
-
 export default Manageusers;

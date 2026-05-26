@@ -1,15 +1,11 @@
 package com.learnsphere.course.service.impl;
-
 import java.time.Instant;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
-
 import com.learnsphere.course.entity.Category;
 import com.learnsphere.course.exception.BadRequestException;
 import com.learnsphere.course.repository.CategoryRepository;
 import com.learnsphere.course.service.CategoryService;
-
 @Service
 public class CategoryServiceImpl implements CategoryService{
 	private final CategoryRepository categoryRepository;
@@ -25,7 +21,6 @@ public class CategoryServiceImpl implements CategoryService{
 		category.setActive(true);
 		return categoryRepository.save(category);
 	}
-
 	@Override
 	public List<Category> getAllCategories() {
 		return categoryRepository.findAll();
@@ -46,7 +41,6 @@ public class CategoryServiceImpl implements CategoryService{
         existing.setDescription(category.getDescription());
 		return categoryRepository.save(existing);
 	}
-
 	@Override
 	public void deleteCategory(String id) {
 		Category existing=getCategoryById(id);
@@ -56,10 +50,8 @@ public class CategoryServiceImpl implements CategoryService{
 		existing.setActive(false);
 		categoryRepository.save(existing);
 	}
-	
 	@Override
 	public List<Category> getActive(){
 		return categoryRepository.findByActiveTrue();
 	}
-
 }

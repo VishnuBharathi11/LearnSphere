@@ -1,10 +1,7 @@
 package com.learnsphere.admin.dto;
-
 import lombok.*;
-
 import java.time.Instant;
 import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,7 +18,6 @@ public class DashboardResponse {
     private List<RevenueTrendPoint> revenueTrend;
     private List<PendingTask> pendingTasks;
     private List<RecentActivity> recentActivity;
-
     @Data
     @Builder
     @NoArgsConstructor
@@ -31,7 +27,6 @@ public class DashboardResponse {
         private long registrations;
         private long logins;
     }
-
     @Data
     @Builder
     @NoArgsConstructor
@@ -42,7 +37,6 @@ public class DashboardResponse {
         private double grossRevenue;
         private double commissionRevenue;
     }
-
     @Data
     @Builder
     @NoArgsConstructor
@@ -52,7 +46,6 @@ public class DashboardResponse {
         private String priority;
         private long count;
     }
-
     @Data
     @Builder
     @NoArgsConstructor
@@ -63,4 +56,3 @@ public class DashboardResponse {
         private Instant timestamp;
     }
 }
-

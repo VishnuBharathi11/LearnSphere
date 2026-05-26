@@ -5,7 +5,6 @@ import { getCourseById } from "../../../services/courseApi";
 import { pushLocalNotification } from "../../../services/activityNotificationStore";
 import { getCurrentUser } from "../../../services/userProfileStore";
 import "./PaymentSuccess.scss";
-
 function PaymentSuccess() {
   const navigate = useNavigate();
   const { state } = useLocation();
@@ -13,16 +12,13 @@ function PaymentSuccess() {
   const paymentId = state?.paymentId;
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
-
   const [course, setCourse] = useState(null);
-
   useEffect(() => {
     if (!courseId) return;
     getCourseById(String(courseId))
       .then((data) => setCourse(data))
       .catch(() => setCourse(null));
   }, [courseId]);
-
   useEffect(() => {
     if (!courseId || !userId) return;
     pushLocalNotification({
@@ -36,7 +32,6 @@ function PaymentSuccess() {
       targetPath: `/student-layout/learn/${courseId}`,
     });
   }, [courseId, paymentId, userId]);
-
   if (!courseId) {
     return (
       <div className="success-page">
@@ -47,7 +42,6 @@ function PaymentSuccess() {
       </div>
     );
   }
-
   return (
     <div className="success-page">
       <div className="success-container">
@@ -58,7 +52,6 @@ function PaymentSuccess() {
             {course ? `You are now enrolled in ${course.courseName}` : "Enrollment completed successfully."}
           </p>
         </div>
-
         <div className="ps-card transaction-card">
           <h3>Transaction Details</h3>
           <div className="transaction-grid">
@@ -80,7 +73,6 @@ function PaymentSuccess() {
             </div>
           </div>
         </div>
-
         <div className="actions">
           <button className="ps-primary-btn" onClick={() => navigate(`/student-layout/learn/${courseId}`)}>
             <Play size={18} />
@@ -94,5 +86,4 @@ function PaymentSuccess() {
     </div>
   );
 }
-
 export default PaymentSuccess;

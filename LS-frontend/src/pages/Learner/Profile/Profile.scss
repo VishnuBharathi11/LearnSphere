@@ -1,33 +1,29 @@
-// Design Tokens & Core Variables (Adhering strictly to LearnSphere Branding)
 $profile-font-primary: "Inter", sans-serif;
 $profile-font-display: "Poppins", sans-serif;
 $profile-white: #ffffff;
 $profile-text-dark: #1e293b;
 $profile-text-muted: #64748b;
-$profile-primary: #a435f0;       // Royal Purple
+$profile-primary: #a435f0;       
 $profile-primary-hover: #8222c8;
-$profile-accent: #f69c08;        // Luxury Gold
+$profile-accent: #f69c08;        
 $profile-accent-hover: #dd8800;
 $profile-border-light: #e2e8f0;
 $profile-bg-disabled: #f8fafc;
 $profile-bg-soft: rgba(164, 53, 240, 0.05);
 $profile-shadow: 0 10px 35px rgba(30, 41, 59, 0.05), 0 1px 3px rgba(30, 41, 59, 0.02);
 $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164, 53, 240, 0.03);
-
 @mixin flex-row($gap: 0, $justify: flex-start, $align: stretch) {
   display: flex;
   gap: $gap;
   justify-content: $justify;
   align-items: $align;
 }
-
 @mixin card-base($radius: 20px) {
   background: $profile-white;
   border-radius: $radius;
   box-shadow: $profile-shadow;
   border: 1px solid $profile-border-light;
 }
-
 .profile-content {
   width: 100%;
   padding: 32px;
@@ -35,8 +31,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   min-height: 100vh;
   font-family: $profile-font-primary;
 }
-
-// 1. Immersive Premium Header Summary Card
 .profile-summary {
   @include card-base;
   overflow: hidden;
@@ -44,12 +38,10 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   display: flex;
   flex-direction: column;
 }
-
 .summary-banner {
   height: 140px;
   background: linear-gradient(135deg, #1e1b4b 0%, #a435f0 60%, #f69c08 100%);
   position: relative;
-
   &::before {
     content: "";
     position: absolute;
@@ -60,37 +52,31 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     background-size: 20px 20px;
   }
 }
-
 .summary-top {
   @include flex-row(32px, space-between, flex-end);
   padding: 0 40px 24px 40px;
   position: relative;
   z-index: 5;
 }
-
 .summary-left {
   @include flex-row(24px, flex-start, flex-end);
 }
-
 .profile-image-wrapper {
   position: relative;
   width: 110px;
   height: 110px;
   border-radius: 50%;
   cursor: pointer;
-  margin-top: -55px; // Overlaps the banner beautifully
+  margin-top: -55px; 
   flex-shrink: 0;
   transition: all 0.3s ease;
-
   &:hover {
     transform: scale(1.03);
-
     .edit-icon {
       background: $profile-accent;
       transform: scale(1.1);
     }
   }
-
   img {
     width: 100%;
     height: 100%;
@@ -100,7 +86,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 }
-
 .profile-image-fallback {
   width: 100%;
   height: 100%;
@@ -115,7 +100,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   background: linear-gradient(135deg, #a435f0 0%, #f69c08 100%);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
-
 .edit-icon {
   position: absolute;
   bottom: 2px;
@@ -130,14 +114,11 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
   transition: all 0.25s ease;
 }
-
 .profile-meta {
   margin-bottom: 6px;
-
   .name-row {
     @include flex-row(12px, flex-start, center);
     margin-bottom: 4px;
-
     h3 {
       font-family: $profile-font-display;
       font-size: 24px;
@@ -147,7 +128,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
       letter-spacing: -0.01em;
     }
   }
-
   p {
     font-size: 14px;
     font-weight: 500;
@@ -155,7 +135,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     margin: 0;
   }
 }
-
 .role-badge {
   display: inline-flex;
   align-items: center;
@@ -169,7 +148,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   padding: 4px 12px;
   border-radius: 20px;
 }
-
 .edit-profile-btn {
   @include flex-row(8px, center, center);
   background: $profile-primary;
@@ -182,17 +160,14 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   cursor: pointer;
   margin-bottom: 6px;
   transition: all 0.25s ease;
-
   &:hover {
     background: $profile-primary-hover;
     border-color: $profile-primary-hover;
     box-shadow: 0 4px 12px rgba($profile-primary, 0.2);
   }
-
   &.edit-active {
     background: $profile-accent;
     border-color: $profile-accent;
-
     &:hover {
       background: $profile-accent-hover;
       border-color: $profile-accent-hover;
@@ -200,22 +175,18 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     }
   }
 }
-
 .summary-divider {
   height: 1px;
   background: $profile-border-light;
   margin: 0 40px;
 }
-
 .summary-stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   padding: 24px 40px;
   text-align: center;
-
   div {
     position: relative;
-
     &:not(:last-child)::after {
       content: "";
       position: absolute;
@@ -226,7 +197,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
       background: $profile-border-light;
     }
   }
-
   span {
     display: block;
     font-size: 11px;
@@ -236,7 +206,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     letter-spacing: 0.05em;
     margin-bottom: 4px;
   }
-
   strong {
     display: block;
     font-size: 28px;
@@ -245,50 +214,41 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     color: $profile-text-dark;
   }
 }
-
-// 2. Gamified Highlights grid
 .profile-highlights {
   margin-top: 24px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
-
 .highlight-card {
   @include card-base(16px);
   padding: 18px 24px;
   @include flex-row(16px, flex-start, center);
   transition: all 0.3s ease;
-
   &:hover {
     transform: translateY(-3px);
     box-shadow: $profile-shadow-hover;
     border-color: rgba($profile-primary, 0.12);
   }
-
   .highlight-icon-box {
     width: 44px;
     height: 44px;
     border-radius: 12px;
     @include flex-row(0, center, center);
     flex-shrink: 0;
-
     &.fire {
       background: rgba(239, 68, 68, 0.1);
-      color: #ef4444; // Orange-red streak flame
+      color: #ef4444; 
     }
-
     &.target {
       background: rgba($profile-primary, 0.1);
       color: $profile-primary;
     }
-
     &.medal {
       background: rgba($profile-accent, 0.1);
       color: $profile-accent;
     }
   }
-
   span {
     display: block;
     font-size: 11px;
@@ -297,7 +257,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     color: $profile-text-muted;
     letter-spacing: 0.05em;
   }
-
   strong {
     display: block;
     font-size: 16px;
@@ -306,30 +265,24 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     margin-top: 2px;
   }
 }
-
-// 3. Two Column Dashboard Layout
 .profile-bottom {
   display: grid;
   grid-template-columns: 1.8fr 1fr;
   gap: 28px;
   margin-top: 28px;
 }
-
 .personal-info,
 .achievements {
   @include card-base;
   padding: 32px;
-
   .section-header {
     @include flex-row(10px, flex-start, center);
     margin-bottom: 24px;
     border-bottom: 1.5px solid $profile-border-light;
     padding-bottom: 12px;
-
     .header-icon {
       color: $profile-primary;
     }
-
     h3 {
       font-family: $profile-font-display;
       font-size: 17px;
@@ -339,23 +292,18 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     }
   }
 }
-
-// 3.1 Input Forms & Labels
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
 }
-
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 6px;
-
   &.full-width {
     grid-column: span 2;
   }
-
   label {
     font-size: 12px;
     font-weight: 700;
@@ -363,7 +311,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
-
   input,
   textarea {
     width: 100%;
@@ -376,25 +323,21 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     color: $profile-text-dark;
     outline: none;
     transition: all 0.3s ease;
-
     &:disabled {
       background: $profile-bg-disabled;
       color: $profile-text-muted;
       cursor: not-allowed;
     }
-
     &:focus:not(:disabled) {
       border-color: $profile-primary;
       box-shadow: 0 0 0 4px rgba($profile-primary, 0.12);
     }
   }
-
   textarea {
     resize: none;
     line-height: 1.5;
   }
 }
-
 .save-btn {
   @include flex-row(8px, center, center);
   background: $profile-primary;
@@ -407,21 +350,17 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   cursor: pointer;
   margin-top: 24px;
   transition: all 0.25s ease;
-
   &:hover {
     background: $profile-primary-hover;
     box-shadow: 0 4px 12px rgba($profile-primary, 0.2);
   }
 }
-
-// 3.2 Trophy achievements section
 .achievements-list {
   display: flex;
   flex-direction: column;
   gap: 12px;
   margin-bottom: 24px;
 }
-
 .achievement-card {
   @include flex-row(16px, flex-start, center);
   padding: 14px 18px;
@@ -429,19 +368,16 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
   border: 1px solid $profile-border-light;
   border-radius: 14px;
   transition: all 0.3s ease;
-
   &.animate-hover:hover {
     background: $profile-white;
     border-color: rgba($profile-accent, 0.25);
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba($profile-accent, 0.08);
-
     .achievement-icon {
       background: rgba($profile-accent, 0.15);
       color: $profile-accent;
     }
   }
-
   .achievement-icon {
     width: 38px;
     height: 38px;
@@ -452,7 +388,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     flex-shrink: 0;
     transition: all 0.3s ease;
   }
-
   .achievement-details {
     strong {
       display: block;
@@ -461,7 +396,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
       color: $profile-text-dark;
       line-height: 1.35;
     }
-
     p {
       font-size: 12px;
       font-weight: 600;
@@ -470,38 +404,32 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     }
   }
 }
-
 .empty-achievements {
   text-align: center;
   padding: 30px 20px;
   color: $profile-text-muted;
-
   svg {
     opacity: 0.15;
     color: $profile-text-muted;
     margin-bottom: 12px;
   }
-
   p {
     font-size: 14px;
     font-weight: 700;
     color: $profile-text-dark;
     margin: 0;
   }
-
   small {
     display: block;
     font-size: 12px;
     margin-top: 4px;
   }
 }
-
 .achievement-tip {
   background: $profile-bg-soft;
   border-radius: 16px;
   padding: 18px;
   border: 1px solid rgba($profile-primary, 0.08);
-
   .tip-header {
     @include flex-row(6px, flex-start, center);
     color: $profile-primary;
@@ -511,7 +439,6 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     letter-spacing: 0.05em;
     margin-bottom: 8px;
   }
-
   p {
     font-size: 13px;
     line-height: 1.5;
@@ -520,94 +447,75 @@ $profile-shadow-hover: 0 20px 45px rgba(164, 53, 240, 0.08), 0 1px 3px rgba(164,
     font-weight: 500;
   }
 }
-
-// 4. Responsive Queries
 @mixin bottom-desktop {
   @media (max-width: 1024px) { @content; }
 }
-
 @mixin bottom-mobile {
   @media (max-width: 768px) { @content; }
 }
-
 @include bottom-desktop {
   .profile-bottom {
     grid-template-columns: 1fr;
     gap: 20px;
   }
 }
-
 @include bottom-mobile {
   .profile-content {
     padding: 16px;
   }
-
   .summary-banner {
     height: 110px;
   }
-
   .summary-top {
     flex-direction: column;
     align-items: stretch;
     padding: 0 20px 20px 20px;
     gap: 16px;
   }
-
   .summary-left {
     flex-direction: column;
     align-items: center;
     text-align: center;
   }
-
   .profile-image-wrapper {
     margin-top: -45px;
     width: 90px;
     height: 90px;
   }
-
   .profile-meta .name-row {
     flex-direction: column;
     gap: 6px;
   }
-
   .edit-profile-btn {
     width: 100%;
     margin-bottom: 0;
   }
-
   .summary-divider {
     margin: 0 20px;
   }
-
   .summary-stats {
     grid-template-columns: repeat(2, 1fr);
     padding: 16px 20px;
     gap: 12px;
-
     div {
       padding: 6px 0;
-
       &:not(:last-child)::after {
         display: none;
       }
     }
   }
-
   .profile-highlights {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-
   .personal-info,
   .achievements {
     padding: 24px;
   }
-
   .form-grid {
     grid-template-columns: 1fr;
     gap: 14px;
   }
-
   .form-group.full-width {
     grid-column: span 1;
   }

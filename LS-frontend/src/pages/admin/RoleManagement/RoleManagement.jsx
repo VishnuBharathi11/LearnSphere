@@ -3,7 +3,6 @@ import { Shield, Plus, Edit, Trash2, X } from "lucide-react";
 import { getAdminRoles, saveAdminRolePermissions } from "../../../services/adminApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./RoleManagement.scss";
-
 function RoleManagement() {
   const [showModal, setShowModal] = useState(false);
   const [editingRole, setEditingRole] = useState(null);
@@ -25,12 +24,10 @@ function RoleManagement() {
     "System Settings",
     "Manage Roles",
   ];
-
   const [formData, setFormData] = useState({
     role: "",
     permissions: [],
   });
-
   const loadRoles = async () => {
     try {
       const data = await getAdminRoles();
@@ -40,17 +37,14 @@ function RoleManagement() {
       setError(getFriendlyErrorMessage(apiError, "Failed to load role permissions"));
     }
   };
-
   useEffect(() => {
     loadRoles();
   }, []);
-
   const openCreate = () => {
     setEditingRole(null);
     setFormData({ role: "", permissions: [] });
     setShowModal(true);
   };
-
   const openEdit = (role) => {
     setEditingRole(role);
     setFormData({
@@ -59,7 +53,6 @@ function RoleManagement() {
     });
     setShowModal(true);
   };
-
   const handleDeleteRole = async (roleName) => {
     const confirmDelete = window.confirm("Delete this role permissions?");
     if (!confirmDelete) return;
@@ -70,7 +63,6 @@ function RoleManagement() {
       setError(getFriendlyErrorMessage(apiError, "Failed to delete role permissions"));
     }
   };
-
   const togglePermission = (permission) => {
     setFormData((prev) => ({
       ...prev,
@@ -79,7 +71,6 @@ function RoleManagement() {
         : [...prev.permissions, permission],
     }));
   };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -93,12 +84,10 @@ function RoleManagement() {
       setError(getFriendlyErrorMessage(apiError, "Failed to save role permissions"));
     }
   };
-
   return (
     <div className="role-management-layout">
       <div className="admin-content">
         {error && <p className="admin-error">{error}</p>}
-
         <main className="role-container">
           {roles.map((role) => (
             <div className="role-card" key={role.role}>
@@ -110,12 +99,10 @@ function RoleManagement() {
                     <span>{role.users} users</span>
                   </div>
                 </div>
-
                 <div className="role-actions">
                   <button className="edit-btn" onClick={() => openEdit(role)} title="Edit Role">
                     <Edit size={16} />
                   </button>
-
                   <button
                     className="delete-btn"
                     onClick={() => handleDeleteRole(role.role)}
@@ -125,9 +112,7 @@ function RoleManagement() {
                   </button>
                 </div>
               </div>
-
               <p className="role-desc">Configured permissions for {role.role}</p>
-
               <div className="permission-list">
                 {(role.permissions || []).map((permission) => (
                   <span key={permission} className="permission-pill">
@@ -137,14 +122,12 @@ function RoleManagement() {
               </div>
             </div>
           ))}
-
           <button className="role-add" onClick={openCreate}>
             <Plus size={28} />
             <span>Create Role</span>
           </button>
         </main>
       </div>
-
       {showModal && (
         <div className="modal-backdrop">
           <div className="modal">
@@ -154,7 +137,6 @@ function RoleManagement() {
                 <X size={20} />
               </button>
             </div>
-
             <form onSubmit={handleSubmit} className="modal-body">
               <label>
                 Role Name
@@ -165,7 +147,6 @@ function RoleManagement() {
                   onChange={(event) => setFormData({ ...formData, role: event.target.value })}
                 />
               </label>
-
               <div className="permission-box">
                 {ALL_PERMISSIONS.map((permission) => (
                   <label key={permission} className="perm-item">
@@ -178,7 +159,6 @@ function RoleManagement() {
                   </label>
                 ))}
               </div>
-
               <div className="modal-actions">
                 <button type="submit" className="btn-primary">
                   Save
@@ -194,5 +174,4 @@ function RoleManagement() {
     </div>
   );
 }
-
 export default RoleManagement;

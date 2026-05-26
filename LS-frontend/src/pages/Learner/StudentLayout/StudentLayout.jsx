@@ -3,7 +3,6 @@ import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import StudentSideBar from "../../../components/SideBar-S/SidebarStudent";
 import TopNavBarStudent from "../../../components/TopNavBar-S/TopNavBarStudent";
 import "./StudentLayout.scss";
-
 function StudentLayout() {
   const location = useLocation();
   const outlet = useOutlet();
@@ -11,15 +10,12 @@ function StudentLayout() {
   const role = String(currentUser?.role || "").toLowerCase();
   const search = new URLSearchParams(location.search);
   const isAdminPreview = search.get("adminPreview") === "true" && role === "admin";
-
   if (loading) {
     return null;
   }
-
   if (!currentUser || (role !== "learner" && !isAdminPreview)) {
     return <Navigate to="/login" replace />;
   }
-
   return (
     <div className={`student-layout ${isAdminPreview ? "admin-preview-mode" : ""}`}>
       <StudentSideBar />
@@ -32,5 +28,4 @@ function StudentLayout() {
     </div>
   );
 }
-
 export default StudentLayout;

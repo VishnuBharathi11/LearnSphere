@@ -1,13 +1,9 @@
 package com.learnsphere.auth.service;
-
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
-
 import com.learnsphere.auth.entity.User;
 import com.learnsphere.auth.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService{
@@ -22,6 +18,5 @@ public class CustomUserDetailsService implements UserDetailsService{
 				.password(user.getPassword())
 				.roles(user.getRole())
 				.build();
-				
 	}
 }

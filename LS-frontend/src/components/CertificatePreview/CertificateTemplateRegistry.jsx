@@ -1,5 +1,4 @@
 import styles from "./CertificateTemplates.module.scss";
-
 const defaultData = {
   id: "CREDENTIAL-51F16B",
   studentName: "Saad Uzair",
@@ -10,7 +9,6 @@ const defaultData = {
   qrCodeDataUri: "",
   skillBadges: ["React 19", "Spring Boot 3", "System Design", "Cloud Native"],
 };
-
 function formatDate(value) {
   if (!value) return "Issued today";
   return new Intl.DateTimeFormat("en", {
@@ -19,8 +17,6 @@ function formatDate(value) {
     year: "numeric",
   }).format(new Date(value));
 }
-
-// Sophisticated SVG Guilloche Watermark for background
 function GuillocheWatermark() {
   return (
     <div className={styles.watermark}>
@@ -37,8 +33,6 @@ function GuillocheWatermark() {
     </div>
   );
 }
-
-// Academic Crest SVG for traditional layouts
 function AcademicCrest() {
   return (
     <div className={styles.academicCrest}>
@@ -53,8 +47,6 @@ function AcademicCrest() {
     </div>
   );
 }
-
-// Brand logo and name matching the website colors (Royal Purple and Luxury Gold)
 function LearnSphereLogo({ centered = false }) {
   return (
     <div className={styles.brandLogo} style={{ display: 'flex', alignItems: 'center', gap: '10px', justifyContent: centered ? 'center' : 'flex-start' }}>
@@ -68,8 +60,6 @@ function LearnSphereLogo({ centered = false }) {
     </div>
   );
 }
-
-// Dynamic Seal Component
 function Seal({ tone = "gold" }) {
   return (
     <div className={`${styles.seal} ${styles[tone]}`}>
@@ -77,8 +67,6 @@ function Seal({ tone = "gold" }) {
     </div>
   );
 }
-
-// Signature block with authentic script signatures
 function Signature({ name, role = "Lead Instructor" }) {
   const scriptName = name || "LearnSphere Faculty";
   return (
@@ -91,8 +79,6 @@ function Signature({ name, role = "Lead Instructor" }) {
     </div>
   );
 }
-
-// Security strip with full dynamic verifiable details
 function SecurityStrip({ certificate }) {
   return (
     <div className={styles.securityStrip}>
@@ -102,8 +88,6 @@ function SecurityStrip({ certificate }) {
     </div>
   );
 }
-
-// QR block with scan frames
 function QrBlock({ certificate }) {
   return (
     <div className={styles.qrBlock}>
@@ -116,7 +100,6 @@ function QrBlock({ certificate }) {
     </div>
   );
 }
-
 function Badges({ badges = [] }) {
   if (!badges.length) return null;
   return (
@@ -127,7 +110,6 @@ function Badges({ badges = [] }) {
     </div>
   );
 }
-
 function CertificateShell({ certificate, variant, children }) {
   return (
     <article className={`${styles.certificate} ${styles[variant]}`}>
@@ -137,15 +119,10 @@ function CertificateShell({ certificate, variant, children }) {
     </article>
   );
 }
-
-// ==========================================================================
-// 1. HORIZONTAL LUXURY (Stanford/Google Centered layout with Hexagon reference)
-// ==========================================================================
 export function HorizontalLuxuryCertificate({ data }) {
   const certificate = { ...defaultData, ...data };
   return (
     <CertificateShell certificate={certificate} variant="horizontalLuxury">
-      {/* Sleek Google-style vertical geometric accents in brand colors (Purple & Gold) */}
       <div className={styles.geometricLeft}>
         <svg viewBox="0 0 40 400" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ width: '100%', height: '100%', display: 'block' }}>
           <rect x="0" y="0" width="12" height="400" fill="#a435f0" opacity="0.9" />
@@ -168,48 +145,33 @@ export function HorizontalLuxuryCertificate({ data }) {
           <polygon points="22,190 10,200 22,210" fill="#a435f0" opacity="0.3" />
         </svg>
       </div>
-
       <div className={styles.certificateBody}>
-        {/* Brand logo header centered */}
         <div style={{ transform: 'scale(1.08)', marginBottom: '1cqh' }}>
           <LearnSphereLogo centered={true} />
         </div>
-
         <div className={styles.kicker} style={{ marginTop: '1cqh' }}>Course Certificate</div>
         <div className={styles.issuedDateSub}>Issued on {formatDate(certificate.issuedAt)}</div>
-        
         <p className={styles.statement} style={{ margin: '1.2cqh 0 0.4cqh 0' }}>
           This is to officially certify that the Learner
         </p>
-        
         <h1>{certificate.studentName}</h1>
-        
         <p className={styles.statement} style={{ margin: '0.8cqh 0' }}>
           has successfully completed all assessment and academic requirements for
         </p>
-        
         <h2>{certificate.courseTitle}</h2>
-        
-        {/* Google Certificate-style detailed multi-line subtext description to fill the space perfectly */}
         <p className={styles.courseDescription} style={{ maxWidth: '82%', margin: '0.8cqh auto 1.5cqh auto' }}>
           an online non-credit course authorized by LearnSphere and offered through its verified educational platform. This rigorous program certifies the successful mastery of core professional competencies, validated through active assessments, practical projects, and academic excellence.
         </p>
-
-        {/* Structured skills panel for visual weight */}
         <div className={styles.skillsPanel}>
           <span className={styles.skillsPanelTitle}>Verified Competencies & Skills:</span>
           <Badges badges={certificate.skillBadges} />
         </div>
-
-        {/* Visual grounding divider line above signatures */}
         <div className={styles.dividerLine} />
-
         <div className={styles.footerRow} style={{ marginTop: '1.5cqh', paddingTop: '0.5cqh' }}>
           <Signature name={certificate.instructorName} role="Lead Instructor" />
           <Seal />
           <Signature name="Dr. Sarah Jenkins" role="Director of Academics" />
         </div>
-
         <div className={styles.academicFootnotes}>
           <span>Credential ID: {certificate.id || "VERIFIABLE-CREDENTIAL-UUID"}</span>
           <span className={styles.dividerDot}>•</span>
@@ -219,41 +181,29 @@ export function HorizontalLuxuryCertificate({ data }) {
     </CertificateShell>
   );
 }
-
-// ==========================================================================
-// 2. VERTICAL EXECUTIVE (Elegant corporate executive portrait template)
-// ==========================================================================
 export function VerticalExecutiveCertificate({ data }) {
   const certificate = { ...defaultData, ...data };
   return (
     <CertificateShell certificate={certificate} variant="verticalExecutive">
       <div className={styles.certificateBody}>
         <LearnSphereLogo centered={true} />
-
         <div className={styles.kicker} style={{ marginTop: '4cqh' }}>Executive Credential</div>
         <h1>{certificate.studentName}</h1>
-        
         <p className={styles.statement}>
           is hereby awarded this credential of professional mastery for completing the certified curriculum
         </p>
-        
         <h2>{certificate.courseTitle}</h2>
-
         <p className={styles.courseDescription}>
           an online non-credit course authorized by LearnSphere and offered through its verified educational platform
         </p>
-
         <Badges badges={certificate.skillBadges} />
-        
         <div className={styles.executiveBadgeRow}>
           <Seal tone="silver" />
         </div>
-
         <div className={styles.verticalFooter}>
           <Signature name={certificate.instructorName} role="Course Advisor" />
           <Signature name="Dr. Sarah Jenkins" role="Executive Board Chair" />
         </div>
-
         <div className={styles.academicFootnotes}>
           <span>Issued {formatDate(certificate.issuedAt)}</span>
           <span className={styles.dividerDot}>•</span>
@@ -263,42 +213,30 @@ export function VerticalExecutiveCertificate({ data }) {
     </CertificateShell>
   );
 }
-
-// ==========================================================================
-// 3. DARK PREMIUM (Futuristic high contrast neon tech glassmorphism)
-// ==========================================================================
 export function DarkPremiumCertificate({ data }) {
   const certificate = { ...defaultData, ...data };
   return (
     <CertificateShell certificate={certificate} variant="darkPremium">
       <div className={styles.neonBorder} />
       <div className={styles.certificateBody}>
-        {/* Elegant glowing brand logo */}
         <div style={{ filter: 'drop-shadow(0 0 8px rgba(164, 53, 240, 0.4))' }}>
           <LearnSphereLogo centered={true} />
         </div>
-
         <div className={styles.kicker} style={{ marginTop: '2cqh' }}>Premium Tech Mastery Certification</div>
         <h1>{certificate.studentName}</h1>
-        
         <p className={styles.statement}>
           has successfully achieved all core objectives and proven technical expertise in
         </p>
-        
         <h2>{certificate.courseTitle}</h2>
-
         <p className={styles.courseDescription} style={{ color: 'rgba(255, 255, 255, 0.55)' }}>
           an online non-credit course authorized by LearnSphere and offered through its verified educational platform
         </p>
-
         <Badges badges={certificate.skillBadges} />
-
         <div className={styles.footerRow} style={{ marginTop: '2cqh' }}>
           <Signature name={certificate.instructorName} role="Syllabus Architect" />
           <Seal />
           <QrBlock certificate={certificate} />
         </div>
-
         <div className={styles.academicFootnotes} style={{ color: 'rgba(255, 255, 255, 0.45)' }}>
           <span>Traceable Issuance: {formatDate(certificate.issuedAt)}</span>
           <span className={styles.dividerDot} style={{ color: '#f69c08' }}>•</span>
@@ -308,46 +246,32 @@ export function DarkPremiumCertificate({ data }) {
     </CertificateShell>
   );
 }
-
-// ==========================================================================
-// 4. GLASS FUTURE (Coursera-inspired SaaS Left Aligned Hanging Ribbon Layout)
-// ==========================================================================
 export function GlassFutureCertificate({ data }) {
   const certificate = { ...defaultData, ...data };
   return (
     <article className={`${styles.certificate} ${styles.glassFuture}`}>
       <GuillocheWatermark />
-      
-      {/* Dynamic Brand Logo & Security Header Row */}
       <div className={styles.securityStrip}>
         <LearnSphereLogo />
         <span>CREDENTIAL ID: {certificate.id || "VERIFIABLE-CREDENTIAL"}</span>
       </div>
-
       <div className={styles.saasBody}>
         <div className={styles.kicker}>Professional Course Certificate</div>
         <h1>{certificate.studentName}</h1>
-        
         <p className={styles.statement}>
           has successfully completed the rigorous training requirements and verified assessments for
         </p>
-        
         <h2>{certificate.courseTitle}</h2>
-
         <p className={styles.courseDescription} style={{ margin: '0 0 1.5cqh 0', textAlign: 'left', maxWidth: '90%' }}>
           an online non-credit course authorized by LearnSphere and offered through its verified educational platform
         </p>
-
         <Badges badges={certificate.skillBadges} />
       </div>
-
-      {/* Spaced Footer: signatures left, QR/verification links right */}
       <div className={styles.saasFooter}>
         <div className={styles.saasSignatures}>
           <Signature name={certificate.instructorName} role="Lead Instructor" />
           <Signature name="Dr. Sarah Jenkins" role="VP of Product & Academics" />
         </div>
-        
         <div className={styles.saasVerification}>
           <div className={styles.verifyDetails}>
             <span>Official Learner Wallet</span>
@@ -357,8 +281,6 @@ export function GlassFutureCertificate({ data }) {
           <QrBlock certificate={certificate} />
         </div>
       </div>
-
-      {/* Coursera-inspired vertical hanging ribbon banner */}
       <div className={styles.hangingRibbon}>
         <div className={styles.ribbonText}>Course Certificate</div>
         <div className={styles.ribbonSeal}>
@@ -371,10 +293,6 @@ export function GlassFutureCertificate({ data }) {
     </article>
   );
 }
-
-// ==========================================================================
-// 5. ACADEMIC LUXURY (Traditional University classical diploma style)
-// ==========================================================================
 export function AcademicLuxuryCertificate({ data }) {
   const certificate = { ...defaultData, ...data };
   return (
@@ -383,25 +301,19 @@ export function AcademicLuxuryCertificate({ data }) {
         <AcademicCrest />
         <div className={styles.kicker}>LearnSphere Academy Board of Trustees</div>
         <h1>{certificate.studentName}</h1>
-        
         <p className={styles.statement}>
           is awarded this verified diploma for distinguished completion of the academy program in
         </p>
-        
         <h2>{certificate.courseTitle}</h2>
-
         <p className={styles.courseDescription}>
           an online non-credit course authorized by LearnSphere and offered through its verified educational platform
         </p>
-
         <Badges badges={certificate.skillBadges} />
-
         <div className={styles.footerRow} style={{ marginTop: '2cqh' }}>
           <Signature name={certificate.instructorName} role="Faculty Dean" />
           <Seal />
           <Signature name="Dr. Sarah Jenkins" role="Board President" />
         </div>
-
         <div className={styles.academicFootnotes}>
           <span>Attested on {formatDate(certificate.issuedAt)}</span>
           <span className={styles.dividerDot}>•</span>
@@ -411,7 +323,6 @@ export function AcademicLuxuryCertificate({ data }) {
     </CertificateShell>
   );
 }
-
 export const certificateTemplates = {
   "horizontal-luxury": HorizontalLuxuryCertificate,
   "vertical-executive": VerticalExecutiveCertificate,
@@ -419,7 +330,6 @@ export const certificateTemplates = {
   "glass-future": GlassFutureCertificate,
   "academic-luxury": AcademicLuxuryCertificate,
 };
-
 export function CertificateTemplateRenderer({ certificate, templateKey }) {
   const Component =
     certificateTemplates[templateKey || certificate?.componentKey] || HorizontalLuxuryCertificate;

@@ -9,7 +9,6 @@
   padding: 20px 14px;
   font-family: "Poppins", sans-serif;
   box-shadow: 10px 0 30px rgba(48, 43, 110, 0.25);
-
   .logo-name {
     display: flex;
     align-items: center;
@@ -19,25 +18,21 @@
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.08);
     text-decoration: none;
-
     .logo {
       width: 36px;
       height: 36px;
     }
-
     .page-name {
       font-size: 22px;
       font-weight: 600;
       color: #ffffff;
     }
   }
-
   .L-sidebar {
     display: flex;
     flex-direction: column;
     flex: 1;
     gap: 6px;
-
     .nav-item {
       position: relative;
       display: flex;
@@ -50,25 +45,20 @@
       font-size: 15px;
       cursor: pointer;
       transition: all 0.25s ease;
-
       &:hover {
         background: rgba(255, 255, 255, 0.14);
         transform: translateX(6px);
       }
-
       &:active {
         transform: scale(0.97);
       }
-
       &.active {
         background: #ffffff;
         color: var(--ui-primary);
         font-weight: 500;
-
         svg {
           color: var(--ui-primary);
         }
-
         &::before {
           content: "";
           position: absolute;
@@ -81,11 +71,9 @@
           background: #ffffff;
         }
       }
-
       &.logout {
         margin-top: auto;
         color: #ffe3e3;
-
         &:hover {
           background: rgba(255, 95, 95, 0.25);
           color: #ffffff;

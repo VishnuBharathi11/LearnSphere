@@ -13,13 +13,11 @@ import {
   getNetworkActivityCount,
   subscribeNetworkActivity,
 } from "../../services/networkActivityStore";
-
 const INITIAL_LOAD_DURATION_MS = 1800;
 const ROUTE_TRANSITION_DURATION_MS = 720;
 const NETWORK_VISIBILITY_DELAY_MS = 180;
 const NETWORK_SETTLE_DELAY_MS = 240;
 const RECONNECT_SETTLE_DELAY_MS = 1400;
-
 const LoadingContext = createContext({
   active: false,
   initialLoadComplete: false,
@@ -29,7 +27,6 @@ const LoadingContext = createContext({
   stopLoading: () => {},
   withLoading: async (promiseLike) => promiseLike,
 });
-
 function getModeMeta(mode, isOffline) {
   if (isOffline || mode === "reconnecting") {
     return {
@@ -39,7 +36,6 @@ function getModeMeta(mode, isOffline) {
       showProgress: true,
     };
   }
-
   switch (mode) {
     case "manual":
       return {
@@ -71,7 +67,6 @@ function getModeMeta(mode, isOffline) {
       };
   }
 }
-
 export function LoadingProvider({ children }) {
   const location = useLocation();
   const routeKey = `${location.pathname}${location.search}${location.hash}`;
@@ -88,37 +83,30 @@ export function LoadingProvider({ children }) {
   const [isOffline, setIsOffline] = useState(typeof navigator !== "undefined" ? !navigator.onLine : false);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [manualLoads, setManualLoads] = useState([]);
-
   useEffect(() => {
     networkLoadingRef.current = networkLoading;
   }, [networkLoading]);
-
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
       setInitialLoadComplete(true);
     }, INITIAL_LOAD_DURATION_MS);
-
     return () => {
       window.clearTimeout(timeoutId);
     };
   }, []);
-
   useEffect(() => {
     if (!routeMountedRef.current) {
       routeMountedRef.current = true;
       return undefined;
     }
-
     setRouteLoading(true);
     const timeoutId = window.setTimeout(() => {
       setRouteLoading(false);
     }, ROUTE_TRANSITION_DURATION_MS);
-
     return () => {
       window.clearTimeout(timeoutId);
     };
   }, [routeKey]);
-
   useEffect(() => {
     const updateNetwork = (count) => {
       if (count > 0) {
@@ -130,15 +118,12 @@ export function LoadingProvider({ children }) {
         }
         return;
       }
-
       window.clearTimeout(networkShowTimerRef.current);
       networkHideTimerRef.current = window.setTimeout(() => {
         setNetworkLoading(false);
       }, NETWORK_SETTLE_DELAY_MS);
     };
-
     updateNetwork(getNetworkActivityCount());
-
     const unsubscribe = subscribeNetworkActivity(updateNetwork);
     return () => {
       unsubscribe();
@@ -146,58 +131,47 @@ export function LoadingProvider({ children }) {
       window.clearTimeout(networkHideTimerRef.current);
     };
   }, []);
-
   useEffect(() => {
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
       return undefined;
     }
-
     mediaQueryRef.current = window.matchMedia("(prefers-reduced-motion: reduce)");
     const query = mediaQueryRef.current;
     const handleChange = () => {
       setReducedMotion(query.matches);
     };
-
     handleChange();
     query.addEventListener("change", handleChange);
-
     return () => {
       query.removeEventListener("change", handleChange);
     };
   }, []);
-
   useEffect(() => {
     const handleOffline = () => {
       window.clearTimeout(reconnectTimerRef.current);
       setIsOffline(true);
     };
-
     const handleOnline = () => {
       window.clearTimeout(reconnectTimerRef.current);
       reconnectTimerRef.current = window.setTimeout(() => {
         setIsOffline(false);
       }, RECONNECT_SETTLE_DELAY_MS);
     };
-
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
-
     return () => {
       window.removeEventListener("offline", handleOffline);
       window.removeEventListener("online", handleOnline);
       window.clearTimeout(reconnectTimerRef.current);
     };
   }, []);
-
   const stopLoading = useCallback((id) => {
     setManualLoads((current) => current.filter((entry) => entry.id !== id));
   }, []);
-
   const startLoading = useCallback(
     (options = {}) => {
       const id = `loader-${idCounterRef.current + 1}`;
       idCounterRef.current += 1;
-
       setManualLoads((current) => [
         ...current,
         {
@@ -208,12 +182,10 @@ export function LoadingProvider({ children }) {
           showProgress: options.showProgress ?? true,
         },
       ]);
-
       return () => stopLoading(id);
     },
     [stopLoading]
   );
-
   const withLoading = useCallback(
     async (promiseLike, options = {}) => {
       const release = startLoading(options);
@@ -225,11 +197,9 @@ export function LoadingProvider({ children }) {
     },
     [startLoading]
   );
-
   const currentManualLoad = manualLoads[manualLoads.length - 1] ?? null;
   const overlayActive =
     !initialLoadComplete || isOffline || manualLoads.length > 0;
-
   const modeMeta = useMemo(() => {
     if (currentManualLoad) {
       const manualMeta = getModeMeta(currentManualLoad.mode, isOffline);
@@ -240,14 +210,12 @@ export function LoadingProvider({ children }) {
         showProgress: currentManualLoad.showProgress ?? manualMeta.showProgress,
       };
     }
-
     if (isOffline) return getModeMeta("reconnecting", true);
     if (!initialLoadComplete) return getModeMeta("initial", false);
     if (routeLoading) return getModeMeta("route", false);
     if (networkLoading) return getModeMeta("network", false);
     return getModeMeta("initial", false);
   }, [currentManualLoad, initialLoadComplete, isOffline, routeLoading, networkLoading]);
-
   const value = useMemo(
     () => ({
       active: overlayActive,
@@ -260,7 +228,6 @@ export function LoadingProvider({ children }) {
     }),
     [initialLoadComplete, isOffline, modeMeta.mode, overlayActive, startLoading, stopLoading, withLoading]
   );
-
   return (
     <LoadingContext.Provider value={value}>
       {children}
@@ -275,11 +242,9 @@ export function LoadingProvider({ children }) {
     </LoadingContext.Provider>
   );
 }
-
 export function useLoading() {
   return useContext(LoadingContext);
 }
-
 export function useInitialLoadComplete() {
   return useContext(LoadingContext).initialLoadComplete;
 }

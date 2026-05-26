@@ -1,15 +1,12 @@
 package com.learnsphere.course.exception;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	@ExceptionHandler(ResourseNotFoundException.class)
@@ -35,8 +32,6 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(MissingServletRequestParameterException.class)
 	public ResponseEntity<?> handleMissingParams(MissingServletRequestParameterException ex){
 		 ex.printStackTrace();
-		
 		return ResponseEntity.badRequest().body(Map.of("error",ex.getMessage()));
 	}
-
 }

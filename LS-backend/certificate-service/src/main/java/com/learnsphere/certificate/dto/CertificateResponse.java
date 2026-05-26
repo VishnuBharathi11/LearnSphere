@@ -1,13 +1,10 @@
 package com.learnsphere.certificate.dto;
-
 import com.learnsphere.certificate.entity.CertificateStatus;
 import com.learnsphere.certificate.entity.TemplateFormat;
 import lombok.Builder;
 import lombok.Getter;
-
 import java.time.Instant;
 import java.util.List;
-
 @Getter
 @Builder
 public class CertificateResponse {

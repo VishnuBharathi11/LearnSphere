@@ -11,7 +11,6 @@
   position: sticky;
   top: 0;
   box-shadow: 10px 0 30px rgba(48, 43, 110, 0.25);
-
   .logo-name {
     display: flex;
     align-items: center;
@@ -21,25 +20,21 @@
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.08);
     text-decoration: none;
-
     .logo {
       width: 36px;
       height: 36px;
     }
-
     .page-name {
       font-size: 22px;
       font-weight: 600;
       color: #ffffff;
     }
   }
-
   .I-sidebar {
     display: flex;
     flex-direction: column;
     gap: 6px;
     flex: 1;
-
     a {
       position: relative;
       display: flex;
@@ -52,25 +47,20 @@
       font-size: 15px;
       cursor: pointer;
       transition: all 0.25s ease;
-
       &:hover {
         background: rgba(255, 255, 255, 0.14);
         transform: translateX(6px);
       }
-
       &:active {
         transform: scale(0.97);
       }
-
       &.active {
         background: #ffffff;
         color: var(--ui-primary);
         font-weight: 500;
-
         svg {
           color: var(--ui-primary);
         }
-
         &::before {
           content: "";
           position: absolute;
@@ -83,29 +73,23 @@
           background: #ffffff;
         }
       }
-
       &.logout {
         margin-top: auto;
         color: #ffe3e3 !important;
-
         svg {
           color: #ffe3e3 !important;
         }
-
         &:hover {
           background: rgba(255, 95, 95, 0.25) !important;
           color: #ffffff !important;
           transform: translateX(6px);
         }
-
         &::before {
           display: none !important;
         }
-
         &.active {
           background: rgba(255, 95, 95, 0.25) !important;
           color: #ffffff !important;
-
           svg {
             color: #ffffff !important;
           }
@@ -114,31 +98,25 @@
     }
   }
 }
-
 @media (max-width: 900px) {
   .I-navbar {
     padding: 14px 10px;
   }
-
   .I-navbar .logo-name .page-name {
     display: none;
   }
-
   .I-navbar .logo-name {
     justify-content: center;
   }
-
   .I-navbar .I-sidebar a {
     justify-content: center;
     padding: 12px 0;
     font-size: 0;
     gap: 0;
   }
-
   .I-navbar .I-sidebar a svg {
     margin: 0;
   }
-
   .I-navbar .I-sidebar a.active::before {
     left: -10px;
   }

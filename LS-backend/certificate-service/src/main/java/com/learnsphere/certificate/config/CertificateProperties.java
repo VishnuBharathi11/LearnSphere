@@ -1,10 +1,8 @@
 package com.learnsphere.certificate.config;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-
 @Getter
 @Setter
 @Configuration
@@ -14,13 +12,11 @@ public class CertificateProperties {
     private String renderBaseUrl;
     private Storage storage = new Storage();
     private Pdf pdf = new Pdf();
-
     @Getter
     @Setter
     public static class Storage {
         private String localRoot;
     }
-
     @Getter
     @Setter
     public static class Pdf {

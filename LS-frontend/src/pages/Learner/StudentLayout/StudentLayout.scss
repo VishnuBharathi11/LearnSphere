@@ -5,7 +5,6 @@
   overflow: hidden;
   background: var(--ui-bg);
 }
-
 .student-layout.admin-preview-mode .page-content {
   button,
   input,
@@ -15,7 +14,6 @@
     opacity: 0.7;
   }
 }
-
 .student-main {
   flex: 1;
   display: flex;
@@ -24,7 +22,6 @@
   background: var(--ui-bg);
   overflow: hidden;
 }
-
 .student-main .dashboard-body {
   flex: 1;
   min-height: 0;
@@ -33,7 +30,6 @@
   padding: 16px;
   overflow: hidden;
 }
-
 .student-main .page-content {
   flex: 1;
   padding: 0;
@@ -41,28 +37,23 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
-
 @media (max-width: 1200px) {
   .student-main .dashboard-body {
     padding: 12px;
   }
 }
-
 @media (max-width: 900px) {
   .student-layout {
     height: auto;
     min-height: 100vh;
     overflow: visible;
   }
-
   .student-main {
     min-height: 100vh;
   }
-
   .student-main .dashboard-body {
     overflow: visible;
   }
-
   .student-main .page-content {
     overflow: visible;
   }

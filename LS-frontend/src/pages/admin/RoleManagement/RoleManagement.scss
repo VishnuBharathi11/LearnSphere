@@ -1,5 +1,4 @@
 @use "sass:color";
-
 $font: "Inter", sans-serif;
 $primary: #a435f0;
 $accent: #f69c08;
@@ -12,12 +11,10 @@ $card-glass: rgba(255, 255, 255, 0.65);
 $card-glass-hover: rgba(255, 255, 255, 0.88);
 $text-dark: #1c1d1f;
 $text-muted: #6a6f73;
-
 .role-management-layout {
   display: flex;
   font-family: $font;
   width: 100%;
-
   .admin-content {
     width: 100%;
     flex: 1;
@@ -30,13 +27,11 @@ $text-muted: #6a6f73;
     border-radius: 16px;
   }
 }
-
 .role-container {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 20px;
 }
-
 .role-card {
   background: $card-glass;
   backdrop-filter: blur(14px);
@@ -47,7 +42,6 @@ $text-muted: #6a6f73;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   display: flex;
   flex-direction: column;
-
   &:hover {
     background: $card-glass-hover;
     border-color: rgba($primary, 0.2);
@@ -55,19 +49,16 @@ $text-muted: #6a6f73;
     transform: translateY(-4px);
   }
 }
-
 .role-top-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
 }
-
 .role-header {
   display: flex;
   align-items: center;
   gap: 12px;
-
   svg {
     color: $primary;
     background: rgba($primary, 0.08);
@@ -77,26 +68,22 @@ $text-muted: #6a6f73;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba($primary, 0.12);
   }
-
   h3 {
     font-size: 16px;
     font-weight: 700;
     color: $text-dark;
     margin-bottom: 2px;
   }
-
   span {
     font-size: 12px;
     color: $text-muted;
     font-weight: 600;
   }
 }
-
 .role-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-
   button {
     width: 32px;
     height: 32px;
@@ -110,39 +97,33 @@ $text-muted: #6a6f73;
     color: $text-muted;
     position: static;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-
     &:hover {
       transform: scale(1.08);
     }
   }
-
   .edit-btn:hover {
     background: rgba($primary, 0.08);
     color: $primary;
     border-color: rgba($primary, 0.2);
   }
-
   .delete-btn:hover {
     background: rgba($danger, 0.08);
     color: $danger;
     border-color: rgba($danger, 0.2);
   }
 }
-
 .role-desc {
   font-size: 13px;
   color: $text-muted;
   font-weight: 500;
   margin-bottom: 18px;
 }
-
 .permission-list {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: auto;
 }
-
 .permission-pill {
   background: rgba($primary, 0.05);
   color: $primary;
@@ -153,13 +134,11 @@ $text-muted: #6a6f73;
   font-weight: 600;
   letter-spacing: 0.2px;
   transition: all 0.2s ease;
-
   &:hover {
     background: rgba($primary, 0.08);
     border-color: rgba($primary, 0.25);
   }
 }
-
 .role-add {
   border: 2px dashed rgba($primary, 0.35);
   border-radius: 16px;
@@ -175,7 +154,6 @@ $text-muted: #6a6f73;
   text-align: center;
   min-height: 200px;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-
   &:hover {
     background: rgba($primary, 0.08);
     border-color: $primary;
@@ -183,13 +161,11 @@ $text-muted: #6a6f73;
     transform: translateY(-4px);
     box-shadow: 0 10px 24px rgba(164, 53, 240, 0.05);
   }
-
   span {
     margin-top: 8px;
     font-size: 14px;
   }
 }
-
 .modal-backdrop {
   position: fixed;
   inset: 0;
@@ -201,7 +177,6 @@ $text-muted: #6a6f73;
   justify-content: center;
   z-index: 1000;
 }
-
 .modal {
   background: #ffffff;
   padding: 28px;
@@ -211,19 +186,16 @@ $text-muted: #6a6f73;
   border: 1px solid rgba(255, 255, 255, 0.8);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
 }
-
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
-
   h2 {
     font-size: 18px;
     font-weight: 700;
     color: $text-dark;
   }
-
   button {
     background: none;
     border: none;
@@ -233,18 +205,15 @@ $text-muted: #6a6f73;
     align-items: center;
     justify-content: center;
     transition: color 0.2s ease;
-
     &:hover {
       color: $danger;
     }
   }
 }
-
 .modal-body {
   display: flex;
   flex-direction: column;
   gap: 16px;
-
   label {
     font-size: 13px;
     font-weight: 600;
@@ -253,7 +222,6 @@ $text-muted: #6a6f73;
     flex-direction: column;
     gap: 8px;
   }
-
   input {
     width: 100%;
     padding: 12px 16px;
@@ -264,7 +232,6 @@ $text-muted: #6a6f73;
     outline: none;
     background: #fdfdfd;
     transition: all 0.25s ease;
-
     &:focus {
       border-color: $primary;
       background: #ffffff;
@@ -272,7 +239,6 @@ $text-muted: #6a6f73;
     }
   }
 }
-
 .permission-box {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -283,7 +249,6 @@ $text-muted: #6a6f73;
   background: rgba($primary, 0.02);
   border: 1px solid $border-glass;
   border-radius: 12px;
-
   .perm-item {
     font-size: 13px;
     font-weight: 500;
@@ -293,7 +258,6 @@ $text-muted: #6a6f73;
     align-items: center;
     gap: 8px;
     cursor: pointer;
-
     input[type="checkbox"] {
       width: 16px;
       height: 16px;
@@ -302,12 +266,10 @@ $text-muted: #6a6f73;
     }
   }
 }
-
 .modal-actions {
   display: flex;
   gap: 12px;
   margin-top: 8px;
-
   button {
     flex: 1;
     padding: 12px;
@@ -318,29 +280,24 @@ $text-muted: #6a6f73;
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
-
   .btn-primary {
     background: linear-gradient(135deg, $primary, color.adjust($primary, $lightness: -8%));
     color: #ffffff;
     box-shadow: 0 4px 12px rgba($primary, 0.2);
-
     &:hover {
       box-shadow: 0 6px 16px rgba($primary, 0.3);
       transform: translateY(-2px);
     }
   }
-
   .btn-secondary {
     background: rgba($text-muted, 0.08);
     color: $text-dark;
-
     &:hover {
       background: rgba($text-muted, 0.12);
       transform: translateY(-2px);
     }
   }
 }
-
 @media (max-width: 600px) {
   .permission-box {
     grid-template-columns: 1fr;
@@ -348,7 +305,6 @@ $text-muted: #6a6f73;
   .modal-actions {
     flex-direction: column;
     gap: 8px;
-
     button {
       width: 100%;
     }

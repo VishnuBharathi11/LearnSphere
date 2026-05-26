@@ -1,5 +1,4 @@
 @use "sass:color";
-
 .dashboard-header {
   display: flex;
   justify-content: space-between;
@@ -14,7 +13,6 @@
   position: relative;
   z-index: 30;
 }
-
 .header-left h2 {
   margin: 0;
   font-size: 22px;
@@ -22,7 +20,6 @@
   font-weight: 700;
   color: var(--ui-text);
 }
-
 .header-right {
   display: flex;
   align-items: center;
@@ -30,7 +27,6 @@
   position: relative;
   min-width: 0;
 }
-
 .notification {
   position: relative;
   width: 36px;
@@ -43,14 +39,12 @@
   color: var(--ui-text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
-
   &:hover {
     color: var(--ui-primary);
     border-color: rgba(164, 53, 240, 0.25);
     background: rgba(164, 53, 240, 0.02);
   }
 }
-
 .notification .badge {
   position: absolute;
   top: -4px;
@@ -67,7 +61,6 @@
   border: 2px solid #ffffff;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
-
 .notification-panel {
   position: absolute;
   top: 48px;
@@ -82,7 +75,6 @@
   z-index: 60;
   display: flex;
   flex-direction: column;
-
   &::-webkit-scrollbar {
     width: 4px;
   }
@@ -94,7 +86,6 @@
     border-radius: 999px;
   }
 }
-
 .notification-head {
   display: flex;
   align-items: center;
@@ -105,7 +96,6 @@
   position: sticky;
   top: 0;
   z-index: 10;
-
   span {
     font-family: var(--font-display, "Poppins", sans-serif);
     font-size: 12.5px;
@@ -114,12 +104,10 @@
     letter-spacing: -0.01em;
   }
 }
-
 .head-actions {
   display: flex;
   align-items: center;
   gap: 8px;
-
   button {
     border: none;
     background: transparent;
@@ -131,19 +119,16 @@
     border-radius: 6px;
     font-size: 13px;
     transition: all 0.2s ease;
-
     &:hover {
       background: #f1f5f9;
       color: var(--ui-primary);
     }
   }
 }
-
 .notification-list {
   display: flex;
   flex-direction: column;
 }
-
 .notification-item {
   width: 100%;
   text-align: left;
@@ -155,24 +140,20 @@
   display: flex;
   flex-direction: column;
   gap: 3px;
-
   &:hover {
     background: #f8fafc;
   }
-
   &.unread {
     background: rgba(164, 53, 240, 0.01);
     border-left: 3px solid var(--ui-primary);
     padding-left: 11px;
   }
-
   &.read {
     background: #ffffff;
     border-left: 3px solid transparent;
     padding-left: 11px;
   }
 }
-
 .n-title {
   margin: 0;
   display: flex;
@@ -182,7 +163,6 @@
   font-weight: 700;
   color: #1e293b;
   line-height: 1.35;
-
   svg {
     width: 12px;
     height: 12px;
@@ -193,21 +173,18 @@
     color: var(--ui-primary);
   }
 }
-
 .n-message {
   margin: 0 0 0 18px;
   font-size: 11px;
   color: #64748b;
   line-height: 1.4;
 }
-
 .n-time {
   margin: 0 0 0 18px;
   font-size: 10px;
   color: #94a3b8;
   font-weight: 600;
 }
-
 .n-link {
   align-self: flex-end;
   border: none;
@@ -218,13 +195,11 @@
   padding: 2px 0 0 0;
   cursor: pointer;
   transition: all 0.2s ease;
-
   &:hover {
     color: color.adjust(#a435f0, $lightness: -10%);
     text-decoration: underline;
   }
 }
-
 .notification-empty {
   margin: 0;
   padding: 16px;
@@ -232,7 +207,6 @@
   font-size: 11px;
   text-align: center;
 }
-
 .notification-see-all {
   width: 100%;
   border: none;
@@ -245,13 +219,11 @@
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
-
   &:hover {
     background: rgba(164, 53, 240, 0.05);
     color: color.adjust(#a435f0, $lightness: -5%);
   }
 }
-
 .profile {
   display: flex;
   align-items: center;
@@ -262,7 +234,6 @@
   background: #f6f8ff;
   min-width: 0;
 }
-
 .avatar {
   width: 36px;
   height: 36px;
@@ -275,21 +246,18 @@
   place-items: center;
   overflow: hidden;
 }
-
 .avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
 }
-
 .profile-info {
   display: flex;
   flex-direction: column;
   line-height: 1.15;
   min-width: 0;
 }
-
 .profile-info .name {
   font-size: 13px;
   font-weight: 700;
@@ -299,7 +267,6 @@
   text-overflow: ellipsis;
   max-width: 180px;
 }
-
 .profile-info .email {
   font-size: 12px;
   color: #64748b;
@@ -308,21 +275,17 @@
   text-overflow: ellipsis;
   max-width: 180px;
 }
-
 @media (max-width: 900px) {
   .dashboard-header {
     margin: 12px 12px 0;
     padding: 12px;
   }
-
   .header-left h2 {
     font-size: 18px;
   }
-
   .profile-info {
     display: none;
   }
-
   .notification-panel {
     right: 66px;
     width: min(236px, calc(100vw - 20px));

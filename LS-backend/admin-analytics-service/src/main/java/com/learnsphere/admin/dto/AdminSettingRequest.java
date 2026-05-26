@@ -1,7 +1,5 @@
 package com.learnsphere.admin.dto;
-
 import lombok.Data;
-
 @Data
 public class AdminSettingRequest {
     private String siteName;
@@ -19,4 +17,3 @@ public class AdminSettingRequest {
     private Boolean guestBrowsing;
     private Boolean maintenanceMode;
 }
-

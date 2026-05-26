@@ -5,7 +5,6 @@ import NavBar from "../../components/NavBar/NavBar";
 import Footer from "../../components/Footer/Footer";
 import { normalizeApiError, registerUser } from "../../services/authApi";
 import { getAdminSettings } from "../../services/adminApi";
-
 function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -17,7 +16,6 @@ function Register() {
   });
   const [error, setError] = useState("");
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
-
   React.useEffect(() => {
     let active = true;
     async function loadSettings() {
@@ -35,30 +33,24 @@ function Register() {
       active = false;
     };
   }, []);
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
   const handleRegister = async (e) => {
     e.preventDefault();
     setError("");
-
     if (!registrationEnabled) {
       setError("User registration is currently disabled by admin.");
       return;
     }
-
     if (!form.username || !form.email || !form.password) {
       setError("Please fill all required fields");
       return;
     }
-
     if (form.password !== form.confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
     try {
       await registerUser({
         name: form.username,
@@ -67,13 +59,11 @@ function Register() {
         password: form.password,
         role: "learner",
       });
-
       navigate("/login");
     } catch (apiError) {
       setError(normalizeApiError(apiError, "We could not create your account. Please check your details and try again."));
     }
   };
-
   return (
     <>
       <NavBar />
@@ -152,5 +142,4 @@ function Register() {
     </>
   );
 }
-
 export default Register;

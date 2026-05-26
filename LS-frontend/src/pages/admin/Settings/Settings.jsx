@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { getAdminSettings, saveAdminSettings } from "../../../services/adminApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./Settings.scss";
-
 function Settings() {
   const [settings, setSettings] = useState({
     siteName: "LearnSphere",
@@ -21,7 +20,6 @@ function Settings() {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-
   useEffect(() => {
     async function load() {
       try {
@@ -33,11 +31,9 @@ function Settings() {
     }
     load();
   }, []);
-
   const handleToggle = (key) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
-
   const handleSave = async () => {
     try {
       const minPrice = Number(settings.minCoursePrice || 0);
@@ -52,7 +48,6 @@ function Settings() {
         setSuccess("");
         return;
       }
-
       const payload = {
         ...settings,
         platformFeePercent: Number(settings.platformFeePercent || 0),
@@ -68,41 +63,33 @@ function Settings() {
       setSuccess("");
     }
   };
-
   const handleChange = (key, value) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
-
   return (
     <div className="settings-layout">
       <div className="settings-wrapper">
         {error && <p className="admin-error">{error}</p>}
         {success && <p className="admin-success">{success}</p>}
-
         <div className="settings-card">
           <h3 className="card-title">General Settings</h3>
-
           <div className="form-grid">
             <div className="form-group">
               <label>Site Name</label>
               <input value={settings.siteName} onChange={(e) => handleChange("siteName", e.target.value)} />
             </div>
-
             <div className="form-group">
               <label>Site Email</label>
               <input value={settings.siteEmail} onChange={(e) => handleChange("siteEmail", e.target.value)} />
             </div>
-
             <div className="form-group full">
               <label>Support Email</label>
               <input value={settings.supportEmail} onChange={(e) => handleChange("supportEmail", e.target.value)} />
             </div>
           </div>
         </div>
-
         <div className="settings-card">
           <h3 className="card-title">Payment Settings</h3>
-
           <div className="form-grid">
             <div className="form-group">
               <label>Platform Fee (%)</label>
@@ -112,7 +99,6 @@ function Settings() {
                 onChange={(e) => handleChange("platformFeePercent", e.target.value)}
               />
             </div>
-
             <div className="form-group">
               <label>Min Course Price (INR)</label>
               <input
@@ -121,7 +107,6 @@ function Settings() {
                 onChange={(e) => handleChange("minCoursePrice", e.target.value)}
               />
             </div>
-
             <div className="form-group">
               <label>Max Course Price (INR)</label>
               <input
@@ -132,10 +117,8 @@ function Settings() {
             </div>
           </div>
         </div>
-
         <div className="settings-card">
           <h3 className="card-title">Feature Toggles</h3>
-
           {[
             ["Enable User Registration", "userRegistration"],
             ["Require Email Verification", "emailVerification"],
@@ -153,7 +136,6 @@ function Settings() {
             </div>
           ))}
         </div>
-
         <button className="save-btn" onClick={handleSave}>
           Save Settings
         </button>
@@ -161,5 +143,4 @@ function Settings() {
     </div>
   );
 }
-
 export default Settings;

@@ -4,7 +4,6 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import "./AddLesson.scss";
 import { createCourseLesson, getCourseById, getCourseLessons, updateCourseLesson } from "../../../../services/courseApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
-
 function AddLesson() {
   const { courseId } = useParams();
   const [searchParams] = useSearchParams();
@@ -28,7 +27,6 @@ function AddLesson() {
     fileName: "",
     mimeType: "",
   });
-
   useEffect(() => {
     async function loadCourse() {
       try {
@@ -46,7 +44,6 @@ function AddLesson() {
     }
     loadCourse();
   }, [id, currentUser?.id]);
-
   useEffect(() => {
     async function loadLessons() {
       try {
@@ -58,7 +55,6 @@ function AddLesson() {
     }
     loadLessons();
   }, [id]);
-
   useEffect(() => {
     if (!isEditMode) return;
     if (!Array.isArray(lessons)) return;
@@ -67,7 +63,6 @@ function AddLesson() {
       setLoadingLesson(false);
       return;
     }
-
     setForm({
       title: lesson.title || "",
       description: lesson.description || "",
@@ -79,16 +74,13 @@ function AddLesson() {
     });
     setLoadingLesson(false);
   }, [isEditMode, lessons, editLessonId]);
-
   useEffect(() => {
     if (!isEditMode) return;
     setLoadingLesson(true);
   }, [isEditMode]);
-
   if (loadingCourse) {
     return null;
   }
-
   if (!currentUser || currentRole !== "instructor" || !course) {
     return (
       <p style={{ padding: 40 }}>
@@ -96,7 +88,6 @@ function AddLesson() {
       </p>
     );
   }
-
   const handleTypeChange = (type) => {
     setForm((prev) => ({
       ...prev,
@@ -108,7 +99,6 @@ function AddLesson() {
       mimeType: type === "theory" ? "" : prev.mimeType,
     }));
   };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -124,7 +114,6 @@ function AddLesson() {
     };
     reader.readAsDataURL(file);
   };
-
   const validate = () => {
     if (!form.title.trim()) return "Lesson title required";
     if (form.type === "theory") {
@@ -132,17 +121,14 @@ function AddLesson() {
     } else if (!form.fileUrl) {
       return "Upload lesson file";
     }
-
     const duplicate = lessons.find(
       (l) =>
         String(l.title || "").toLowerCase() === form.title.toLowerCase() &&
         String(l.id) !== editLessonId
     );
     if (duplicate) return "Lesson with same title already exists";
-
     return null;
   };
-
   const handleSubmit = async () => {
     setMessage({ type: "", text: "" });
     const error = validate();
@@ -150,7 +136,6 @@ function AddLesson() {
       setMessage({ type: "error", text: error });
       return;
     }
-
     try {
       const payload = {
         title: form.title.trim(),
@@ -165,7 +150,6 @@ function AddLesson() {
           ? lessons.findIndex((l) => String(l.id) === editLessonId)
           : lessons.length,
       };
-
       if (isEditMode) {
         const updated = await updateCourseLesson(id, editLessonId, payload);
         setLessons((prev) =>
@@ -175,14 +159,12 @@ function AddLesson() {
         const saved = await createCourseLesson(id, payload);
         setLessons((prev) => [...prev, saved]);
       }
-
       setMessage({ type: "success", text: isEditMode ? "Lesson updated successfully." : "Lesson added successfully." });
       setTimeout(() => navigate(`/instructor-layout/manage-courses/${id}/lessons`), 600);
     } catch {
       setMessage({ type: "error", text: isEditMode ? "Failed to update lesson." : "Failed to save lesson." });
     }
   };
-
   return (
     <div className="add-lesson-layout">
       <div className="add-lesson-page">
@@ -203,9 +185,7 @@ function AddLesson() {
             Back to Lessons
           </button>
         </div>
-
         {message.text && <p className={`lesson-message ${message.type}`}>{message.text}</p>}
-
         <div className="add-lesson-card">
           {isEditMode && loadingLesson ? <p className="prefill-note">Loading previous lesson content...</p> : null}
           <div className="form-grid">
@@ -218,8 +198,6 @@ function AddLesson() {
               />
             </label>
           </div>
-
-
           <div className="content-type">
             <p>Choose content type</p>
             <div className="type-options">
@@ -249,7 +227,6 @@ function AddLesson() {
               </button>
             </div>
           </div>
-
           {form.type === "theory" ? (
             <div className="notepad">
               <textarea
@@ -281,7 +258,6 @@ function AddLesson() {
               ) : null}
             </div>
           )}
-
           <div className="add-lesson-actions">
             <button className="primary-btn" onClick={handleSubmit}>
               {isEditMode ? "Update Lesson" : "Save Lesson"}
@@ -298,5 +274,4 @@ function AddLesson() {
     </div>
   );
 }
-
 export default AddLesson;

@@ -5,11 +5,9 @@ import "./CreateQuiz.scss";
 import { getCourseById, getCourseLessons } from "../../../../services/courseApi";
 import { getCourseQuizzesByCourseId, saveCourseQuiz } from "../../../../services/progressApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
-
 function CreateQuiz() {
   const { courseId } = useParams();
   const navigate = useNavigate();
-
   const currentUser = getCurrentUser();
   const currentRole = String(currentUser?.role || "").toLowerCase();
   const [course, setCourse] = useState(null);
@@ -35,7 +33,6 @@ function CreateQuiz() {
   const [lessons, setLessons] = useState([]);
   const [existingQuizzes, setExistingQuizzes] = useState([]);
   const [message, setMessage] = useState({ type: "", text: "" });
-
   const emptyQuestion = () => ({
     question: "",
     points: 10,
@@ -46,9 +43,7 @@ function CreateQuiz() {
       { text: "", isCorrect: false },
     ],
   });
-
   const optionIsCorrect = (option) => Boolean(option?.isCorrect ?? option?.correct);
-
   const normalizeQuestions = (questionList) => {
     if (!Array.isArray(questionList)) return [];
     return questionList.map((question, index) => ({
@@ -63,7 +58,6 @@ function CreateQuiz() {
         : [],
     }));
   };
-
   const applyQuizForm = (quizData) => {
     setQuizTitle(quizData?.quizTitle || "");
     setDescription(quizData?.description || "");
@@ -71,32 +65,26 @@ function CreateQuiz() {
     setTimeLimit(quizData?.timeLimit || 30);
     setQuestions(normalizeQuestions(quizData?.questions));
   };
-
   useEffect(() => {
     let active = true;
     async function loadCourseAndQuiz() {
       try {
         const fetched = await getCourseById(String(courseId));
         if (!active) return;
-
         const ownerMatches =
           String(fetched?.instructorId || "") === String(currentUser?.id || "") ||
           String(fetched?.instructorId || "") === String(currentUser?.email || "");
-
         if (!ownerMatches) {
           setCourse(null);
           return;
         }
-
         setCourse(fetched);
-
         try {
           const list = await getCourseLessons(String(courseId));
           setLessons(Array.isArray(list) ? list : []);
         } catch {
           setLessons([]);
         }
-
         const loadedQuizzes = await getCourseQuizzesByCourseId(String(courseId));
         if (!active) return;
         setExistingQuizzes(Array.isArray(loadedQuizzes) ? loadedQuizzes : []);
@@ -112,7 +100,6 @@ function CreateQuiz() {
       active = false;
     };
   }, [courseId, currentUser?.email, currentUser?.id]);
-
   useEffect(() => {
     const scopedQuiz =
       assessmentType === "LESSON"
@@ -122,7 +109,6 @@ function CreateQuiz() {
               String(quiz.lessonId || "") === String(lessonId || "")
           )
         : existingQuizzes.find((quiz) => String(quiz.assessmentType || "FINAL").toUpperCase() === "FINAL");
-
     if (scopedQuiz) {
       applyQuizForm(scopedQuiz);
       if (assessmentType === "LESSON") {
@@ -130,17 +116,14 @@ function CreateQuiz() {
       }
       return;
     }
-
     applyQuizForm(null);
     if (assessmentType === "FINAL") {
       setLessonTitle("");
     }
   }, [assessmentType, lessonId, existingQuizzes]);
-
   if (loadingCourse) {
     return null;
   }
-
   if (currentRole !== "instructor" || !course) {
     return (
       <p style={{ padding: 40 }}>
@@ -148,7 +131,6 @@ function CreateQuiz() {
       </p>
     );
   }
-
   const setCorrectOption = (index) => {
     setCurrentQuestion((prev) => ({
       ...prev,
@@ -158,7 +140,6 @@ function CreateQuiz() {
       })),
     }));
   };
-
   const addQuestion = () => {
     setMessage({ type: "", text: "" });
     if (!currentQuestion.question.trim()) {
@@ -174,19 +155,15 @@ function CreateQuiz() {
       setMessage({ type: "error", text: "Exactly one correct answer must be selected." });
       return;
     }
-
     setQuestions((prev) => [...prev, { id: String(Date.now()), ...currentQuestion }]);
     setCurrentQuestion(emptyQuestion());
   };
-
   const saveQuiz = async () => {
     setMessage({ type: "", text: "" });
-
     if (!quizTitle.trim()) {
       setMessage({ type: "error", text: "Quiz title is required." });
       return;
     }
-
     if (questions.length === 0) {
       setMessage({ type: "error", text: "Add at least one question." });
       return;
@@ -195,7 +172,6 @@ function CreateQuiz() {
       setMessage({ type: "error", text: "Select lesson for lesson assessment." });
       return;
     }
-
     try {
       await saveCourseQuiz({
         courseId: String(courseId),
@@ -209,27 +185,22 @@ function CreateQuiz() {
         timeLimit: Number(timeLimit),
         questions,
       });
-
       setMessage({ type: "success", text: "Quiz saved to database successfully." });
       setTimeout(() => navigate("/instructor-layout/manage-courses"), 700);
     } catch {
       setMessage({ type: "error", text: "Failed to save quiz in database." });
     }
   };
-
   return (
     <div className="create-quiz-layout">
       <div className="quiz-page">
         <h2>{course.courseName} - Create Quiz</h2>
         {message.text && <p className={`quiz-message ${message.type}`}>{message.text}</p>}
-
         <div className="quiz-card">
           <label>Quiz Title</label>
           <input value={quizTitle} onChange={(e) => setQuizTitle(e.target.value)} />
-
           <label>Description</label>
           <textarea value={description} onChange={(e) => setDescription(e.target.value)} />
-
           <label>Assessment Type</label>
           <div className="select-field">
             <select
@@ -247,7 +218,6 @@ function CreateQuiz() {
               <option value="LESSON">Lesson Assessment</option>
             </select>
           </div>
-
           {assessmentType === "LESSON" ? (
             <>
               <label>Lesson Name</label>
@@ -271,7 +241,6 @@ function CreateQuiz() {
               </div>
             </>
           ) : null}
-
           <div className="quiz-grid">
             <div>
               <label>Passing %</label>
@@ -283,7 +252,6 @@ function CreateQuiz() {
             </div>
           </div>
         </div>
-
         <div className="quiz-card">
           <h3>Add Question</h3>
           <textarea
@@ -315,7 +283,6 @@ function CreateQuiz() {
             <Plus size={16} /> Add Question
           </button>
         </div>
-
         {questions.length > 0 && (
           <div className="quiz-card">
             <h3>Questions</h3>
@@ -334,7 +301,6 @@ function CreateQuiz() {
             ))}
           </div>
         )}
-
         <div className="quiz-actions">
           <button className="save" onClick={saveQuiz}>
             Save Quiz
@@ -347,6 +313,4 @@ function CreateQuiz() {
     </div>
   );
 }
-
 export default CreateQuiz;
-

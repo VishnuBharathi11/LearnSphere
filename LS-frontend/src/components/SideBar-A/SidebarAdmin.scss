@@ -9,7 +9,6 @@
   padding: 20px 14px;
   font-family: "Poppins", sans-serif;
   box-shadow: 10px 0 30px rgba(48, 43, 110, 0.25);
-
   .admin-logo {
     display: flex;
     align-items: center;
@@ -19,25 +18,21 @@
     border-radius: 14px;
     background: rgba(255, 255, 255, 0.08);
     text-decoration: none;
-
     img {
       width: 36px;
       height: 36px;
     }
-
     span {
       font-size: 22px;
       font-weight: 600;
       color: #ffffff;
     }
   }
-
   .admin-menu {
     display: flex;
     flex-direction: column;
     gap: 6px;
     flex: 1;
-
     a {
       position: relative;
       display: flex;
@@ -51,25 +46,20 @@
       white-space: nowrap;
       cursor: pointer;
       transition: all 0.25s ease;
-
       &:hover {
         background: rgba(255, 255, 255, 0.14);
         transform: translateX(6px);
       }
-
       &:active {
         transform: scale(0.97);
       }
-
       &.active {
         background: #ffffff;
         color: var(--ui-primary);
         font-weight: 500;
-
         svg {
           color: var(--ui-primary);
         }
-
         &::before {
           content: "";
           position: absolute;
@@ -82,21 +72,17 @@
           background: #ffffff;
         }
       }
-
       &.nav-item-logout {
         margin-top: auto !important;
         color: #ffe3e3 !important;
-
         &:hover {
           background: rgba(255, 95, 95, 0.25) !important;
           color: #ffffff !important;
           transform: translateX(6px);
         }
-
         svg {
           color: #ffe3e3 !important;
         }
-
         &::before {
           display: none !important;
         }

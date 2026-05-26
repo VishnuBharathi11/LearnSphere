@@ -1,42 +1,31 @@
 package com.learnsphere.progress.service.impl;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
-
 import com.learnsphere.progress.entity.Question;
 import com.learnsphere.progress.entity.Quiz;
 import com.learnsphere.progress.repository.QuizRepository;
 import com.learnsphere.progress.service.AssessmentService;
-
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class AssessmentServiceImpl implements AssessmentService {
-
     private final QuizRepository quizRepository;
-
     @Override
     public Quiz saveOrUpdateQuiz(Quiz request) {
         if (request == null || isBlank(request.getCourseId())) {
             throw new IllegalArgumentException("Course id is required");
         }
-
         String courseId = request.getCourseId().trim();
         String assessmentType = isBlank(request.getAssessmentType()) ? "FINAL" : request.getAssessmentType().trim().toUpperCase();
         String lessonId = isBlank(request.getLessonId()) ? null : request.getLessonId().trim();
-
         if ("LESSON".equals(assessmentType) && isBlank(lessonId)) {
             throw new IllegalArgumentException("Lesson assessment must include lessonId");
         }
-
         Quiz existing = findScopedQuiz(courseId, assessmentType, lessonId).orElse(null);
         Instant now = Instant.now();
-
         Quiz target = existing == null ? new Quiz() : existing;
         target.setCourseId(courseId);
         target.setInstructorId(isBlank(request.getInstructorId()) ? "unknown" : request.getInstructorId().trim());
@@ -52,10 +41,8 @@ public class AssessmentServiceImpl implements AssessmentService {
         if (target.getCreatedAt() == null) {
             target.setCreatedAt(now);
         }
-
         return quizRepository.save(target);
     }
-
     @Override
     public Optional<Quiz> getQuizByCourseId(String courseId) {
         if (isBlank(courseId)) {
@@ -67,7 +54,6 @@ public class AssessmentServiceImpl implements AssessmentService {
         }
         return Optional.of(finals.get(0));
     }
-
     @Override
     public List<Quiz> getQuizzesByCourseId(String courseId) {
         if (isBlank(courseId)) {
@@ -75,7 +61,6 @@ public class AssessmentServiceImpl implements AssessmentService {
         }
         return quizRepository.findByCourseIdOrderByUpdatedAtDesc(courseId.trim());
     }
-
     private Optional<Quiz> findScopedQuiz(String courseId, String assessmentType, String lessonId) {
         if ("LESSON".equals(assessmentType)) {
             return quizRepository.findByCourseIdAndAssessmentTypeAndLessonId(courseId, "LESSON", lessonId);
@@ -85,12 +70,10 @@ public class AssessmentServiceImpl implements AssessmentService {
             .filter(quiz -> isBlank(quiz.getLessonId()))
             .findFirst();
     }
-
     private List<Question> normalizeQuestions(List<Question> questions) {
         if (questions == null || questions.isEmpty()) {
             return new ArrayList<>();
         }
-
         List<Question> result = new ArrayList<>();
         for (Question question : questions) {
             if (question == null || isBlank(question.getQuestion())) continue;
@@ -104,7 +87,6 @@ public class AssessmentServiceImpl implements AssessmentService {
         }
         return result;
     }
-
     private boolean isBlank(String value) {
         return value == null || value.isBlank();
     }

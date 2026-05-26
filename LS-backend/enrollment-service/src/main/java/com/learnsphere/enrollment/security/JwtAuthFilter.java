@@ -1,8 +1,6 @@
 package com.learnsphere.enrollment.security;
-
 import java.io.IOException;
 import java.util.Collections;
-
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -12,7 +10,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
-
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter{
@@ -26,7 +23,6 @@ public class JwtAuthFilter extends OncePerRequestFilter{
 			filterChain.doFilter(request, response);
 			return;
 		}
-		
 		String token=authHeader.substring(7);
 		try {
 			String username=jwtService.extractUsername(token);

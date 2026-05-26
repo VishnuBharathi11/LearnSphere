@@ -23,12 +23,10 @@ import "./Dashboard.scss";
 import { getInstructorCourses } from "../../../services/courseApi";
 import { getEnrollmentsByCourses } from "../../../services/enrollmentApi";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-
 function Dashboard() {
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const currentUser = useMemo(() => {
     try {
       return getCurrentUser();
@@ -37,7 +35,6 @@ function Dashboard() {
     }
   }, []);
   const userId = currentUser?.id || currentUser?.userId || "";
-
   useEffect(() => {
     const role = String(currentUser?.role || "").toLowerCase();
     if (!userId || !role.includes("instructor")) {
@@ -45,7 +42,6 @@ function Dashboard() {
       setLoading(false);
       return;
     }
-
     let active = true;
     async function load() {
       try {
@@ -53,7 +49,6 @@ function Dashboard() {
         if (!active) return;
         const loadedCourses = Array.isArray(result) ? result : [];
         setCourses(loadedCourses);
-
         const ids = loadedCourses.map((c) => String(c.id));
         const loadedEnrollments = await getEnrollmentsByCourses(ids);
         if (!active) return;
@@ -66,30 +61,25 @@ function Dashboard() {
         if (active) setLoading(false);
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [userId, currentUser?.role]);
-
   const { stats, trendData, coursePerformance, recentActivities } = useMemo(() => {
     const totalCourses = courses.length;
     const courseIdSet = new Set(courses.map((c) => String(c.id)));
     const scopedEnrollments = enrollments.filter((e) => courseIdSet.has(String(e.courseId)));
     const totalStudents = scopedEnrollments.length;
-
     const totalRevenue = scopedEnrollments.reduce((sum, e) => {
       const course = courses.find((c) => String(c.id) === String(e.courseId));
       return sum + (Number(course?.price) || 0);
     }, 0);
-
     const stats = [
       { title: "Total Courses", value: totalCourses, icon: BookOpen, color: "blue" },
       { title: "Total Students", value: totalStudents, icon: Users, color: "yellow" },
       { title: "Revenue", value: `Rs ${Math.round(totalRevenue).toLocaleString()}`, icon: DollarSign, color: "red" },
     ];
-
     const monthMap = {};
     scopedEnrollments.forEach((enrollment) => {
       if (!enrollment.enrolledAt) return;
@@ -98,7 +88,6 @@ function Dashboard() {
       const key = `${date.getFullYear()}-${date.getMonth()}`;
       monthMap[key] = (monthMap[key] || 0) + 1;
     });
-
     const now = new Date();
     const trendData = Array.from({ length: 6 }).map((_, idx) => {
       const date = new Date(now.getFullYear(), now.getMonth() - (5 - idx), 1);
@@ -110,7 +99,6 @@ function Dashboard() {
         revenue: enroll * Math.max(1, Math.round(totalRevenue / Math.max(totalStudents, 1))),
       };
     });
-
     const coursePerformance = courses.slice(0, 7).map((course) => {
       const enrollmentCount = scopedEnrollments.filter((e) => String(e.courseId) === String(course.id)).length;
       const score = Math.min(100, Math.max(8, Math.round(enrollmentCount * 10)));
@@ -119,7 +107,6 @@ function Dashboard() {
         score,
       };
     });
-
     const recentActivities = [...courses]
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
       .slice(0, 5)
@@ -127,20 +114,16 @@ function Dashboard() {
         text: `${course.courseName} is ${String(course.status || "DRAFT").toLowerCase()}`,
         time: course.createdAt ? new Date(course.createdAt).toLocaleDateString() : "-",
       }));
-
     return { stats, trendData, coursePerformance, recentActivities };
   }, [courses, enrollments]);
-
   const averagePerformance = useMemo(() => {
     if (!coursePerformance.length) return 0;
     const total = coursePerformance.reduce((sum, item) => sum + (Number(item.score) || 0), 0);
     return Math.round(total / coursePerformance.length);
   }, [coursePerformance]);
-
   if (loading) {
     return null;
   }
-
   return (
     <div className="instructor-dashboard-layout">
       <div className="instructor-dashboard">
@@ -154,7 +137,6 @@ function Dashboard() {
             </p>
           </div>
         </div>
-
         <div className="status-grid" style={{ display: "flex", gap: "20px", width: "100%", marginBottom: "32px" }}>
           {stats.map((item, index) => {
             const Icon = item.icon;
@@ -171,7 +153,6 @@ function Dashboard() {
             );
           })}
         </div>
-
         <div className="chart-grid">
           <div className="chart-card">
             <div className="chart-header">
@@ -196,7 +177,6 @@ function Dashboard() {
               </AreaChart>
             </ResponsiveContainer>
           </div>
-
           <div className="chart-card">
             <div className="chart-header">
               <div className="chart-title">
@@ -244,7 +224,6 @@ function Dashboard() {
             )}
           </div>
         </div>
-
         <div className="activity-card">
           <h3>Recent Activity</h3>
           {recentActivities.length === 0 ? (
@@ -267,5 +246,4 @@ function Dashboard() {
     </div>
   );
 }
-
 export default Dashboard;

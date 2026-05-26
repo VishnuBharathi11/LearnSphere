@@ -1,11 +1,8 @@
 import { useState } from "react";
-
 const ReportModal = ({ isOpen, onClose, onSubmit }) => {
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
-
   if (!isOpen) return null;
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     const value = reason.trim();
@@ -13,7 +10,6 @@ const ReportModal = ({ isOpen, onClose, onSubmit }) => {
       setError("Please provide a reason.");
       return;
     }
-
     const result = await onSubmit(value);
     if (result?.ok) {
       setReason("");
@@ -21,10 +17,8 @@ const ReportModal = ({ isOpen, onClose, onSubmit }) => {
       onClose();
       return;
     }
-
     setError(result?.error || "Unable to report.");
   };
-
   return (
     <div className="forum-modal-backdrop" onClick={onClose}>
       <div className="forum-modal" onClick={(event) => event.stopPropagation()}>
@@ -40,9 +34,7 @@ const ReportModal = ({ isOpen, onClose, onSubmit }) => {
             onChange={(event) => setReason(event.target.value)}
             placeholder="Describe what is inappropriate in this reply"
           />
-
           {error ? <p className="forum-error">{error}</p> : null}
-
           <div className="forum-modal-actions">
             <button className="forum-btn ghost" type="button" onClick={onClose}>
               Cancel
@@ -56,5 +48,4 @@ const ReportModal = ({ isOpen, onClose, onSubmit }) => {
     </div>
   );
 };
-
 export default ReportModal;

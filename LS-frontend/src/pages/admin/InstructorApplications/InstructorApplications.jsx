@@ -8,7 +8,6 @@ import {
 } from "../../../services/authApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import "./InstructorApplications.scss";
-
 function InstructorApplications() {
   const [applications, setApplications] = useState([]);
   const [search, setSearch] = useState("");
@@ -19,7 +18,6 @@ function InstructorApplications() {
   const [approveEmail, setApproveEmail] = useState("");
   const [approvePassword, setApprovePassword] = useState("");
   const [processing, setProcessing] = useState(false);
-
   const loadApplications = async () => {
     try {
       const list = await getInstructorApplications();
@@ -29,11 +27,9 @@ function InstructorApplications() {
       setError(getFriendlyErrorMessage(apiError, "Failed to load applications"));
     }
   };
-
   useEffect(() => {
     loadApplications();
   }, []);
-
   const filteredApplications = useMemo(() => {
     const term = search.toLowerCase();
     return applications.filter((app) => {
@@ -44,7 +40,6 @@ function InstructorApplications() {
       );
     });
   }, [applications, search]);
-
   const stats = useMemo(() => {
     const pending = applications.filter((app) => String(app.status).toUpperCase() === "PENDING")
       .length;
@@ -56,19 +51,16 @@ function InstructorApplications() {
     const approvalRate = reviewed === 0 ? 0 : Math.round((approved / reviewed) * 100);
     return { pending, approved, rejected, approvalRate };
   }, [applications]);
-
   const openReview = (app) => {
     setSelected(app);
     setShowReview(true);
     setApproveEmail(app?.email || "");
     setApprovePassword("");
   };
-
   const closeReview = () => {
     setShowReview(false);
     setSelected(null);
   };
-
   const handleViewResume = async () => {
     if (!selected?.id) return;
     try {
@@ -82,7 +74,6 @@ function InstructorApplications() {
       setError(getFriendlyErrorMessage(apiError, "Failed to load resume"));
     }
   };
-
   const handleReject = async () => {
     if (!selected?.id) return;
     if (!window.confirm("Reject this instructor application?")) return;
@@ -97,7 +88,6 @@ function InstructorApplications() {
       setProcessing(false);
     }
   };
-
   const handleApprove = async () => {
     if (!selected?.id) return;
     if (!approveEmail || !approvePassword) {
@@ -119,11 +109,9 @@ function InstructorApplications() {
       setProcessing(false);
     }
   };
-
   return (
     <div className="instructor-applications-page">
       {error && <p className="admin-error">{error}</p>}
-
       <div className="ia-header">
         <div>
           <h2>Instructor Registration</h2>
@@ -138,7 +126,6 @@ function InstructorApplications() {
           />
         </div>
       </div>
-
       <div className="ia-stats">
         <div className="ia-stat-card">
           <span>Pending Approval</span>
@@ -157,7 +144,6 @@ function InstructorApplications() {
           <strong>{stats.approvalRate}%</strong>
         </div>
       </div>
-
       <div className="ia-table">
         <table>
           <thead>
@@ -202,7 +188,6 @@ function InstructorApplications() {
           </tbody>
         </table>
       </div>
-
       {showReview && selected && (
         <div className="ia-modal-overlay" onClick={closeReview}>
           <div className="ia-modal" onClick={(event) => event.stopPropagation()}>
@@ -258,7 +243,6 @@ function InstructorApplications() {
           </div>
         </div>
       )}
-
       {showApprove && selected && (
         <div className="ia-modal-overlay" onClick={() => setShowApprove(false)}>
           <div className="ia-modal" onClick={(event) => event.stopPropagation()}>
@@ -300,5 +284,4 @@ function InstructorApplications() {
     </div>
   );
 }
-
 export default InstructorApplications;

@@ -14,7 +14,6 @@ import {
   pushLocalNotification,
 } from "../../services/activityNotificationStore";
 import "./TopNavBarStudent.scss";
-
 function formatRelativeTime(dateValue) {
   if (!dateValue) return "just now";
   const now = Date.now();
@@ -29,7 +28,6 @@ function formatRelativeTime(dateValue) {
   const days = Math.floor(hrs / 24);
   return `${days} days ago`;
 }
-
 function buildDiscussionMessage(item) {
   const rawActor =
     item?.actorName ||
@@ -49,22 +47,18 @@ function buildDiscussionMessage(item) {
   const type = String(item?.type || item?.notificationType || "").toLowerCase();
   const message = String(item?.message || "").trim();
   if (message) return message;
-
   if (type.includes("reply")) {
     if (actor && topicTitle) return `${actor} replied on "${topicTitle}".`;
     if (actor) return `${actor} replied to your thread.`;
     return "New reply on your thread.";
   }
-
   if (type.includes("question") || type.includes("thread")) {
     if (actor && topicTitle) return `${actor} posted a question: "${topicTitle}".`;
     if (actor) return `${actor} posted a new question.`;
     return "New learner question posted.";
   }
-
   return "You have a new discussion update.";
 }
-
 function TopNavBarStudent() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -72,7 +66,6 @@ function TopNavBarStudent() {
   const { currentUser } = useCurrentUser();
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
-
   const pageMap = {
     "/student-layout/dashboard": "Dashboard",
     "/student-layout/my-courses": "My Courses",
@@ -84,7 +77,6 @@ function TopNavBarStudent() {
     "/student-layout/learn": "Continue Learning",
     "/student-layout/profile": "My Profile",
   };
-
   const getNormalizedPath = (pathname) => {
     if (pathname.startsWith("/student-layout/certificate")) return "/student-layout/certificate";
     if (pathname.startsWith("/student-layout/download-certificate")) return "/student-layout/download-certificate";
@@ -93,27 +85,22 @@ function TopNavBarStudent() {
     if (pathname.startsWith("/student-layout/learn")) return "/student-layout/learn";
     return pathname;
   };
-
   const pageTitle = pageMap[getNormalizedPath(location.pathname)] || "Dashboard";
   const searchParams = new URLSearchParams(location.search);
   const isAdminPreview = searchParams.get("adminPreview") === "true";
   const previewUserName = searchParams.get("adminUserName") || "";
   const previewUserEmail = searchParams.get("adminUserEmail") || "";
-
   useEffect(() => {
     if (isAdminPreview) {
       setNotifications([]);
       return;
     }
-
     const userId = currentUser?.id || currentUser?.userId;
     if (!userId) {
       setNotifications([]);
       return;
     }
-
     let active = true;
-
     const load = async () => {
       try {
         const [list, localList] = await Promise.all([
@@ -121,7 +108,6 @@ function TopNavBarStudent() {
           Promise.resolve(getLocalNotificationsByUser(String(userId), "learner")),
         ]);
         if (!active) return;
-
         const discussionNotifications = (Array.isArray(list) ? list : []).map((item) => ({
           id: `api-${item.id}`,
           source: "api",
@@ -134,16 +120,13 @@ function TopNavBarStudent() {
           targetPath: "",
           createdAt: item.createdAt || new Date().toISOString(),
         }));
-
         const localNotifications = (Array.isArray(localList) ? localList : []).map((item) => ({
           ...item,
           source: "local",
           createdAt: item.createdAt || new Date().toISOString(),
         }));
-
         const storageKey = `cleared_notifications_${userId}`;
         const clearedIds = JSON.parse(localStorage.getItem(storageKey) || "[]");
-
         setNotifications(
           [...localNotifications, ...discussionNotifications]
             .filter((item) => !clearedIds.includes(String(item.id)))
@@ -161,7 +144,6 @@ function TopNavBarStudent() {
         );
       }
     };
-
     load();
     const timer = setInterval(load, 12000);
     return () => {
@@ -169,13 +151,10 @@ function TopNavBarStudent() {
       clearInterval(timer);
     };
   }, [currentUser?.id, currentUser?.userId, isAdminPreview]);
-
   useEffect(() => {
     if (isAdminPreview) return;
-
     const userId = currentUser?.id || currentUser?.userId;
     if (!userId) return;
-
     let active = true;
     const syncCourseCompletionNotifications = async () => {
       try {
@@ -189,7 +168,6 @@ function TopNavBarStudent() {
           )
           .map((enrollment) => String(enrollment.courseId));
         if (!active || activeCourseIds.length === 0) return;
-
         const [courses, progressList, lessonsList] = await Promise.all([
           getCoursesByIds(activeCourseIds),
           getProgressByCourses(String(userId), activeCourseIds),
@@ -205,7 +183,6 @@ function TopNavBarStudent() {
           ),
         ]);
         if (!active) return;
-
         const progressMap = {};
         (Array.isArray(progressList) ? progressList : []).forEach((item) => {
           progressMap[String(item.courseId)] = item;
@@ -214,7 +191,6 @@ function TopNavBarStudent() {
         (Array.isArray(lessonsList) ? lessonsList : []).forEach(([courseId, lessons]) => {
           lessonMap[String(courseId)] = lessons;
         });
-
         (Array.isArray(courses) ? courses : []).forEach((course) => {
           if (!course?.id) return;
           const state = buildCourseLearningStateFromApi(
@@ -222,7 +198,6 @@ function TopNavBarStudent() {
             progressMap[String(course.id)] || null
           );
           if (!state.certificateUnlocked) return;
-
           pushLocalNotification({
             userId: String(userId),
             role: "learner",
@@ -235,10 +210,8 @@ function TopNavBarStudent() {
           });
         });
       } catch {
-        // ignore completion sync failures
       }
     };
-
     syncCourseCompletionNotifications();
     const timer = setInterval(syncCourseCompletionNotifications, 60000);
     return () => {
@@ -246,18 +219,15 @@ function TopNavBarStudent() {
       clearInterval(timer);
     };
   }, [currentUser?.id, currentUser?.userId, isAdminPreview]);
-
   useEffect(() => {
     const onDocClick = (event) => {
       if (!panelRef.current) return;
       if (panelRef.current.contains(event.target)) return;
       setOpenNotifications(false);
     };
-
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
-
   const displayName = isAdminPreview
     ? previewUserName || "Learner"
     : currentUser?.name || currentUser?.username || "Learner";
@@ -275,16 +245,13 @@ function TopNavBarStudent() {
     [displayName]
   );
   const unreadCount = notifications.filter((item) => !item.read).length;
-
   const handleNotificationClick = async (item) => {
     if (isAdminPreview) return;
-
     const userId = currentUser?.id || currentUser?.userId;
     if (userId && item?.id && item?.source === "api" && item?.sourceId) {
       try {
         await markNotificationRead(String(item.sourceId), String(userId));
       } catch {
-        // Ignore marking failures and continue navigation
       }
       setNotifications((prev) =>
         prev.map((entry) => (String(entry.id) === String(item.id) ? { ...entry, read: true } : entry))
@@ -296,14 +263,11 @@ function TopNavBarStudent() {
         prev.map((entry) => (String(entry.id) === String(item.id) ? { ...entry, read: true } : entry))
       );
     }
-
     setOpenNotifications(false);
-
     if (item?.targetPath) {
       navigate(item.targetPath);
       return;
     }
-
     if (item?.courseId) {
       const query = new URLSearchParams();
       query.set("tab", "discussion");
@@ -311,18 +275,14 @@ function TopNavBarStudent() {
       navigate(`/student-layout/learn/${item.courseId}?${query.toString()}`);
       return;
     }
-
     navigate("/student-layout/my-courses");
   };
-
   const markAllAsRead = async () => {
     if (isAdminPreview) return;
-
     const userId = currentUser?.id || currentUser?.userId;
     if (!userId) return;
     const unread = notifications.filter((item) => !item.read);
     if (!unread.length) return;
-
     await Promise.all(
       unread
         .filter((item) => item.source === "api" && item.sourceId)
@@ -331,28 +291,23 @@ function TopNavBarStudent() {
     markAllLocalNotificationsRead(String(userId), "learner");
     setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
-
   const clearReadNotifications = () => {
     if (isAdminPreview) return;
     const userId = currentUser?.id || currentUser?.userId;
     if (!userId) return;
     const readIds = notifications.filter((item) => item.read).map((item) => item.id);
     if (!readIds.length) return;
-
     const storageKey = `cleared_notifications_${userId}`;
     const existingCleared = JSON.parse(localStorage.getItem(storageKey) || "[]");
     const updatedCleared = Array.from(new Set([...existingCleared, ...readIds.map(String)]));
     localStorage.setItem(storageKey, JSON.stringify(updatedCleared));
-
     setNotifications((prev) => prev.filter((item) => !readIds.includes(item.id)));
   };
-
   return (
     <div className="dashboard-header">
       <div className="header-left">
         <h2>{pageTitle}</h2>
       </div>
-
       <div className="header-right">
         <button
           className="notification"
@@ -366,7 +321,6 @@ function TopNavBarStudent() {
           <FiBell />
           {unreadCount > 0 && <span className="badge">{Math.min(unreadCount, 9)}</span>}
         </button>
-
         {openNotifications && (
           <div className="notification-panel" ref={panelRef}>
             <div className="notification-head">
@@ -401,7 +355,6 @@ function TopNavBarStudent() {
             </button>
           </div>
         )}
-
         <div className="profile">
           <div className="avatar">
             {currentUser?.image ? <img src={currentUser.image} alt={displayName} /> : initials}
@@ -415,5 +368,4 @@ function TopNavBarStudent() {
     </div>
   );
 }
-
 export default TopNavBarStudent;

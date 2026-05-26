@@ -5,7 +5,6 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
-
 .download-certificate-header {
   display: flex;
   align-items: center;
@@ -15,7 +14,6 @@
   margin-left: auto;
   margin-right: auto;
 }
-
 .download-certificate-header::before {
   content: "✓";
   display: flex;
@@ -31,12 +29,10 @@
   flex-shrink: 0;
   box-shadow: 0 10px 30px rgba(164, 53, 240, 0.25);
 }
-
 .download-certificate-header > div {
   flex: 1;
   min-width: 0;
 }
-
 .download-certificate-header h2 {
   margin: 0;
   font-size: clamp(28px, 5vw, 48px);
@@ -48,7 +44,6 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
-
 .download-certificate-layout {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
@@ -58,7 +53,6 @@
   margin-left: auto;
   margin-right: auto;
 }
-
 .download-certificate-preview {
   background: #ffffff;
   border: 2px solid #e2e8f0;
@@ -67,25 +61,21 @@
   box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
   transition: all 0.3s ease;
 }
-
 .download-certificate-preview:hover {
   border-color: #A435F0;
   box-shadow: 0 24px 48px rgba(164, 53, 240, 0.15);
 }
-
 .download-certificate-template {
   position: relative;
   width: 100%;
   max-width: 980px;
 }
-
 .download-certificate-image {
   width: 100%;
   height: auto;
   display: block;
   border-radius: 10px;
 }
-
 .download-certificate-overlay {
   position: absolute;
   color: #2f3e67;
@@ -93,7 +83,6 @@
   text-align: center;
   font-family: Georgia, "Times New Roman", serif;
 }
-
 .download-certificate-learner {
   left: 34%;
   top: 48.5%;
@@ -102,7 +91,6 @@
   font-size: clamp(18px, 1.95vw, 42px);
   font-weight: 500;
 }
-
 .download-certificate-course {
   left: 34%;
   top: 64.2%;
@@ -110,7 +98,6 @@
   width: 58%;
   font-size: clamp(13px, 1.1vw, 24px);
 }
-
 .download-certificate-issued {
   left: 8%;
   top: 78.5%;
@@ -120,7 +107,6 @@
   font-size: clamp(9px, 0.8vw, 15px);
   font-family: "Poppins", sans-serif;
 }
-
 .download-certificate-id {
   left: 8%;
   top: 83.5%;
@@ -130,7 +116,6 @@
   font-size: clamp(9px, 0.8vw, 15px);
   font-family: "Poppins", sans-serif;
 }
-
 .download-certificate-actions {
   background: #ffffff;
   border: 2px solid #e2e8f0;
@@ -142,12 +127,10 @@
   top: 32px;
   transition: all 0.3s ease;
 }
-
 .download-certificate-actions:hover {
   border-color: #A435F0;
   box-shadow: 0 24px 48px rgba(164, 53, 240, 0.15);
 }
-
 .download-cert-meta {
   display: flex;
   flex-direction: column;
@@ -156,7 +139,6 @@
   padding-bottom: 24px;
   border-bottom: 1px solid #e2e8f0;
 }
-
 .download-cert-meta p {
   margin: 0;
   font-size: 14px;
@@ -166,7 +148,6 @@
   gap: 12px;
   align-items: start;
 }
-
 .download-cert-meta span {
   color: #64748b;
   font-weight: 600;
@@ -174,7 +155,6 @@
   font-size: 12px;
   letter-spacing: 0.5px;
 }
-
 .download-cert-meta strong {
   color: #1e293b;
   text-align: left;
@@ -182,13 +162,11 @@
   font-size: 15px;
   font-weight: 600;
 }
-
 .download-cert-action-row {
   display: grid;
   grid-template-columns: 1fr;
   gap: 12px;
 }
-
 .download-cert-btn,
 .download-cert-share-btn {
   width: 100%;
@@ -205,36 +183,30 @@
   justify-content: center;
   gap: 8px;
 }
-
 .download-cert-btn {
   border: none;
   background: linear-gradient(135deg, #A435F0 0%, #8A2BE2 100%);
   color: #ffffff;
   box-shadow: 0 10px 25px rgba(164, 53, 240, 0.3);
 }
-
 .download-cert-btn:hover {
   background: linear-gradient(135deg, #8A2BE2 0%, #7B1FA2 100%);
   box-shadow: 0 15px 35px rgba(164, 53, 240, 0.4);
   transform: translateY(-2px);
 }
-
 .download-cert-btn:active {
   transform: translateY(0);
 }
-
 .download-cert-share-btn {
   border: 2px solid #A435F0;
   background-color: #ffffff;
   color: #A435F0;
 }
-
 .download-cert-share-btn:hover {
   background-color: #f3e5ff;
   border-color: #8A2BE2;
   color: #8A2BE2;
 }
-
 .download-certificate-locked-state {
   background: #ffffff;
   border: 2px solid #e2e8f0;
@@ -249,12 +221,10 @@
   max-width: 600px;
   margin: 0 auto;
 }
-
 .download-certificate-lock-icon {
   font-size: 64px;
   animation: bounce 2s infinite;
 }
-
 @keyframes bounce {
   0%, 100% {
     transform: translateY(0);
@@ -263,21 +233,18 @@
     transform: translateY(-10px);
   }
 }
-
 .download-certificate-locked-state h3 {
   margin: 0;
   font-size: 28px;
   font-weight: 700;
   color: #0f172a;
 }
-
 .download-certificate-locked-state p {
   margin: 0;
   font-size: 15px;
   color: #64748b;
   line-height: 1.6;
 }
-
 .unlock-requirements {
   list-style: none;
   padding: 20px 0;
@@ -285,7 +252,6 @@
   text-align: left;
   display: inline-block;
 }
-
 .unlock-requirements li {
   padding: 10px 0;
   padding-left: 30px;
@@ -293,7 +259,6 @@
   font-size: 15px;
   color: #334155;
 }
-
 .unlock-requirements li::before {
   content: "\2713";
   position: absolute;
@@ -302,125 +267,101 @@
   font-weight: bold;
   font-size: 18px;
 }
-
 .current-status {
   margin-top: 16px !important;
   font-style: italic;
   color: #7c3aed;
   font-weight: 500;
 }
-
 @media (max-width: 1200px) {
   .download-certificate-header h2 {
     font-size: 36px;
   }
-
   .download-certificate-layout {
     gap: 24px;
   }
 }
-
 @media (max-width: 980px) {
   .download-certificate-page {
     padding: 24px 16px;
   }
-
   .download-certificate-header {
     margin-bottom: 28px;
     gap: 16px;
   }
-
   .download-certificate-header h2 {
     font-size: 28px;
   }
-
   .download-certificate-layout {
     grid-template-columns: 1fr;
     gap: 20px;
   }
-
   .download-certificate-actions {
     position: static;
     top: auto;
     padding: 20px;
   }
-
   .download-certificate-locked-state {
     padding: 40px 24px;
   }
-
   .download-certificate-locked-state h3 {
     font-size: 24px;
   }
 }
-
 @media (max-width: 640px) {
   .download-certificate-page {
     padding: 16px 12px;
   }
-
   .download-certificate-header {
     flex-direction: column;
     text-align: center;
     margin-bottom: 20px;
   }
-
   .download-certificate-header::before {
     width: 48px;
     height: 48px;
     font-size: 28px;
   }
-
   .download-certificate-header h2 {
     font-size: 22px;
   }
-
   .download-certificate-preview {
     padding: 12px;
     border-radius: 16px;
   }
-
   .download-certificate-actions {
     padding: 16px;
     border-radius: 16px;
   }
-
   .download-cert-meta {
     gap: 12px;
     margin-bottom: 16px;
     padding-bottom: 16px;
   }
-
   .download-cert-meta p {
     grid-template-columns: 70px minmax(0, 1fr);
     gap: 8px;
     font-size: 13px;
   }
-
   .download-cert-meta span {
     font-size: 11px;
   }
-
   .download-cert-btn,
   .download-cert-share-btn {
     min-height: 44px;
     padding: 10px 16px;
     font-size: 14px;
   }
-
   .download-certificate-locked-state {
     padding: 32px 16px;
     gap: 16px;
   }
-
   .download-certificate-lock-icon {
     font-size: 56px;
   }
-
   .download-certificate-locked-state h3 {
     font-size: 20px;
   }
-
   .download-certificate-locked-state p {
     font-size: 14px;
   }

@@ -1,5 +1,4 @@
 @use "sass:color";
-
 $font: "Inter", sans-serif;
 $font-heading: "Poppins", sans-serif;
 $primary: #a435f0;
@@ -11,13 +10,11 @@ $card-glass-hover: rgba(255, 255, 255, 0.88);
 $border-glass: rgba(164, 53, 240, 0.12);
 $text-dark: #1c1d1f;
 $text-muted: #6a6f73;
-
 .admin-dashboard-layout {
   display: flex;
   font-family: $font;
   width: 100%;
 }
-
 .admin-dashboard {
   width: 100%;
   padding: 24px;
@@ -26,13 +23,11 @@ $text-muted: #6a6f73;
               #f6f8fa;
   min-height: 100%;
   border-radius: 16px;
-
   .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 28px;
-    
     h1 {
       font-family: $font-heading;
       font-size: 26px;
@@ -43,12 +38,10 @@ $text-muted: #6a6f73;
       -webkit-text-fill-color: transparent;
       margin-bottom: 4px;
     }
-
     p {
       font-size: 14px;
       color: $text-muted;
     }
-
     .system-tag {
       display: flex;
       align-items: center;
@@ -60,21 +53,18 @@ $text-muted: #6a6f73;
       font-size: 13px;
       font-weight: 600;
       color: $primary;
-
       svg {
         color: $accent;
       }
     }
   }
 }
-
 .status-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   margin-bottom: 28px;
 }
-
 .stat-card {
   background: $card-glass;
   backdrop-filter: blur(14px);
@@ -88,7 +78,6 @@ $text-muted: #6a6f73;
   box-shadow: 0 10px 24px rgba(28, 29, 31, 0.04);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
   cursor: default;
-
   &:hover {
     transform: translateY(-4px) scale(1.02);
     background: $card-glass-hover;
@@ -96,7 +85,6 @@ $text-muted: #6a6f73;
     box-shadow: 0 16px 36px rgba(164, 53, 240, 0.08),
                 0 0 0 1px rgba($primary, 0.08);
   }
-
   .icon-wrapper {
     width: 46px;
     height: 46px;
@@ -107,27 +95,22 @@ $text-muted: #6a6f73;
     color: #ffffff;
     flex-shrink: 0;
   }
-
   &.purple {
     .icon-wrapper { background: linear-gradient(135deg, $primary, #7c3aed); }
     &:hover { border-color: rgba($primary, 0.35); }
   }
-
   &.gold {
     .icon-wrapper { background: linear-gradient(135deg, $accent, #e08b00); }
     &:hover { border-color: rgba($accent, 0.35); }
   }
-
   &.emerald {
     .icon-wrapper { background: linear-gradient(135deg, $success, #059669); }
     &:hover { border-color: rgba($success, 0.35); }
   }
-
   &.gold-glow {
     .icon-wrapper { background: linear-gradient(135deg, $primary, $accent); }
     &:hover { border-color: rgba($accent, 0.45); }
   }
-
   .stat-value {
     font-size: 22px;
     font-weight: 700;
@@ -135,14 +118,12 @@ $text-muted: #6a6f73;
     letter-spacing: -0.5px;
     margin-bottom: 2px;
   }
-
   .stat-label {
     font-size: 13px;
     font-weight: 500;
     color: $text-muted;
   }
 }
-
 .pending-box {
   margin: 28px 0;
   padding: 22px;
@@ -151,7 +132,6 @@ $text-muted: #6a6f73;
   border-radius: 16px;
   border: 1px solid rgba($accent, 0.25);
   box-shadow: 0 10px 25px rgba($accent, 0.03);
-
   h3 {
     font-size: 16px;
     font-weight: 700;
@@ -162,13 +142,11 @@ $text-muted: #6a6f73;
     align-items: center;
   }
 }
-
 .task-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 14px;
 }
-
 .task {
   background: $card-glass;
   backdrop-filter: blur(8px);
@@ -182,13 +160,11 @@ $text-muted: #6a6f73;
   font-weight: 500;
   color: $text-dark;
   transition: all 0.25s ease;
-
   &:hover {
     background: #ffffff;
     border-color: rgba($primary, 0.2);
     transform: translateX(4px);
   }
-
   .badge {
     font-size: 11px;
     font-weight: 700;
@@ -197,7 +173,6 @@ $text-muted: #6a6f73;
     border-radius: 99px;
     letter-spacing: 0.5px;
   }
-
   &.high {
     border-left: 4px solid #ef4444;
     .badge {
@@ -206,7 +181,6 @@ $text-muted: #6a6f73;
       border: 1px solid rgba(239, 68, 68, 0.2);
     }
   }
-
   &.medium {
     border-left: 4px solid $accent;
     .badge {
@@ -216,14 +190,12 @@ $text-muted: #6a6f73;
     }
   }
 }
-
 .charts-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 28px;
 }
-
 .chart-card {
   background: $card-glass;
   backdrop-filter: blur(14px);
@@ -232,33 +204,28 @@ $text-muted: #6a6f73;
   border-radius: 16px;
   box-shadow: 0 10px 24px rgba(28, 29, 31, 0.04);
   transition: all 0.3s ease;
-
   &:hover {
     background: $card-glass-hover;
     border-color: rgba($primary, 0.2);
     box-shadow: 0 16px 36px rgba(28, 29, 31, 0.08);
   }
-
   .chart-header {
     display: flex;
     align-items: center;
     gap: 8px;
     margin-bottom: 18px;
     color: $primary;
-
     h3 {
       font-size: 15px;
       font-weight: 700;
       color: $text-dark;
     }
   }
-
   .chart-container {
     position: relative;
     width: 100%;
   }
 }
-
 .selected-category-label {
   margin: 12px 0 0;
   font-size: 12px;
@@ -269,7 +236,6 @@ $text-muted: #6a6f73;
   padding: 6px;
   border-radius: 8px;
 }
-
 .activity-box {
   background: $card-glass;
   backdrop-filter: blur(14px);
@@ -278,19 +244,16 @@ $text-muted: #6a6f73;
   border: 1px solid $border-glass;
   box-shadow: 0 10px 24px rgba(28, 29, 31, 0.04);
   transition: all 0.3s ease;
-
   &:hover {
     background: $card-glass-hover;
     border-color: rgba($primary, 0.2);
   }
-
   h3 {
     font-size: 16px;
     font-weight: 700;
     margin-bottom: 16px;
     color: $text-dark;
   }
-
   ul {
     list-style: none;
     padding: 0;
@@ -299,7 +262,6 @@ $text-muted: #6a6f73;
     flex-direction: column;
     gap: 12px;
   }
-
   li {
     display: flex;
     align-items: center;
@@ -312,13 +274,11 @@ $text-muted: #6a6f73;
     color: $text-dark;
     font-weight: 500;
     transition: all 0.2s ease;
-
     &:hover {
       transform: translateX(4px);
       background: #ffffff;
       border-color: rgba($primary, 0.15);
     }
-
     .activity-icon {
       width: 24px;
       height: 24px;
@@ -330,12 +290,10 @@ $text-muted: #6a6f73;
       justify-content: center;
       flex-shrink: 0;
     }
-
     .activity-message {
       line-height: 1.4;
     }
   }
-
   .empty-trail {
     font-size: 14px;
     color: $text-muted;
@@ -343,7 +301,6 @@ $text-muted: #6a6f73;
     padding: 24px 0;
   }
 }
-
 .admin-access-denied {
   display: flex;
   flex-direction: column;
@@ -355,7 +312,6 @@ $text-muted: #6a6f73;
   gap: 14px;
   font-weight: 600;
 }
-
 @media (max-width: 1200px) {
   .status-grid {
     grid-template-columns: repeat(2, 1fr);
@@ -364,7 +320,6 @@ $text-muted: #6a6f73;
     grid-template-columns: 1fr;
   }
 }
-
 @media (max-width: 768px) {
   .status-grid {
     grid-template-columns: 1fr;

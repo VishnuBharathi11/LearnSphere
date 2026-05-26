@@ -1,11 +1,8 @@
 package com.learnsphere.course.dto;
-
 import lombok.Builder;
 import lombok.Data;
-
 import java.time.Instant;
 import java.util.List;
-
 @Data
 @Builder
 public class LessonResponse {

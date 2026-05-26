@@ -7,7 +7,6 @@
   margin-bottom: 24px;
   width: 100%;
   user-select: none;
-
   &__btn {
     display: inline-flex;
     align-items: center;
@@ -23,7 +22,6 @@
     backdrop-filter: blur(8px);
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-
     &:hover:not(:disabled) {
       background: #A435F0;
       border-color: #A435F0;
@@ -31,7 +29,6 @@
       transform: translateY(-2px);
       box-shadow: 0 6px 12px rgba(164, 53, 240, 0.18);
     }
-
     &:disabled {
       background: rgba(241, 245, 249, 0.5);
       border-color: #e2e8f0;
@@ -40,14 +37,12 @@
       transform: none;
       box-shadow: none;
     }
-
     span {
       @media (max-width: 480px) {
         display: none;
       }
     }
   }
-
   &__pages {
     display: flex;
     align-items: center;
@@ -58,7 +53,6 @@
     border-radius: 16px;
     backdrop-filter: blur(6px);
   }
-
   &__page-btn {
     display: flex;
     align-items: center;
@@ -74,12 +68,10 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
-
     &:hover {
       background: rgba(164, 53, 240, 0.08);
       color: #A435F0;
     }
-
     &.is-active {
       background: linear-gradient(135deg, #A435F0 0%, #7c22cc 100%);
       color: #ffffff;
@@ -87,7 +79,6 @@
       box-shadow: 0 4px 10px rgba(164, 53, 240, 0.25);
     }
   }
-
   &__ellipsis {
     display: flex;
     align-items: center;
@@ -99,46 +90,37 @@
     letter-spacing: 1.5px;
   }
 }
-
-/* Make it dark-mode friendly if parent has dark context */
 .dark-theme, .dark {
   .ls-pagination {
     &__btn {
       background: rgba(30, 41, 59, 0.7);
       border-color: #334155;
       color: #cbd5e1;
-
       &:hover:not(:disabled) {
         background: #A435F0;
         border-color: #A435F0;
         color: #ffffff;
       }
-
       &:disabled {
         background: rgba(15, 23, 42, 0.5);
         border-color: #1e293b;
         color: #475569;
       }
     }
-
     &__pages {
       background: rgba(15, 23, 42, 0.8);
       border-color: #1e293b;
     }
-
     &__page-btn {
       color: #94a3b8;
-
       &:hover {
         background: rgba(164, 53, 240, 0.15);
         color: #c084fc;
       }
-
       &.is-active {
         color: #ffffff;
       }
     }
-
     &__ellipsis {
       color: #475569;
     }

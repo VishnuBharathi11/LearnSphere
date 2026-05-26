@@ -2,14 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./ReviewCourse.scss";
 import { getAdminCourses, publishCourse, rejectCourse } from "../../../../services/courseApi";
-
 function ReviewCourse() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reason, setReason] = useState("");
-
   useEffect(() => {
     let active = true;
     async function loadCourses() {
@@ -29,25 +27,20 @@ function ReviewCourse() {
       active = false;
     };
   }, []);
-
   const course = useMemo(
     () => courses.find((item) => String(item.id) === String(id)),
     [courses, id]
   );
-
   if (loading) {
     return null;
   }
-
   if (!course) {
     return <p style={{ padding: 40 }}>Course not found.</p>;
   }
-
   const approveCurrentCourse = async () => {
     await publishCourse(String(course.id));
     navigate("/admin-layout/approve-courses", { replace: true });
   };
-
   const rejectCurrentCourse = async () => {
     if (!reason.trim()) {
       alert("Rejection reason is required.");
@@ -56,7 +49,6 @@ function ReviewCourse() {
     await rejectCourse(String(course.id), reason.trim());
     navigate("/admin-layout/approve-courses", { replace: true });
   };
-
   return (
     <div className="review-course">
       <div className="review-container">
@@ -64,7 +56,6 @@ function ReviewCourse() {
           <h2>Review Course</h2>
           <p>Carefully verify course details before approval</p>
         </div>
-
         <div className="review-card">
           <div className="course-info">
             <div>
@@ -83,12 +74,10 @@ function ReviewCourse() {
               <span>Price:</span> INR {course.price}
             </div>
           </div>
-
           <div className="course-description">
             <h4>Description</h4>
             <p>{course.description || "No description provided."}</p>
           </div>
-
           <div className="reject-section">
             <label>Rejection Reason (if rejecting)</label>
             <textarea
@@ -97,7 +86,6 @@ function ReviewCourse() {
               placeholder="Provide a clear reason for rejection..."
             />
           </div>
-
           <div className="review-actions">
             <button className="approve" onClick={approveCurrentCourse}>
               Approve Course
@@ -114,5 +102,4 @@ function ReviewCourse() {
     </div>
   );
 }
-
 export default ReviewCourse;

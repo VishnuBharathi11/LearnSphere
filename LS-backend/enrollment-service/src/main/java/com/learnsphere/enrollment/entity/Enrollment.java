@@ -1,11 +1,8 @@
 package com.learnsphere.enrollment.entity;
-
 import java.time.Instant;
-
 import jakarta.persistence.*;
 import lombok.*;
 import com.learnsphere.enrollment.enums.EnrollmentStatus;
-
 @Entity
 @Table(name = "enrollments")
 @Getter
@@ -26,5 +23,4 @@ public class Enrollment {
 	private EnrollmentStatus status;
 	@Column(nullable = false)
 	private Instant enrolledAt;
-	
 }

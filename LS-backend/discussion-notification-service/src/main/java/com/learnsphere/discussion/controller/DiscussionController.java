@@ -1,5 +1,4 @@
 package com.learnsphere.discussion.controller;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.learnsphere.discussion.dto.request.AuthenticatedActor;
 import com.learnsphere.discussion.dto.request.CreateReplyRequest;
 import com.learnsphere.discussion.dto.request.CreateThreadRequest;
@@ -24,18 +22,14 @@ import com.learnsphere.discussion.dto.response.ThreadDetailResponse;
 import com.learnsphere.discussion.dto.response.ThreadSummaryResponse;
 import com.learnsphere.discussion.dto.response.VoteResponse;
 import com.learnsphere.discussion.service.DiscussionService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-
 @RestController
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class DiscussionController {
-
     private final DiscussionService discussionService;
-
     @PostMapping("/courses/{courseId}/threads")
     public ResponseEntity<ThreadSummaryResponse> createThread(
         @PathVariable String courseId,
@@ -46,7 +40,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.createThread(courseId, request, actor));
     }
-
     @GetMapping("/courses/{courseId}/threads")
     public ResponseEntity<PagedThreadsResponse> listThreads(
         @PathVariable String courseId,
@@ -58,7 +51,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.getThreadsByCourse(courseId, page, size, actor));
     }
-
     @GetMapping("/courses/{courseId}/threads/reported")
     public ResponseEntity<?> reportedThreads(
         @PathVariable String courseId,
@@ -68,7 +60,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.getReportedThreadsByCourse(courseId, actor));
     }
-
     @GetMapping("/threads/{threadId}")
     public ResponseEntity<ThreadDetailResponse> getThread(
         @PathVariable String threadId,
@@ -80,7 +71,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.getThreadById(threadId, page, size, actor));
     }
-
     @PostMapping("/threads/{threadId}/replies")
     public ResponseEntity<ThreadDetailResponse> createReply(
         @PathVariable String threadId,
@@ -91,7 +81,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.createReply(threadId, request, actor));
     }
-
     @PutMapping("/threads/{id}/upvote")
     public ResponseEntity<VoteResponse> upvoteThread(
         @PathVariable String id,
@@ -101,7 +90,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.upvoteThread(id, actor));
     }
-
     @PutMapping("/replies/{id}/upvote")
     public ResponseEntity<VoteResponse> upvoteReply(
         @PathVariable String id,
@@ -111,7 +99,6 @@ public class DiscussionController {
         AuthenticatedActor actor = AuthenticatedActor.from(authentication, userId);
         return ResponseEntity.ok(discussionService.upvoteReply(id, actor));
     }
-
     @PostMapping("/replies/{id}/report")
     public ResponseEntity<Void> reportReply(
         @PathVariable String id,
@@ -123,7 +110,6 @@ public class DiscussionController {
         discussionService.reportReply(id, request, actor);
         return ResponseEntity.noContent().build();
     }
-
     @PutMapping("/threads/{id}/lock")
     public ResponseEntity<Void> lockThread(
         @PathVariable String id,
@@ -136,7 +122,6 @@ public class DiscussionController {
         discussionService.lockThread(id, locked, actor, authorization);
         return ResponseEntity.noContent().build();
     }
-
     @DeleteMapping("/threads/{id}")
     public ResponseEntity<Void> deleteThread(
         @PathVariable String id,
@@ -148,7 +133,6 @@ public class DiscussionController {
         discussionService.deleteThread(id, actor, authorization);
         return ResponseEntity.noContent().build();
     }
-
     @DeleteMapping("/replies/{id}")
     public ResponseEntity<Void> deleteReply(
         @PathVariable String id,

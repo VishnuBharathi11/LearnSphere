@@ -12,7 +12,6 @@ import {
   pushLocalNotification,
 } from "../../services/activityNotificationStore";
 import "./TopNavBarInstructor.scss";
-
 function formatRelativeTime(dateValue) {
   if (!dateValue) return "just now";
   const now = Date.now();
@@ -27,7 +26,6 @@ function formatRelativeTime(dateValue) {
   const days = Math.floor(hrs / 24);
   return `${days} days ago`;
 }
-
 function buildDiscussionMessage(item) {
   const rawActor =
     item?.actorName ||
@@ -47,22 +45,18 @@ function buildDiscussionMessage(item) {
   const type = String(item?.type || item?.notificationType || "").toLowerCase();
   const message = String(item?.message || "").trim();
   if (message) return message;
-
   if (type.includes("reply")) {
     if (actor && topicTitle) return `${actor} replied on "${topicTitle}".`;
     if (actor) return `${actor} replied on your course thread.`;
     return "A learner posted a new reply in your course thread.";
   }
-
   if (type.includes("question") || type.includes("thread")) {
     if (actor && topicTitle) return `${actor} asked: "${topicTitle}".`;
     if (actor) return `${actor} asked a new question in your course discussion.`;
     return "A new learner question was posted in your course discussion.";
   }
-
   return "You have a new discussion update.";
 }
-
 const PAGE_MAP = {
   "/instructor-layout/dashboard": {
     title: "Instructor Dashboard",
@@ -85,7 +79,6 @@ const PAGE_MAP = {
     subtitle: "Update your public instructor profile",
   },
 };
-
 function resolvePageMeta(pathname) {
   if (pathname.includes("/manage-courses/") && pathname.includes("/lessons")) {
     return { title: "Upload Lesson", subtitle: "Add and organize course lessons" };
@@ -112,7 +105,6 @@ function resolvePageMeta(pathname) {
     }
   );
 }
-
 function TopNavBarInstructor() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -125,7 +117,6 @@ function TopNavBarInstructor() {
   const [openNotifications, setOpenNotifications] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const { currentUser } = useCurrentUser();
-
   const displayName = isAdminPreview
     ? previewUserName || "Instructor"
     : currentUser?.name || currentUser?.username || "Instructor";
@@ -139,22 +130,18 @@ function TopNavBarInstructor() {
     .join("")
     .slice(0, 2)
     .toUpperCase();
-
   const fetchNotifications = useMemo(
     () => async () => {
       if (isAdminPreview) {
         setNotifications([]);
         return;
       }
-
       if (!userId) return;
-
       try {
         const [discussionList, localList] = await Promise.all([
           getNotifications(userId),
           Promise.resolve(getLocalNotificationsByUser(userId, "instructor")),
         ]);
-
         const discussionNotifications = (discussionList || []).map((item) => ({
           id: `d-${item.id}`,
           source: "api",
@@ -168,21 +155,17 @@ function TopNavBarInstructor() {
           read: Boolean(item.read),
           createdAt: item.createdAt,
         }));
-
         const localNotifications = (Array.isArray(localList) ? localList : []).map((item) => ({
           ...item,
           source: "local",
           rank: item.createdAt ? new Date(item.createdAt).getTime() : 0,
         }));
-
         const storageKey = `cleared_notifications_${userId}`;
         const clearedIds = JSON.parse(localStorage.getItem(storageKey) || "[]");
-
         const merged = [...localNotifications, ...discussionNotifications]
           .filter((item) => !clearedIds.includes(String(item.id)))
           .sort((a, b) => b.rank - a.rank)
           .slice(0, 12);
-
         setNotifications(merged);
       } catch {
         const storageKey = `cleared_notifications_${userId}`;
@@ -196,16 +179,13 @@ function TopNavBarInstructor() {
     },
     [userId, isAdminPreview]
   );
-
   useEffect(() => {
     fetchNotifications();
     const timer = setInterval(fetchNotifications, 15000);
     return () => clearInterval(timer);
   }, [fetchNotifications]);
-
   useEffect(() => {
     if (isAdminPreview || !userId) return;
-
     let active = true;
     const syncEnrollmentNotifications = async () => {
       try {
@@ -216,7 +196,6 @@ function TopNavBarInstructor() {
         const courseMap = new Map(courses.map((course) => [String(course.id), course]));
         const enrollments = await getEnrollmentsByCourses(Array.from(courseMap.keys()));
         if (!active) return;
-
         (Array.isArray(enrollments) ? enrollments : []).forEach((enrollment) => {
           const course = courseMap.get(String(enrollment.courseId));
           if (!course) return;
@@ -235,7 +214,6 @@ function TopNavBarInstructor() {
             /^user\s*#?\d+$/i.test(learnerRaw)
               ? "A learner"
               : learnerRaw;
-
           pushLocalNotification({
             userId,
             role: "instructor",
@@ -247,7 +225,6 @@ function TopNavBarInstructor() {
             createdAt: enrollment.enrolledAt || enrollment.createdAt || new Date().toISOString(),
             targetPath: `/instructor-layout/manage-courses/${course.id}/students`,
           });
-
           const paymentStatus = String(
             enrollment.paymentStatus || enrollment.paymentState || enrollment.paymentResult || ""
           ).toUpperCase();
@@ -276,7 +253,6 @@ function TopNavBarInstructor() {
               targetPath: `/instructor-layout/manage-courses/${course.id}/students`,
             });
           }
-
           const progressPercent = Number(enrollment.progressPercentage || enrollment.progress || 0);
           const enrollmentStatus = String(enrollment.status || "").toUpperCase();
           if (progressPercent >= 100 || enrollmentStatus === "COMPLETED") {
@@ -294,10 +270,8 @@ function TopNavBarInstructor() {
           }
         });
       } catch {
-        // ignore enrollment sync failures
       }
     };
-
     syncEnrollmentNotifications();
     const timer = setInterval(syncEnrollmentNotifications, 45000);
     return () => {
@@ -305,7 +279,6 @@ function TopNavBarInstructor() {
       clearInterval(timer);
     };
   }, [userId, isAdminPreview]);
-
   useEffect(() => {
     const onDocClick = (event) => {
       if (!panelRef.current) return;
@@ -315,13 +288,10 @@ function TopNavBarInstructor() {
     document.addEventListener("mousedown", onDocClick);
     return () => document.removeEventListener("mousedown", onDocClick);
   }, []);
-
   const markAllAsRead = async () => {
     if (isAdminPreview) return;
-
     const unread = notifications.filter((item) => !item.read);
     if (!unread.length) return;
-
     await Promise.all(
       unread
         .filter((item) => item.source === "api" && item.sourceId)
@@ -330,21 +300,17 @@ function TopNavBarInstructor() {
     markAllLocalNotificationsRead(userId, "instructor");
     setNotifications((prev) => prev.map((item) => ({ ...item, read: true })));
   };
-
   const clearReadNotifications = () => {
     if (isAdminPreview) return;
     if (!userId) return;
     const readIds = notifications.filter((item) => item.read).map((item) => item.id);
     if (!readIds.length) return;
-
     const storageKey = `cleared_notifications_${userId}`;
     const existingCleared = JSON.parse(localStorage.getItem(storageKey) || "[]");
     const updatedCleared = Array.from(new Set([...existingCleared, ...readIds.map(String)]));
     localStorage.setItem(storageKey, JSON.stringify(updatedCleared));
-
     setNotifications((prev) => prev.filter((item) => !readIds.includes(item.id)));
   };
-
   return (
     <header className="dashboard-header">
       <div className="header-left">
@@ -353,7 +319,6 @@ function TopNavBarInstructor() {
           <span className="sub-head">{pageMeta.subtitle}</span>
         </div>
       </div>
-
       <div className="header-right">
         <button
           className="notification"
@@ -367,7 +332,6 @@ function TopNavBarInstructor() {
             <span className="badge">{Math.min(notifications.filter((item) => !item.read).length, 9)}</span>
           )}
         </button>
-
         {openNotifications && (
           <div className="notification-panel" ref={panelRef}>
             <div className="notification-head">
@@ -395,20 +359,16 @@ function TopNavBarInstructor() {
                           try {
                             await markNotificationRead(item.sourceId, userId);
                           } catch {
-                            // ignore read errors
                           }
                         }
                         if (item.source === "local") {
                           markLocalNotificationRead(item.id, userId);
                         }
-
                         setOpenNotifications(false);
-
                         if (item.targetPath) {
                           navigate(item.targetPath);
                           return;
                         }
-
                         if (item.courseId) {
                           const params = new URLSearchParams();
                           if (item.threadId) params.set("threadId", String(item.threadId));
@@ -416,7 +376,6 @@ function TopNavBarInstructor() {
                           navigate(`/courses/${item.courseId}/forum${query ? `?${query}` : ""}`);
                           return;
                         }
-
                         if (item.threadId) {
                           navigate(`/forum/topic/${item.threadId}`);
                         }
@@ -431,7 +390,6 @@ function TopNavBarInstructor() {
             <button type="button" className="notification-see-all">See all</button>
           </div>
         )}
-
         <div className="profile">
           <div className="avatar">
             {currentUser?.image ? <img src={currentUser.image} alt={displayName} /> : initials || "IN"}
@@ -445,5 +403,4 @@ function TopNavBarInstructor() {
     </header>
   );
 }
-
 export default TopNavBarInstructor;

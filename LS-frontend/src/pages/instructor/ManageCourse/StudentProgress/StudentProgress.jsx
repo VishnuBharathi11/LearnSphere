@@ -14,7 +14,6 @@ import { getEnrollmentsByCourse } from "../../../../services/enrollmentApi";
 import { getAdminUsers } from "../../../../services/adminApi";
 import { getCourseProgress } from "../../../../services/progressApi";
 import { getCurrentUser } from "../../../../services/userProfileStore.js";
-
 function StudentProgress() {
   const { courseId } = useParams();
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,7 +25,6 @@ function StudentProgress() {
   const [userDirectory, setUserDirectory] = useState({});
   const [courseLessons, setCourseLessons] = useState([]);
   const [progressByUser, setProgressByUser] = useState({});
-
   useEffect(() => {
     async function loadCourse() {
       try {
@@ -63,13 +61,11 @@ function StudentProgress() {
     }
     loadCourse();
   }, [courseId, currentUser?.id]);
-
   useEffect(() => {
     if (!courseId || enrollments.length === 0) {
       setProgressByUser({});
       return;
     }
-
     let active = true;
     async function loadProgress() {
       try {
@@ -81,7 +77,6 @@ function StudentProgress() {
             return [userId, data];
           })
         );
-
         if (!active) return;
         setProgressByUser(Object.fromEntries(responses.filter(([userId]) => Boolean(userId))));
       } catch {
@@ -89,13 +84,11 @@ function StudentProgress() {
         setProgressByUser({});
       }
     }
-
     loadProgress();
     return () => {
       active = false;
     };
   }, [courseId, enrollments]);
-
   const { course, students, avgProgress, activeCount, completedCount } = useMemo(() => {
     if (!selectedCourse) {
       return {
@@ -106,7 +99,6 @@ function StudentProgress() {
         completedCount: 0,
       };
     }
-
     const students = enrollments.map((e) => {
       const user = userDirectory[String(e.userId)] || null;
       const displayName = String(user?.name || "").trim() || `Learner #${e.userId}`;
@@ -133,12 +125,10 @@ function StudentProgress() {
         status,
       };
     });
-
     const avgProgress =
       students.length === 0
         ? 0
         : Math.round(students.reduce((sum, student) => sum + student.progress, 0) / students.length);
-
     return {
       course: selectedCourse,
       students,
@@ -147,7 +137,6 @@ function StudentProgress() {
       completedCount: students.filter((student) => student.status === "completed").length,
     };
   }, [selectedCourse, enrollments, userDirectory, progressByUser, courseLessons.length]);
-
   const exportAsPdf = () => {
     const rows = students
       .map(
@@ -164,10 +153,8 @@ function StudentProgress() {
         `
       )
       .join("");
-
     const popup = window.open("", "_blank", "width=1000,height=800");
     if (!popup) return;
-
     popup.document.write(`
       <html>
         <head>
@@ -205,11 +192,9 @@ function StudentProgress() {
     popup.focus();
     popup.print();
   };
-
   if (loadingCourse) {
     return null;
   }
-
   if (currentRole !== "instructor" || !course) {
     return (
       <p style={{ padding: 40 }}>
@@ -217,13 +202,11 @@ function StudentProgress() {
       </p>
     );
   }
-
   const filtered = students.filter(
     (student) =>
       student.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       String(student.email).toLowerCase().includes(searchQuery.toLowerCase())
   );
-
   return (
     <div className="student-progress-layout">
       <div className="student-progress-page">
@@ -236,7 +219,6 @@ function StudentProgress() {
             <Download size={16} /> Export PDF
           </button>
         </div>
-
         <div className="sp-stats-grid">
           <div className="sp-stat-card">
             <TrendingUp />
@@ -254,7 +236,6 @@ function StudentProgress() {
             <strong>{completedCount}</strong>
           </div>
         </div>
-
         <div className="sp-search-box">
           <Search size={16} />
           <input
@@ -263,7 +244,6 @@ function StudentProgress() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-
         <div className="table-card">
           <table>
             <thead>
@@ -306,6 +286,4 @@ function StudentProgress() {
     </div>
   );
 }
-
 export default StudentProgress;
-

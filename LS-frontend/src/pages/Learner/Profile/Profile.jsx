@@ -11,26 +11,22 @@ import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import { getCourseLessons } from "../../../services/courseApi";
 import { getProgressByCourses } from "../../../services/progressApi";
 import "./Profile.scss";
-
 function Profile() {
   const [searchParams] = useSearchParams();
   const infoRef = useRef(null);
   const summaryRef = useRef(null);
   const fileInputRef = useRef(null);
-
   const { currentUser: user } = useCurrentUser();
   const isAdminPreview = searchParams.get("adminPreview") === "true";
   const previewUserId = searchParams.get("adminUserId") || "";
   const previewUserName = searchParams.get("adminUserName") || "";
   const previewUserEmail = searchParams.get("adminUserEmail") || "";
   const userId = isAdminPreview ? previewUserId : user?.id || user?.userId || "";
-
   const [isEditing, setIsEditing] = useState(false);
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [lessonMap, setLessonMap] = useState({});
   const [progressMap, setProgressMap] = useState({});
-
   const initialProfile = useMemo(() => {
     if (isAdminPreview) {
       return {
@@ -59,10 +55,8 @@ function Profile() {
     user?.phone,
     user?.image,
   ]);
-
   const [profile, setProfile] = useState(initialProfile);
   const [formData, setFormData] = useState(initialProfile);
-
   useEffect(() => {
     setProfile((prev) => {
       const prevProfile = JSON.stringify(prev || {});
@@ -70,7 +64,6 @@ function Profile() {
       if (prevProfile === nextProfile) return prev;
       return initialProfile;
     });
-
     setFormData((prev) => {
       const prevForm = JSON.stringify(prev || {});
       const nextForm = JSON.stringify(initialProfile || {});
@@ -78,7 +71,6 @@ function Profile() {
       return initialProfile;
     });
   }, [initialProfile]);
-
   useEffect(() => {
     if (!userId || isAdminPreview) return;
     let active = true;
@@ -96,7 +88,6 @@ function Profile() {
         setProfile(normalized);
         setFormData(normalized);
       } catch {
-        // keep defaults
       }
     }
     loadProfile();
@@ -104,10 +95,8 @@ function Profile() {
       active = false;
     };
   }, [userId, isAdminPreview, initialProfile]);
-
   useEffect(() => {
     if (!userId) return;
-
     let active = true;
     async function load() {
       try {
@@ -115,7 +104,6 @@ function Profile() {
         if (!active) return;
         const safeCourses = Array.isArray(published) ? published : [];
         setCourses(safeCourses);
-
         const list = await getEnrollmentsByUser(String(userId));
         if (!active) return;
         setEnrollments(Array.isArray(list) ? list : []);
@@ -125,20 +113,17 @@ function Profile() {
         setEnrollments([]);
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [userId]);
-
   useEffect(() => {
     if (!userId || enrollments.length === 0) {
       setLessonMap({});
       setProgressMap({});
       return;
     }
-
     const activeEnrollments = enrollments.filter(
       (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
     );
@@ -148,7 +133,6 @@ function Profile() {
       setProgressMap({});
       return;
     }
-
     let active = true;
     async function loadProgress() {
       try {
@@ -156,7 +140,6 @@ function Profile() {
           Promise.all(courseIds.map(async (courseId) => [courseId, await getCourseLessons(courseId).catch(() => [])])),
           getProgressByCourses(userId, courseIds),
         ]);
-
         if (!active) return;
         setLessonMap(Object.fromEntries(lessonResults));
         const progressPairs = (Array.isArray(progressResults) ? progressResults : []).map((item) => [
@@ -170,18 +153,15 @@ function Profile() {
         setProgressMap({});
       }
     }
-
     loadProgress();
     return () => {
       active = false;
     };
   }, [enrollments, userId]);
-
   const { enrolledCount, completedCount, certificatesCount, learningHours, achievements } = useMemo(() => {
     const myEnrollments = enrollments.filter(
       (item) => String(item.userId) === String(userId) && String(item.status || "").toUpperCase() === "ACTIVE"
     );
-
     const withCourse = myEnrollments
       .map((item) => {
         const course = courses.find((c) => String(c.id) === String(item.courseId));
@@ -193,18 +173,15 @@ function Profile() {
           : null;
       })
       .filter(Boolean);
-
     const completedCourses = withCourse.filter(({ course }) => {
       const state = buildCourseLearningStateFromApi(lessonMap[String(course.id)] || [], progressMap[String(course.id)]);
       return state.progressPercentage >= 100;
     });
-
     const certificatesCount = completedCourses.length;
     const learningHours = Math.floor(withCourse.reduce((sum, { course }) => {
       const state = buildCourseLearningStateFromApi(lessonMap[String(course.id)] || [], progressMap[String(course.id)]);
       return sum + Number(state.completedLessons || 0) * 0.5;
     }, 0));
-
     const achievements = completedCourses.slice(0, 4).map(({ course }) => ({
       title: course.courseName,
       date: new Date().toLocaleDateString("en-US", {
@@ -213,7 +190,6 @@ function Profile() {
         year: "numeric",
       }),
     }));
-
     return {
       enrolledCount: withCourse.length,
       completedCount: completedCourses.length,
@@ -222,7 +198,6 @@ function Profile() {
       achievements,
     };
   }, [courses, enrollments, lessonMap, progressMap, userId]);
-
   const initials = useMemo(
     () =>
       String(profile?.name || user?.name || "Learner")
@@ -233,7 +208,6 @@ function Profile() {
         .toUpperCase(),
     [profile?.name, user?.name]
   );
-
   const persistProfile = async (payload) => {
     if (isAdminPreview) return;
     try {
@@ -247,7 +221,6 @@ function Profile() {
       console.warn(normalizeApiError(error, "Failed to sync profile to backend"));
     }
   };
-
   const handleEdit = () => {
     if (isAdminPreview) return;
     setFormData(profile);
@@ -256,7 +229,6 @@ function Profile() {
       infoRef.current?.scrollIntoView({ behavior: "smooth" });
     });
   };
-
   const handleSave = async () => {
     if (isAdminPreview) return;
     const normalized = {
@@ -266,7 +238,6 @@ function Profile() {
       phone: String(formData.phone || "").trim(),
       bio: String(formData.bio || "").trim(),
     };
-
     setProfile(normalized);
     const baseUser = user || {};
     setCurrentUser({
@@ -283,16 +254,13 @@ function Profile() {
       summaryRef.current?.scrollIntoView({ behavior: "smooth" });
     });
   };
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleImageClick = () => {
     if (isAdminPreview) return;
     fileInputRef.current?.click();
   };
-
   const handleImageChange = (e) => {
     if (isAdminPreview) return;
     const file = e.target.files?.[0];
@@ -313,10 +281,8 @@ function Profile() {
     };
     reader.readAsDataURL(file);
   };
-
   return (
     <div className="profile-content">
-      {/* Immersive Premium Profile Banner Card */}
       <div className="profile-summary" ref={summaryRef}>
         <div className="summary-banner" />
         <div className="summary-top">
@@ -330,7 +296,6 @@ function Profile() {
               <div className="edit-icon">
                 <FaRegEdit />
               </div>
-
               <input
                 type="file"
                 accept="image/*"
@@ -339,7 +304,6 @@ function Profile() {
                 onChange={handleImageChange}
               />
             </div>
-
             <div className="profile-meta">
               <div className="name-row">
                 <h3>{profile.name || "Learner"}</h3>
@@ -348,7 +312,6 @@ function Profile() {
               <p>{profile.email || "-"}</p>
             </div>
           </div>
-
           <button 
             className={`edit-profile-btn ${isEditing ? "edit-active" : ""}`} 
             onClick={isEditing ? handleSave : handleEdit}
@@ -369,7 +332,6 @@ function Profile() {
             )}
           </button>
         </div>
-
         <div className="summary-divider"></div>
         <div className="summary-stats">
           <div>
@@ -390,8 +352,6 @@ function Profile() {
           </div>
         </div>
       </div>
-
-      {/* Gamified Highlights Section */}
       <div className="profile-highlights">
         <div className="highlight-card">
           <div className="highlight-icon-box fire"><Flame size={20} /></div>
@@ -415,38 +375,30 @@ function Profile() {
           </div>
         </div>
       </div>
-
-      {/* Two Column Grid */}
       <div className="profile-bottom">
-        {/* Left Column - Personal Info Input Fields */}
         <div className="personal-info" ref={infoRef}>
           <div className="section-header">
             <User size={18} className="header-icon" />
             <h3>Personal Information</h3>
           </div>
-
           <div className="form-grid">
             <div className="form-group">
               <label>Full Name</label>
               <input name="name" value={isEditing ? formData.name || "" : profile.name || ""} disabled={!isEditing} onChange={handleChange} placeholder="e.g. John Doe" />
             </div>
-
             <div className="form-group">
               <label>Email Address</label>
               <input name="email" value={isEditing ? formData.email || "" : profile.email || ""} disabled={!isEditing} onChange={handleChange} placeholder="e.g. john.doe@example.com" />
             </div>
-
             <div className="form-group">
               <label>Phone Number</label>
               <input name="phone" value={isEditing ? formData.phone || "" : profile.phone || ""} disabled={!isEditing} onChange={handleChange} placeholder="e.g. +1 (555) 019-2834" />
             </div>
-
             <div className="form-group full-width">
               <label>Short Bio</label>
               <textarea rows="4" name="bio" value={isEditing ? formData.bio || "" : profile.bio || ""} disabled={!isEditing} onChange={handleChange} placeholder="Tell us about yourself, your learning aspirations, and skills..." />
             </div>
           </div>
-
           {isEditing && !isAdminPreview && (
             <button className="save-btn" onClick={handleSave}>
               <Save size={16} />
@@ -454,14 +406,11 @@ function Profile() {
             </button>
           )}
         </div>
-
-        {/* Right Column - Hall of Fame / Achievements */}
         <div className="achievements">
           <div className="section-header">
             <Trophy size={18} className="header-icon" />
             <h3>Hall of Fame</h3>
           </div>
-
           <div className="achievements-list">
             {achievements.length === 0 ? (
               <div className="empty-achievements">
@@ -481,7 +430,6 @@ function Profile() {
               ))
             )}
           </div>
-
           <div className="achievement-tip">
             <div className="tip-header">
               <Sparkles size={14} />
@@ -494,5 +442,4 @@ function Profile() {
     </div>
   );
 }
-
 export default Profile;

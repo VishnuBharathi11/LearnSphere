@@ -1,9 +1,6 @@
 package com.learnsphere.course.dto;
-
 import lombok.Data;
-
 import java.util.List;
-
 @Data
 public class LessonRequest {
     private String title;

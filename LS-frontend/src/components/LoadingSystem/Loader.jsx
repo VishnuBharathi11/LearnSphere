@@ -2,26 +2,22 @@ import { memo, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { BookOpen, CodeXml, Cog, GraduationCap } from "lucide-react";
 import "./Loader.scss";
-
 const knowledgeSymbols = [
   { key: "cap", icon: GraduationCap, className: "loader__symbol--cap", size: 42 },
   { key: "code", icon: CodeXml, className: "loader__symbol--code", size: 40 },
   { key: "book", icon: BookOpen, className: "loader__symbol--book", size: 38 },
   { key: "gear", icon: Cog, className: "loader__symbol--gear", size: 36 },
 ];
-
 const overlayVariants = {
   initial: { opacity: 0 },
   animate: { opacity: 1 },
   exit: { opacity: 0 },
 };
-
 const stageVariants = {
   initial: { opacity: 0, y: 18, scale: 0.98 },
   animate: { opacity: 1, y: 0, scale: 1 },
   exit: { opacity: 0, y: 16, scale: 0.985 },
 };
-
 function Loader({
   active,
   mode,
@@ -34,7 +30,6 @@ function Loader({
     () =>
       knowledgeSymbols.map((item, index) => {
         const Icon = item.icon;
-
         return (
           <div
             key={item.key}
@@ -65,9 +60,7 @@ function Loader({
       }),
     [reducedMotion]
   );
-
   if (!active) return null;
-
   return (
     <AnimatePresence>
       <motion.div
@@ -84,7 +77,6 @@ function Loader({
         <div className="loader__canvas-grid" aria-hidden="true" />
         <div className="loader__ambient loader__ambient--blue" aria-hidden="true" />
         <div className="loader__ambient loader__ambient--indigo" aria-hidden="true" />
-
         <motion.div
           className="loader__stage"
           variants={stageVariants}
@@ -98,7 +90,6 @@ function Loader({
             <div className="loader__pulse loader__pulse--two" />
             <div className="loader__data-ring loader__data-ring--one" />
             <div className="loader__data-ring loader__data-ring--two" />
-
             <div className="loader__sphere-wrap">
               <div className="loader__sphere">
                 <div className="loader__sphere-surface" />
@@ -113,7 +104,6 @@ function Loader({
               </div>
             </div>
           </div>
-
           <motion.div
             className="loader__content"
             initial={{ opacity: 0, y: 14, filter: "blur(10px)" }}
@@ -127,5 +117,4 @@ function Loader({
     </AnimatePresence>
   );
 }
-
 export default memo(Loader);

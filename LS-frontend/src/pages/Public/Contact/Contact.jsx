@@ -10,7 +10,6 @@ import avatar3 from "../../../assets/Contact/avatar3.png";
 import avatar4 from "../../../assets/Contact/avatar4.png";
 import avatar5 from "../../../assets/Contact/avatar5.png";
 import avatar6 from "../../../assets/Contact/avatar6.png";
-
 function Contact() {
   const [form, setForm] = useState({
     name: "",
@@ -23,7 +22,6 @@ function Contact() {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
-
   const validate = () => {
     let err = {};
     if (!form.name.trim()) err.name = "name is required";
@@ -37,7 +35,6 @@ function Contact() {
     if (!form.message.trim()) err.message = "message cannot be empty";
     return err;
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -52,7 +49,6 @@ function Contact() {
   const handleSendMessage=()=>{
     alert("Message Sent Successfully");
   }
-
   return (
     <>
       <div className="contact" id="contact">
@@ -65,7 +61,6 @@ function Contact() {
             Support • Instructor Help • Partnerships • General Enquiries
           </div>
         </div>
-
         <div className="contact-card">
           <div className="ct-card student">
             <div className="ct-card-icon">
@@ -82,7 +77,6 @@ function Contact() {
               <img src={email} /> support@learnsphere.com
             </div>
           </div>
-
           <div className="ct-card instructor">
             <div className="ct-card-icon">
               {" "}
@@ -98,7 +92,6 @@ function Contact() {
               <img src={email} /> instructors@learnsphere.com
             </div>
           </div>
-
           <div className="ct-card general">
             <div className="ct-card-icon">
               {" "}
@@ -115,7 +108,6 @@ function Contact() {
             </div>
           </div>
         </div>
-
         <div className="ct-content-form">
           <div className="contact-content">
             <div className="ct-cnt-label">GET IN TOUCH</div>
@@ -140,7 +132,6 @@ function Contact() {
               <img src={avatar6} />
             </div>
           </div>
-
           <div className="contact-form">
             <div className="ct-form-title">Send us a message</div>
             <div className="ct-form">
@@ -215,5 +206,4 @@ function Contact() {
     </>
   );
 }
-
 export default Contact;

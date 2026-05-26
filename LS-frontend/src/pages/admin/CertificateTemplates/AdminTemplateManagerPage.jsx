@@ -3,7 +3,6 @@ import { Save, Sparkles } from "lucide-react";
 import { getCertificateTemplates, saveCertificateTemplate } from "../../../services/certificateApi";
 import { CertificateTemplateRenderer } from "../../../components/CertificatePreview/CertificateTemplateRegistry";
 import styles from "./AdminTemplateManager.module.scss";
-
 const componentOptions = [
   "horizontal-luxury",
   "vertical-executive",
@@ -11,7 +10,6 @@ const componentOptions = [
   "glass-future",
   "academic-luxury",
 ];
-
 const emptyForm = {
   code: "custom-template",
   name: "Custom Template",
@@ -22,16 +20,13 @@ const emptyForm = {
   defaultTemplate: false,
   designConfigJson: "{}",
 };
-
 function AdminTemplateManagerPage() {
   const [templates, setTemplates] = useState([]);
   const [form, setForm] = useState(emptyForm);
   const [loadingTemplates, setLoadingTemplates] = useState(true);
   const [error, setError] = useState("");
-
   useEffect(() => {
     let active = true;
-
     getCertificateTemplates()
       .then((items) => {
         if (active) setTemplates(items);
@@ -46,12 +41,10 @@ function AdminTemplateManagerPage() {
       .finally(() => {
         if (active) setLoadingTemplates(false);
       });
-
     return () => {
       active = false;
     };
   }, []);
-
   const preview = useMemo(
     () => ({
       id: "admin-preview",
@@ -66,13 +59,10 @@ function AdminTemplateManagerPage() {
     }),
     [form]
   );
-
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }));
-
   const submit = async (event) => {
     event.preventDefault();
     setError("");
-
     try {
       const saved = await saveCertificateTemplate(form);
       setTemplates((current) => [saved, ...current.filter((item) => item.code !== saved.code)]);
@@ -83,7 +73,6 @@ function AdminTemplateManagerPage() {
       );
     }
   };
-
   return (
     <main className={styles.managerPage}>
       <section className={styles.editorPanel}>
@@ -164,5 +153,4 @@ function AdminTemplateManagerPage() {
     </main>
   );
 }
-
 export default AdminTemplateManagerPage;

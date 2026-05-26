@@ -16,7 +16,6 @@ import { getAdminDashboard } from "../../../services/adminApi";
 import { getAdminCourses } from "../../../services/courseApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-
 function AdminDashboard() {
   const currentUser = getCurrentUser();
   const [loading, setLoading] = useState(true);
@@ -24,10 +23,8 @@ function AdminDashboard() {
   const [selectedCategory, setSelectedCategory] = useState("");
   const [dashboard, setDashboard] = useState(null);
   const [courses, setCourses] = useState([]);
-
   useEffect(() => {
     if (!currentUser || currentUser.role !== "admin") return;
-
     let active = true;
     async function load() {
       setLoading(true);
@@ -49,23 +46,19 @@ function AdminDashboard() {
         }
       }
     }
-
     load();
     return () => {
       active = false;
     };
   }, [currentUser?.role]);
-
   const activeCourses = useMemo(
     () => courses.filter((course) => String(course.status || "").toUpperCase() === "PUBLISHED").length,
     [courses]
   );
-
   const pendingReviewCourses = useMemo(
     () => courses.filter((course) => String(course.status || "").toUpperCase() === "REVIEW").length,
     [courses]
   );
-
   const categories = useMemo(() => {
     const map = {};
     courses.forEach((course) => {
@@ -76,13 +69,11 @@ function AdminDashboard() {
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name));
   }, [courses]);
-
   const handleCategorySelect = (barData) => {
     const picked = barData?.name || barData?.payload?.name || "";
     if (!picked) return;
     setSelectedCategory(picked);
   };
-
   const courseNameMap = useMemo(
     () =>
       new Map(
@@ -90,7 +81,6 @@ function AdminDashboard() {
       ),
     [courses]
   );
-
   const prettifyActivityMessage = (rawMessage) => {
     let message = String(rawMessage || "");
     courseNameMap.forEach((courseName, courseId) => {
@@ -99,7 +89,6 @@ function AdminDashboard() {
     });
     return message;
   };
-
   const stats = useMemo(
     () => [
       { label: "Active Learners", value: dashboard?.activeLearners || 0, icon: Users, theme: "purple" },
@@ -114,7 +103,6 @@ function AdminDashboard() {
     ],
     [dashboard, activeCourses]
   );
-
   const pendingTasks = useMemo(() => {
     const fromApi = Array.isArray(dashboard?.pendingTasks) ? dashboard.pendingTasks : [];
     return [
@@ -128,7 +116,6 @@ function AdminDashboard() {
       })),
     ];
   }, [dashboard?.pendingTasks, pendingReviewCourses]);
-
   if (!currentUser || currentUser.role !== "admin") {
     return (
       <div className="admin-access-denied">
@@ -137,11 +124,9 @@ function AdminDashboard() {
       </div>
     );
   }
-
   if (loading) {
     return null;
   }
-
   return (
     <div className="admin-dashboard-layout">
       <div className="admin-dashboard">
@@ -155,9 +140,7 @@ function AdminDashboard() {
             <span>Admin Control Panel</span>
           </div>
         </header>
-
         {error && <p className="admin-error">{error}</p>}
-
         <div className="status-grid">
           {stats.map((s) => (
             <div key={s.label} className={`stat-card ${s.theme}`}>
@@ -171,7 +154,6 @@ function AdminDashboard() {
             </div>
           ))}
         </div>
-
         <div className="pending-box">
           <h3>
             <AlertCircle size={18} /> Required Operations (Pending Tasks)
@@ -185,7 +167,6 @@ function AdminDashboard() {
             ))}
           </div>
         </div>
-
         <div className="charts-grid">
           <div className="chart-card">
             <div className="chart-header">
@@ -214,7 +195,6 @@ function AdminDashboard() {
               </ResponsiveContainer>
             </div>
           </div>
-
           <div className="chart-card">
             <div className="chart-header">
               <TrendingUp size={16} />
@@ -242,7 +222,6 @@ function AdminDashboard() {
               </ResponsiveContainer>
             </div>
           </div>
-
           <div className="chart-card">
             <div className="chart-header">
               <BookOpen size={16} />
@@ -285,7 +264,6 @@ function AdminDashboard() {
             </div>
           </div>
         </div>
-
         <div className="activity-box">
           <h3>Recent Audit Trail</h3>
           {!dashboard?.recentActivity?.length ? (
@@ -307,5 +285,4 @@ function AdminDashboard() {
     </div>
   );
 }
-
 export default AdminDashboard;

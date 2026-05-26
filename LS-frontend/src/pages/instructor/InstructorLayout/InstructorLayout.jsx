@@ -3,7 +3,6 @@ import InstructorSideBar from "../../../components/SideBar-I/SidebarInstructor";
 import TopNavBarInstructor from "../../../components/TopNavBar-I/TopNavBarInstructor";
 import { useCurrentUser } from "../../../hooks/useCurrentUser";
 import "./InstructorLayout.scss";
-
 function InstructorLayout() {
   const location = useLocation();
   const { currentUser, loading } = useCurrentUser();
@@ -16,14 +15,11 @@ function InstructorLayout() {
   if (!currentUser || (role !== "instructor" && !isAdminPreview)) {
     return <Navigate to="/login" replace />;
   }
-
   return (
     <div className={`instructor-layout ${isAdminPreview ? "admin-preview-mode" : ""}`}>
       <InstructorSideBar />
-
       <div className="instructor-main">
         <TopNavBarInstructor />
-
         <div className="dashboard-body">
           <main className="page-content">
             <Outlet />
@@ -33,5 +29,4 @@ function InstructorLayout() {
     </div>
   );
 }
-
 export default InstructorLayout;

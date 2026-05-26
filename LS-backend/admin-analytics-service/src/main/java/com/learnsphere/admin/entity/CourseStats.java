@@ -1,8 +1,6 @@
 package com.learnsphere.admin.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
-
 @Entity
 @Table(name="course_stats")
 @Getter
@@ -11,11 +9,9 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class CourseStats {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private Long totalCourses;
     private Long publishedCourses;
     private Long pendingCourses;

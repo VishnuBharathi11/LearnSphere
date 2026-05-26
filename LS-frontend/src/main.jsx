@@ -5,10 +5,8 @@ import App from "./App";
 import "./index.scss";
 import { cleanupDeprecatedStoreKeys } from "./services/appStore";
 import { setupAxiosNetworkLoader } from "./services/setupAxiosNetworkLoader";
-
 cleanupDeprecatedStoreKeys();
 setupAxiosNetworkLoader();
-
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>

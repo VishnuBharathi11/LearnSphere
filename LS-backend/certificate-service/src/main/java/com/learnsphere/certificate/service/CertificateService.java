@@ -1,13 +1,10 @@
 package com.learnsphere.certificate.service;
-
 import com.learnsphere.certificate.dto.CertificateGenerateRequest;
 import com.learnsphere.certificate.dto.CertificateResponse;
 import com.learnsphere.certificate.dto.TemplateRequest;
 import com.learnsphere.certificate.dto.TemplateResponse;
 import com.learnsphere.certificate.dto.VerificationResponse;
-
 import java.util.List;
-
 public interface CertificateService {
     CertificateResponse generate(CertificateGenerateRequest request);
     CertificateResponse get(String certificateId);

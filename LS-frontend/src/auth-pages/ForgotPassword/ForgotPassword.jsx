@@ -8,7 +8,6 @@ import {
   resetPassword,
   sendForgotPasswordOtp,
 } from "../../services/authApi";
-
 function ForgotPassword() {
   const [step, setStep] = useState("send-otp");
   const [email, setEmail] = useState("");
@@ -19,7 +18,6 @@ function ForgotPassword() {
   const [success, setSuccess] = useState("");
   const [resendSeconds, setResendSeconds] = useState(0);
   const [resendLoading, setResendLoading] = useState(false);
-
   const startResendCooldown = () => {
     setResendSeconds(30);
     const timer = setInterval(() => {
@@ -32,12 +30,10 @@ function ForgotPassword() {
       });
     }, 1000);
   };
-
   const handleSendOtp = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     try {
       const message = await sendForgotPasswordOtp(email);
       setSuccess(message || "OTP sent successfully");
@@ -47,7 +43,6 @@ function ForgotPassword() {
       setError(normalizeApiError(apiError, "Failed to send OTP"));
     }
   };
-
   const handleResendOtp = async () => {
     if (resendSeconds > 0) return;
     setError("");
@@ -63,17 +58,14 @@ function ForgotPassword() {
       setResendLoading(false);
     }
   };
-
   const handleResetPassword = async (e) => {
     e.preventDefault();
     setError("");
     setSuccess("");
-
     if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return;
     }
-
     try {
       const message = await resetPassword({ email, otp, newPassword });
       setSuccess(message || "Password reset successful");
@@ -82,7 +74,6 @@ function ForgotPassword() {
       setError(normalizeApiError(apiError, "Failed to reset password"));
     }
   };
-
   return (
     <>
       <NavBar />
@@ -96,10 +87,8 @@ function ForgotPassword() {
                 : "Enter OTP and set a new password"}
             </p>
           </div>
-
           {error && <p className="error">{error}</p>}
           {success && <p className="success">{success}</p>}
-
           {step === "send-otp" && (
             <form onSubmit={handleSendOtp}>
               <div className="forgot-form-input-box">
@@ -111,13 +100,11 @@ function ForgotPassword() {
                   required
                 />
               </div>
-
               <button type="submit" className="forgot-form-btn">
                 Send OTP
               </button>
             </form>
           )}
-
           {step === "reset-password" && (
             <form onSubmit={handleResetPassword}>
               <div className="forgot-form-input-box">
@@ -129,7 +116,6 @@ function ForgotPassword() {
                   required
                 />
               </div>
-
               <div className="forgot-form-input-box">
                 <input
                   type="text"
@@ -139,7 +125,6 @@ function ForgotPassword() {
                   required
                 />
               </div>
-
               <div className="forgot-form-input-box">
                 <input
                   type="password"
@@ -149,7 +134,6 @@ function ForgotPassword() {
                   required
                 />
               </div>
-
               <div className="forgot-form-input-box">
                 <input
                   type="password"
@@ -159,11 +143,9 @@ function ForgotPassword() {
                   required
                 />
               </div>
-
               <button type="submit" className="forgot-form-btn">
                 Reset Password
               </button>
-
               <button
                 type="button"
                 className="forgot-resend-btn"
@@ -178,13 +160,11 @@ function ForgotPassword() {
               </button>
             </form>
           )}
-
           {step === "done" && (
             <div className="forgot-form-login">
               Password updated. Please login with your new password.
             </div>
           )}
-
           <div className="forgot-form-login">
             Remember your password?{" "}
             <Link to="/login" className="forgot-reg-text">
@@ -197,5 +177,4 @@ function ForgotPassword() {
     </>
   );
 }
-
 export default ForgotPassword;

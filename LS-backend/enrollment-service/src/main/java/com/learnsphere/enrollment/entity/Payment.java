@@ -1,10 +1,8 @@
 package com.learnsphere.enrollment.entity;
-
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
 import com.learnsphere.enrollment.enums.PaymentStatus;
-
 @Entity
 @Table(name = "payments")
 @Getter
@@ -32,7 +30,6 @@ public class Payment {
 	private PaymentStatus status;
 	@Column(nullable = false)
 	private Instant createdAt;
-
 	@PrePersist
 	private void beforePersist() {
 		if (id == null) {

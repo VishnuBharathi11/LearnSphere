@@ -1,19 +1,16 @@
 package com.learnsphere.progress.service.impl;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-
 import com.learnsphere.progress.dto.AssessmentRequest;
 import com.learnsphere.progress.dto.CourseProgressResponse;
 import com.learnsphere.progress.dto.LessonProgressRequest;
@@ -21,16 +18,12 @@ import com.learnsphere.progress.entity.AssessmentResult;
 import com.learnsphere.progress.entity.CourseProgress;
 import com.learnsphere.progress.repository.CourseProgressRepository;
 import com.learnsphere.progress.service.ProgressService;
-
 import lombok.RequiredArgsConstructor;
-
 @Service
 @RequiredArgsConstructor
 public class ProgressServiceImpl implements ProgressService {
-
     private final CourseProgressRepository courseProgressRepository;
     private final MongoTemplate mongoTemplate;
-
     @Override
     public CourseProgressResponse getProgress(String userId, String courseId) {
         CourseProgress progress = getLatestOrNull(userId, courseId);
@@ -39,15 +32,12 @@ public class ProgressServiceImpl implements ProgressService {
         }
         return toResponse(progress);
     }
-
     @Override
     public List<CourseProgressResponse> getProgressByCourses(String userId, List<String> courseIds) {
         if (courseIds == null || courseIds.isEmpty()) return List.of();
-
         List<CourseProgress> progressList = courseProgressRepository.findByUserIdAndCourseIdIn(userId, courseIds);
         Map<String, CourseProgress> byCourse = new HashMap<>();
         progressList.forEach(item -> byCourse.put(item.getCourseId(), item));
-
         List<CourseProgressResponse> responses = new ArrayList<>();
         for (String courseId : courseIds) {
             CourseProgress progress = byCourse.get(courseId);
@@ -58,7 +48,6 @@ public class ProgressServiceImpl implements ProgressService {
         }
         return responses;
     }
-
     @Override
     public CourseProgressResponse markLessonCompleted(String courseId, LessonProgressRequest request) {
         Instant now = Instant.now();
@@ -69,7 +58,6 @@ public class ProgressServiceImpl implements ProgressService {
                 .setOnInsert("courseId", courseId)
                 .setOnInsert("createdAt", now)
                 .addToSet("completedLessonIds", String.valueOf(request.getLessonId()));
-
         CourseProgress saved = mongoTemplate.findAndModify(
                 query,
                 update,
@@ -78,7 +66,6 @@ public class ProgressServiceImpl implements ProgressService {
         );
         return toResponse(saved);
     }
-
     @Override
     public CourseProgressResponse saveLessonAssessment(String courseId, AssessmentRequest request) {
         Instant now = Instant.now();
@@ -90,7 +77,6 @@ public class ProgressServiceImpl implements ProgressService {
                 .passingScore(request.getPassingScore())
                 .submittedAt(now)
                 .build();
-
         Query query = userCourseQuery(request.getUserId(), courseId);
         Update update = new Update()
                 .set("updatedAt", now)
@@ -98,7 +84,6 @@ public class ProgressServiceImpl implements ProgressService {
                 .setOnInsert("courseId", courseId)
                 .setOnInsert("createdAt", now)
                 .set("lessonAssessments." + lessonId, assessmentResult);
-
         CourseProgress saved = mongoTemplate.findAndModify(
                 query,
                 update,
@@ -107,7 +92,6 @@ public class ProgressServiceImpl implements ProgressService {
         );
         return toResponse(saved);
     }
-
     @Override
     public CourseProgressResponse saveFinalAssessment(String courseId, AssessmentRequest request) {
         Instant now = Instant.now();
@@ -118,7 +102,6 @@ public class ProgressServiceImpl implements ProgressService {
                 .passingScore(request.getPassingScore())
                 .submittedAt(now)
                 .build();
-
         Query query = userCourseQuery(request.getUserId(), courseId);
         Update update = new Update()
                 .set("updatedAt", now)
@@ -126,7 +109,6 @@ public class ProgressServiceImpl implements ProgressService {
                 .setOnInsert("courseId", courseId)
                 .setOnInsert("createdAt", now)
                 .set("finalAssessment", assessmentResult);
-
         CourseProgress saved = mongoTemplate.findAndModify(
                 query,
                 update,
@@ -135,11 +117,9 @@ public class ProgressServiceImpl implements ProgressService {
         );
         return toResponse(saved);
     }
-
     private Query userCourseQuery(String userId, String courseId) {
         return new Query(Criteria.where("userId").is(userId).and("courseId").is(courseId));
     }
-
     private CourseProgress getLatestOrNull(String userId, String courseId) {
         List<CourseProgress> duplicates = courseProgressRepository
                 .findByUserIdAndCourseIdOrderByUpdatedAtDesc(userId, courseId);
@@ -148,13 +128,11 @@ public class ProgressServiceImpl implements ProgressService {
         }
         CourseProgress latest = duplicates.get(0);
         if (duplicates.size() > 1) {
-            // Keep newest record and remove stale duplicates that cause read failures.
             List<CourseProgress> stale = duplicates.subList(1, duplicates.size());
             courseProgressRepository.deleteAll(stale);
         }
         return latest;
     }
-
     private CourseProgress createEmptyProgress(String userId, String courseId, boolean persist) {
         CourseProgress progress = CourseProgress.builder()
                 .userId(userId)
@@ -166,7 +144,6 @@ public class ProgressServiceImpl implements ProgressService {
                 .build();
         return persist ? courseProgressRepository.save(progress) : progress;
     }
-
     private CourseProgressResponse toResponse(CourseProgress progress) {
         return CourseProgressResponse.builder()
                 .userId(progress.getUserId())

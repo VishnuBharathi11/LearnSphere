@@ -9,12 +9,10 @@ import {
   submitCourseForReview,
   updateCourse,
 } from "../../../services/courseApi";
-
 function CreateCourse() {
   const navigate = useNavigate();
   const { courseId } = useParams();
   const isEditMode = Boolean(courseId);
-
   const currentUser = useMemo(() => {
     try {
       return getCurrentUser();
@@ -22,12 +20,10 @@ function CreateCourse() {
       return null;
     }
   }, []);
-
   const [categories, setCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -35,14 +31,12 @@ function CreateCourse() {
     categoryId: "",
     thumbnail: "",
   });
-
   useEffect(() => {
     const role = String(currentUser?.role || "").toLowerCase();
     if (!currentUser || role !== "instructor") {
       navigate("/login", { replace: true });
       return;
     }
-
     let active = true;
     getCategories()
       .then((data) => {
@@ -57,12 +51,10 @@ function CreateCourse() {
         if (!active) return;
         setLoadingCategories(false);
       });
-
     return () => {
       active = false;
     };
   }, [currentUser, navigate]);
-
   useEffect(() => {
     if (!isEditMode || !currentUser?.id) return;
     let active = true;
@@ -91,7 +83,6 @@ function CreateCourse() {
       active = false;
     };
   }, [isEditMode, courseId, currentUser?.id]);
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setForm((prev) => ({
@@ -99,7 +90,6 @@ function CreateCourse() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
   const handleThumbnailUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -113,7 +103,6 @@ function CreateCourse() {
     };
     reader.readAsDataURL(file);
   };
-
   const validateForm = () => {
     if (!form.title.trim()) return "Course title is required";
     if (!form.description.trim()) return "Course description is required";
@@ -125,17 +114,14 @@ function CreateCourse() {
     if (Number(form.price) < 0) return "Invalid course price";
     return null;
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-
     const validationError = validateForm();
     if (validationError) {
       setError(validationError);
       return;
     }
-
     setSaving(true);
     try {
       if (isEditMode) {
@@ -158,7 +144,6 @@ function CreateCourse() {
         });
         await submitCourseForReview(created.id);
       }
-
       navigate("/instructor-layout/manage-courses", { replace: true });
     } catch (apiError) {
       const message =
@@ -171,12 +156,10 @@ function CreateCourse() {
       setSaving(false);
     }
   };
-
   return (
     <div className="create-course-layout">
       <div className="create-course-container">
         {error && <p className="cc-error">{error}</p>}
-
         <form onSubmit={handleSubmit}>
           <label>Course Title</label>
           <input
@@ -186,7 +169,6 @@ function CreateCourse() {
             placeholder="Example: React Fundamentals Bootcamp"
             required
           />
-
           <label>Description</label>
           <textarea
             name="description"
@@ -196,7 +178,6 @@ function CreateCourse() {
             rows={5}
             required
           />
-
           <label>Category</label>
           <select
             name="categoryId"
@@ -214,7 +195,6 @@ function CreateCourse() {
           <small className="cc-helper">
             Categories are managed by admin. Contact admin if a category is missing.
           </small>
-
           <label>Price (INR)</label>
           <input
             type="number"
@@ -225,7 +205,6 @@ function CreateCourse() {
             step="1"
             required
           />
-
           <label>Course Thumbnail</label>
           <input type="file" accept="image/*" onChange={handleThumbnailUpload} />
           {form.thumbnail && (
@@ -235,7 +214,6 @@ function CreateCourse() {
               alt="Course thumbnail preview"
             />
           )}
-
           <button type="submit" className="primary-btn" disabled={saving}>
             {saving ? "Saving..." : isEditMode ? "Update Course" : "Create Course"}
           </button>
@@ -244,6 +222,4 @@ function CreateCourse() {
     </div>
   );
 }
-
 export default CreateCourse;
-

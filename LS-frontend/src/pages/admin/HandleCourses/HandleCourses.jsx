@@ -11,7 +11,6 @@ import {
 } from "../../../services/courseApi";
 import { getCourseMetrics } from "../../../services/adminApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
-
 function HandleCourses() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -21,7 +20,6 @@ function HandleCourses() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
-
   const loadData = async () => {
     try {
       const courseList = await getAdminCourses();
@@ -34,11 +32,9 @@ function HandleCourses() {
       setError(getFriendlyErrorMessage(apiError, "Failed to load courses"));
     }
   };
-
   useEffect(() => {
     loadData();
   }, []);
-
   const metricsMap = useMemo(
     () =>
       new Map(
@@ -46,7 +42,6 @@ function HandleCourses() {
       ),
     [courseMetrics]
   );
-
   const enrichedCourses = useMemo(
     () =>
       courses.map((course) => {
@@ -59,7 +54,6 @@ function HandleCourses() {
       }),
     [courses, metricsMap]
   );
-
   const filteredCourses = useMemo(
     () =>
       enrichedCourses.filter((course) => {
@@ -73,18 +67,14 @@ function HandleCourses() {
       }),
     [enrichedCourses, statusFilter, search]
   );
-
   useEffect(() => {
     setCurrentPage(1);
   }, [search, statusFilter]);
-
   const paginatedCourses = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     return filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   }, [filteredCourses, currentPage]);
-
   const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
-
   const summary = useMemo(() => {
     const totalCourses = enrichedCourses.length;
     const published = enrichedCourses.filter(
@@ -96,7 +86,6 @@ function HandleCourses() {
     const totalRevenue = enrichedCourses.reduce((sum, course) => sum + Number(course.revenue || 0), 0);
     return { totalCourses, published, suspended, totalRevenue };
   }, [enrichedCourses]);
-
   const updateCourseStatus = async (id, action) => {
     try {
       if (action === "suspend") {
@@ -109,7 +98,6 @@ function HandleCourses() {
       setError(getFriendlyErrorMessage(apiError, "Failed to update course status"));
     }
   };
-
   const deleteCourse = async (id) => {
     if (!window.confirm("Delete this course permanently?")) return;
     try {
@@ -119,12 +107,10 @@ function HandleCourses() {
       setError(getFriendlyErrorMessage(apiError, "Failed to delete course"));
     }
   };
-
   return (
     <div className="handle-courses-layout">
       <div className="manage-courses">
         {error && <p className="admin-error">{error}</p>}
-
         <div className="summ-status">
           <div className="summ-status-card">
             <p>Total Courses</p>
@@ -143,7 +129,6 @@ function HandleCourses() {
             <h3>{summary.totalRevenue.toLocaleString()}</h3>
           </div>
         </div>
-
         <div className="filters">
           <div className="search-box">
             <Search size={16} />
@@ -161,7 +146,6 @@ function HandleCourses() {
             <option value="ARCHIVED">Archived</option>
           </select>
         </div>
-
         <div className="table-wrapper">
           <table>
             <thead>
@@ -257,5 +241,4 @@ function HandleCourses() {
     </div>
   );
 }
-
 export default HandleCourses;
