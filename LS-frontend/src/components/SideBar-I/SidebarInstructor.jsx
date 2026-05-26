@@ -5,6 +5,7 @@ import {
   FolderKanban,
   User,
   LogOut,
+  WalletCards,
 } from "lucide-react";
 import logo from "../../assets/Logo/logo.png";
 import { logoutUser } from "../../services/userProfileStore";
@@ -54,6 +55,14 @@ function SidebarInstructor() {
         >
           <FolderKanban size={18} />
           Manage Courses
+        </Link>
+
+        <Link
+          to={withPreview("/instructor-layout/withdrawals")}
+          className={isActive("/instructor-layout/withdrawals") ? "active" : ""}
+        >
+          <WalletCards size={18} />
+          Withdrawals
         </Link>
 
         <Link

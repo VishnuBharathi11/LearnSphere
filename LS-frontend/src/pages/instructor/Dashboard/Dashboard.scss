@@ -105,13 +105,14 @@ $card-shadow-hover: 0 20px 40px rgba(164, 53, 240, 0.06), 0 1px 3px rgba(164, 53
 
 // 2. Upgraded Glassmorphic Status Cards
 .status-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 20px;
   margin-bottom: 32px;
+  width: 100%;
 }
 
 .status-card {
+  flex: 1;
   background: $inst-white;
   border-radius: 16px;
   padding: 22px 24px;
@@ -382,8 +383,12 @@ $card-shadow-hover: 0 20px 40px rgba(164, 53, 240, 0.06), 0 1px 3px rgba(164, 53
 // Responsive Grids
 @media (max-width: 1200px) {
   .status-grid {
-    grid-template-columns: repeat(2, 1fr);
+    flex-wrap: wrap;
     gap: 16px;
+
+    .status-card {
+      flex: 1 1 calc(50% - 8px);
+    }
   }
 
   .chart-grid {
@@ -411,7 +416,12 @@ $card-shadow-hover: 0 20px 40px rgba(164, 53, 240, 0.06), 0 1px 3px rgba(164, 53
   }
 
   .status-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 14px;
+
+    .status-card {
+      width: 100%;
+      flex: none;
+    }
   }
 }

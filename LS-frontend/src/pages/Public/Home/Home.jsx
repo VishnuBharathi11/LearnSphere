@@ -10,7 +10,7 @@ import applicationImg from "../../../assets/Home/application.png";
 import heroVideo from "../../../assets/Home/Hero section.mp4";
 
 import { FaSearch } from "react-icons/fa";
-import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt, FaStar } from "react-icons/fa";
+import { FaEnvelope, FaMapMarkerAlt, FaPhoneAlt } from "react-icons/fa";
 import Footer from "../../../components/Footer/Footer";
 import NavBar from "../../../components/NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
@@ -269,16 +269,6 @@ function Home() {
                 <span className="home-contact__avatar">RV</span>
                 <span className="home-contact__avatar">SM</span>
                 <span className="home-contact__avatar">NT</span>
-              </div>
-              <div className="home-contact__rating">
-                <span>
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                  <FaStar />
-                </span>
-                <small>2.5k+ reviews (4.8 of 5)</small>
               </div>
             </div>
           </div>

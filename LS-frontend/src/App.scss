@@ -1,24 +1,12 @@
-/* =========================
-   Variables (file-scoped)
-   ========================= */
-
 $app-root-width: 100%;
 $app-bg-hero: #F5F6FA;
-
 $app-font-poppins: "Poppins", sans-serif;
 $app-font-inter: "Inter", sans-serif;
-
 $app-navbar-height: 72px;
 $app-padding-hero: clamp(1rem, 4vw, 4rem);
-
-/* =========================
-   Mixins
-   ========================= */
-
 @mixin full-width {
   width: 100%;
 }
-
 @mixin flex-column {
   display: flex;
   flex-direction: column;

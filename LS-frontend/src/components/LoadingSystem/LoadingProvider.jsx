@@ -228,7 +228,7 @@ export function LoadingProvider({ children }) {
 
   const currentManualLoad = manualLoads[manualLoads.length - 1] ?? null;
   const overlayActive =
-    !initialLoadComplete || routeLoading || networkLoading || isOffline || manualLoads.length > 0;
+    !initialLoadComplete || isOffline || manualLoads.length > 0;
 
   const modeMeta = useMemo(() => {
     if (currentManualLoad) {

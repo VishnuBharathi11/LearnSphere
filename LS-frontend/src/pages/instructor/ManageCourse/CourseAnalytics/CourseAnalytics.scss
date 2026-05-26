@@ -40,13 +40,14 @@ $yellow-light: rgba(245, 158, 11, 0.08);
 }
 
 .analytics-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
   gap: 20px;
   margin-bottom: 28px;
+  width: 100%;
 }
 
 .analytics-stat-card {
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 20px;
@@ -217,7 +218,10 @@ $yellow-light: rgba(245, 158, 11, 0.08);
 
 @media (max-width: 1080px) {
   .analytics-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+    flex-wrap: wrap;
+    .analytics-stat-card {
+      flex: 1 1 calc(50% - 10px);
+    }
   }
 
   .analytics-grid {
@@ -227,7 +231,11 @@ $yellow-light: rgba(245, 158, 11, 0.08);
 
 @media (max-width: 640px) {
   .analytics-stats-grid {
-    grid-template-columns: 1fr;
+    flex-direction: column;
+    .analytics-stat-card {
+      width: 100%;
+      flex: none;
+    }
   }
 
   .lesson-row span {

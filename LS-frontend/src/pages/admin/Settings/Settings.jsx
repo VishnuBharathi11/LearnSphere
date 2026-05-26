@@ -13,7 +13,6 @@ function Settings() {
     maxCoursePrice: 9999,
     userRegistration: true,
     emailVerification: true,
-    courseReviews: true,
     discussions: true,
     autoApproveInstructors: false,
     autoApproveCourses: false,
@@ -140,7 +139,6 @@ function Settings() {
           {[
             ["Enable User Registration", "userRegistration"],
             ["Require Email Verification", "emailVerification"],
-            ["Enable Course Reviews", "courseReviews"],
             ["Enable Discussions", "discussions"],
             ["Auto-Approve Instructors", "autoApproveInstructors"],
             ["Auto-Approve Courses", "autoApproveCourses"],

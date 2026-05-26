@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./CourseAnalytics.scss";
-import { DollarSign, Users, Star, MessageSquare, Activity } from "lucide-react";
+import { DollarSign, Users, MessageSquare, Activity } from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -229,8 +229,8 @@ function CourseAnalytics() {
   return (
     <div className="analytics-layout">
       <div className="analytics-page">
-        <div className="analytics-stats-grid">
-          <div className="analytics-stat-card revenue">
+        <div className="analytics-stats-grid" style={{ display: "flex", gap: "20px", width: "100%", marginBottom: "28px" }}>
+          <div className="analytics-stat-card revenue" style={{ flex: 1 }}>
             <div className="stat-icon green"><DollarSign size={22} /></div>
             <div className="stat-content">
               <h2>Rs {totalRevenue.toLocaleString()}</h2>
@@ -238,7 +238,7 @@ function CourseAnalytics() {
             </div>
           </div>
 
-          <div className="analytics-stat-card enroll">
+          <div className="analytics-stat-card enroll" style={{ flex: 1 }}>
             <div className="stat-icon blue"><Users size={22} /></div>
             <div className="stat-content">
               <h2>{totalEnrollments}</h2>
@@ -246,15 +246,7 @@ function CourseAnalytics() {
             </div>
           </div>
 
-          <div className="analytics-stat-card rating">
-            <div className="stat-icon yellow"><Star size={22} /></div>
-            <div className="stat-content">
-              <h2>{avgRating}</h2>
-              <p>Avg. Rating</p>
-            </div>
-          </div>
-
-          <div className="analytics-stat-card reviews">
+          <div className="analytics-stat-card reviews" style={{ flex: 1 }}>
             <div className="stat-icon purple"><MessageSquare size={22} /></div>
             <div className="stat-content">
               <h2>{discussionCount}</h2>
