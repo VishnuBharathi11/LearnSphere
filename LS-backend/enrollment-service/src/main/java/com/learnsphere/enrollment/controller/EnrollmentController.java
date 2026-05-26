@@ -10,6 +10,9 @@ import com.learnsphere.enrollment.dto.CreateOrderRequest;
 import com.learnsphere.enrollment.dto.EnrollmentResponse;
 import com.learnsphere.enrollment.dto.FreeEnrollRequest;
 import com.learnsphere.enrollment.dto.VerifyPaymentRequest;
+import com.learnsphere.enrollment.dto.WithdrawalRequestDto;
+import com.learnsphere.enrollment.dto.WithdrawalResponse;
+import com.learnsphere.enrollment.dto.WithdrawalSummaryResponse;
 import com.learnsphere.enrollment.entity.Enrollment;
 import com.learnsphere.enrollment.service.EnrollmentService;
 
@@ -61,5 +64,26 @@ public class EnrollmentController {
 	@GetMapping("/user/{userId}")
 	public List<Enrollment> byUser(@PathVariable String userId) {
 		return enrollmentService.getByUserId(userId);
+	}
+
+	@GetMapping("/instructor/{instructorId}/withdrawals/summary")
+	public WithdrawalSummaryResponse withdrawalSummary(
+			@PathVariable String instructorId,
+			@RequestParam(required = false) List<String> courseIds) {
+		return enrollmentService.getWithdrawalSummary(instructorId, courseIds);
+	}
+
+	@GetMapping("/instructor/{instructorId}/withdrawals")
+	public List<WithdrawalResponse> withdrawals(
+			@PathVariable String instructorId,
+			@RequestParam(defaultValue = "20") int limit) {
+		return enrollmentService.getWithdrawals(instructorId, limit);
+	}
+
+	@PostMapping("/instructor/{instructorId}/withdrawals")
+	public WithdrawalResponse requestWithdrawal(
+			@PathVariable String instructorId,
+			@Valid @RequestBody WithdrawalRequestDto request) {
+		return enrollmentService.requestWithdrawal(instructorId, request);
 	}
 }

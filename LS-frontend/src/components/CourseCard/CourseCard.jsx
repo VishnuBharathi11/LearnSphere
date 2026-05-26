@@ -29,7 +29,6 @@ function CourseCard({
             <Skeleton className="course-card-tag-skeleton" />
             <Skeleton className="course-card-tag-skeleton" />
           </div>
-          <Skeleton className="course-card-rating-skeleton" />
           <Skeleton className="course-card-price-skeleton" />
           <Skeleton className="course-card-button-skeleton" />
         </div>
@@ -62,7 +61,6 @@ function CourseCard({
               <div className="course-card-category">{course.category}</div>
               <div className="course-card-level">{course.level}</div>
             </div>
-            <div className="course-card-rating">★ {course.rating}</div>
             <div className="course-card-price">From ₹{course.price}</div>
             <button
               className="course-card-btn"
@@ -82,7 +80,6 @@ function CourseCard({
               <Skeleton className="course-card-tag-skeleton" />
               <Skeleton className="course-card-tag-skeleton" />
             </div>
-            <Skeleton className="course-card-rating-skeleton" />
             <Skeleton className="course-card-price-skeleton" />
             <Skeleton className="course-card-button-skeleton" />
           </>

@@ -4,8 +4,7 @@ import { Play, Award, BookOpen, Search, Sparkles, Clock, CheckCircle2, Trophy } 
 import courseImg from "../../../assets/Featured Courses/1.jpg";
 import ProgressiveImage from "../../../components/ProgressiveImage/ProgressiveImage.jsx";
 import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
-import { useInitialLoadComplete } from "../../../components/GlobalNetworkLoader/InitialLoadContext.jsx";
-import { useProgressiveReveal } from "../../../hooks/useProgressiveReveal";
+import Pagination from "../../../components/Pagination/Pagination";
 import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
@@ -108,9 +107,10 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
 
 function MyCourses() {
   const navigate = useNavigate();
-  const initialLoadComplete = useInitialLoadComplete();
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 6;
   const [courses, setCourses] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
   const [lessonMap, setLessonMap] = useState({});
@@ -245,6 +245,10 @@ function MyCourses() {
     };
   }, [enrollments, userId]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchQuery]);
+
   const myCourses = useMemo(() => {
     const backendActive = enrollments.filter(
       (enrollment) =>
@@ -301,13 +305,7 @@ function MyCourses() {
   }, [myCourses, activeTab, searchQuery]);
 
   const isPageLoading = loading || lessonsLoading || progressLoading;
-  const reveal = useProgressiveReveal({
-    isLoading: isPageLoading,
-    hasData: filteredCourses.length > 0,
-    hold: !initialLoadComplete,
-    totalItems: filteredCourses.length,
-    initialCount: 3,
-  });
+  const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
 
   const renderedCards = useMemo(() => {
     if (isPageLoading) {
@@ -317,20 +315,15 @@ function MyCourses() {
       }));
     }
 
-    const visibleCourses = filteredCourses.slice(0, reveal.visibleCount).map((course) => ({
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const slice = filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    return slice.map((course) => ({
       key: String(course.id),
       type: "course",
       course,
     }));
-
-    const hiddenCount = Math.max(filteredCourses.length - reveal.visibleCount, 0);
-    const hiddenSkeletons = Array.from({ length: hiddenCount }, (_, index) => ({
-      key: `pending-${index}`,
-      type: "skeleton",
-    }));
-
-    return [...visibleCourses, ...hiddenSkeletons];
-  }, [filteredCourses, isPageLoading, reveal.visibleCount]);
+  }, [filteredCourses, isPageLoading, currentPage]);
 
   return (
     <div className="mycourses-container">
@@ -392,27 +385,34 @@ function MyCourses() {
 
       {/* Main Course Grid */}
       {renderedCards.length > 0 ? (
-        <div className="mycourse-grid">
-          {renderedCards.map((item) =>
-            item.type === "course" ? (
-              <MyCourseCard
-                key={item.key}
-                course={item.course}
-                showText={reveal.showText}
-                showImage={reveal.showImages}
-                onOpen={() => {
-                  if (item.course.certificateUnlocked) {
-                    navigate(`/student-layout/download-certificate/${item.course.id}`);
-                  } else {
-                    navigate(`/student-layout/learn/${item.course.id}`);
-                  }
-                }}
-              />
-            ) : (
-              <MyCourseCard key={item.key} isSkeleton />
-            )
-          )}
-        </div>
+        <>
+          <div className="mycourse-grid">
+            {renderedCards.map((item) =>
+              item.type === "course" ? (
+                <MyCourseCard
+                  key={item.key}
+                  course={item.course}
+                  showText={true}
+                  showImage={true}
+                  onOpen={() => {
+                    if (item.course.certificateUnlocked) {
+                      navigate(`/student-layout/download-certificate/${item.course.id}`);
+                    } else {
+                      navigate(`/student-layout/learn/${item.course.id}`);
+                    }
+                  }}
+                />
+              ) : (
+                <MyCourseCard key={item.key} isSkeleton />
+              )
+            )}
+          </div>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
+        </>
       ) : (
         <div className="courses-empty-state">
           <BookOpen size={48} className="empty-icon" />

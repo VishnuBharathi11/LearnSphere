@@ -7,6 +7,7 @@ import {
   suspendAdminUser,
 } from "../../../services/adminApi";
 import { getFriendlyErrorMessage } from "../../../services/apiError";
+import Pagination from "../../../components/Pagination/Pagination";
 import "./Manageuser.scss";
 
 function Manageusers() {
@@ -15,6 +16,8 @@ function Manageusers() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
   const navigate = useNavigate();
 
   const loadUsers = async () => {
@@ -45,6 +48,17 @@ function Manageusers() {
       );
     });
   }, [users, activeTab, search, roleFilter]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeTab, roleFilter]);
+
+  const paginatedUsers = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredUsers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredUsers, currentPage]);
+
+  const totalPages = Math.ceil(filteredUsers.length / ITEMS_PER_PAGE);
 
   const toggleUserStatus = async (user) => {
     try {
@@ -135,7 +149,7 @@ function Manageusers() {
               </tr>
             </thead>
             <tbody>
-              {filteredUsers.length === 0 ? (
+              {paginatedUsers.length === 0 ? (
                 <tr>
                   <td colSpan="6" className="empty">
                     <Users size={32} />
@@ -143,7 +157,7 @@ function Manageusers() {
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((user) => (
+                paginatedUsers.map((user) => (
                   <tr key={user.id} className="row-clickable" onClick={() => openUserPortal(user)}>
                     <td>
                       <div className="user-cell">
@@ -202,6 +216,11 @@ function Manageusers() {
             </tbody>
           </table>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

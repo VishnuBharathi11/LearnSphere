@@ -36,6 +36,7 @@ import CreateQuiz from "./pages/instructor/ManageCourse/CreateQuiz/CreateQuiz.js
 import StudentProgress from "./pages/instructor/ManageCourse/StudentProgress/StudentProgress.jsx";
 import CourseAnalytics from "./pages/instructor/ManageCourse/CourseAnalytics/CourseAnalytics.jsx";
 import InstructorProfile from "./pages/instructor/Profile/InstructorProfile.jsx";
+import Withdrawal from "./pages/instructor/Withdrawal/Withdrawal.jsx";
 import ForumPage from "./pages/forum/ForumPage.jsx";
 import TopicPage from "./pages/forum/TopicPage.jsx";
 import ForumRoleLayout from "./pages/forum/ForumRoleLayout.jsx";
@@ -100,6 +101,7 @@ function App() {
           <Route path="manage-courses/:courseId/quiz" element={<CreateQuiz />} />
           <Route path="manage-courses/:courseId/students" element={<StudentProgress />} />
           <Route path="manage-courses/:courseId/analytics" element={<CourseAnalytics />} />
+          <Route path="withdrawals" element={<Withdrawal />} />
           <Route path="profile" element={<InstructorProfile />} />
         </Route>
 

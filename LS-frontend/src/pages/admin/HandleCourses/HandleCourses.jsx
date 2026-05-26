@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search, Ban, UserCheck, Trash2 } from "lucide-react";
+import Pagination from "../../../components/Pagination/Pagination";
 import "./HandleCourses.scss";
 import { useNavigate } from "react-router-dom";
 import {
@@ -18,6 +19,8 @@ function HandleCourses() {
   const [courses, setCourses] = useState([]);
   const [courseMetrics, setCourseMetrics] = useState([]);
   const [error, setError] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
   const loadData = async () => {
     try {
@@ -70,6 +73,17 @@ function HandleCourses() {
       }),
     [enrichedCourses, statusFilter, search]
   );
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, statusFilter]);
+
+  const paginatedCourses = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredCourses, currentPage]);
+
+  const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
 
   const summary = useMemo(() => {
     const totalCourses = enrichedCourses.length;
@@ -157,20 +171,19 @@ function HandleCourses() {
                 <th>Category</th>
                 <th>Learners</th>
                 <th>Revenue</th>
-                <th>Rating</th>
                 <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCourses.length === 0 ? (
+              {paginatedCourses.length === 0 ? (
                 <tr>
-                  <td colSpan="8" className="empty">
+                  <td colSpan="7" className="empty">
                     No courses found
                   </td>
                 </tr>
               ) : (
-                filteredCourses.map((course) => (
+                paginatedCourses.map((course) => (
                   <tr
                     key={course.id}
                     className="row-clickable"
@@ -186,7 +199,6 @@ function HandleCourses() {
                     <td>{course.category || "-"}</td>
                     <td>{course.learners}</td>
                     <td className="revenue">INR {course.revenue.toLocaleString()}</td>
-                    <td>{course.rating || "N/A"}</td>
                     <td>
                       <span className={`status ${String(course.status || "").toLowerCase()}`}>
                         {course.status}
@@ -236,6 +248,11 @@ function HandleCourses() {
             </tbody>
           </table>
         </div>
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
       </div>
     </div>
   );

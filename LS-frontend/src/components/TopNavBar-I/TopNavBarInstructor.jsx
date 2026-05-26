@@ -76,6 +76,10 @@ const PAGE_MAP = {
     title: "Manage Courses",
     subtitle: "Track course status, updates, and performance",
   },
+  "/instructor-layout/withdrawals": {
+    title: "Withdrawals",
+    subtitle: "Review earnings and request instructor payouts",
+  },
   "/instructor-layout/profile": {
     title: "My Profile",
     subtitle: "Update your public instructor profile",

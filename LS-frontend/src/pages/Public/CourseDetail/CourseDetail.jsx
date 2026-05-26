@@ -388,7 +388,7 @@ function CourseDetail() {
                   <h1 className="cd-course-title">{course.courseName}</h1>
                   <p className="hero-desc">{course.description || "Course description coming soon."}</p>
                   <div className="hero-meta">
-                    Rating {course.rating} • {course.lessons} lessons • {course.level}
+                    {course.lessons} lessons • {course.level}
                   </div>
                   <p className="hero-instructor">Instructor: {course.instructor || "Instructor"}</p>
                 </>

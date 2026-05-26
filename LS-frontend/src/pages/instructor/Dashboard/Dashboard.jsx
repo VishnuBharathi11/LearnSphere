@@ -2,7 +2,6 @@ import React, { useEffect, useMemo, useState } from "react";
 import {
   BookOpen,
   Users,
-  Star,
   DollarSign,
   TrendingUp,
   Activity,
@@ -80,11 +79,6 @@ function Dashboard() {
     const scopedEnrollments = enrollments.filter((e) => courseIdSet.has(String(e.courseId)));
     const totalStudents = scopedEnrollments.length;
 
-    const avgRatingRaw =
-      courses.length === 0
-        ? 0
-        : courses.reduce((sum, c) => sum + (Number(c.rating) || 0), 0) / courses.length;
-
     const totalRevenue = scopedEnrollments.reduce((sum, e) => {
       const course = courses.find((c) => String(c.id) === String(e.courseId));
       return sum + (Number(course?.price) || 0);
@@ -93,7 +87,6 @@ function Dashboard() {
     const stats = [
       { title: "Total Courses", value: totalCourses, icon: BookOpen, color: "blue" },
       { title: "Total Students", value: totalStudents, icon: Users, color: "yellow" },
-      { title: "Avg Rating", value: totalCourses === 0 ? "0.0" : avgRatingRaw.toFixed(1), icon: Star, color: "green" },
       { title: "Revenue", value: `Rs ${Math.round(totalRevenue).toLocaleString()}`, icon: DollarSign, color: "red" },
     ];
 
@@ -120,7 +113,7 @@ function Dashboard() {
 
     const coursePerformance = courses.slice(0, 7).map((course) => {
       const enrollmentCount = scopedEnrollments.filter((e) => String(e.courseId) === String(course.id)).length;
-      const score = Math.min(100, Math.max(8, Math.round((Number(course.rating) || 0) * 14 + enrollmentCount * 2)));
+      const score = Math.min(100, Math.max(8, Math.round(enrollmentCount * 10)));
       return {
         course: course.courseName,
         score,
@@ -162,11 +155,11 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className="status-grid">
+        <div className="status-grid" style={{ display: "flex", gap: "20px", width: "100%", marginBottom: "32px" }}>
           {stats.map((item, index) => {
             const Icon = item.icon;
             return (
-              <div className={`status-card status-${item.color}`} key={index}>
+              <div className={`status-card status-${item.color}`} key={index} style={{ flex: 1 }}>
                 <div className="status-icon">
                   <Icon size={22} strokeWidth={2} />
                 </div>

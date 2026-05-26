@@ -121,3 +121,54 @@ export async function verifyEnrollmentPayment({
   );
   return response.data;
 }
+
+function buildCourseIdParams(courseIds = []) {
+  const filteredIds = Array.from(
+    new Set(courseIds.map((id) => String(id || "").trim()).filter(Boolean))
+  );
+
+  return {
+    courseIds: filteredIds,
+    paramsSerializer: {
+      serialize: (params) => {
+        const values = Array.isArray(params?.courseIds) ? params.courseIds : [];
+        return values.map((value) => `courseIds=${encodeURIComponent(value)}`).join("&");
+      },
+    },
+  };
+}
+
+export async function getInstructorWithdrawalSummary(instructorId, courseIds = []) {
+  if (!instructorId) return null;
+  const courseParams = buildCourseIdParams(courseIds);
+  const response = await axios.get(
+    `${ENROLLMENT_API_BASE_URL}/instructor/${encodeURIComponent(String(instructorId))}/withdrawals/summary`,
+    {
+      params: { courseIds: courseParams.courseIds },
+      paramsSerializer: courseParams.paramsSerializer,
+      headers: getAuthHeaders(),
+    }
+  );
+  return response.data;
+}
+
+export async function getInstructorWithdrawals(instructorId, limit = 20) {
+  if (!instructorId) return [];
+  const response = await axios.get(
+    `${ENROLLMENT_API_BASE_URL}/instructor/${encodeURIComponent(String(instructorId))}/withdrawals`,
+    {
+      params: { limit },
+      headers: getAuthHeaders(),
+    }
+  );
+  return Array.isArray(response.data) ? response.data : [];
+}
+
+export async function requestInstructorWithdrawal(instructorId, payload) {
+  const response = await axios.post(
+    `${ENROLLMENT_API_BASE_URL}/instructor/${encodeURIComponent(String(instructorId))}/withdrawals`,
+    payload,
+    { headers: getAuthHeaders() }
+  );
+  return response.data;
+}
