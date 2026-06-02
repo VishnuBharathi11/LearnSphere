@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Play, Award, BookOpen, Search, Sparkles, Clock, CheckCircle2, Trophy } from "lucide-react";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
 import ProgressiveImage from "../../../components/ProgressiveImage/ProgressiveImage.jsx";
-import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
 import Pagination from "../../../components/Pagination/Pagination";
 import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
@@ -11,23 +10,8 @@ import { buildCourseLearningStateFromApi } from "../../../services/learnerProgre
 import { getProgressByCourses } from "../../../services/progressApi";
 import "./MyCourses.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-const MY_COURSE_PLACEHOLDERS = 6;
-function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen }) {
-  if (isSkeleton || !course) {
-    return (
-      <div className="mycourse-card mycourse-card--skeleton" aria-hidden="true">
-        <Skeleton className="mycourse-img-skeleton" />
-        <div className="mycourse-card-body">
-          <Skeleton className="mycourse-badge-skeleton" />
-          <Skeleton className="mycourse-title-skeleton" />
-          <Skeleton className="mycourse-instructor-skeleton" />
-          <Skeleton className="mycourse-progress-text-skeleton" />
-          <Skeleton className="mycourse-progress-track-skeleton" />
-          <Skeleton className="mycourse-btn-skeleton" />
-        </div>
-      </div>
-    );
-  }
+function MyCourseCard({ course, showText, showImage, onOpen }) {
+  if (!course) return null;
   const category = course.category || "Development";
   const level = course.level || "Beginner";
   return (
@@ -85,16 +69,7 @@ function MyCourseCard({ course, showText, showImage, isSkeleton = false, onOpen 
               )}
             </button>
           </>
-        ) : (
-          <>
-            <Skeleton className="mycourse-badge-skeleton" />
-            <Skeleton className="mycourse-title-skeleton" />
-            <Skeleton className="mycourse-instructor-skeleton" />
-            <Skeleton className="mycourse-progress-text-skeleton" />
-            <Skeleton className="mycourse-progress-track-skeleton" />
-            <Skeleton className="mycourse-btn-skeleton" />
-          </>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -281,10 +256,7 @@ function MyCourses() {
   const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
   const renderedCards = useMemo(() => {
     if (isPageLoading) {
-      return Array.from({ length: MY_COURSE_PLACEHOLDERS }, (_, index) => ({
-        key: `loading-${index}`,
-        type: "skeleton",
-      }));
+      return [];
     }
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const slice = filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
@@ -351,25 +323,21 @@ function MyCourses() {
       {renderedCards.length > 0 ? (
         <>
           <div className="mycourse-grid">
-            {renderedCards.map((item) =>
-              item.type === "course" ? (
-                <MyCourseCard
-                  key={item.key}
-                  course={item.course}
-                  showText={true}
-                  showImage={true}
-                  onOpen={() => {
-                    if (item.course.certificateUnlocked) {
-                      navigate(`/student-layout/download-certificate/${item.course.id}`);
-                    } else {
-                      navigate(`/student-layout/learn/${item.course.id}`);
-                    }
-                  }}
-                />
-              ) : (
-                <MyCourseCard key={item.key} isSkeleton />
-              )
-            )}
+            {renderedCards.map((item) => (
+              <MyCourseCard
+                key={item.key}
+                course={item.course}
+                showText={true}
+                showImage={true}
+                onOpen={() => {
+                  if (item.course.certificateUnlocked) {
+                    navigate(`/student-layout/download-certificate/${item.course.id}`);
+                  } else {
+                    navigate(`/student-layout/learn/${item.course.id}`);
+                  }
+                }}
+              />
+            ))}
           </div>
           <Pagination
             currentPage={currentPage}
@@ -377,13 +345,13 @@ function MyCourses() {
             onPageChange={setCurrentPage}
           />
         </>
-      ) : (
+      ) : !isPageLoading ? (
         <div className="courses-empty-state">
           <BookOpen size={48} className="empty-icon" />
           <h3>No matching courses found</h3>
           <p>{searchQuery ? "Try refining your search query or check other filters." : "Enroll in courses to start learning today!"}</p>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

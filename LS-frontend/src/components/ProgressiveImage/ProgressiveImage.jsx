@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Skeleton from "../Skeleton/Skeleton.jsx";
 import "./ProgressiveImage.scss";
 function ProgressiveImage({
   src,
@@ -7,7 +6,6 @@ function ProgressiveImage({
   alt = "",
   className = "",
   wrapperClassName = "",
-  skeletonClassName = "",
   reveal = false,
 }) {
   const [loaded, setLoaded] = useState(false);
@@ -18,7 +16,6 @@ function ProgressiveImage({
   const shouldRenderImage = reveal && Boolean(resolvedSrc);
   return (
     <div className={`progressive-image ${wrapperClassName}`.trim()}>
-      {!loaded ? <Skeleton className={`progressive-image__skeleton ${skeletonClassName}`.trim()} /> : null}
       {shouldRenderImage ? (
         <img
           src={resolvedSrc}

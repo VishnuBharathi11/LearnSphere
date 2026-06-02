@@ -5,7 +5,6 @@ import CourseCard from "../../../components/CourseCard/CourseCard";
 import Pagination from "../../../components/Pagination/Pagination";
 import { getPublishedCourses } from "../../../services/courseApi";
 import "./BrowseCourses.scss";
-const COURSE_CARD_PLACEHOLDERS = 6;
 function BrowseCourses() {
   const location = useLocation();
   const source = new URLSearchParams(location.search).get("source");
@@ -67,10 +66,7 @@ function BrowseCourses() {
   const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
   const renderedCards = useMemo(() => {
     if (loading) {
-      return Array.from({ length: COURSE_CARD_PLACEHOLDERS }, (_, index) => ({
-        key: `loading-${index}`,
-        type: "skeleton",
-      }));
+      return [];
     }
     if (filteredCourses.length === 0) {
       return [];
@@ -130,18 +126,14 @@ function BrowseCourses() {
         {!error && renderedCards.length > 0 ? (
           <>
             <div className="course-grid">
-              {renderedCards.map((item) =>
-                item.type === "course" ? (
-                  <CourseCard
-                    key={item.key}
-                    course={item.course}
-                    showText={true}
-                    showImage={true}
-                  />
-                ) : (
-                  <CourseCard key={item.key} isSkeleton />
-                )
-              )}
+              {renderedCards.map((item) => (
+                <CourseCard
+                  key={item.key}
+                  course={item.course}
+                  showText={true}
+                  showImage={true}
+                />
+              ))}
             </div>
             <Pagination
               currentPage={currentPage}

@@ -17,9 +17,6 @@ import {
   Compass 
 } from "lucide-react";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
-import Skeleton from "../../../components/Skeleton/Skeleton.jsx";
-import { useInitialLoadComplete } from "../../../components/GlobalNetworkLoader/InitialLoadContext.jsx";
-import { useProgressiveReveal } from "../../../hooks/useProgressiveReveal";
 import useForum from "../../../hooks/useForum";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
@@ -27,34 +24,10 @@ import { getCourseProgress, getCourseQuizzesByCourseId, markLessonCompletedDb } 
 import { getAdminSettings } from "../../../services/adminApi";
 import "./LearnCourse.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
-const LESSON_PLACEHOLDER_COUNT = 5;
-function WorkspaceSkeleton() {
-  return (
-    <div className="workspace-loading-state" aria-hidden="true">
-      <Skeleton className="skeleton-badge" />
-      <Skeleton className="skeleton-title" />
-      <Skeleton className="skeleton-text" />
-      <Skeleton className="skeleton-media" />
-      <Skeleton className="skeleton-actions" />
-    </div>
-  );
-}
-function SidebarItemSkeleton() {
-  return (
-    <div className="sidebar-skeleton-item" aria-hidden="true">
-      <Skeleton className="skeleton-dot" />
-      <div className="skeleton-details">
-        <Skeleton className="skeleton-eyebrow" />
-        <Skeleton className="skeleton-label" />
-      </div>
-    </div>
-  );
-}
 function LearnCourse() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const initialLoadComplete = useInitialLoadComplete();
   const courseId = String(id);
   const currentUser = getCurrentUser();
   const userId = currentUser?.id || currentUser?.userId || "";
@@ -507,7 +480,7 @@ function LearnCourse() {
   };
   const renderMainContent = () => {
     if (isPageLoading) {
-      return <WorkspaceSkeleton />;
+      return null;
     }
     if (isDiscussionOpen) {
       return renderDiscussionPanel();
@@ -624,11 +597,7 @@ function LearnCourse() {
             <h3>Course Curriculum</h3>
           </div>
           <div className="sidebar-scrollable-menu">
-            {isPageLoading ? (
-              Array.from({ length: LESSON_PLACEHOLDER_COUNT }, (_, index) => (
-                <SidebarItemSkeleton key={`sidebar-skeleton-${index}`} />
-              ))
-            ) : (
+            {isPageLoading ? null : (
               <>
                 {lessons.map((lesson, index) => {
                   const done = learningState.progress.completedLessonIds.includes(String(lesson.id));

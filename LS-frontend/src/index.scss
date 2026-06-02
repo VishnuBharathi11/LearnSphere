@@ -1,5 +1,11 @@
 :root {
   --ui-primary: #a435f0;
+  --ui-sidebar-bg: #4c1d95;
+  --ui-sidebar-bg-hover: rgba(255, 255, 255, 0.12);
+  --ui-sidebar-active-bg: rgba(255, 255, 255, 0.16);
+  --ui-sidebar-active-indicator: #f6c65b;
+  --ui-sidebar-text: #f5f3ff;
+  --ui-sidebar-text-muted: #ddd6fe;
   --ui-accent: #f69c08;
   --ui-bg: #f7f9fa;
   --ui-card: #ffffff;
@@ -16,6 +22,7 @@
   --loader-bright-blue: #4facfe;
   --loader-violet: #a855f7;
   --loader-soft-white: #f8fafc;
+
   --loader-light-gray: #eef2f7;
   --loader-overlay: rgba(31, 41, 64, 0.65);
   --loader-skeleton-base: rgba(59, 130, 246, 0.12);

@@ -1,7 +1,7 @@
 .I-navbar {
   width: 240px;
   height: 100vh;
-  background: var(--ui-primary);
+  background: var(--ui-sidebar-bg);
   color: #ffffff;
   border-right: 1px solid rgba(255, 255, 255, 0.2);
   display: flex;
@@ -10,7 +10,7 @@
   font-family: "Poppins", sans-serif;
   position: sticky;
   top: 0;
-  box-shadow: 10px 0 30px rgba(48, 43, 110, 0.25);
+  box-shadow: 10px 0 26px rgba(31, 24, 71, 0.18);
   .logo-name {
     display: flex;
     align-items: center;
@@ -43,23 +43,23 @@
       padding: 12px 16px;
       border-radius: 12px;
       text-decoration: none;
-      color: #f4f6ff;
+      color: var(--ui-sidebar-text);
       font-size: 15px;
       cursor: pointer;
       transition: all 0.25s ease;
       &:hover {
-        background: rgba(255, 255, 255, 0.14);
+        background: var(--ui-sidebar-bg-hover);
         transform: translateX(6px);
       }
       &:active {
         transform: scale(0.97);
       }
       &.active {
-        background: #ffffff;
-        color: var(--ui-primary);
+        background: var(--ui-sidebar-active-bg);
+        color: #ffffff;
         font-weight: 500;
         svg {
-          color: var(--ui-primary);
+          color: #ffffff;
         }
         &::before {
           content: "";
@@ -70,7 +70,7 @@
           width: 4px;
           height: 24px;
           border-radius: 6px;
-          background: #ffffff;
+          background: var(--ui-sidebar-active-indicator);
         }
       }
       &.logout {
