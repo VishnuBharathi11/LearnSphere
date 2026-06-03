@@ -6,7 +6,7 @@ services:
     name: api-gateway
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/api-gateway
+    rootDir: LS-backend/api-gateway
     envVars:
       - key: PORT
         value: 8084
@@ -30,7 +30,7 @@ services:
     name: auth-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/auth-service
+    rootDir: LS-backend/auth-service
     envVars:
       - key: PORT
         value: 9098
@@ -48,7 +48,7 @@ services:
     name: course-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/course-service
+    rootDir: LS-backend/course-service
     envVars:
       - key: PORT
         value: 9091
@@ -60,7 +60,7 @@ services:
     name: enrollment-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/enrollment-service
+    rootDir: LS-backend/enrollment-service
     envVars:
       - key: PORT
         value: 9092
@@ -78,7 +78,7 @@ services:
     name: learn-progress-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/learn-progress-service
+    rootDir: LS-backend/learn-progress-service
     envVars:
       - key: PORT
         value: 9093
@@ -98,7 +98,7 @@ services:
     name: discussion-notification-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/discussion-notification-service
+    rootDir: LS-backend/discussion-notification-service
     envVars:
       - key: PORT
         value: 9094
@@ -112,7 +112,7 @@ services:
     name: admin-analytics-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/admin-analytics-service
+    rootDir: LS-backend/admin-analytics-service
     envVars:
       - key: PORT
         value: 9095
@@ -128,7 +128,7 @@ services:
     name: certificate-service
     env: docker
     plan: free
-    rootDir: LearnSphere/LS-backend/certificate-service
+    rootDir: LS-backend/certificate-service
     envVars:
       - key: PORT
         value: 9099
