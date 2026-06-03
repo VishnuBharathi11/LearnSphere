@@ -19,14 +19,15 @@ This document details the layout of the LearnSphere project workspace to help de
   * **`src/services/`**: API layer utilizing Axios to communicate with the Spring Boot microservices.
   * **`src/utils/`**: Shared helper utilities.
 
-* **`LS-backend/`**: Spring Boot backend microservices and databases.
+* **`LS-backend/`**: Spring Boot backend microservices.
   * **`auth-service/`**: Microservice handling registration, token issuing, and profile endpoints.
   * **`course-service/`**: Microservice hosting course listings and details.
   * **`enrollment-service/`**: Manages course registrations and payments.
   * **`certificate-service/`**: Automates PDF certificate generation.
-  * **`database/`**: SQL scripts establishing PostgreSQL/MySQL schemas for the platform.
-    * **`certificate_schema.sql`**: Certificate tables.
-    * **`sql/schema.sql`**: Main user, enrollment, and review tables.
+
+* **`database/`**: SQL scripts establishing PostgreSQL/MySQL schemas for the platform.
+  * **`certificate_schema.sql`**: Certificate tables.
+  * **`sql/schema.sql`**: Main user, enrollment, and review tables.
 
 * **`scripts/`**: Reusable maintenance and seeding scripts.
   * **`data/mongo/`**: Mongo Shell scripts for data ingestion and duplicate checks.
