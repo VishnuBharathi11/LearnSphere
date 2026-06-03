@@ -8,7 +8,7 @@ import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getProgressByCourses } from "../../../services/progressApi";
-import "./MyCourses.scss";
+import "./Mycourses.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 function MyCourseCard({ course, showText, showImage, onOpen }) {
   if (!course) return null;
