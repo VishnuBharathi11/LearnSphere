@@ -14,7 +14,7 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
-import LearnerImg from "../../../assets/learner/learner.jpg";
+import LearnerImg from "../../../assets/Learner/learner.jpg";
 import courseFallbackImg from "../../../assets/Popular Categories/ui.png";
 import {
   getCourseLessons,
