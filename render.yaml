@@ -1,0 +1,176 @@
+# Render Blueprint Specification for LearnSphere Microservices
+services:
+
+  # 1. API Gateway
+  - type: web
+    name: api-gateway
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/api-gateway
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/api-gateway-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 8084
+      - key: AUTH_SERVICE_URL
+        value: http://auth-service:9098
+      - key: ENROLLMENT_SERVICE_URL
+        value: http://enrollment-service:9092
+      - key: DISCUSSION_SERVICE_URL
+        value: http://discussion-notification-service:9094
+      - key: ADMIN_SERVICE_URL
+        value: http://admin-analytics-service:9095
+      - key: PROGRESS_SERVICE_URL
+        value: http://learn-progress-service:9093
+      - key: COURSE_SERVICE_URL
+        value: http://course-service:9091
+      - key: CERTIFICATE_SERVICE_URL
+        value: http://certificate-service:9099
+
+  # 2. Auth Service
+  - type: web
+    name: auth-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/auth-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/auth-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9098
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: ADMIN_ANALYTICS_SERVICE_URL
+        value: http://admin-analytics-service:9095
+
+  # 3. Course Service
+  - type: web
+    name: course-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/course-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/course-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9091
+      - key: SPRING_MONGODB_URI
+        sync: false
+
+  # 4. Enrollment Service
+  - type: web
+    name: enrollment-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/enrollment-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/enrollment-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9092
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: COURSE_SERVICE_URL
+        value: http://course-service:9091
+
+  # 5. Learn Progress Service
+  - type: web
+    name: learn-progress-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/learn-progress-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/learn-progress-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9093
+      - key: SPRING_MONGODB_URI
+        sync: false
+      - key: COURSE_SERVICE_URL
+        value: http://course-service:9091
+      - key: ENROLLMENT_SERVICE_URL
+        value: http://enrollment-service:9092
+      - key: DISCUSSION_SERVICE_URL
+        value: http://discussion-notification-service:9094
+      - key: ADMIN_ANALYTICS_SERVICE_URL
+        value: http://admin-analytics-service:9095
+
+  # 6. Discussion Notification Service
+  - type: web
+    name: discussion-notification-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/discussion-notification-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/discussion-notification-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9094
+      - key: SPRING_MONGODB_URI
+        sync: false
+      - key: COURSE_SERVICE_URL
+        value: http://course-service:9091
+
+  # 7. Admin Analytics Service
+  - type: web
+    name: admin-analytics-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/admin-analytics-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/admin-analytics-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9095
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+
+  # 8. Certificate Service
+  - type: web
+    name: certificate-service
+    env: java
+    plan: free
+    rootDir: LearnSphere/LS-backend/certificate-service
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/certificate-service-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: JAVA_VERSION
+        value: 21
+      - key: PORT
+        value: 9099
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: FRONTEND_PUBLIC_URL
+        sync: false
+      - key: CERTIFICATE_SERVICE_URL
+        value: http://certificate-service:9099
