@@ -37,9 +37,9 @@ import StudentProgress from "./pages/instructor/ManageCourse/StudentProgress/Stu
 import CourseAnalytics from "./pages/instructor/ManageCourse/CourseAnalytics/CourseAnalytics.jsx";
 import InstructorProfile from "./pages/instructor/Profile/InstructorProfile.jsx";
 import Withdrawal from "./pages/instructor/Withdrawal/Withdrawal.jsx";
-import ForumPage from "./pages/forum/ForumPage.jsx";
-import TopicPage from "./pages/forum/TopicPage.jsx";
-import ForumRoleLayout from "./pages/forum/ForumRoleLayout.jsx";
+import ForumPage from "./pages/Forum/ForumPage.jsx";
+import TopicPage from "./pages/Forum/TopicPage.jsx";
+import ForumRoleLayout from "./pages/Forum/ForumRoleLayout.jsx";
 import AdminLayout from "./pages/admin/AdminLayout/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/Dashboard/AdminDashboard.jsx";
 import ManageUsers from "./pages/admin/ManageUsers/Manageusers.jsx";
