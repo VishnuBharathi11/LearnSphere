@@ -309,7 +309,7 @@ function LearnCourse() {
             <Trophy size={18} className="gold-icon" />
             <div>
               <h3>Lesson Assessment</h3>
-              <p>Test your understanding of the materials covered in this lesson.</p>
+              <p>Take this quick quiz to check your understanding of this lesson's concepts.</p>
             </div>
           </div>
           <button
@@ -345,16 +345,16 @@ function LearnCourse() {
       <div className="workspace-discussion-panel">
         <div className="panel-header">
           <span className="discussion-badge">COMMUNITY FORUM</span>
-          <h2>Course Discussion Board</h2>
-          <p>Engage with fellow learners, collaborate on course topics, and ask questions.</p>
+          <h2>Course Discussion</h2>
+          <p>Ask questions, share notes, or discuss this course's topics with fellow students.</p>
         </div>
         <div className="discussion-composer-card">
           <div className="composer-header">
             <MessageCircle size={18} className="purple-icon" />
-            <h3>Create a New Discussion Thread ({topics.length})</h3>
+            <h3>Start a Discussion ({topics.length})</h3>
           </div>
           <textarea
-            placeholder="Share an insight, ask a question, or discuss lessons..."
+            placeholder="Ask a question or share a thought about this course..."
             value={composerText}
             onChange={(e) => {
               setComposerText(e.target.value);
@@ -378,7 +378,7 @@ function LearnCourse() {
             <Sparkles size={14} className="gold-icon" />
             <span>Community Code of Conduct</span>
           </div>
-          <p>Be respectful and supportive. Share hints and explanations, but avoid publishing direct exam answers.</p>
+          <p>Please follow our community guidelines: be respectful, and do not post direct answers to quiz questions.</p>
         </div>
         <div className="discussion-threads-scrollable">
           {loading && <p className="loading-threads-text">Loading discussions...</p>}
@@ -386,8 +386,8 @@ function LearnCourse() {
           {!loading && topics.length === 0 && (
             <div className="empty-threads-state">
               <MessageCircle size={32} />
-              <p>No discussion threads have been created yet.</p>
-              <small>Be the first to ask a question or start a topic!</small>
+              <p>No discussions started yet.</p>
+              <small>Be the first to start a conversation!</small>
             </div>
           )}
           {topics.map((topic) => {
@@ -489,20 +489,20 @@ function LearnCourse() {
       return (
         <div className="workspace-final-exam-panel">
           <div className="panel-header">
-            <span className="exam-badge">ACADEMIC CAPSTONE</span>
+            <span className="exam-badge">FINAL ASSESSMENT</span>
             <h2>Final Course Assessment</h2>
-            <p>Prove your mastery of the entire syllabus to earn your verifiable LearnSphere Certificate.</p>
+            <p>Pass this comprehensive quiz to demonstrate your understanding and earn your certificate.</p>
           </div>
           <div className="exam-details-card">
             <Trophy size={48} className="trophy-glow" />
-            <h3>Verifiable Certificate Capstone</h3>
-            <p>You have unlocked the final exam by completing all lessons in this curriculum. Ensure you are well prepared before starting the assessment.</p>
+            <h3>Final Course Quiz</h3>
+            <p>You have unlocked the final quiz. Once you start, your answers will be graded.</p>
             <div className="exam-rules-list">
               <h4>Exam Guidelines:</h4>
               <ul>
-                <li>Must score a passing grade to unlock the digital certificate.</li>
-                <li>Ensure a stable network connection before starting.</li>
-                <li>All submissions are final and recorded on your official transcript.</li>
+                <li>You must achieve the passing score to earn your course certificate.</li>
+                <li>Ensure you have a stable internet connection before starting.</li>
+                <li>Your submission is final. You can view your results immediately after submitting.</li>
               </ul>
             </div>
             <button 
@@ -523,13 +523,13 @@ function LearnCourse() {
     return (
       <div className="workspace-welcome-state">
         <Compass size={48} className="welcome-icon" />
-        <h2>Welcome to your Learning Workspace</h2>
-        <p>Select any unlocked lesson from the navigation menu on the right to start studying, watching video lessons, or downloading resources.</p>
+        <h2>Welcome to your Course</h2>
+        <p>Select a lesson from the curriculum on the right to start.</p>
         {learningState.progressPercentage === 100 && finalQuiz && (
           <div className="welcome-final-call">
             <Trophy size={32} className="trophy-glow" />
-            <h3>Congratulations! You've finished all lessons.</h3>
-            <p>Unlock your verifiable course credential by passing the final exam.</p>
+            <h3>You have completed all the lessons!</h3>
+            <p>Complete the final quiz to earn your course certificate.</p>
             <button className="start-final-btn" onClick={() => navigate(`/student-layout/test/${courseId}?mode=final`)}>
               Start Final Assessment
             </button>
@@ -566,9 +566,9 @@ function LearnCourse() {
         </div>
         <div className="hero-content-wrap">
           <div className="hero-details">
-            <span className="hero-eyebrow"><Sparkles size={13} /> COURSE WORKSPACE</span>
-            <h1>{course?.courseName || "Loading Course Workspace..."}</h1>
-            <p className="instructor-sub">Authorized by <strong>{course?.instructor || "LearnSphere Faculty"}</strong></p>
+            <span className="hero-eyebrow"><Sparkles size={13} /> COURSE CONTENT</span>
+            <h1>{course?.courseName || "Loading Course Content..."}</h1>
+            <p className="instructor-sub">Instructed by <strong>{course?.instructor || "LearnSphere Faculty"}</strong></p>
           </div>
           <div className="hero-progress-hub">
             <div className="progress-stats-row">
@@ -582,7 +582,7 @@ function LearnCourse() {
               />
             </div>
             <span className="progress-ratio-sub">
-              {completedCount} of {lessons.length} lessons mastered
+              {completedCount} of {lessons.length} lessons completed
             </span>
           </div>
         </div>
@@ -663,7 +663,7 @@ function LearnCourse() {
                       <Trophy size={16} className="capstone-icon" />
                     </div>
                     <div className="item-details">
-                      <span className="lesson-index-sub">ACADEMIC CAPSTONE</span>
+                      <span className="lesson-index-sub">FINAL ASSESSMENT</span>
                       <strong className="lesson-title">Final Course Assessment</strong>
                     </div>
                   </button>

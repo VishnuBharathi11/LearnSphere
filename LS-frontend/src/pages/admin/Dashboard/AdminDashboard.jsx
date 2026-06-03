@@ -133,7 +133,7 @@ function AdminDashboard() {
         <header className="dashboard-header">
           <div>
             <h1>Dashboard Overview</h1>
-            <p>Welcome back, Admin. Here is the operational status of LearnSphere.</p>
+            <p>Welcome back, Administrator. Here is the current status of the LearnSphere platform.</p>
           </div>
           <div className="system-tag">
             <Sparkles size={16} />
@@ -156,7 +156,7 @@ function AdminDashboard() {
         </div>
         <div className="pending-box">
           <h3>
-            <AlertCircle size={18} /> Required Operations (Pending Tasks)
+            <AlertCircle size={18} /> Pending Approvals & Tasks
           </h3>
           <div className="task-grid">
             {pendingTasks.map((task, idx) => (
@@ -259,15 +259,15 @@ function AdminDashboard() {
                 </BarChart>
               </ResponsiveContainer>
               <p className="selected-category-label">
-                {selectedCategory ? `Selected: ${selectedCategory}` : "Click a category bar to target"}
+                {selectedCategory ? `Selected: ${selectedCategory}` : "Select a category bar to filter"}
               </p>
             </div>
           </div>
         </div>
         <div className="activity-box">
-          <h3>Recent Audit Trail</h3>
+          <h3>Recent Platform Activity</h3>
           {!dashboard?.recentActivity?.length ? (
-            <p className="empty-trail">No recent administrative logs found.</p>
+            <p className="empty-trail">No recent admin activity found.</p>
           ) : (
             <ul>
               {dashboard.recentActivity.map((activity, idx) => (

@@ -100,18 +100,18 @@ function Dashboard() {
       };
     });
     const coursePerformance = courses.slice(0, 7).map((course) => {
-      const enrollmentCount = scopedEnrollments.filter((e) => String(e.courseId) === String(course.id)).length;
-      const score = Math.min(100, Math.max(8, Math.round(enrollmentCount * 10)));
-      return {
-        course: course.courseName,
-        score,
-      };
-    });
+        const enrollmentCount = scopedEnrollments.filter((e) => String(e.courseId) === String(course.id)).length;
+        const score = Math.min(100, Math.max(8, Math.round(enrollmentCount * 10)));
+        return {
+          course: course.courseName,
+          score,
+        };
+      });
     const recentActivities = [...courses]
       .sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0))
       .slice(0, 5)
       .map((course) => ({
-        text: `${course.courseName} is ${String(course.status || "DRAFT").toLowerCase()}`,
+        text: `Course '${course.courseName}' status changed to ${String(course.status || "DRAFT").toLowerCase()}.`,
         time: course.createdAt ? new Date(course.createdAt).toLocaleDateString() : "-",
       }));
     return { stats, trendData, coursePerformance, recentActivities };
@@ -129,11 +129,10 @@ function Dashboard() {
       <div className="instructor-dashboard">
         <div className="dashboard-hero">
           <div className="hero-welcome">
-            <span className="hero-eyebrow">Instructor Suite</span>
+            <span className="hero-eyebrow">Instructor Dashboard</span>
             <h1>Welcome back, {currentUser?.name || "Instructor"}</h1>
             <p>
-              Monitor your academy growth, examine recent course enrollments, evaluate student 
-              discussion threads, and control your online classroom materials.
+              Track course enrollments, review earnings, and manage your student community forum.
             </p>
           </div>
         </div>
@@ -181,7 +180,7 @@ function Dashboard() {
             <div className="chart-header">
               <div className="chart-title">
                 <Activity size={20} strokeWidth={2.2} />
-                <h3>Course Performance Index</h3>
+                <h3>Course Engagement</h3>
               </div>
             </div>
             {coursePerformance.length <= 1 ? (
@@ -227,7 +226,7 @@ function Dashboard() {
         <div className="activity-card">
           <h3>Recent Activity</h3>
           {recentActivities.length === 0 ? (
-            <p className="activity-empty">No recent course activities found.</p>
+            <p className="activity-empty">No recent activity.</p>
           ) : (
             <div className="activity-list">
               {recentActivities.map((activity, index) => (

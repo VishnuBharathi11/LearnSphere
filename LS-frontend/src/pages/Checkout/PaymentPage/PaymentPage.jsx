@@ -39,7 +39,7 @@ function PaymentPage() {
       })
       .catch(() => {
         if (!active) return;
-        setError("Invalid course");
+        setError("We couldn't retrieve this course's checkout details. Please go back and try again.");
       })
       .finally(() => {
         if (!active) return;
@@ -158,18 +158,18 @@ function PaymentPage() {
   }, [loading, course, currentUser?.id, razorpayKey]);
   if (loading || userLoading) return <p style={{ padding: 40 }}>Loading...</p>;
   if (error && !course) return <p style={{ padding: 40 }}>{error}</p>;
-  if (!course) return <p style={{ padding: 40 }}>Invalid course</p>;
+  if (!course) return <p style={{ padding: 40 }}>We couldn't retrieve this course's checkout details. Please go back and try again.</p>;
   return (
     <div className="payment-page">
-      <h2>Redirecting To Razorpay</h2>
+      <h2>Redirecting to Razorpay</h2>
       <div className="payment-summary">
         <div className="card paycard">
           <h3>{course.courseName}</h3>
           <p>Total: Rs {course.price}</p>
-          <p>Opening secure checkout...</p>
+          <p>Opening checkout...</p>
           {error && <p className="payment-error">{error}</p>}
           <button className="pay-btn" onClick={handlePayNow} disabled={isPaying}>
-            {isPaying ? "Opening..." : "Retry Razorpay Checkout"}
+            {isPaying ? "Opening..." : "Open Razorpay Checkout"}
           </button>
         </div>
       </div>

@@ -104,14 +104,14 @@ function CreateCourse() {
     reader.readAsDataURL(file);
   };
   const validateForm = () => {
-    if (!form.title.trim()) return "Course title is required";
-    if (!form.description.trim()) return "Course description is required";
-    if (!form.categoryId) return "Please choose a category";
+    if (!form.title.trim()) return "Please enter a course title.";
+    if (!form.description.trim()) return "Please enter a course description.";
+    if (!form.categoryId) return "Please select a course category.";
     if (form.description.trim().length < 30) {
-      return "Description should be at least 30 characters";
+      return "Course description must be at least 30 characters long to provide sufficient detail for students.";
     }
-    if (!form.thumbnail) return "Course thumbnail is required";
-    if (Number(form.price) < 0) return "Invalid course price";
+    if (!form.thumbnail) return "Please upload a course thumbnail image.";
+    if (Number(form.price) < 0) return "Course price cannot be negative. Please enter a valid price.";
     return null;
   };
   const handleSubmit = async (e) => {
@@ -174,7 +174,7 @@ function CreateCourse() {
             name="description"
             value={form.description}
             onChange={handleChange}
-            placeholder="Write what students will learn, prerequisites and outcomes..."
+            placeholder="Describe what students will learn, any requirements, and the key learning outcomes."
             rows={5}
             required
           />
@@ -193,7 +193,7 @@ function CreateCourse() {
             ))}
           </select>
           <small className="cc-helper">
-            Categories are managed by admin. Contact admin if a category is missing.
+            Course categories are managed by the administration. If you need a new category, please contact support.
           </small>
           <label>Price (INR)</label>
           <input

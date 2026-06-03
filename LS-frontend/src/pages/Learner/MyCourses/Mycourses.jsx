@@ -271,8 +271,8 @@ function MyCourses() {
       <header className="mycourses-hero">
         <div className="hero-welcome">
           <span className="hero-eyebrow"><Sparkles size={14} /> LEARNER PORTAL</span>
-          <h1>My Learning Journey</h1>
-          <p>Track your progress, continue classes, and earn verifiable certifications.</p>
+          <h1>My Courses</h1>
+          <p>Resume your active courses, track your lessons, and download earned certificates.</p>
         </div>
         <div className="hero-stats-grid">
           <div className="hero-stat-card">
@@ -301,7 +301,7 @@ function MyCourses() {
       <div className="mycourses-toolbar">
         <div className="tabs-pill">
           <button className={activeTab === "all" ? "active" : ""} onClick={() => setActiveTab("all")}>
-            All Programs ({stats.total})
+            All Courses ({stats.total})
           </button>
           <button className={activeTab === "pending" ? "active" : ""} onClick={() => setActiveTab("pending")}>
             In Progress ({stats.inProgress})
@@ -349,7 +349,7 @@ function MyCourses() {
         <div className="courses-empty-state">
           <BookOpen size={48} className="empty-icon" />
           <h3>No matching courses found</h3>
-          <p>{searchQuery ? "Try refining your search query or check other filters." : "Enroll in courses to start learning today!"}</p>
+          <p>{searchQuery ? "No courses found matching your search. Try resetting the search bar." : "You aren't enrolled in any courses yet. Browse our course catalog to find a topic you'd like to learn."}</p>
         </div>
       ) : null}
     </div>

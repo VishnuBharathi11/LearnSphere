@@ -34,7 +34,7 @@ function ApproveCourses() {
       await publishCourse(id);
       await loadCourses();
     } catch (apiError) {
-      setError(getFriendlyErrorMessage(apiError, "Failed to approve course"));
+      setError(getFriendlyErrorMessage(apiError, "We could not approve the course. Please try again."));
     }
   };
   const reject = async (id) => {
@@ -42,7 +42,7 @@ function ApproveCourses() {
       await rejectCourse(id, "REJECTED_BY_ADMIN");
       await loadCourses();
     } catch (apiError) {
-      setError(getFriendlyErrorMessage(apiError, "Failed to reject course"));
+      setError(getFriendlyErrorMessage(apiError, "We could not reject the course. Please try again."));
     }
   };
   return (
@@ -62,7 +62,7 @@ function ApproveCourses() {
         </div>
         <div className="course-list">
           {pendingCourses.length === 0 ? (
-            <p className="empty">No courses pending review</p>
+            <p className="empty">No courses pending review.</p>
           ) : (
             pendingCourses.map((course) => (
               <div key={course.id} className="admin-course-card">

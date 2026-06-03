@@ -36,8 +36,8 @@ function PaymentSuccess() {
     return (
       <div className="success-page">
         <div className="success-container">
-          <h1>Invalid payment session</h1>
-          <button className="ps-secondary-btn" onClick={() => navigate("/courses")}>Go to Courses</button>
+          <h1>We couldn't verify this payment session.</h1>
+          <button className="ps-secondary-btn" onClick={() => navigate("/courses")}>Browse Courses</button>
         </div>
       </div>
     );
@@ -47,7 +47,7 @@ function PaymentSuccess() {
       <div className="success-container">
         <div className="success-header">
           <CheckCircle size={96} className="success-icon" />
-          <h1>Payment Successful!</h1>
+          <h1>Enrollment Confirmed!</h1>
           <p>
             {course ? `You are now enrolled in ${course.courseName}` : "Enrollment completed successfully."}
           </p>
@@ -79,7 +79,7 @@ function PaymentSuccess() {
             Start Learning
           </button>
           <button className="ps-secondary-btn" onClick={() => navigate("/student-layout/my-courses")}>
-            Go to My Courses
+            Back to My Courses
           </button>
         </div>
       </div>

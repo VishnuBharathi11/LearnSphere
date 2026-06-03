@@ -166,11 +166,11 @@ function InstructorApplication() {
           </form>
           <div className="instructor-application__tips">
             <h3>What happens next?</h3>
-            <p>We verify your expertise, review your resume, and may request a short demo lesson.</p>
+            <p>Our academic committee reviews applications weekly. Here's what we look for:</p>
             <ul>
-              <li>Review time: 3-5 business days.</li>
-              <li>Be sure your LinkedIn profile is public.</li>
-              <li>We contact you by email if we need more details.</li>
+              <li>Demonstrated expertise in your selected tech domain.</li>
+              <li>A public LinkedIn profile showing professional experience.</li>
+              <li>Clear communication skills (we may request a short demo lesson).</li>
             </ul>
           </div>
         </div>

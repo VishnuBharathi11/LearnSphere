@@ -421,17 +421,19 @@ function Dashboard() {
               <Target size={20} />
               <h2>Today's goal</h2>
             </div>
-            <CircularMetric value={goalPercent} label="Today's goal" tone="orange" />
+            <CircularMetric value={goalPercent} label={dashboardStats.totalLessons === 0 ? "No Active Courses" : "Today's goal"} tone="orange" />
             <div className="metric-card__legend">
-              <span>Your goal</span>
-              <strong>{dashboardStats.completedLessons}/{dashboardStats.totalLessons || 0} lessons</strong>
+              <span>{dashboardStats.totalLessons === 0 ? "Enroll in a course to set a goal" : "Your goal"}</span>
+              {dashboardStats.totalLessons > 0 && (
+                <strong>{dashboardStats.completedLessons}/{dashboardStats.totalLessons || 0} lessons</strong>
+              )}
             </div>
           </div>
 
           <div className="dashboard-panel metric-card">
             <div className="metric-card__head">
               <BarChart3 size={20} />
-              <h2>Your score looks good!</h2>
+              <h2>{dashboardStats.activeCourses === 0 ? "Ready to Start Learning?" : "Your Completion Average"}</h2>
             </div>
             <CircularMetric value={completedPercent} label="Overall score" />
             <div className="metric-card__legend">
@@ -480,8 +482,8 @@ function Dashboard() {
         <section className="dashboard-panel media-panel">
           <div className="dashboard-section-head">
             <div>
-              <span>Lessons</span>
-              <h2>Media for lessons</h2>
+              <span>Up Next</span>
+              <h2>Lessons to Study</h2>
             </div>
             <button type="button" onClick={() => navigate("/student-layout/my-courses")}>
               View all

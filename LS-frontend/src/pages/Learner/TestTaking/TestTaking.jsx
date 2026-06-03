@@ -121,8 +121,8 @@ function TestTaking() {
   if (!quiz || !questions.length) {
     return (
       <div className="test-empty">
-        <h2>No quiz available for this assessment.</h2>
-        <button onClick={() => navigate(-1)}>Go Back</button>
+        <h2>No quiz is available for this lesson right now.</h2>
+        <button onClick={() => navigate(-1)}>Return to Course</button>
       </div>
     );
   }
@@ -146,7 +146,7 @@ function TestTaking() {
             className={`review-btn ${reviewFlags[current] ? "active" : ""}`}
             onClick={() => setReviewFlags((prev) => ({ ...prev, [current]: !prev[current] }))}
           >
-            {reviewFlags[current] ? "Marked for review" : "Mark as review"}
+            {reviewFlags[current] ? "Marked for Review" : "Mark for Review"}
           </button>
           <div className="attempt-timer">
             <Clock3 size={16} />
@@ -181,7 +181,7 @@ function TestTaking() {
             </button>
           ) : (
             <button className="finish-btn" onClick={finishAssessment}>
-              Finish
+              Submit Assessment
             </button>
           )}
         </div>

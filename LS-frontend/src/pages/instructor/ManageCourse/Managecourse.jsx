@@ -121,7 +121,7 @@ function Managecourse() {
               <FileText size={32} />
             </div>
             <h3>No courses found</h3>
-            <p>Try refining your search queries or status filters, or start fresh by building a new course.</p>
+            <p>Try adjusting your search query or status filter, or create a new course using the button above.</p>
           </div>
         ) : (
           <div className="course-registry-grid">
@@ -130,7 +130,7 @@ function Managecourse() {
                 <div className="course-info">
                   <div className="course-top">
                     <div className="course-header-text">
-                      <span className="course-category-badge">{course.category || "General"}</span>
+                       <span className="course-category-badge">{course.category || "General"}</span>
                       <h3>{course.courseName}</h3>
                     </div>
                     <span className={`status ${(course.status || "").toLowerCase()}`}>
@@ -182,7 +182,7 @@ function Managecourse() {
                         disabled={submittingId === course.id}
                         onClick={() => onSubmitForReview(course.id)}
                       >
-                        {submittingId === course.id ? "Submitting..." : "Submit Review"}
+                        {submittingId === course.id ? "Submitting..." : "Submit for Review"}
                       </button>
                     )}
                   </div>

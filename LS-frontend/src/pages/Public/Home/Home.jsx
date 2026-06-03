@@ -34,16 +34,16 @@ function Home() {
         <div className="hero-section__content">
           <div className="hero-section__right">
             <div className="main-head">
-              Unlock Your
-              <br /> <span className="hero-gradient-text">Potential</span> with
-              <br /> Online Learning
+              Master Practical
+              <br /> <span className="hero-gradient-text">Tech Skills</span> with
+              <br /> Expert-Led Courses
             </div>
             <div className="btn-get-browse">
               <button className="btn-get" onClick={() => navigate("/free-courses")}>
                 Get Started for Free
               </button>
               <button className="btn-browse" onClick={() => navigate("/courses")}>
-                Browse Course
+                Browse Courses
               </button>
             </div>
           </div>
@@ -189,10 +189,10 @@ function Home() {
           </div>
           <div className="why-learn-cont">
             <img src={web} />
-            <div className="why-learn-title">Personalized Learning</div>
+            <div className="why-learn-title">Personalized Recommendations</div>
             <div className="why-learn-in-font">
-              AI-powered suggestions to help you discover courses based on your
-              goals and interests.
+              Get course suggestions tailored to your learning progress and
+              career interests.
             </div>
           </div>
         </div>

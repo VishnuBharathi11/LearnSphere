@@ -227,7 +227,7 @@ function InstructorProfile() {
         <div className="instructor-profile-page">
           <div className="instructor-profile-form">
             <h2>Profile</h2>
-            <p>Please login to view your profile.</p>
+            <p>Please sign in to view your profile.</p>
           </div>
         </div>
       </div>
@@ -399,7 +399,7 @@ function InstructorProfile() {
                   <span>Instructor Tip</span>
                 </div>
                 <p>
-                  Keep your bio and expertise updated to attract more learners! Students love detailed bios with real-world project portfolios and experience.
+                  Complete your profile to build credibility. Students prefer instructors with detailed professional backgrounds and portfolios.
                 </p>
               </div>
             </div>

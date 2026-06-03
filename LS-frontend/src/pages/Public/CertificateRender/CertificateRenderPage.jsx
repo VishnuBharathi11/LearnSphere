@@ -20,7 +20,7 @@ function CertificateRenderPage() {
         setCertificate(null);
         setError(
           requestError?.response?.data?.message ||
-            "Unable to render this certificate. Check that the certificate service is running."
+            "We couldn't load this certificate. Please try again or check the certificate link."
         );
       });
     return () => {

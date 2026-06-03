@@ -42,16 +42,21 @@ function GetStarted() {
   }, [freeCourses, currentPage]);
   return (
     <div className="free-page">
-      <h1>Get Started for free</h1>
-      <p>No payment. No trial. Start learning immediately.</p>
+      <h1>Start Learning for Free</h1>
+      <p>Explore our selection of free introductory courses. Create an account to track your progress and earn certificates at no cost.</p>
       <div className="free-course-grid">
         {loading && <p>Loading free courses...</p>}
         {!loading && error && <p>{error}</p>}
         {!loading &&
           !error &&
+          freeCourses.length === 0 && (
+            <p className="no-results">No free courses are currently available. Check back soon or browse our full catalog.</p>
+          )}
+        {!loading &&
+          !error &&
           paginatedFreeCourses.map((course) => <CourseCard key={course.id} course={course} />)}
       </div>
-      {!loading && !error && (
+      {!loading && !error && freeCourses.length > 0 && (
         <Pagination
           currentPage={currentPage}
           totalPages={totalPages}

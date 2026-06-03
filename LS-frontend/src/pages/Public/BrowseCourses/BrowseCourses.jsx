@@ -96,7 +96,7 @@ function BrowseCourses() {
         <div className="filter-bar">
           <input
             type="search"
-            placeholder="Search courses"
+            placeholder="Search courses by title or keyword..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -120,8 +120,9 @@ function BrowseCourses() {
           </select>
         </div>
         {error ? <p className="no-results">{error}</p> : null}
+        {loading ? <p className="loading-state">Loading courses...</p> : null}
         {!error && filteredCourses.length === 0 && !loading ? (
-          <p className="no-results">No courses found</p>
+          <p className="no-results">No courses found matching your criteria. Try adjusting your search term, category, or level filters.</p>
         ) : null}
         {!error && renderedCards.length > 0 ? (
           <>

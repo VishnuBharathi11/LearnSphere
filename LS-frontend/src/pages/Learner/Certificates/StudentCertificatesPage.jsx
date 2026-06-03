@@ -91,7 +91,7 @@ function StudentCertificatesPage() {
         setSelectedId("");
         setError(
           requestError?.response?.data?.message ||
-            "Unable to load your certificate progress. Check that the course, enrollment, and progress services are running."
+            "We couldn't load your certificate history. Please refresh the page or contact our support team."
         );
       } finally {
         if (active) setLoadingCards(false);
@@ -128,7 +128,7 @@ function StudentCertificatesPage() {
     } catch (requestError) {
       setError(
         requestError?.response?.data?.message ||
-          "Unable to issue this certificate. Check that the certificate service is running and that you are signed in."
+          "We could not generate your certificate. Please try again or contact support if the issue persists."
       );
     } finally {
       setIssuingId("");
@@ -139,7 +139,7 @@ function StudentCertificatesPage() {
       <section className={styles.collectionPanel}>
         <div className={styles.panelHeader}>
           <div>
-            <span className={styles.eyebrow}>Credential wallet</span>
+            <span className={styles.eyebrow}>My Certificates</span>
             <h1>Certificates</h1>
           </div>
           <ShieldCheck size={24} />
@@ -152,7 +152,7 @@ function StudentCertificatesPage() {
           ) : error ? (
             <div className={styles.emptyState}>{error}</div>
           ) : cards.length === 0 ? (
-            <div className={styles.emptyState}>Enroll in courses and complete assessments to unlock certificates.</div>
+            <div className={styles.emptyState}>Unlock certificates by enrolling in courses and passing their final assessments.</div>
           ) : (
             cards.map((card) => (
               <button

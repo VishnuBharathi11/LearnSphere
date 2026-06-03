@@ -1,4 +1,4 @@
-﻿﻿import { useLocation, useNavigate } from "react-router-dom";
+﻿import { useLocation, useNavigate } from "react-router-dom";
 import "./AssesmentResult.scss";
 function AssesmentResult() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function AssesmentResult() {
   return (
     <div className="result-wrapper">
       <div className="result-card">
-        <h2>Assessment Result</h2>
+        <h2>Quiz Results</h2>
         <div className={`result-status ${passed ? "pass" : "fail"}`}>{passed ? "Passed" : "Failed"}</div>
         <div className="score-circle">
           <h1>{percentage}%</h1>
@@ -33,7 +33,7 @@ function AssesmentResult() {
           </div>
           <div>
             <h4>{total - correct}</h4>
-            <span>Wrong</span>
+            <span>Incorrect</span>
           </div>
           <div>
             <h4>{total}</h4>
@@ -43,11 +43,11 @@ function AssesmentResult() {
         <div className="result-actions">
           {!passed && (
             <button className="retry" onClick={handleRetry}>
-              Retry Test
+              Retake Quiz
             </button>
           )}
           <button className="primary" onClick={handleContinue}>
-            Go to My Courses
+            Back to My Courses
           </button>
           {passed && mode !== "lesson" && (
             <button className="certificate" onClick={handleCertificate}>

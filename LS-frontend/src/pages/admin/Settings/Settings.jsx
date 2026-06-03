@@ -39,12 +39,12 @@ function Settings() {
       const minPrice = Number(settings.minCoursePrice || 0);
       const maxPrice = Number(settings.maxCoursePrice || 0);
       if (minPrice < 0 || maxPrice < 0) {
-        setError("Min and max course price must be non-negative.");
+        setError("Minimum and maximum course prices must be 0 or greater.");
         setSuccess("");
         return;
       }
       if (minPrice > maxPrice) {
-        setError("Minimum course price cannot be greater than maximum course price.");
+        setError("The minimum course price cannot exceed the maximum course price.");
         setSuccess("");
         return;
       }
@@ -56,7 +56,7 @@ function Settings() {
       };
       const saved = await saveAdminSettings(payload);
       setSettings((prev) => ({ ...prev, ...(saved || {}) }));
-      setSuccess("Settings saved successfully");
+      setSuccess("Settings saved successfully.");
       setError("");
     } catch (apiError) {
       setError(getFriendlyErrorMessage(apiError, "Failed to save admin settings"));

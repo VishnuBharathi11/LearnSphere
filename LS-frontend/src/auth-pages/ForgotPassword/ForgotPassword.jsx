@@ -40,7 +40,7 @@ function ForgotPassword() {
       setStep("reset-password");
       startResendCooldown();
     } catch (apiError) {
-      setError(normalizeApiError(apiError, "Failed to send OTP"));
+      setError(normalizeApiError(apiError, "We couldn't send an OTP to that email. Please check the address and try again."));
     }
   };
   const handleResendOtp = async () => {
@@ -53,7 +53,7 @@ function ForgotPassword() {
       setSuccess(message || "OTP resent successfully");
       startResendCooldown();
     } catch (apiError) {
-      setError(normalizeApiError(apiError, "Failed to resend OTP"));
+      setError(normalizeApiError(apiError, "We couldn't send a new OTP. Please try again."));
     } finally {
       setResendLoading(false);
     }
@@ -63,7 +63,7 @@ function ForgotPassword() {
     setError("");
     setSuccess("");
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match. Please confirm your new password.");
       return;
     }
     try {
@@ -71,7 +71,7 @@ function ForgotPassword() {
       setSuccess(message || "Password reset successful");
       setStep("done");
     } catch (apiError) {
-      setError(normalizeApiError(apiError, "Failed to reset password"));
+      setError(normalizeApiError(apiError, "Invalid OTP or password reset expired. Please try again."));
     }
   };
   return (

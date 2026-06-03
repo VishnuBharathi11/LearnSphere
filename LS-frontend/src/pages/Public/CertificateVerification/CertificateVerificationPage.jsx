@@ -24,8 +24,8 @@ function CertificateVerificationPage() {
             <div className={styles.iconBadge}>
               {result.valid ? <BadgeCheck size={34} /> : <CircleAlert size={34} />}
             </div>
-            <span className={styles.eyebrow}>LearnSphere verification</span>
-            <h1>{result.valid ? "Certificate verified" : "Certificate not verified"}</h1>
+            <span className={styles.eyebrow}>Credential Verification</span>
+            <h1>{result.valid ? "Certificate Verified" : "Certificate Verification Failed"}</h1>
             <p>{result.message}</p>
             {result.valid && (
               <div className={styles.metaGrid}>
@@ -49,7 +49,7 @@ function CertificateVerificationPage() {
             )}
             <div className={styles.trustLine}>
               <ShieldCheck size={18} />
-              Public verification endpoint with logged validation checks
+              This certificate is officially registered in the LearnSphere database.
             </div>
           </>
         )}

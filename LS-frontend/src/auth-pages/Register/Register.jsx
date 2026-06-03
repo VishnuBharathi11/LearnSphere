@@ -44,11 +44,11 @@ function Register() {
       return;
     }
     if (!form.username || !form.email || !form.password) {
-      setError("Please fill all required fields");
+      setError("Please fill in all required fields.");
       return;
     }
     if (form.password !== form.confirmPassword) {
-      setError("Passwords do not match");
+      setError("Passwords do not match. Please verify your password entry.");
       return;
     }
     try {

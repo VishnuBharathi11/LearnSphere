@@ -206,8 +206,8 @@ function Withdrawal() {
         <div className="payout-spinner-glow">
           <RefreshCw size={36} className="spinner-icon animate-spin" />
         </div>
-        <h3>Syncing Revenue Ledger...</h3>
-        <p>Securing connection with payment gateway systems.</p>
+        <h3>Loading Revenue Ledger...</h3>
+        <p>Retrieving your payout history and earnings details.</p>
       </div>
     );
   }
@@ -218,10 +218,9 @@ function Withdrawal() {
           <span className="withdrawal-eyebrow">
             <Sparkles size={12} className="sparkle-icon" /> Instructor Earnings
           </span>
-          <h1>Withdraw course revenue with a clear payout trail</h1>
+          <h1>Instructor Payouts</h1>
           <p>
-            Review available earnings, reserve a payout, and track each request from submission
-            through finance processing in a fully secure dashboard.
+            Submit payout requests and track your earnings from enrollment fees.
           </p>
         </div>
         <button 
@@ -309,7 +308,7 @@ function Withdrawal() {
           <div className="panel-heading">
             <div>
               <h2>Request Payout</h2>
-              <p>Minimum threshold limit: <strong>{formatMoney(summary?.minimumWithdrawal)}</strong></p>
+              <p>Minimum payout amount: <strong>{formatMoney(summary?.minimumWithdrawal)}</strong></p>
             </div>
           </div>
           <div className="form-content">
@@ -342,7 +341,7 @@ function Withdrawal() {
                   )}
                   {requestedAmount >= minimumWithdrawal && requestedAmount <= availableBalance && (
                     <span className="gauge-warning green">
-                      <CheckCircle2 size={12} /> Value is within safe limits for processing
+                      <CheckCircle2 size={12} /> Amount is valid for withdrawal.
                     </span>
                   )}
                 </div>
@@ -467,7 +466,7 @@ function Withdrawal() {
               </div>
               <div className="receipt-trust-seal">
                 <Lock size={12} />
-                <span>Banking-grade 256-bit AES payout encryption</span>
+                <span>Transactions are processed securely.</span>
               </div>
             </div>
             <button className="submit-withdrawal" type="submit" disabled={!canSubmit}>
@@ -478,12 +477,12 @@ function Withdrawal() {
         <aside className="withdrawal-side-panel">
           <div className="side-card payout-rules-card">
             <div className="side-icon"><ShieldCheck size={20} /></div>
-            <h3>Payout Governance</h3>
+            <h3>Payout Guidelines</h3>
             <p>{summary?.instructorSharePercent || 80}% instructor share is calculated from successful paid enrollments.</p>
             <ul>
-              <li>Pending payouts are reserved from available balance.</li>
-              <li>Rejected requests release the balance automatically.</li>
-              <li>Finance can process approved payouts offline.</li>
+              <li>Pending payouts are deducted from your available balance.</li>
+              <li>If a request is rejected, the funds are returned to your balance.</li>
+              <li>Payouts are processed within 2-3 business days.</li>
             </ul>
           </div>
           <div className="side-card compact">

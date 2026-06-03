@@ -322,7 +322,7 @@ function Profile() {
             ) : isEditing ? (
               <>
                 <Save size={15} />
-                <span>Save Portfolio</span>
+                <span>Save Changes</span>
               </>
             ) : (
               <>
@@ -371,7 +371,7 @@ function Profile() {
           <div className="highlight-icon-box medal"><Medal size={20} /></div>
           <div>
             <span>Academic Rank</span>
-            <strong>{certificatesCount > 0 ? "Elite Graduate" : "Active Scholar"}</strong>
+            <strong>{certificatesCount > 0 ? "Graduate" : "Active Student"}</strong>
           </div>
         </div>
       </div>
@@ -402,21 +402,21 @@ function Profile() {
           {isEditing && !isAdminPreview && (
             <button className="save-btn" onClick={handleSave}>
               <Save size={16} />
-              Save Portfolio Changes
+              Save Changes
             </button>
           )}
         </div>
         <div className="achievements">
           <div className="section-header">
             <Trophy size={18} className="header-icon" />
-            <h3>Hall of Fame</h3>
+            <h3>Earned Certificates</h3>
           </div>
           <div className="achievements-list">
             {achievements.length === 0 ? (
               <div className="empty-achievements">
                 <Trophy size={36} />
-                <p>No certificates earned yet</p>
-                <small>Complete assessments to unlock awards.</small>
+                <p>No certificates earned yet.</p>
+                <small>Complete a course and pass its final assessment to earn your certificate.</small>
               </div>
             ) : (
               achievements.map((item, index) => (
@@ -435,7 +435,7 @@ function Profile() {
               <Sparkles size={14} />
               <span>Next Milestone Tips</span>
             </div>
-            <p>Keep study intervals balanced. Finish active course assessments to unlock verifiable digital credentials.</p>
+            <p>Complete your active course quizzes to receive verifiable digital certificates.</p>
           </div>
         </div>
       </div>

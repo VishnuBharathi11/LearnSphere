@@ -37,7 +37,7 @@ function CertificateDownloadPage() {
       ]);
       const learningState = buildCourseLearningStateFromApi(lessons, progress);
       if (!learningState.certificateUnlocked) {
-        throw new Error("Certificate is locked until all lessons are complete and the final assessment is passed.");
+        throw new Error("This certificate is locked. You must complete all course lessons and pass the final assessment first.");
       }
       const generatedCertificate = await generateCertificate({
         studentUserId: userId,
@@ -57,7 +57,7 @@ function CertificateDownloadPage() {
         setError(
           requestError?.response?.data?.message ||
             requestError?.message ||
-            "Unable to load or generate this certificate."
+            "We couldn't load or generate this certificate. Please try again later."
         );
       })
       .finally(() => {

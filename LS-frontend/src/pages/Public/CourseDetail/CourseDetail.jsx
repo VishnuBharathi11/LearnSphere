@@ -216,7 +216,7 @@ function CourseDetail() {
           } catch {
             setMessage({
               type: "error",
-              text: "Payment succeeded but enrollment verification failed.",
+              text: "We received your payment, but could not confirm your enrollment immediately. Please do not pay again—contact our support team at support@learnsphere.com and we will resolve it.",
             });
             pushLocalNotification({
               userId: String(resolvedUserId),
@@ -233,6 +233,10 @@ function CourseDetail() {
         },
         modal: {
           ondismiss: () => {
+            setMessage({
+              type: "error",
+              text: "The payment process was closed. If you still wish to enroll, please click Buy Now again.",
+            });
             pushLocalNotification({
               userId: String(resolvedUserId),
               role: "learner",
@@ -252,8 +256,7 @@ function CourseDetail() {
       const msg =
         apiError?.response?.data?.message ||
         apiError?.response?.data?.error ||
-        apiError?.message ||
-        "Unable to start Razorpay checkout.";
+        "We could not start the checkout process. Please check your internet connection and try again.";
       setMessage({ type: "error", text: msg });
       pushLocalNotification({
         userId: String(resolvedUserId),
@@ -286,7 +289,7 @@ function CourseDetail() {
       <NavBar />
       <div className="course-detail">
         {loading ? null : !course ? (
-          <p style={{ padding: "40px" }}>{error || "Course not found"}</p>
+          <p style={{ padding: "40px" }}>{error || "This course doesn't exist or has been removed. Browse our active courses to find other topics."}</p>
         ) : error ? (
           <p style={{ padding: "40px" }}>{error}</p>
         ) : (
@@ -324,10 +327,10 @@ function CourseDetail() {
                 <div className="card">
                   <h3>What You Will Learn</h3>
                   <ul className="learn-list">
-                    <li>Understand key concepts with practical examples</li>
-                    <li>Build confidence through guided lessons</li>
-                    <li>Apply knowledge to real-world scenarios</li>
-                    <li>Track your progress lesson by lesson</li>
+                    <li>Step-by-step video instructions designed for active learning</li>
+                    <li>Hands-on coding exercises to build your portfolio</li>
+                    <li>Quizzes at the end of each section to test your understanding</li>
+                    <li>Official shareable course certificate upon completion</li>
                   </ul>
                 </div>
                 <div className="card">

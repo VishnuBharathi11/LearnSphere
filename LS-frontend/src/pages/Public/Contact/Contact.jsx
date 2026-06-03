@@ -24,15 +24,15 @@ function Contact() {
   };
   const validate = () => {
     let err = {};
-    if (!form.name.trim()) err.name = "name is required";
-    if (!form.email.trim()) err.email = "email is required";
+    if (!form.name.trim()) err.name = "Name is required.";
+    if (!form.email.trim()) err.email = "Email is required.";
     else if (
       !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9._]+\.[a-zA-Z]{2,}$/.test(form.email)
     )
-      err.email = "invalid email";
-    if (!form.role) err.role = "select a role";
-    if (!form.subject) err.subject = "select a subject";
-    if (!form.message.trim()) err.message = "message cannot be empty";
+      err.email = "Please enter a valid email address.";
+    if (!form.role) err.role = "Please select your role.";
+    if (!form.subject) err.subject = "Please select a subject.";
+    if (!form.message.trim()) err.message = "Message content cannot be empty.";
     return err;
   };
   const handleSubmit = (e) => {
@@ -40,15 +40,12 @@ function Contact() {
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
-      alert("User logged in successfully");
+      alert("Your message has been sent successfully. We will get back to you soon.");
       setForm({ name: "", email: "", role: "", subject: "", message: "" });
     } else {
       setErrors(validationErrors);
     }
   };
-  const handleSendMessage=()=>{
-    alert("Message Sent Successfully");
-  }
   return (
     <>
       <div className="contact" id="contact">
@@ -195,7 +192,7 @@ function Contact() {
                   />
                   {errors.message && <p className="error">{errors.message}</p>}
                 </div>
-                <button type="submit" className="ct-form-btn" onClick={handleSendMessage}>
+                <button type="submit" className="ct-form-btn">
                   Send Message
                 </button>
               </form>
