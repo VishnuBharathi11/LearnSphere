@@ -11,19 +11,19 @@ services:
       - key: PORT
         value: 8084
       - key: AUTH_SERVICE_URL
-        value: http://auth-service:9098
+        value: http://auth-service.render.internal:9098
       - key: ENROLLMENT_SERVICE_URL
-        value: http://enrollment-service:9092
+        value: http://enrollment-service.render.internal:9092
       - key: DISCUSSION_SERVICE_URL
-        value: http://discussion-notification-service:9094
+        value: http://discussion-notification-service.render.internal:9094
       - key: ADMIN_SERVICE_URL
-        value: http://admin-analytics-service:9095
+        value: http://admin-analytics-service.render.internal:9095
       - key: PROGRESS_SERVICE_URL
-        value: http://learn-progress-service:9093
+        value: http://learn-progress-service.render.internal:9093
       - key: COURSE_SERVICE_URL
-        value: http://course-service:9091
+        value: http://course-service.render.internal:9091
       - key: CERTIFICATE_SERVICE_URL
-        value: http://certificate-service:9099
+        value: http://certificate-service.render.internal:9099
 
   # 2. Auth Service
   - type: web
@@ -41,7 +41,7 @@ services:
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: ADMIN_ANALYTICS_SERVICE_URL
-        value: http://admin-analytics-service:9095
+        value: http://admin-analytics-service.render.internal:9095
 
   # 3. Course Service
   - type: web
@@ -71,7 +71,7 @@ services:
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
       - key: COURSE_SERVICE_URL
-        value: http://course-service:9091
+        value: http://course-service.render.internal:9091
 
   # 5. Learn Progress Service
   - type: web
@@ -85,13 +85,13 @@ services:
       - key: SPRING_MONGODB_URI
         sync: false
       - key: COURSE_SERVICE_URL
-        value: http://course-service:9091
+        value: http://course-service.render.internal:9091
       - key: ENROLLMENT_SERVICE_URL
-        value: http://enrollment-service:9092
+        value: http://enrollment-service.render.internal:9092
       - key: DISCUSSION_SERVICE_URL
-        value: http://discussion-notification-service:9094
+        value: http://discussion-notification-service.render.internal:9094
       - key: ADMIN_ANALYTICS_SERVICE_URL
-        value: http://admin-analytics-service:9095
+        value: http://admin-analytics-service.render.internal:9095
 
   # 6. Discussion Notification Service
   - type: web
@@ -105,7 +105,7 @@ services:
       - key: SPRING_MONGODB_URI
         sync: false
       - key: COURSE_SERVICE_URL
-        value: http://course-service:9091
+        value: http://course-service.render.internal:9091
 
   # 7. Admin Analytics Service
   - type: web
@@ -141,4 +141,4 @@ services:
       - key: FRONTEND_PUBLIC_URL
         sync: false
       - key: CERTIFICATE_SERVICE_URL
-        value: http://certificate-service:9099
+        value: http://certificate-service.render.internal:9099
