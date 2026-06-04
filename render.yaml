@@ -10,20 +10,41 @@ services:
     envVars:
       - key: PORT
         value: 8084
-      - key: AUTH_SERVICE_URL
-        value: http://auth-service.render.internal:9098
-      - key: ENROLLMENT_SERVICE_URL
-        value: http://enrollment-service.render.internal:9092
-      - key: DISCUSSION_SERVICE_URL
-        value: http://discussion-notification-service.render.internal:9094
-      - key: ADMIN_SERVICE_URL
-        value: http://admin-analytics-service.render.internal:9095
-      - key: PROGRESS_SERVICE_URL
-        value: http://learn-progress-service.render.internal:9093
-      - key: COURSE_SERVICE_URL
-        value: http://course-service.render.internal:9091
-      - key: CERTIFICATE_SERVICE_URL
-        value: http://certificate-service.render.internal:9099
+      - key: AUTH_SERVICE_HOSTPORT
+        fromService:
+          name: auth-service
+          type: web
+          property: hostport
+      - key: ENROLLMENT_SERVICE_HOSTPORT
+        fromService:
+          name: enrollment-service
+          type: web
+          property: hostport
+      - key: DISCUSSION_SERVICE_HOSTPORT
+        fromService:
+          name: discussion-notification-service
+          type: web
+          property: hostport
+      - key: ADMIN_SERVICE_HOSTPORT
+        fromService:
+          name: admin-analytics-service
+          type: web
+          property: hostport
+      - key: PROGRESS_SERVICE_HOSTPORT
+        fromService:
+          name: learn-progress-service
+          type: web
+          property: hostport
+      - key: COURSE_SERVICE_HOSTPORT
+        fromService:
+          name: course-service
+          type: web
+          property: hostport
+      - key: CERTIFICATE_SERVICE_HOSTPORT
+        fromService:
+          name: certificate-service
+          type: web
+          property: hostport
 
   # 2. Auth Service
   - type: web
@@ -40,8 +61,11 @@ services:
         sync: false
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
-      - key: ADMIN_ANALYTICS_SERVICE_URL
-        value: http://admin-analytics-service.render.internal:9095
+      - key: ADMIN_ANALYTICS_SERVICE_HOSTPORT
+        fromService:
+          name: admin-analytics-service
+          type: web
+          property: hostport
 
   # 3. Course Service
   - type: web
@@ -70,8 +94,11 @@ services:
         sync: false
       - key: SPRING_DATASOURCE_PASSWORD
         sync: false
-      - key: COURSE_SERVICE_URL
-        value: http://course-service.render.internal:9091
+      - key: COURSE_SERVICE_HOSTPORT
+        fromService:
+          name: course-service
+          type: web
+          property: hostport
 
   # 5. Learn Progress Service
   - type: web
@@ -84,14 +111,26 @@ services:
         value: 9093
       - key: SPRING_MONGODB_URI
         sync: false
-      - key: COURSE_SERVICE_URL
-        value: http://course-service.render.internal:9091
-      - key: ENROLLMENT_SERVICE_URL
-        value: http://enrollment-service.render.internal:9092
-      - key: DISCUSSION_SERVICE_URL
-        value: http://discussion-notification-service.render.internal:9094
-      - key: ADMIN_ANALYTICS_SERVICE_URL
-        value: http://admin-analytics-service.render.internal:9095
+      - key: COURSE_SERVICE_HOSTPORT
+        fromService:
+          name: course-service
+          type: web
+          property: hostport
+      - key: ENROLLMENT_SERVICE_HOSTPORT
+        fromService:
+          name: enrollment-service
+          type: web
+          property: hostport
+      - key: DISCUSSION_SERVICE_HOSTPORT
+        fromService:
+          name: discussion-notification-service
+          type: web
+          property: hostport
+      - key: ADMIN_ANALYTICS_SERVICE_HOSTPORT
+        fromService:
+          name: admin-analytics-service
+          type: web
+          property: hostport
 
   # 6. Discussion Notification Service
   - type: web
@@ -104,8 +143,11 @@ services:
         value: 9094
       - key: SPRING_MONGODB_URI
         sync: false
-      - key: COURSE_SERVICE_URL
-        value: http://course-service.render.internal:9091
+      - key: COURSE_SERVICE_HOSTPORT
+        fromService:
+          name: course-service
+          type: web
+          property: hostport
 
   # 7. Admin Analytics Service
   - type: web
@@ -140,5 +182,8 @@ services:
         sync: false
       - key: FRONTEND_PUBLIC_URL
         sync: false
-      - key: CERTIFICATE_SERVICE_URL
-        value: http://certificate-service.render.internal:9099
+      - key: CERTIFICATE_SERVICE_HOSTPORT
+        fromService:
+          name: certificate-service
+          type: web
+          property: hostport
