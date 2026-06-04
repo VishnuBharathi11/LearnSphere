@@ -1,0 +1,175 @@
+[{
+  "_id": {
+    "$oid": "69a1d8c1c03c73343217214e"
+  },
+  "userId": "14",
+  "courseId": "699dbd1819978c76ed1e2622",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-02-27T17:47:45.491Z"
+  },
+  "updatedAt": {
+    "$date": "2026-02-27T17:47:45.491Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a2c12a5e020f48fed61e06"
+  },
+  "userId": "16",
+  "courseId": "699c9f66493ecb516c1e2624",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-02-28T10:19:22.502Z"
+  },
+  "updatedAt": {
+    "$date": "2026-02-28T10:19:22.502Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a46b685fc8b90320e80dc6"
+  },
+  "userId": "3",
+  "courseId": "699dbd1819978c76ed1e2667",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-03-01T16:38:00.159Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-01T16:38:00.159Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a46b9f5fc8b90320e80dc7"
+  },
+  "userId": "3",
+  "courseId": "699dab5616ca2c542afb9855",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-03-01T16:38:55.989Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-01T16:38:55.989Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a5359910975f7d13913fd2"
+  },
+  "userId": "11",
+  "courseId": "699c9f66493ecb516c1e2624",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-03-02T07:00:41.433Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-02T07:00:41.433Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a5359910975f7d13913fd3"
+  },
+  "userId": "11",
+  "courseId": "699dbd1819978c76ed1e266a",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-03-02T07:00:41.438Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-02T07:00:41.438Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a5359910975f7d13913fd4"
+  },
+  "userId": "11",
+  "courseId": "699dab5616ca2c542afb9855",
+  "completedLessonIds": [
+    "69a0b059c19b855fb1406ba1",
+    "69a0b0a2c19b855fb1406ba2",
+    "69a1c846a831b45a166232e2"
+  ],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-03-02T07:00:41.442Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-02T18:55:41.233Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress",
+  "finalAssessment": {
+    "score": 24,
+    "total": 25,
+    "passed": true,
+    "passingScore": 70,
+    "submittedAt": {
+      "$date": "2026-03-02T18:55:41.233Z"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "69a5359910975f7d13913fd5"
+  },
+  "userId": "11",
+  "courseId": "699dbd1819978c76ed1e2667",
+  "completedLessonIds": [],
+  "lessonAssessments": {},
+  "createdAt": {
+    "$date": "2026-03-02T07:00:41.446Z"
+  },
+  "updatedAt": {
+    "$date": "2026-03-02T07:00:41.446Z"
+  },
+  "_class": "com.learnsphere.progress.entity.CourseProgress"
+},
+{
+  "_id": {
+    "$oid": "69a8555abd67f5a222a8573c"
+  },
+  "courseId": "69a682e9908ec13c425e3f91",
+  "userId": "11",
+  "completedLessonIds": [
+    "69a84b34b4c77f4d7afc6c40",
+    "69a84b6cb4c77f4d7afc6c41",
+    "69a84b7eb4c77f4d7afc6c42",
+    "69a84b91b4c77f4d7afc6c43",
+    "69a84ba5b4c77f4d7afc6c44",
+    "69a84c72b4c77f4d7afc6c45",
+    "69a84ca1b4c77f4d7afc6c46"
+  ],
+  "createdAt": {
+    "$date": "2026-03-04T15:52:58.643Z"
+  },
+  "updatedAt": {
+    "$date": "2026-05-23T04:10:50.232Z"
+  },
+  "lessonAssessments": {
+    "69a84b34b4c77f4d7afc6c40": {
+      "score": 1,
+      "total": 2,
+      "passed": false,
+      "passingScore": 60,
+      "submittedAt": {
+        "$date": "2026-05-23T04:10:50.232Z"
+      },
+      "_class": "com.learnsphere.progress.entity.AssessmentResult"
+    }
+  }
+}]

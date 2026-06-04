@@ -1,0 +1,84 @@
+[{
+  "_id": {
+    "$oid": "6999f09f93bfb47dc67e398b"
+  },
+  "studentId": "13",
+  "courseId": "6998b0b725decc4ae71253c9",
+  "lessonId": "lesson-1",
+  "percentageWatched": 100,
+  "completed": true,
+  "lastViewedAt": {
+    "$date": "2026-02-21T17:51:59.780Z"
+  },
+  "_class": "com.learnsphere.progress.entity.LessonProgress"
+},
+{
+  "_id": {
+    "$oid": "6999f19293bfb47dc67e398d"
+  },
+  "studentId": "13",
+  "courseId": "6998b0b725decc4ae71253c9",
+  "lessonId": "lesson-2",
+  "percentageWatched": 100,
+  "completed": true,
+  "lastViewedAt": {
+    "$date": "2026-02-21T17:55:30.921Z"
+  },
+  "_class": "com.learnsphere.progress.entity.LessonProgress"
+},
+{
+  "_id": {
+    "$oid": "6999f19793bfb47dc67e398e"
+  },
+  "studentId": "13",
+  "courseId": "6998b0b725decc4ae71253c9",
+  "lessonId": "lesson-3",
+  "percentageWatched": 100,
+  "completed": true,
+  "lastViewedAt": {
+    "$date": "2026-02-21T17:55:35.614Z"
+  },
+  "_class": "com.learnsphere.progress.entity.LessonProgress"
+},
+{
+  "_id": {
+    "$oid": "6999f19d93bfb47dc67e398f"
+  },
+  "studentId": "13",
+  "courseId": "6998b0b725decc4ae71253c9",
+  "lessonId": "lesson-4",
+  "percentageWatched": 100,
+  "completed": true,
+  "lastViewedAt": {
+    "$date": "2026-02-21T17:55:41.397Z"
+  },
+  "_class": "com.learnsphere.progress.entity.LessonProgress"
+},
+{
+  "_id": {
+    "$oid": "6999f1a593bfb47dc67e3990"
+  },
+  "studentId": "13",
+  "courseId": "6998b0b725decc4ae71253c9",
+  "lessonId": "lesson-5",
+  "percentageWatched": 100,
+  "completed": true,
+  "lastViewedAt": {
+    "$date": "2026-02-21T17:55:49.904Z"
+  },
+  "_class": "com.learnsphere.progress.entity.LessonProgress"
+},
+{
+  "_id": {
+    "$oid": "6999f1ae93bfb47dc67e3991"
+  },
+  "studentId": "13",
+  "courseId": "6998b0b725decc4ae71253c9",
+  "lessonId": "lesson-6",
+  "percentageWatched": 100,
+  "completed": true,
+  "lastViewedAt": {
+    "$date": "2026-02-21T17:55:58.584Z"
+  },
+  "_class": "com.learnsphere.progress.entity.LessonProgress"
+}]

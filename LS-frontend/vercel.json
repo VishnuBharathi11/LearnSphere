@@ -1,0 +1,28 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://api-gateway-yg0w.onrender.com/api/:path*"
+    },
+    {
+      "source": "/notifications/:path*",
+      "destination": "https://api-gateway-yg0w.onrender.com/notifications/:path*"
+    },
+    {
+      "source": "/discussion/:path*",
+      "destination": "https://api-gateway-yg0w.onrender.com/discussion/:path*"
+    },
+    {
+      "source": "/payments/:path*",
+      "destination": "https://api-gateway-yg0w.onrender.com/payments/:path*"
+    },
+    {
+      "source": "/enrollments/:path*",
+      "destination": "https://api-gateway-yg0w.onrender.com/enrollments/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

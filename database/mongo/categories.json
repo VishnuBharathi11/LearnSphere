@@ -1,0 +1,139 @@
+[{
+  "_id": {
+    "$oid": "6998adeb25decc4ae71253c8"
+  },
+  "name": "Advanced Programming",
+  "description": "Updated description for advanced backend topics",
+  "_class": "com.learnsphere.course.entity.Category"
+},
+{
+  "_id": {
+    "$oid": "69992c4e2ef9d63849a0aea9"
+  },
+  "name": "Artificial Intelligence",
+  "description": "Courses related to AI development ",
+  "_class": "com.learnsphere.course.entity.Category"
+},
+{
+  "_id": {
+    "$oid": "699c7d549403ea33f5f40db9"
+  },
+  "name": "Backend Development",
+  "description": "Category created by vishnubharathi1011@gmail.com",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-23T16:16:20.482Z"
+  },
+  "_class": "com.learnsphere.course.entity.Category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9ac"
+  },
+  "name": "Web Development",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Web Development category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9ad"
+  },
+  "name": "UI/UX Design",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "UI/UX Design category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9ae"
+  },
+  "name": "Data Science",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Data Science category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9af"
+  },
+  "name": "Mobile Development",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Mobile Development category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9b0"
+  },
+  "name": "Cybersecurity",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Cybersecurity category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9b1"
+  },
+  "name": "Cloud Computing",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Cloud Computing category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9b2"
+  },
+  "name": "DevOps",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "DevOps category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9b3"
+  },
+  "name": "Blockchain",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Blockchain category"
+},
+{
+  "_id": {
+    "$oid": "699dbd18331db413dd85d9b4"
+  },
+  "name": "Software Engineering",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T15:00:40.695Z"
+  },
+  "description": "Software Engineering category"
+},
+{
+  "_id": {
+    "$oid": "699de01e14dbfc72ae8237fd"
+  },
+  "name": "SQL",
+  "description": "DMBS",
+  "active": true,
+  "createdAt": {
+    "$date": "2026-02-24T17:30:06.728Z"
+  },
+  "_class": "com.learnsphere.course.entity.Category"
+}]
