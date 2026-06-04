@@ -52,10 +52,31 @@ public class JwtAuthFilter implements GlobalFilter {
         return chain.filter(exchange);
     }
     private boolean isPublicPath(String path) {
-        return path.startsWith("/api/auth/login")
-                || path.startsWith("/api/auth/register")
-                || path.startsWith("/api/auth/forgot-password")
-                || path.startsWith("/api/auth/reset-password")
-                || path.startsWith("/api/auth/refresh");
+        if (path.startsWith("/api/auth/")) {
+            return path.startsWith("/api/auth/login")
+                    || path.startsWith("/api/auth/register")
+                    || path.startsWith("/api/auth/forgot-password")
+                    || path.startsWith("/api/auth/reset-password")
+                    || path.startsWith("/api/auth/refresh");
+        }
+        if (path.startsWith("/api/courses/")) {
+            String suffix = path.substring("/api/courses/".length());
+            return "published".equals(suffix) || !suffix.contains("/");
+        }
+        if (path.startsWith("/api/categories")) {
+            String suffix = path.substring("/api/categories".length());
+            return suffix.isEmpty() || "/".equals(suffix) || "/active".equals(suffix) || (suffix.startsWith("/") && !suffix.substring(1).contains("/"));
+        }
+        if (path.startsWith("/api/certificates/")) {
+            String suffix = path.substring("/api/certificates/".length());
+            if (suffix.startsWith("verify/") || suffix.startsWith("render/") || suffix.startsWith("qr/")) {
+                return true;
+            }
+            if (!suffix.contains("/")) {
+                return true;
+            }
+            return suffix.endsWith("/download") && suffix.indexOf("/") == suffix.lastIndexOf("/");
+        }
+        return false;
     }
 }
