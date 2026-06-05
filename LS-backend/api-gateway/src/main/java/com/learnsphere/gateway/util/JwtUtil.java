@@ -6,10 +6,10 @@ import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 @Component
 public class JwtUtil {
-    private final String SECRET =
-            "learnsphere-secret-key-learnsphere-secret-key";
+    @org.springframework.beans.factory.annotation.Value("${jwt.secret:learnsphere-super-secure-jwt-secret-key-2026-project-auth-service}")
+    private String secret;
     private SecretKey getKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
     public Claims validateToken(String token) {
         return Jwts.parserBuilder()
