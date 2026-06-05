@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api-gateway-yg0w.onrender.com/api/:path*"
+      "destination": "https://api-gateway-80go.onrender.com/api/:path*"
     },
     {
       "source": "/notifications/:path*",
