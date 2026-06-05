@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -15,8 +16,12 @@ public class JwtAuthFilter implements GlobalFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange,
                              org.springframework.cloud.gateway.filter.GatewayFilterChain chain) {
+        // Bypass preflight OPTIONS requests to allow CORS configuration to handle them
+        if (HttpMethod.OPTIONS.equals(exchange.getRequest().getMethod())) {
+            return chain.filter(exchange);
+        }
         String path = exchange.getRequest().getURI().getPath();
-        if (isPublicPath(path)) {
+        if (isPublicPath(path, exchange.getRequest().getMethod())) {
             return chain.filter(exchange);
         }
         String authHeader =
@@ -31,12 +36,12 @@ public class JwtAuthFilter implements GlobalFilter {
             Claims claims = jwtUtil.validateToken(token);
             String role = claims.get("role", String.class);
             String normalizedRole = role == null ? "" : role.trim().toUpperCase();
-            if (path.startsWith("/admin") && !"ADMIN".equals(normalizedRole)) {
+            if ((path.startsWith("/api/admin") || path.startsWith("/admin")) && !"ADMIN".equals(normalizedRole)) {
                 exchange.getResponse()
                         .setStatusCode(HttpStatus.FORBIDDEN);
                 return exchange.getResponse().setComplete();
             }
-            if (path.startsWith("/payments")
+            if ((path.startsWith("/api/payments") || path.startsWith("/payments"))
                     && !("STUDENT".equals(normalizedRole)
                          || "LEARNER".equals(normalizedRole)
                          || "ADMIN".equals(normalizedRole))) {
@@ -51,8 +56,11 @@ public class JwtAuthFilter implements GlobalFilter {
         }
         return chain.filter(exchange);
     }
-    private boolean isPublicPath(String path) {
+    private boolean isPublicPath(String path, HttpMethod method) {
         if (path.startsWith("/api/auth/")) {
+            if ("/api/auth/instructor-applications".equals(path) && HttpMethod.POST.equals(method)) {
+                return true;
+            }
             return path.startsWith("/api/auth/login")
                     || path.startsWith("/api/auth/register")
                     || path.startsWith("/api/auth/forgot-password")
