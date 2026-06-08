@@ -135,7 +135,11 @@ public class AuthServiceImpl implements AuthService {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
-            headers.set("api-key", brevoApiKey);
+            String apiKey = System.getenv("BREVO_API_KEY");
+            if (apiKey == null || apiKey.isBlank()) {
+                apiKey = brevoApiKey;
+            }
+            headers.set("api-key", apiKey);
 
             Map<String, Object> body = new HashMap<>();
             body.put("sender", Map.of("name", "LearnSphere", "email", senderEmail));
