@@ -49,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
     private boolean otpMailEnabled;
     @Value("${auth.otp.debug-return:false}")
     private boolean otpDebugReturn;
-    @Value("${spring.mail.password:}")
+    @Value("${brevo.api.key:}")
     private String brevoApiKey;
     private final Map<String, OtpEntry> otpStore = new ConcurrentHashMap<>();
     private record OtpEntry(String otp, Instant expiresAt) {}
