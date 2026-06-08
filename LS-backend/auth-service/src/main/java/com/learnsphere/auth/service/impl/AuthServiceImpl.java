@@ -19,11 +19,17 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.HttpEntity;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
+import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 @Service
 @RequiredArgsConstructor
@@ -43,6 +49,8 @@ public class AuthServiceImpl implements AuthService {
     private boolean otpMailEnabled;
     @Value("${auth.otp.debug-return:false}")
     private boolean otpDebugReturn;
+    @Value("${spring.mail.password:}")
+    private String brevoApiKey;
     private final Map<String, OtpEntry> otpStore = new ConcurrentHashMap<>();
     private record OtpEntry(String otp, Instant expiresAt) {}
     @Override
@@ -116,18 +124,30 @@ public class AuthServiceImpl implements AuthService {
             log.warn("OTP mail disabled. email={}, otp={}", email, otp);
             return successMessage;
         }
-        SimpleMailMessage message = new SimpleMailMessage();
-        if (fromMail != null && !fromMail.isBlank()) {
-            message.setFrom(fromMail);
+        String senderEmail = fromMail;
+        if (senderEmail != null && senderEmail.contains("<") && senderEmail.contains(">")) {
+            senderEmail = senderEmail.substring(senderEmail.indexOf("<") + 1, senderEmail.indexOf(">")).trim();
         }
-        message.setTo(email);
-        message.setSubject("LearnSphere Password Reset OTP");
-        message.setText("Your OTP is " + otp + ". It expires in " + otpExpiryMinutes + " minutes.");
+        if (senderEmail == null || senderEmail.isBlank()) {
+            senderEmail = "learnspheredemo@gmail.com";
+        }
         try {
-            mailSender.send(message);
-            log.info("OTP email sent to {}", email);
+            RestTemplate restTemplate = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.set("api-key", brevoApiKey);
+
+            Map<String, Object> body = new HashMap<>();
+            body.put("sender", Map.of("name", "LearnSphere", "email", senderEmail));
+            body.put("to", List.of(Map.of("email", email)));
+            body.put("subject", "LearnSphere Password Reset OTP");
+            body.put("textContent", "Your OTP is " + otp + ". It expires in " + otpExpiryMinutes + " minutes.");
+
+            HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+            restTemplate.postForEntity("https://api.brevo.com/v3/smtp/email", entity, String.class);
+            log.info("OTP email successfully sent via Brevo HTTP API to {}", email);
         } catch (Exception ex) {
-            log.error("Failed to send OTP mail to {}: {}", email, ex.getMessage(), ex);
+            log.error("Failed to send OTP mail via HTTP API to {}: {}", email, ex.getMessage());
             if (otpDebugReturn) {
                 return "Email send failed, use DEV OTP: " + otp;
             }

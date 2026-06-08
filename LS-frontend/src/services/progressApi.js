@@ -11,7 +11,6 @@ function getAuthHeaders() {
 export async function saveCourseQuiz(payload) {
   const response = await axios.post(`${PROGRESS_API_BASE_URL}/quizzes`, payload, {
     headers: getAuthHeaders(),
-    timeout: 12000,
   });
   return response.data;
 }
@@ -21,7 +20,6 @@ export async function getCourseQuizByCourseId(courseId) {
   try {
     const response = await axios.get(`${PROGRESS_API_BASE_URL}/quizzes/course/${encodeURIComponent(String(courseId))}/latest`, {
       headers: getAuthHeaders(),
-      timeout: 12000,
     });
     return response.data || null;
   } catch (error) {
@@ -34,7 +32,6 @@ export async function getCourseQuizzesByCourseId(courseId) {
   if (!courseId) return [];
   const response = await axios.get(`${PROGRESS_API_BASE_URL}/quizzes/course/${encodeURIComponent(String(courseId))}`, {
     headers: getAuthHeaders(),
-    timeout: 12000,
   });
   return Array.isArray(response.data) ? response.data : [];
 }
@@ -43,7 +40,7 @@ export async function getCourseProgress(userId, courseId) {
   if (!userId || !courseId) return null;
   const response = await axios.get(
     `${PROGRESS_API_BASE_URL}/courses/${encodeURIComponent(String(courseId))}/users/${encodeURIComponent(String(userId))}`,
-    { headers: getAuthHeaders(), timeout: 12000 }
+    { headers: getAuthHeaders() }
   );
   return response.data || null;
 }
@@ -61,7 +58,6 @@ export async function getProgressByCourses(userId, courseIds = []) {
         },
       },
       headers: getAuthHeaders(),
-      timeout: 12000,
     }
   );
   return Array.isArray(response.data) ? response.data : [];
@@ -71,7 +67,7 @@ export async function markLessonCompletedDb(userId, courseId, lessonId) {
   const response = await axios.post(
     `${PROGRESS_API_BASE_URL}/courses/${encodeURIComponent(String(courseId))}/lessons/complete`,
     { userId, lessonId },
-    { headers: getAuthHeaders(), timeout: 12000 }
+    { headers: getAuthHeaders() }
   );
   return response.data || null;
 }
@@ -80,7 +76,7 @@ export async function saveLessonAssessmentDb(userId, courseId, lessonId, payload
   const response = await axios.post(
     `${PROGRESS_API_BASE_URL}/courses/${encodeURIComponent(String(courseId))}/assessments/lesson`,
     { userId, lessonId, ...payload },
-    { headers: getAuthHeaders(), timeout: 12000 }
+    { headers: getAuthHeaders() }
   );
   return response.data || null;
 }
@@ -89,7 +85,7 @@ export async function saveFinalAssessmentDb(userId, courseId, payload) {
   const response = await axios.post(
     `${PROGRESS_API_BASE_URL}/courses/${encodeURIComponent(String(courseId))}/assessments/final`,
     { userId, ...payload },
-    { headers: getAuthHeaders(), timeout: 12000 }
+    { headers: getAuthHeaders() }
   );
   return response.data || null;
 }

@@ -8,9 +8,10 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
-	private static final String SECRET="learnsphere-super-secure-jwt-secret-key-2026-project-auth-service";
+	@org.springframework.beans.factory.annotation.Value("${jwt.secret}")
+	private String secret;
 	private Key getSignKey() {
-		return Keys.hmacShaKeyFor(SECRET.getBytes());
+		return Keys.hmacShaKeyFor(secret.getBytes());
 	}
 	public String extractUsername(String token) {
 		return extractAllClaims(token).getSubject();

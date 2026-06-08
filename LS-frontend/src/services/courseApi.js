@@ -96,7 +96,7 @@ function mapCourse(course, categoryMap, instructorMap = new Map()) {
 
 export async function getCategoryMap() {
   try {
-    const response = await axios.get(CATEGORIES_API_BASE_URL, { timeout: 12000 });
+    const response = await axios.get(CATEGORIES_API_BASE_URL);
     const categories = Array.isArray(response.data) ? response.data : [];
     return new Map(categories.map((c) => [c.id, c.name]));
   } catch {
@@ -122,7 +122,6 @@ export async function getPublishedCourses(page = 0, size = 100) {
   ]);
   const response = await axios.get(`${COURSES_API_BASE_URL}/published`, {
     params: { page, size },
-    timeout: 12000,
   });
   const coursePage = response.data || {};
   const items = Array.isArray(coursePage.content) ? coursePage.content : [];
@@ -136,7 +135,6 @@ export async function getCourseById(id) {
   ]);
   const response = await axios.get(`${COURSES_API_BASE_URL}/${id}`, {
     headers: getAuthHeaders(),
-    timeout: 12000,
   });
   return mapCourse(response.data, categoryMap, instructorMap);
 }
@@ -156,7 +154,6 @@ export async function getCoursesByIds(courseIds = []) {
       try {
         const response = await axios.get(`${COURSES_API_BASE_URL}/${encodeURIComponent(courseId)}`, {
           headers: getAuthHeaders(),
-          timeout: 12000,
         });
         return mapCourse(response.data, categoryMap, instructorMap);
       } catch {

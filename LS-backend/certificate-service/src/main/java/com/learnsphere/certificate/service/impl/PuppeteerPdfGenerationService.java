@@ -46,7 +46,7 @@ public class PuppeteerPdfGenerationService implements PdfGenerationService {
     public byte[] renderCertificate(Certificate certificate) {
         try {
             Path tempFile = Files.createTempFile("learnsphere-certificate-", ".pdf");
-            String url = properties.getRenderBaseUrl()
+            String url = properties.getPublicBaseUrl()
                     + "/certificate-render/" + certificate.getId()
                     + "?token=" + certificate.getVerificationToken();
             String resolvedScriptPath = resolveScriptPath(properties.getPdf().getScriptPath());

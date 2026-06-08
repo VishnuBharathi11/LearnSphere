@@ -49,7 +49,6 @@ export async function getEnrollmentsByUser(userId) {
   const promise = axios
     .get(`${ENROLLMENT_API_BASE_URL}/user/${normalizedUserId}`, {
       headers: getAuthHeaders(),
-      timeout: 12000,
     })
     .then((response) => (Array.isArray(response.data) ? response.data : []))
     .catch((error) => {
