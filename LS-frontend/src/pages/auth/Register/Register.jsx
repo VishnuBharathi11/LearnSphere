@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router-dom";
 import NavBar from "../../../components/NavBar/NavBar";
 import Footer from "../../../components/Footer/Footer";
 import { normalizeApiError, registerUser } from "../../../services/authApi";
-import { getAdminSettings } from "../../../services/adminApi";
 function Register() {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -16,23 +15,6 @@ function Register() {
   });
   const [error, setError] = useState("");
   const [registrationEnabled, setRegistrationEnabled] = useState(true);
-  React.useEffect(() => {
-    let active = true;
-    async function loadSettings() {
-      try {
-        const settings = await getAdminSettings();
-        if (!active) return;
-        setRegistrationEnabled(Boolean(settings?.userRegistration ?? true));
-      } catch {
-        if (!active) return;
-        setRegistrationEnabled(true);
-      }
-    }
-    loadSettings();
-    return () => {
-      active = false;
-    };
-  }, []);
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

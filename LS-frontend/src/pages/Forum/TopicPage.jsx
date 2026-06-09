@@ -4,7 +4,6 @@ import { ArrowLeft, Lock, LockOpen, Trash2 } from "lucide-react";
 import ReplyItem from "../../components/forum/ReplyItem";
 import ReplyBox from "../../components/forum/ReplyBox";
 import useForum from "../../hooks/useForum";
-import { getAdminSettings } from "../../services/adminApi";
 import { normalizeForumRole } from "../../utils/forumRole";
 import "./forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
@@ -38,23 +37,7 @@ const TopicPage = () => {
   const plainTitle = String(threadDetail?.title || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   const plainContent = String(threadDetail?.content || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
   const showTitle = plainTitle && plainTitle.toLowerCase() !== plainContent.toLowerCase();
-  useEffect(() => {
-    let active = true;
-    async function loadFeatureSettings() {
-      try {
-        const settings = await getAdminSettings();
-        if (!active) return;
-        setDiscussionEnabled(Boolean(settings?.discussions ?? true));
-      } catch {
-        if (!active) return;
-        setDiscussionEnabled(true);
-      }
-    }
-    loadFeatureSettings();
-    return () => {
-      active = false;
-    };
-  }, []);
+
   useEffect(() => {
     fetchThreadById(topicId, 0, false);
   }, [fetchThreadById, topicId]);

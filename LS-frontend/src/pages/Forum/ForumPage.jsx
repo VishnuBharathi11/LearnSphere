@@ -5,7 +5,6 @@ import TopicCard from "../../components/forum/TopicCard";
 import CreateTopicModal from "../../components/forum/CreateTopicModal";
 import useForum from "../../hooks/useForum";
 import { getInstructorCourses, getPublishedCourses } from "../../services/courseApi";
-import { getAdminSettings } from "../../services/adminApi";
 import { normalizeForumRole } from "../../utils/forumRole";
 import "./forum.scss";
 import { getCurrentUser } from "../../services/userProfileStore.js";
@@ -40,23 +39,7 @@ const ForumPage = () => {
     threadMeta,
     countReplies,
   } = useForum(activeCourseId, currentUser);
-  useEffect(() => {
-    let active = true;
-    async function loadFeatureSettings() {
-      try {
-        const settings = await getAdminSettings();
-        if (!active) return;
-        setDiscussionEnabled(Boolean(settings?.discussions ?? true));
-      } catch {
-        if (!active) return;
-        setDiscussionEnabled(true);
-      }
-    }
-    loadFeatureSettings();
-    return () => {
-      active = false;
-    };
-  }, []);
+
   useEffect(() => {
     let active = true;
     async function loadCourses() {

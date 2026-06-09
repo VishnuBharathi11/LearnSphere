@@ -21,7 +21,6 @@ import useForum from "../../../hooks/useForum";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
 import { getCourseLessons, getCoursesByIds } from "../../../services/courseApi";
 import { getCourseProgress, getCourseQuizzesByCourseId, markLessonCompletedDb } from "../../../services/progressApi";
-import { getAdminSettings } from "../../../services/adminApi";
 import "./LearnCourse.scss";
 import { getCurrentUser } from "../../../services/userProfileStore.js";
 function LearnCourse() {
@@ -70,23 +69,7 @@ function LearnCourse() {
       navigate("/login", { replace: true, state: { from: `/student-layout/learn/${courseId}` } });
     }
   }, [courseId, navigate, userId]);
-  useEffect(() => {
-    let active = true;
-    async function loadFeatureSettings() {
-      try {
-        const settings = await getAdminSettings();
-        if (!active) return;
-        setDiscussionEnabled(Boolean(settings?.discussions ?? true));
-      } catch {
-        if (!active) return;
-        setDiscussionEnabled(true);
-      }
-    }
-    loadFeatureSettings();
-    return () => {
-      active = false;
-    };
-  }, []);
+
   useEffect(() => {
     let active = true;
     async function loadCourseDetails() {
