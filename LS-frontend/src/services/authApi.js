@@ -29,7 +29,9 @@ export async function loginUser({ email, password }) {
 
 function authHeader() {
   const token = appStore.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token && token !== "null" && token !== "undefined"
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 }
 
 export async function getMyProfile() {

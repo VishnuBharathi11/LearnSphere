@@ -17,6 +17,7 @@ public class Course {
 	private Double price;
 	private String categoryId;
 	private String instructorId;
+	private String instructorName;
 	private CourseStatus status;
 	private Instant createdAt;  
 	private Instant updatedAt;

@@ -33,6 +33,7 @@ public class CourseController {
 				.price(request.getPrice())
                 .categoryId(request.getCategoryId())
                 .instructorId(request.getInstructorId())
+                .instructorName(request.getInstructorName())
                 .build()
 				);
 	}
@@ -48,6 +49,7 @@ public class CourseController {
 						.price(request.getPrice())
 						.categoryId(request.getCategoryId())
 						.instructorId(request.getInstructorId())
+						.instructorName(request.getInstructorName())
 						.build()
 		);
 	}

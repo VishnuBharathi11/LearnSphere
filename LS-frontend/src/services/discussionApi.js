@@ -9,7 +9,7 @@ function getAuthHeaders() {
   const currentUser = getCurrentUser();
 
   const headers = {};
-  if (token) headers.Authorization = `Bearer ${token}`;
+  if (token && token !== "null" && token !== "undefined") headers.Authorization = `Bearer ${token}`;
   if (currentUser?.id || currentUser?.userId) headers["X-User-Id"] = String(currentUser.id || currentUser.userId);
   return headers;
 }

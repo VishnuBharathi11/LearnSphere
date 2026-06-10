@@ -118,9 +118,18 @@ public class CertificateServiceImpl implements CertificateService {
                 .build();
     }
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public byte[] downloadPdf(String certificateId) {
-        return storageService.read(findCertificate(certificateId).getPdfStorageKey());
+        Certificate certificate = findCertificate(certificateId);
+        try {
+            return storageService.read(certificate.getPdfStorageKey());
+        } catch (ResourceNotFoundException ex) {
+            byte[] pdf = pdfGenerationService.renderCertificate(certificate);
+            String storageKey = storageService.savePdf(certificate.getId(), pdf);
+            certificate.setPdfStorageKey(storageKey);
+            certificateRepository.save(certificate);
+            return pdf;
+        }
     }
     @Override
     public String generateQr(String token) {

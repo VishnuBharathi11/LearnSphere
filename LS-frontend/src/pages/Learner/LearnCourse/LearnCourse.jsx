@@ -115,11 +115,6 @@ function LearnCourse() {
         const list = await getCourseLessons(courseId);
         if (!active) return;
         setCourseLessons(Array.isArray(list) ? list : []);
-        if (Array.isArray(list) && list.length > 0) {
-          const completedIds = courseProgress?.completedLessonIds || [];
-          const firstUncompletedIndex = list.findIndex(lesson => !completedIds.includes(String(lesson.id)));
-          setOpenLessonIndex(firstUncompletedIndex >= 0 ? firstUncompletedIndex : 0);
-        }
       } catch {
         if (!active) return;
         setCourseLessons([]);
@@ -131,7 +126,20 @@ function LearnCourse() {
     return () => {
       active = false;
     };
-  }, [courseId, courseProgress]);
+  }, [courseId]);
+
+  useEffect(() => {
+    if (lessonsLoading || progressLoading) return;
+    if (openLessonIndex !== -1) return;
+
+    if (courseLessons.length > 0) {
+      const completedIds = courseProgress?.completedLessonIds || [];
+      const firstUncompletedIndex = courseLessons.findIndex(
+        (lesson) => !completedIds.includes(String(lesson.id))
+      );
+      setOpenLessonIndex(firstUncompletedIndex >= 0 ? firstUncompletedIndex : 0);
+    }
+  }, [lessonsLoading, progressLoading, courseLessons, courseProgress, openLessonIndex]);
   useEffect(() => {
     let active = true;
     async function loadProgress() {
@@ -172,7 +180,15 @@ function LearnCourse() {
     ) || null;
   const handleCompleteLesson = (lessonId, index) => {
     markLessonCompletedDb(userId, courseId, lessonId)
-      .then((progress) => setCourseProgress(progress || null))
+      .then((progress) => {
+        setCourseProgress(progress || null);
+        const nextIndex = index + 1;
+        if (nextIndex < lessons.length) {
+          setOpenLessonIndex(nextIndex);
+        } else if (finalQuiz) {
+          setOpenLessonIndex(-2);
+        }
+      })
       .catch(() => null);
   };
   const getAuthorName = (topic) =>

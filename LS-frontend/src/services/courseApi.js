@@ -1,6 +1,7 @@
 import axios from "axios";
 import { appStore } from "./appStore";
 import { getAdminUsers } from "./adminApi";
+import { getCurrentUser } from "./userProfileStore";
 
 const COURSES_API_BASE_URL =
   import.meta.env.VITE_COURSE_API_BASE_URL || "/api/courses";
@@ -18,7 +19,9 @@ let instructorMapCache = {
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token && token !== "null" && token !== "undefined"
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 }
 
 function deriveCategory(course, categoryMap) {
@@ -51,6 +54,12 @@ function deriveEnrollments(course) {
 async function getInstructorMap() {
   const now = Date.now();
   if (now - instructorMapCache.at < INSTRUCTOR_CACHE_TTL_MS) {
+    return instructorMapCache.map;
+  }
+
+  const user = getCurrentUser();
+  const isAdmin = user && String(user.role || "").toLowerCase() === "admin";
+  if (!isAdmin) {
     return instructorMapCache.map;
   }
 
@@ -199,6 +208,7 @@ export async function createCourse({
   categoryId,
   instructorId,
 }) {
+  const user = getCurrentUser();
   const payload = {
     title,
     description,
@@ -206,6 +216,7 @@ export async function createCourse({
     price: Number(price),
     categoryId,
     instructorId: String(instructorId),
+    instructorName: user ? String(user.name || "").trim() : "",
   };
 
   const response = await axios.post(COURSES_API_BASE_URL, payload, {
@@ -218,6 +229,7 @@ export async function updateCourse(
   id,
   { title, description, thumbnail, price, categoryId, instructorId }
 ) {
+  const user = getCurrentUser();
   const payload = {
     title,
     description,
@@ -225,6 +237,7 @@ export async function updateCourse(
     price: Number(price),
     categoryId,
     instructorId: String(instructorId),
+    instructorName: user ? String(user.name || "").trim() : "",
   };
 
   const response = await axios.put(`${COURSES_API_BASE_URL}/${id}`, payload, {

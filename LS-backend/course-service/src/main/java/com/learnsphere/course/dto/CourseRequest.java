@@ -18,4 +18,5 @@ public class CourseRequest {
 	private String categoryId;
 	@NotBlank(message = "Instructor ID is required")
 	private String instructorId;	
+	private String instructorName;
 }

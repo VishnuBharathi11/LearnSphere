@@ -10,7 +10,9 @@ const enrollmentByUserCache = new Map();
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token && token !== "null" && token !== "undefined"
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 }
 
 export async function checkEnrollmentStatus(userId, courseId) {

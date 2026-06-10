@@ -6,7 +6,9 @@ const CERTIFICATE_API_BASE_URL =
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token && token !== "null" && token !== "undefined"
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 }
 
 export async function generateCertificate(payload) {

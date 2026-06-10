@@ -5,7 +5,9 @@ const PROGRESS_API_BASE_URL = import.meta.env.VITE_PROGRESS_API_BASE_URL || "/ap
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token && token !== "null" && token !== "undefined"
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 }
 
 export async function saveCourseQuiz(payload) {

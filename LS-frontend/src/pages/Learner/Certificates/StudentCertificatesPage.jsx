@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Award, Download, LoaderCircle, Lock, ShieldCheck } from "lucide-react";
+import axios from "axios";
 import {
   generateCertificate,
   getCertificateDownloadUrl,
@@ -19,6 +20,7 @@ function StudentCertificatesPage() {
   const [selectedId, setSelectedId] = useState("");
   const [loadingCards, setLoadingCards] = useState(true);
   const [issuingId, setIssuingId] = useState("");
+  const [downloadingId, setDownloadingId] = useState("");
   const [error, setError] = useState("");
   useEffect(() => {
     const userId = currentUserId;
@@ -134,6 +136,26 @@ function StudentCertificatesPage() {
       setIssuingId("");
     }
   }
+  async function handleDownloadPdf(certificateId, courseTitle) {
+    if (!certificateId || downloadingId) return;
+    setDownloadingId(certificateId);
+    setError("");
+    try {
+      const response = await axios.get(getCertificateDownloadUrl(certificateId), {
+        responseType: "blob",
+      });
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${courseTitle.replace(/[^a-zA-Z0-9-_ ]/g, "")}_Certificate.pdf`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    } catch (err) {
+      setError("Failed to download PDF. Please try again later.");
+    } finally {
+      setDownloadingId("");
+    }
+  }
   return (
     <main className={styles.certificateWorkspace}>
       <section className={styles.collectionPanel}>
@@ -176,10 +198,19 @@ function StudentCertificatesPage() {
           )}
         </div>
         {selected?.unlocked && selected.certificate && (
-          <a className={styles.downloadButton} href={getCertificateDownloadUrl(selected.certificate.id)}>
-            <Download size={17} />
+          <button
+            className={styles.downloadButton}
+            onClick={() => handleDownloadPdf(selected.certificate.id, selected.course.courseName)}
+            disabled={Boolean(downloadingId)}
+            type="button"
+          >
+            {downloadingId === selected.certificate.id ? (
+              <LoaderCircle size={17} style={{ animation: "spin 1s linear infinite" }} />
+            ) : (
+              <Download size={17} />
+            )}
             Download PDF
-          </a>
+          </button>
         )}
         {selected?.unlocked && !selected.certificate && (
           <button

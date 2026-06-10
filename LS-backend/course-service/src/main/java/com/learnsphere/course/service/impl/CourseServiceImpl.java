@@ -53,6 +53,9 @@ public class CourseServiceImpl implements CourseService{
 		course.setThumbnail(request.getThumbnail());
 		course.setPrice(request.getPrice());
 		course.setCategoryId(request.getCategoryId());
+		if (request.getInstructorName() != null && !request.getInstructorName().isBlank()) {
+			course.setInstructorName(request.getInstructorName());
+		}
 		course.setUpdatedAt(Instant.now());
 		return courseRepository.save(course);
 	}

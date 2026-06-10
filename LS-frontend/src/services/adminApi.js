@@ -5,7 +5,9 @@ const ADMIN_API_BASE_URL = import.meta.env.VITE_ADMIN_API_BASE_URL || "/api/admi
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token && token !== "null" && token !== "undefined"
+    ? { Authorization: `Bearer ${token}` }
+    : {};
 }
 
 export async function getAdminDashboard() {
