@@ -42,7 +42,8 @@ public class SecurityConfig {
                         		"/api/auth/login",
                         		"/api/auth/refresh",
                                 "/api/auth/forgot-password",
-                                "/api/auth/reset-password").permitAll()
+                                "/api/auth/reset-password",
+                                "/error").permitAll()
                         .requestMatchers(org.springframework.http.HttpMethod.POST, "/api/auth/instructor-applications")
                         .permitAll()
                         .anyRequest().authenticated()

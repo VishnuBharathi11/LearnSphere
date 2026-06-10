@@ -25,7 +25,8 @@ public class SecurityConfig {
 						"/api/courses/*",
 						"/api/categories",
 						"/api/categories/*",
-						"/api/categories/active"
+						"/api/categories/active",
+						"/error"
 						).permitAll()
 				.anyRequest().authenticated())
 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
