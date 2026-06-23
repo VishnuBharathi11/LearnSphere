@@ -1,0 +1,41 @@
+name: LearnSphere Keep-Alive
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'  # Run every 5 minutes
+  workflow_dispatch:      # Allow manual triggering from GitHub UI
+
+env:
+  RENDER_SUFFIX: "80go"   # Change this suffix if your Render deployment URLs change
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping LearnSphere Services
+        run: |
+          services=(
+            "https://api-gateway-${{ env.RENDER_SUFFIX }}.onrender.com/actuator/health"
+            "https://auth-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+            "https://course-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+            "https://enrollment-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+            "https://learn-progress-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+            "https://discussion-notification-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+            "https://admin-analytics-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+            "https://certificate-service-${{ env.RENDER_SUFFIX }}.onrender.com/health"
+          )
+          
+          echo "============================================="
+          echo "Starting Keep-Alive Ping at $(date)"
+          echo "============================================="
+          
+          for url in "${services[@]}"; do
+            echo -n "Pinging: $url -> "
+            # Perform a GET request. Keep timeouts small so that slow responses do not hang the workflow.
+            status=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 15 "$url")
+            echo "HTTP Status Code: $status"
+          done
+          
+          echo "============================================="
+          echo "Keep-Alive Ping completed successfully."
+          echo "============================================="
