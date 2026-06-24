@@ -25,24 +25,20 @@ jobs:
             "https://api-gateway-80go.onrender.com/api/certificates/actuator/health"
           )
 
-          echo "Initiating parallel keep-alive pings against ${#SERVICES[@]} services..."
+          echo "Initiating sequential keep-alive pings against ${#SERVICES[@]} services..."
           
           for service in "${SERVICES[@]}"; do
-            (
-              URL="$service"
-              # Perform a lightweight GET request.
-              # Increased timeouts to 60s connect and 90s max-time to allow Render Free Tier cold starts (50s+)
-              # without aborting early and triggering Render's hibernate-rate-limited protection.
-              RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 -L "$URL")
-              
-              if [ "$RESPONSE_CODE" = "200" ]; then
-                echo "✅ SUCCESS: [200] $service is warm and healthy."
-              else
-                echo "⚠️ WARNING: [$RESPONSE_CODE] $service health check failed or timed out."
-              fi
-            ) &
+            URL="$service"
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 -L "$URL")
+            
+            if [ "$RESPONSE_CODE" = "200" ]; then
+              echo "✅ SUCCESS: [200] $service is warm and healthy."
+            else
+              echo "⚠️ WARNING: [$RESPONSE_CODE] $service health check failed or timed out."
+            fi
+            
+            # Sleep for 5 seconds between pings to prevent triggering Render's hibernate-rate-limited proxy
+            sleep 5
           done
           
-          # Wait for all background ping processes to complete
-          wait
           echo "All keep-alive pings completed."
