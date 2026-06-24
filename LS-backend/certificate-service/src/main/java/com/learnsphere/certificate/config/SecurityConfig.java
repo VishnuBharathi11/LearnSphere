@@ -24,6 +24,7 @@ public class SecurityConfig {
                                 "/api/certificates/qr/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
+                                "/actuator/**",
                                 "/error"
                         ).permitAll()
                         .anyRequest().authenticated())

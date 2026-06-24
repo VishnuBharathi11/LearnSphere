@@ -26,6 +26,7 @@ public class SecurityConfig {
 						"/api/categories",
 						"/api/categories/*",
 						"/api/categories/active",
+						"/actuator/**",
 						"/error"
 						).permitAll()
 				.anyRequest().authenticated())
