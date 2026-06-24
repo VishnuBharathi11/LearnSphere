@@ -57,6 +57,9 @@ public class JwtAuthFilter implements GlobalFilter {
         return chain.filter(exchange);
     }
     private boolean isPublicPath(String path, HttpMethod method) {
+        if (path.contains("/actuator/")) {
+            return true;
+        }
         if (path.startsWith("/api/auth/")) {
             if ("/api/auth/instructor-applications".equals(path) && HttpMethod.POST.equals(method)) {
                 return true;
