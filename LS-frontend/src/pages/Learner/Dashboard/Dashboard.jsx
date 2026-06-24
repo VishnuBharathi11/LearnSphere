@@ -9,7 +9,6 @@ import {
   GraduationCap,
   MoreHorizontal,
   PlayCircle,
-  Sparkles,
   Target,
   Trophy,
   Users,
@@ -413,7 +412,6 @@ function Dashboard() {
           <img src={LearnerImg} alt="" aria-hidden="true" />
           <span className="dashboard-hero__note dashboard-hero__note--one">JS</span>
           <span className="dashboard-hero__note dashboard-hero__note--two">UI</span>
-          <Sparkles className="dashboard-hero__sparkle" size={24} aria-hidden="true" />
         </section>
         <section className="dashboard-metrics">
           <div className="dashboard-panel metric-card">

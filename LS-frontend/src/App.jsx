@@ -49,6 +49,7 @@ import Categories from "./pages/admin/Categories/Categories.jsx";
 import RoleManagement from "./pages/admin/RoleManagement/RoleManagement.jsx";
 import Settings from "./pages/admin/Settings/Settings.jsx";
 import InstructorApplications from "./pages/admin/InstructorApplications/InstructorApplications.jsx";
+import ContactSubmissions from "./pages/admin/ContactSubmissions/ContactSubmissions.jsx";
 import { LoadingProvider } from "./components/LoadingSystem/LoadingProvider.jsx";
 function App() {
   const routes = useMemo(
@@ -107,6 +108,7 @@ function App() {
           <Route path="categories" element={<Categories />} />
           <Route path="roles" element={<RoleManagement />} />
           <Route path="instructor-applications" element={<InstructorApplications />} />
+          <Route path="contact-submissions" element={<ContactSubmissions />} />
           <Route path="settings" element={<Settings />} />
           <Route path="certificate-templates" element={<AdminTemplateManagerPage />} />
           <Route path="forum" element={<ForumPage />} />

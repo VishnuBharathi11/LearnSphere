@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Save, Sparkles } from "lucide-react";
+import { Save, Award } from "lucide-react";
 import { getCertificateTemplates, saveCertificateTemplate } from "../../../services/certificateApi";
 import { CertificateTemplateRenderer } from "../../../components/CertificatePreview/CertificateTemplateRegistry";
 import styles from "./AdminTemplateManager.module.scss";
@@ -81,7 +81,7 @@ function AdminTemplateManagerPage() {
             <span>Certificate system</span>
             <h1>Template Manager</h1>
           </div>
-          <Sparkles size={24} />
+          <Award size={24} />
         </div>
         <form onSubmit={submit} className={styles.templateForm}>
           <label>

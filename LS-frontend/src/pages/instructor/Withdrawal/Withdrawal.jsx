@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import {
   AlertCircle,
   ArrowDownToLine,
@@ -15,7 +15,6 @@ import {
   RefreshCw,
   Search,
   ShieldCheck,
-  Sparkles,
   User,
   WalletCards,
 } from "lucide-react";
@@ -91,6 +90,10 @@ function Withdrawal() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [refreshing, setRefreshing] = useState(false);
+
+  const coursesRef = useRef([]);
+  const coursesLoadedRef = useRef(false);
+
   const currentUser = useMemo(() => {
     try {
       return getCurrentUser();
@@ -100,17 +103,22 @@ function Withdrawal() {
   }, []);
   const instructorId = currentUser?.id || currentUser?.userId || "";
   const courseIds = useMemo(() => courses.map((course) => String(course.id)).filter(Boolean), [courses]);
+
   const loadWithdrawalData = useCallback(async () => {
-    if (!instructorId) return;
+    if (!instructorId) {
+      setLoading(false);
+      return;
+    }
     setError("");
     try {
-      let loadedCourses = courses;
-      if (loadedCourses.length === 0) {
-        loadedCourses = await getInstructorCourses(String(instructorId), 0, 300);
-        loadedCourses = Array.isArray(loadedCourses) ? loadedCourses : [];
-        setCourses(loadedCourses);
+      if (!coursesLoadedRef.current) {
+        const loadedCourses = await getInstructorCourses(String(instructorId), 0, 300);
+        const parsed = Array.isArray(loadedCourses) ? loadedCourses : [];
+        coursesRef.current = parsed;
+        setCourses(parsed);
+        coursesLoadedRef.current = true;
       }
-      const ids = loadedCourses.map((course) => String(course.id)).filter(Boolean);
+      const ids = coursesRef.current.map((course) => String(course.id)).filter(Boolean);
       const [summaryResult, withdrawalResult] = await Promise.all([
         getInstructorWithdrawalSummary(String(instructorId), ids),
         getInstructorWithdrawals(String(instructorId), 20),
@@ -122,12 +130,14 @@ function Withdrawal() {
     } finally {
       setLoading(false);
     }
-  }, [courses, instructorId]);
+  }, [instructorId]);
+
   useEffect(() => {
     loadWithdrawalData();
     const timer = setInterval(loadWithdrawalData, 15000);
     return () => clearInterval(timer);
   }, [loadWithdrawalData]);
+
   const handleManualRefresh = async () => {
     if (!instructorId) return;
     setRefreshing(true);
@@ -135,7 +145,9 @@ function Withdrawal() {
     try {
       const loadedCourses = await getInstructorCourses(String(instructorId), 0, 300);
       const parsedCourses = Array.isArray(loadedCourses) ? loadedCourses : [];
+      coursesRef.current = parsedCourses;
       setCourses(parsedCourses);
+      coursesLoadedRef.current = true;
       const ids = parsedCourses.map((course) => String(course.id)).filter(Boolean);
       const [summaryResult, withdrawalResult] = await Promise.all([
         getInstructorWithdrawalSummary(String(instructorId), ids),
@@ -216,7 +228,7 @@ function Withdrawal() {
       <header className="withdrawal-hero">
         <div className="hero-context">
           <span className="withdrawal-eyebrow">
-            <Sparkles size={12} className="sparkle-icon" /> Instructor Earnings
+            <WalletCards size={12} className="sparkle-icon" /> Instructor Earnings
           </span>
           <h1>Instructor Payouts</h1>
           <p>

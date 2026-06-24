@@ -480,6 +480,33 @@ $font-inter: "Inter", sans-serif;
       cursor: pointer;
       width: fit-content;
     }
+    .error-text {
+      color: #b91c1c;
+      font-size: 12px;
+      font-family: $font-inter;
+      margin-top: -6px;
+      text-align: left;
+    }
+    .success-alert {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: $font-inter;
+      text-align: left;
+    }
+    .error-alert {
+      background: #fef2f2;
+      border: 1px solid #fee2e2;
+      color: #991b1b;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: $font-inter;
+      text-align: left;
+    }
   }
 }
 @media (max-width: 1024px) {

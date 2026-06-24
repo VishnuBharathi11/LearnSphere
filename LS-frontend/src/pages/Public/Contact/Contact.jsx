@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./Contact.scss";
+import { saveContactSubmission } from "../../../services/contactService";
 import headset from "../../../assets/Contact/headset.png";
 import school from "../../../assets/Contact/school.png";
 import teacher from "../../../assets/Contact/teacher.png";
@@ -40,8 +41,13 @@ function Contact() {
     const validationErrors = validate();
     setErrors(validationErrors);
     if (Object.keys(validationErrors).length === 0) {
-      alert("Your message has been sent successfully. We will get back to you soon.");
-      setForm({ name: "", email: "", role: "", subject: "", message: "" });
+      try {
+        saveContactSubmission(form);
+        alert("Your message has been sent successfully. We will get back to you soon.");
+        setForm({ name: "", email: "", role: "", subject: "", message: "" });
+      } catch (err) {
+        alert("Failed to submit contact query. Please try again.");
+      }
     } else {
       setErrors(validationErrors);
     }

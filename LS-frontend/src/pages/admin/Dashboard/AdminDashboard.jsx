@@ -130,16 +130,6 @@ function AdminDashboard() {
   return (
     <div className="admin-dashboard-layout">
       <div className="admin-dashboard">
-        <header className="dashboard-header">
-          <div>
-            <h1>Dashboard Overview</h1>
-            <p>Welcome back, Administrator. Here is the current status of the LearnSphere platform.</p>
-          </div>
-          <div className="system-tag">
-            <Sparkles size={16} />
-            <span>Admin Control Panel</span>
-          </div>
-        </header>
         {error && <p className="admin-error">{error}</p>}
         <div className="status-grid">
           {stats.map((s) => (

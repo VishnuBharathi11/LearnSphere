@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Play, Award, BookOpen, Search, Sparkles, Clock, CheckCircle2, Trophy } from "lucide-react";
+import { Play, Award, BookOpen, Search, Clock, CheckCircle2, Trophy } from "lucide-react";
 import courseImg from "../../../assets/Featured Courses/1.jpg";
 import ProgressiveImage from "../../../components/ProgressiveImage/ProgressiveImage.jsx";
 import Pagination from "../../../components/Pagination/Pagination";
@@ -270,7 +270,7 @@ function MyCourses() {
     <div className="mycourses-container">
       <header className="mycourses-hero">
         <div className="hero-welcome">
-          <span className="hero-eyebrow"><Sparkles size={14} /> LEARNER PORTAL</span>
+          <span className="hero-eyebrow"><BookOpen size={14} /> LEARNER PORTAL</span>
           <h1>My Courses</h1>
           <p>Resume your active courses, track your lessons, and download earned certificates.</p>
         </div>

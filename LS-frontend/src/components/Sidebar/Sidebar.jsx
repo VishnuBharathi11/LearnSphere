@@ -15,6 +15,7 @@ import {
   FolderKanban,
   User,
   WalletCards,
+  Mail,
 } from "lucide-react";
 import { logoutUser } from "../../services/userProfileStore";
 import "./Sidebar.scss";
@@ -52,6 +53,7 @@ function Sidebar({ role }) {
           { to: "/admin-layout/categories", label: "Categories", icon: Layers },
           { to: "/admin-layout/roles", label: "Role Management", icon: UserCog },
           { to: "/admin-layout/instructor-applications", label: "Instructor Registration", icon: BadgeCheck },
+          { to: "/admin-layout/contact-submissions", label: "Contact Messages", icon: Mail },
           { to: "/admin-layout/settings", label: "Settings", icon: Settings },
           { to: "/admin-layout/certificate-templates", label: "Certificate Templates", icon: Award },
         ];

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { FaRegEdit } from "react-icons/fa";
-import { Flame, Medal, Target, Trophy, Mail, Phone, User, BookOpen, Clock, Shield, Sparkles, Save, Edit3 } from "lucide-react";
+import { Flame, Medal, Target, Trophy, Mail, Phone, User, BookOpen, Clock, Shield, Save, Edit3 } from "lucide-react";
 import { getMyProfile, normalizeApiError, updateMyProfile } from "../../../services/authApi";
 import { getPublishedCourses } from "../../../services/courseApi";
 import { getEnrollmentsByUser } from "../../../services/enrollmentApi";
@@ -432,7 +432,7 @@ function Profile() {
           </div>
           <div className="achievement-tip">
             <div className="tip-header">
-              <Sparkles size={14} />
+              <Target size={14} />
               <span>Next Milestone Tips</span>
             </div>
             <p>Complete your active course quizzes to receive verifiable digital certificates.</p>

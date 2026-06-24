@@ -42,8 +42,18 @@ function GetStarted() {
   }, [freeCourses, currentPage]);
   return (
     <div className="free-page">
-      <h1>Start Learning for Free</h1>
-      <p>Explore our selection of free introductory courses. Create an account to track your progress and earn certificates at no cost.</p>
+      <header className="free-courses-hero">
+        <div className="hero-content">
+          <span className="hero-eyebrow">Zero Cost, Unlimited Potential</span>
+          <h1>Start Learning for Free</h1>
+          <p>
+            Explore our selection of free introductory courses. Create an account to track your progress and earn certificates at no cost.
+          </p>
+        </div>
+        <div className="hero-visual">
+          <div className="visual-badge">Free Courses</div>
+        </div>
+      </header>
       <div className="free-course-grid">
         {loading && <p>Loading free courses...</p>}
         {!loading && error && <p>{error}</p>}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Home.scss";
 import web from "../../../assets/Popular Categories/web.png";
 import ai from "../../../assets/Popular Categories/artificial-intelligence.png";
@@ -14,8 +14,60 @@ import Footer from "../../../components/Footer/Footer";
 import NavBar from "../../../components/NavBar/NavBar";
 import { useNavigate } from "react-router-dom";
 import About from "../About/About";
+import { saveContactSubmission } from "../../../services/contactService";
+
 function Home() {
   const navigate = useNavigate();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+  const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    if (errors[e.target.name]) {
+      setErrors({ ...errors, [e.target.name]: "" });
+    }
+  };
+
+  const validate = () => {
+    const errs = {};
+    if (!form.name.trim()) errs.name = "Name is required.";
+    if (!form.email.trim()) {
+      errs.email = "Email is required.";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      errs.email = "Please enter a valid email address.";
+    }
+    if (!form.subject.trim()) errs.subject = "Subject is required.";
+    if (!form.message.trim()) errs.message = "Message is required.";
+    return errs;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setSuccessMessage("");
+    setErrorMessage("");
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      saveContactSubmission(form);
+      setSuccessMessage("Your message has been sent successfully. We will get back to you soon!");
+      setForm({ name: "", email: "", subject: "", message: "" });
+      setErrors({});
+    } catch (err) {
+      setErrorMessage("Something went wrong. Please try again.");
+    }
+  };
+
   return (
     <>
       <NavBar transparent />
@@ -244,13 +296,48 @@ function Home() {
               </div>
             </div>
           </div>
-          <form className="home-contact__form" autoComplete="off">
+          <form className="home-contact__form" autoComplete="off" onSubmit={handleSubmit}>
             <h4>Get In Touch</h4>
-            <input type="text" name="name" placeholder="Enter Name..." />
-            <input type="email" name="email" placeholder="Enter Email..." />
-            <input type="tel" name="phone" placeholder="Enter Phone..." />
-            <textarea name="message" rows={4} placeholder="Enter Your Message..." />
-            <button type="button">Send Message</button>
+            {successMessage && <div className="success-alert">{successMessage}</div>}
+            {errorMessage && <div className="error-alert">{errorMessage}</div>}
+            
+            <input 
+              type="text" 
+              name="name" 
+              placeholder="Enter Name..." 
+              value={form.name}
+              onChange={handleChange}
+            />
+            {errors.name && <span className="error-text">{errors.name}</span>}
+            
+            <input 
+              type="email" 
+              name="email" 
+              placeholder="Enter Email..." 
+              value={form.email}
+              onChange={handleChange}
+            />
+            {errors.email && <span className="error-text">{errors.email}</span>}
+            
+            <input 
+              type="text" 
+              name="subject" 
+              placeholder="Enter Subject..." 
+              value={form.subject}
+              onChange={handleChange}
+            />
+            {errors.subject && <span className="error-text">{errors.subject}</span>}
+            
+            <textarea 
+              name="message" 
+              rows={4} 
+              placeholder="Enter Your Message..." 
+              value={form.message}
+              onChange={handleChange}
+            />
+            {errors.message && <span className="error-text">{errors.message}</span>}
+            
+            <button type="submit">Send Message</button>
           </form>
         </div>
       </section>

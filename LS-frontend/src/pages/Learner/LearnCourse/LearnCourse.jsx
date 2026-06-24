@@ -8,7 +8,7 @@ import {
   Reply, 
   ThumbsUp, 
   ArrowLeft, 
-  Sparkles, 
+  ShieldAlert, 
   BookOpen, 
   Trophy, 
   PlayCircle, 
@@ -374,7 +374,7 @@ function LearnCourse() {
         </div>
         <div className="discussion-rules-banner">
           <div className="rules-header">
-            <Sparkles size={14} className="gold-icon" />
+            <ShieldAlert size={14} className="gold-icon" />
             <span>Community Code of Conduct</span>
           </div>
           <p>Please follow our community guidelines: be respectful, and do not post direct answers to quiz questions.</p>
@@ -565,7 +565,7 @@ function LearnCourse() {
         </div>
         <div className="hero-content-wrap">
           <div className="hero-details">
-            <span className="hero-eyebrow"><Sparkles size={13} /> COURSE CONTENT</span>
+            <span className="hero-eyebrow"><BookOpen size={13} /> COURSE CONTENT</span>
             <h1>{course?.courseName || "Loading Course Content..."}</h1>
             <p className="instructor-sub">Instructed by <strong>{course?.instructor || "LearnSphere Faculty"}</strong></p>
           </div>

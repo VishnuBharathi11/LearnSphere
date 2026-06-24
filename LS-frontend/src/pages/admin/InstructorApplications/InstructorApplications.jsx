@@ -112,11 +112,7 @@ function InstructorApplications() {
   return (
     <div className="instructor-applications-page">
       {error && <p className="admin-error">{error}</p>}
-      <div className="ia-header">
-        <div>
-          <h2>Instructor Registration</h2>
-          <p>Review and approve instructor applications submitted by users.</p>
-        </div>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "16px" }}>
         <div className="ia-search">
           <Search size={16} />
           <input
