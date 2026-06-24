@@ -15,21 +15,21 @@ jobs:
       - name: Ping All Services in Parallel
         run: |
           SERVICES=(
-            "https://api-gateway-80go.onrender.com"
-            "https://auth-service-80go.onrender.com"
-            "https://course-service-80go.onrender.com"
-            "https://enrollment-service-80go.onrender.com"
-            "https://learn-progress-service-80go.onrender.com"
-            "https://discussion-notification-service-80go.onrender.com"
-            "https://admin-analytics-service-80go.onrender.com"
-            "https://certificate-service-80go.onrender.com"
+            "https://api-gateway-80go.onrender.com/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/auth/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/courses/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/enrollments/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/progress/actuator/health"
+            "https://api-gateway-80go.onrender.com/notifications/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/admin/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/certificates/actuator/health"
           )
 
           echo "Initiating parallel keep-alive pings against ${#SERVICES[@]} services..."
           
           for service in "${SERVICES[@]}"; do
             (
-              URL="${service}/actuator/health"
+              URL="$service"
               # Perform a lightweight HEAD or GET request. We use GET since Actuator health is very small.
               # Timeout set to 10s connection timeout and 20s total response timeout.
               RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 20 -L "$URL")
