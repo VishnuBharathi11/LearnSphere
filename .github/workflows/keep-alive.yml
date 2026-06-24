@@ -2,6 +2,7 @@ name: LearnSphere Keep-Alive
 
 on:
   schedule:
+<<<<<<< HEAD
     - cron: '*/5 * * * *'  # Run every 5 minutes
   workflow_dispatch:      # Allow manual triggering from GitHub UI
 
@@ -39,3 +40,48 @@ jobs:
           echo "============================================="
           echo "Keep-Alive Ping completed successfully."
           echo "============================================="
+=======
+    # Runs every 5 minutes (Render Free Tier inactivity timeout is 15 minutes)
+    - cron: '*/5 * * * *'
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+
+jobs:
+  ping-services:
+    name: Ping Render Services
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Ping All Services in Parallel
+        run: |
+          SERVICES=(
+            "https://api-gateway-80go.onrender.com/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/auth/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/courses/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/enrollments/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/progress/actuator/health"
+            "https://api-gateway-80go.onrender.com/notifications/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/admin/actuator/health"
+            "https://api-gateway-80go.onrender.com/api/certificates/actuator/health"
+          )
+
+          echo "Initiating parallel keep-alive pings against ${#SERVICES[@]} services..."
+          
+          for service in "${SERVICES[@]}"; do
+            (
+              URL="$service"
+              # Perform a lightweight HEAD or GET request. We use GET since Actuator health is very small.
+              # Timeout set to 10s connection timeout and 20s total response timeout.
+              RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 20 -L "$URL")
+              
+              if [ "$RESPONSE_CODE" = "200" ]; then
+                echo "✅ SUCCESS: [200] $service is warm and healthy."
+              else
+                echo "⚠️ WARNING: [$RESPONSE_CODE] $service health check failed or timed out."
+              fi
+            ) &
+          done
+          
+          # Wait for all background ping processes to complete
+          wait
+          echo "All keep-alive pings completed."
+>>>>>>> developer
