@@ -24,13 +24,8 @@ public class SecurityConfig {
                                 "/api/certificates/qr/**",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-<<<<<<< HEAD
-                                "/error",
-                                "/health"
-=======
                                 "/api/certificates/actuator/**",
                                 "/error"
->>>>>>> developer
                         ).permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

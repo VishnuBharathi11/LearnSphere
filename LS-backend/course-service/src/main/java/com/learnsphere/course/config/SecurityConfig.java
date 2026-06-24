@@ -26,13 +26,8 @@ public class SecurityConfig {
 						"/api/categories",
 						"/api/categories/*",
 						"/api/categories/active",
-<<<<<<< HEAD
-						"/error",
-						"/health"
-=======
 						"/api/courses/actuator/**",
 						"/error"
->>>>>>> developer
 						).permitAll()
 				.anyRequest().authenticated())
 		.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
