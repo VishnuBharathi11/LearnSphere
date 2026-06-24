@@ -30,9 +30,10 @@ jobs:
           for service in "${SERVICES[@]}"; do
             (
               URL="$service"
-              # Perform a lightweight HEAD or GET request. We use GET since Actuator health is very small.
-              # Timeout set to 10s connection timeout and 20s total response timeout.
-              RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 10 --max-time 20 -L "$URL")
+              # Perform a lightweight GET request.
+              # Increased timeouts to 60s connect and 90s max-time to allow Render Free Tier cold starts (50s+)
+              # without aborting early and triggering Render's hibernate-rate-limited protection.
+              RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 -L "$URL")
               
               if [ "$RESPONSE_CODE" = "200" ]; then
                 echo "✅ SUCCESS: [200] $service is warm and healthy."
