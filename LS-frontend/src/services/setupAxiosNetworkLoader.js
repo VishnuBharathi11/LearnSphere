@@ -12,24 +12,38 @@ export function setupAxiosNetworkLoader() {
 
   axios.interceptors.request.use(
     (config) => {
-      if (!config?.headers?.["X-Skip-Global-Loader"]) {
+      const url = config?.url || "";
+      const isBackground =
+        config?.headers?.["X-Skip-Global-Loader"] ||
+        url.includes("/notifications") ||
+        url.includes("/withdrawals") ||
+        url.includes("/api/progress/users") ||
+        url.includes("/api/enrollments/user") ||
+        url.includes("/api/enrollments/courses") ||
+        url.includes("/api/courses/instructor");
+
+      if (!isBackground) {
         incrementNetworkActivity();
       }
+      config.metadata = { ...config.metadata, isBackground: Boolean(isBackground) };
       return config;
     },
     (error) => {
-      decrementNetworkActivity();
       return Promise.reject(error);
     }
   );
 
   axios.interceptors.response.use(
     (response) => {
-      decrementNetworkActivity();
+      if (!response.config?.metadata?.isBackground) {
+        decrementNetworkActivity();
+      }
       return response;
     },
     (error) => {
-      decrementNetworkActivity();
+      if (error.config && !error.config.metadata?.isBackground) {
+        decrementNetworkActivity();
+      }
       return Promise.reject(error);
     }
   );

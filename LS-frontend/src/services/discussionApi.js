@@ -92,7 +92,10 @@ export async function lockThread(threadId, locked) {
 
 export async function getNotifications(userId) {
   const response = await axios.get(`/notifications/${encodeURIComponent(String(userId))}`, {
-    headers: getAuthHeaders(),
+    headers: {
+      ...getAuthHeaders(),
+      "X-Skip-Global-Loader": "true",
+    },
   });
   return Array.isArray(response.data) ? response.data : [];
 }
