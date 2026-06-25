@@ -16,13 +16,13 @@ jobs:
         run: |
           SERVICES=(
             "https://api-gateway-80go.onrender.com/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/auth/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/courses/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/enrollments/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/progress/actuator/health"
-            "https://api-gateway-80go.onrender.com/notifications/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/admin/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/certificates/actuator/health"
+            "https://auth-service-80go.onrender.com/api/auth/actuator/health"
+            "https://course-service-80go.onrender.com/api/courses/actuator/health"
+            "https://enrollment-service-80go.onrender.com/api/enrollments/actuator/health"
+            "https://learn-progress-service-80go.onrender.com/api/progress/actuator/health"
+            "https://discussion-notification-service-80go.onrender.com/notifications/actuator/health"
+            "https://admin-analytics-service-80go.onrender.com/api/admin/actuator/health"
+            "https://certificate-service-80go.onrender.com/api/certificates/actuator/health"
           )
 
           echo "Initiating sequential keep-alive pings against ${#SERVICES[@]} services..."
