@@ -29,7 +29,7 @@ jobs:
           
           for service in "${SERVICES[@]}"; do
             URL="$service"
-            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 -L "$URL")
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 -L "$URL" || echo "000")
             
             if [ "$RESPONSE_CODE" = "200" ]; then
               echo "✅ SUCCESS: [200] $service is warm and healthy."
