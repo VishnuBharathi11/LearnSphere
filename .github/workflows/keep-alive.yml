@@ -16,29 +16,19 @@ jobs:
         run: |
           SERVICES=(
             "https://api-gateway-80go.onrender.com/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/auth/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/courses/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/enrollments/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/progress/actuator/health"
-            "https://api-gateway-80go.onrender.com/notifications/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/admin/actuator/health"
-            "https://api-gateway-80go.onrender.com/api/certificates/actuator/health"
           )
 
-          echo "Initiating sequential keep-alive pings against ${#SERVICES[@]} services..."
+          echo "Initiating keep-alive ping against ${#SERVICES[@]} service..."
           
           for service in "${SERVICES[@]}"; do
             URL="$service"
-            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 -L "$URL" || echo "000")
+            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 --retry 3 --retry-delay 10 --retry-connrefused -A "GitHub Actions Keep-Alive" -L "$URL" || echo "000")
             
             if [ "$RESPONSE_CODE" = "200" ]; then
               echo "✅ SUCCESS: [200] $service is warm and healthy."
             else
               echo "⚠️ WARNING: [$RESPONSE_CODE] $service health check failed or timed out."
             fi
-            
-            # Sleep for 5 seconds between pings to prevent triggering Render's hibernate-rate-limited proxy
-            sleep 5
           done
           
           echo "All keep-alive pings completed."
