@@ -1,15 +1,12 @@
-# Build stage for Maven
-FROM maven:3.9.6-eclipse-temurin-21-jammy AS build
+FROM maven:3.9.9-eclipse-temurin-21-jammy AS build
 WORKDIR /app
 COPY pom.xml .
 RUN mvn dependency:go-offline -B
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn package -DskipTests -B
 
-# Run stage
 FROM eclipse-temurin:21-jre-jammy
 
-# Install Node.js, npm, and Chromium/Puppeteer dependencies
 RUN apt-get update && apt-get install -y curl gnupg && \
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs \
@@ -28,15 +25,20 @@ RUN apt-get update && apt-get install -y curl gnupg && \
     libpango-1.0-0 \
     libpangocairo-1.0-0 \
     --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    useradd --system --uid 10001 --create-home app
 
 WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
-# Copy package.json and install Puppeteer
 COPY package*.json ./
 COPY scripts/ ./scripts/
-RUN npm ci
+ENV PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
+RUN npm ci --omit=dev && \
+    mkdir -p /app/storage/certificates && \
+    chown -R 10001:10001 /app
+
+USER 10001
 
 EXPOSE 9099
 ENTRYPOINT ["java", "-jar", "app.jar"]

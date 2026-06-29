@@ -25,6 +25,9 @@ logs/
 .env
 .env.*
 !.env.example
+.deployed-revision
+.previous-revision
+backups/
 
 # IDE and workspace files
 .idea/

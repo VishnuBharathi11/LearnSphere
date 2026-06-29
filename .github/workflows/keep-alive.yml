@@ -2,33 +2,63 @@ name: LearnSphere Keep-Alive
 
 on:
   schedule:
-    # Runs every 5 minutes (Render Free Tier inactivity timeout is 15 minutes)
-    - cron: '*/5 * * * *'
-  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab
+    # Render Free web services spin down after 15 minutes without inbound traffic.
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
 
 jobs:
   ping-services:
-    name: Ping Render Services
+    name: Ping Render services through the gateway
     runs-on: ubuntu-latest
-    
+    timeout-minutes: 15
+    concurrency:
+      group: learnsphere-render-keep-alive
+      cancel-in-progress: false
+
     steps:
-      - name: Ping All Services in Parallel
+      - name: Ping each downstream health endpoint
+        shell: bash
         run: |
-          SERVICES=(
-            "https://api-gateway-80go.onrender.com/actuator/health"
+          set -u
+
+          BASE_URL="https://api-gateway-80go.onrender.com"
+          HEALTH_PATHS=(
+            "/api/auth/actuator/health"
+            "/api/courses/actuator/health"
+            "/api/enrollments/actuator/health"
+            "/api/progress/actuator/health"
+            "/notifications/actuator/health"
+            "/api/admin/actuator/health"
+            "/api/certificates/actuator/health"
           )
 
-          echo "Initiating keep-alive ping against ${#SERVICES[@]} service..."
-          
-          for service in "${SERVICES[@]}"; do
-            URL="$service"
-            RESPONSE_CODE=$(curl -s -o /dev/null -w "%{http_code}" --connect-timeout 60 --max-time 90 --retry 3 --retry-delay 10 --retry-connrefused -A "GitHub Actions Keep-Alive" -L "$URL" || echo "000")
-            
-            if [ "$RESPONSE_CODE" = "200" ]; then
-              echo "✅ SUCCESS: [200] $service is warm and healthy."
+          failures=0
+
+          for path in "${HEALTH_PATHS[@]}"; do
+            status=$(curl \
+              --silent \
+              --show-error \
+              --output /dev/null \
+              --write-out "%{http_code}" \
+              --connect-timeout 60 \
+              --max-time 150 \
+              --user-agent "LearnSphere-GitHub-Keep-Alive/1.0" \
+              "${BASE_URL}${path}") || status="000"
+
+            if [[ "$status" == "200" ]]; then
+              echo "OK   ${path}"
+            elif [[ "$status" == "429" ]]; then
+              echo "RATE LIMITED ${path}; not retrying"
+              failures=$((failures + 1))
             else
-              echo "⚠️ WARNING: [$RESPONSE_CODE] $service health check failed or timed out."
+              echo "FAIL [${status}] ${path}"
+              failures=$((failures + 1))
             fi
+
+            # Serialize requests to keep traffic gentle on the gateway.
+            sleep 2
           done
-          
-          echo "All keep-alive pings completed."
+
+          if (( failures > 0 )); then
+            echo "::warning::${failures} service health ping(s) failed."
+          fi

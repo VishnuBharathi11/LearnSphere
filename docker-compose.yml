@@ -1,0 +1,292 @@
+name: learnsphere
+
+x-service-common: &service-common
+  restart: unless-stopped
+  init: true
+  env_file:
+    - .env
+  networks:
+    - backend
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+      compress: "true"
+  security_opt:
+    - no-new-privileges:true
+  read_only: true
+  tmpfs:
+    - /tmp:size=64m,mode=1777
+
+x-java-environment: &java-environment
+  JAVA_TOOL_OPTIONS: >-
+    -XX:+UseSerialGC
+    -XX:MaxRAMPercentage=70
+    -XX:InitialRAMPercentage=20
+    -XX:+ExitOnOutOfMemoryError
+    -XX:ActiveProcessorCount=1
+    -Djava.security.egd=file:/dev/urandom
+  SPRING_MAIN_LAZY_INITIALIZATION: "true"
+  SERVER_SHUTDOWN: graceful
+  SPRING_LIFECYCLE_TIMEOUT_PER_SHUTDOWN_PHASE: 20s
+  LOGGING_LEVEL_ROOT: INFO
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_GATEWAY: INFO
+  LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: INFO
+  SERVER_FORWARD_HEADERS_STRATEGY: framework
+
+x-mysql-environment: &mysql-environment
+  SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/learnsphere_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+  SPRING_DATASOURCE_USERNAME: learnsphere
+  SPRING_DATASOURCE_PASSWORD: ${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD in .env}
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+    command:
+      - --innodb-buffer-pool-size=256M
+      - --innodb-log-buffer-size=16M
+      - --max-connections=60
+      - --performance-schema=OFF
+      - --skip-name-resolve
+    environment:
+      MYSQL_DATABASE: learnsphere_db
+      MYSQL_USER: learnsphere
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - backend
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: "1.0"
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  auth-service:
+    <<: *service-common
+    build: ./LS-backend/auth-service
+    environment:
+      <<: [*java-environment, *mysql-environment]
+      PORT: "9098"
+      ADMIN_ANALYTICS_SERVICE_URL: http://admin-analytics-service:9095
+      SPRING_MAIL_PASSWORD: ${BREVO_SMTP_PASSWORD:?Set BREVO_SMTP_PASSWORD in .env}
+      APP_ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD:?Set ADMIN_SEED_PASSWORD in .env}
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9098/api/auth/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: "1.0"
+
+  course-service:
+    <<: *service-common
+    build: ./LS-backend/course-service
+    environment:
+      <<: *java-environment
+      PORT: "9091"
+      SPRING_MONGODB_URI: ${MONGODB_COURSE_URI:?Set MONGODB_COURSE_URI in .env}
+      ADMIN_ANALYTICS_SERVICE_URL: http://admin-analytics-service:9095
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9091/api/courses/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: "1.0"
+
+  enrollment-service:
+    <<: *service-common
+    build: ./LS-backend/enrollment-service
+    environment:
+      <<: [*java-environment, *mysql-environment]
+      PORT: "9092"
+      COURSE_SERVICE_URL: http://course-service:9091
+      RAZORPAY_KEY: ${RAZORPAY_KEY:?Set RAZORPAY_KEY in .env}
+      RAZORPAY_SECRET: ${RAZORPAY_SECRET:?Set RAZORPAY_SECRET in .env}
+      SPRING_JPA_SHOW_SQL: "false"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9092/api/enrollments/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: "1.0"
+
+  learn-progress-service:
+    <<: *service-common
+    build: ./LS-backend/learn-progress-service
+    environment:
+      <<: *java-environment
+      PORT: "9093"
+      SPRING_MONGODB_URI: ${MONGODB_PROGRESS_URI:?Set MONGODB_PROGRESS_URI in .env}
+      COURSE_SERVICE_URL: http://course-service:9091
+      ENROLLMENT_SERVICE_URL: http://enrollment-service:9092
+      DISCUSSION_SERVICE_URL: http://discussion-notification-service:9094
+      ADMIN_ANALYTICS_SERVICE_URL: http://admin-analytics-service:9095
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9093/api/progress/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: "1.0"
+
+  discussion-notification-service:
+    <<: *service-common
+    build: ./LS-backend/discussion-notification-service
+    environment:
+      <<: *java-environment
+      PORT: "9094"
+      SPRING_MONGODB_URI: ${MONGODB_FORUM_URI:?Set MONGODB_FORUM_URI in .env}
+      COURSE_SERVICE_URL: http://course-service:9091
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9094/notifications/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: "1.0"
+
+  admin-analytics-service:
+    <<: *service-common
+    build: ./LS-backend/admin-analytics-service
+    environment:
+      <<: [*java-environment, *mysql-environment]
+      PORT: "9095"
+      SPRING_MAIL_PASSWORD: ${BREVO_SMTP_PASSWORD:?Set BREVO_SMTP_PASSWORD in .env}
+      SPRING_JPA_SHOW_SQL: "false"
+      SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL: "false"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9095/api/admin/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 90s
+    deploy:
+      resources:
+        limits:
+          memory: 384M
+          cpus: "1.0"
+
+  certificate-service:
+    <<: *service-common
+    build: ./LS-backend/certificate-service
+    environment:
+      <<: [*java-environment, *mysql-environment]
+      PORT: "9099"
+      FRONTEND_PUBLIC_URL: ${FRONTEND_PUBLIC_URL:?Set FRONTEND_PUBLIC_URL in .env}
+      CERTIFICATE_SERVICE_URL: http://certificate-service:9099
+      PUPPETEER_CACHE_DIR: /app/.cache/puppeteer
+    volumes:
+      - certificate_data:/app/storage
+    depends_on:
+      mysql:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9099/api/certificates/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+          cpus: "1.5"
+
+  api-gateway:
+    <<: *service-common
+    build: ./LS-backend/api-gateway
+    ports:
+      - "127.0.0.1:8084:8084"
+    environment:
+      <<: *java-environment
+      PORT: "8084"
+      AUTH_SERVICE_URL: http://auth-service:9098
+      ENROLLMENT_SERVICE_URL: http://enrollment-service:9092
+      DISCUSSION_SERVICE_URL: http://discussion-notification-service:9094
+      ADMIN_SERVICE_URL: http://admin-analytics-service:9095
+      PROGRESS_SERVICE_URL: http://learn-progress-service:9093
+      COURSE_SERVICE_URL: http://course-service:9091
+      CERTIFICATE_SERVICE_URL: http://certificate-service:9099
+      SPRING_CLOUD_GATEWAY_HTTPCLIENT_CONNECT_TIMEOUT: "5000"
+      SPRING_CLOUD_GATEWAY_HTTPCLIENT_RESPONSE_TIMEOUT: 45s
+    depends_on:
+      auth-service:
+        condition: service_healthy
+      course-service:
+        condition: service_healthy
+      enrollment-service:
+        condition: service_healthy
+      learn-progress-service:
+        condition: service_healthy
+      discussion-notification-service:
+        condition: service_healthy
+      admin-analytics-service:
+        condition: service_healthy
+      certificate-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          memory: 320M
+          cpus: "1.0"
+
+networks:
+  backend:
+    driver: bridge
+    internal: false
+
+volumes:
+  mysql_data:
+  certificate_data:
