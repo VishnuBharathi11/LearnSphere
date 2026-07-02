@@ -2,23 +2,23 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://api-gateway-80go.onrender.com/api/:path*"
+      "destination": "https://api-gateway-hgh1.onrender.com/api/:path*"
     },
     {
       "source": "/notifications/:path*",
-      "destination": "https://api-gateway-80go.onrender.com/notifications/:path*"
+      "destination": "https://api-gateway-hgh1.onrender.com/notifications/:path*"
     },
     {
       "source": "/discussion/:path*",
-      "destination": "https://api-gateway-80go.onrender.com/discussion/:path*"
+      "destination": "https://api-gateway-hgh1.onrender.com/discussion/:path*"
     },
     {
       "source": "/payments/:path*",
-      "destination": "https://api-gateway-80go.onrender.com/payments/:path*"
+      "destination": "https://api-gateway-hgh1.onrender.com/payments/:path*"
     },
     {
       "source": "/enrollments/:path*",
-      "destination": "https://api-gateway-80go.onrender.com/enrollments/:path*"
+      "destination": "https://api-gateway-hgh1.onrender.com/enrollments/:path*"
     },
     {
       "source": "/(.*)",
