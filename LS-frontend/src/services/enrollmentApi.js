@@ -7,6 +7,9 @@ const FALLBACK_RAZORPAY_KEY =
   import.meta.env.VITE_RAZORPAY_KEY || "rzp_test_SIf0T7lHEketYm";
 const ENROLLMENT_CACHE_TTL_MS = 10000;
 const enrollmentByUserCache = new Map();
+const enrollmentByCoursesRequests = new Map();
+const RETRYABLE_STATUS_CODES = new Set([502, 503, 504]);
+const MAX_GET_ATTEMPTS = 3;
 
 function getAuthHeaders() {
   const token = appStore.getItem("authToken");
@@ -71,18 +74,49 @@ export async function getEnrollmentsByCourses(courseIds = []) {
 
   if (filteredIds.length === 0) return [];
 
-  const response = await axios.get(`${ENROLLMENT_API_BASE_URL}/courses`, {
-    params: { courseIds: filteredIds },
-    paramsSerializer: {
-      serialize: (params) => {
-        const values = Array.isArray(params?.courseIds) ? params.courseIds : [];
-        return values.map((value) => `courseIds=${encodeURIComponent(value)}`).join("&");
-      },
-    },
-    headers: getAuthHeaders(),
-  });
+  const requestKey = filteredIds.slice().sort().join(",");
+  if (enrollmentByCoursesRequests.has(requestKey)) {
+    return enrollmentByCoursesRequests.get(requestKey);
+  }
 
-  return Array.isArray(response.data) ? response.data : [];
+  const request = retryIdempotentGet(async () => {
+    const response = await axios.get(`${ENROLLMENT_API_BASE_URL}/courses`, {
+      params: { courseIds: filteredIds },
+      paramsSerializer: {
+        serialize: (params) => {
+          const values = Array.isArray(params?.courseIds) ? params.courseIds : [];
+          return values.map((value) => `courseIds=${encodeURIComponent(value)}`).join("&");
+        },
+      },
+      headers: getAuthHeaders(),
+    });
+    return Array.isArray(response.data) ? response.data : [];
+  }).finally(() => enrollmentByCoursesRequests.delete(requestKey));
+
+  enrollmentByCoursesRequests.set(requestKey, request);
+  return request;
+}
+
+async function retryIdempotentGet(operation) {
+  let lastError;
+  for (let attempt = 1; attempt <= MAX_GET_ATTEMPTS; attempt += 1) {
+    try {
+      return await operation();
+    } catch (error) {
+      lastError = error;
+      const status = Number(error?.response?.status || 0);
+      const isNetworkTimeout = error?.code === "ECONNABORTED" || error?.code === "ETIMEDOUT";
+      if (
+        attempt === MAX_GET_ATTEMPTS ||
+        (!RETRYABLE_STATUS_CODES.has(status) && !isNetworkTimeout)
+      ) {
+        throw error;
+      }
+      const backoffMs = 350 * 2 ** (attempt - 1) + Math.floor(Math.random() * 150);
+      await new Promise((resolve) => window.setTimeout(resolve, backoffMs));
+    }
+  }
+  throw lastError;
 }
 
 export async function createEnrollmentOrder(userId, courseId, amount) {

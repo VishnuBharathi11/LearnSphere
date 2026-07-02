@@ -22,6 +22,7 @@ function StudentCertificatesPage() {
   const [issuingId, setIssuingId] = useState("");
   const [downloadingId, setDownloadingId] = useState("");
   const [error, setError] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
   useEffect(() => {
     const userId = currentUserId;
     if (!userId || loading) return;
@@ -103,7 +104,7 @@ function StudentCertificatesPage() {
     return () => {
       active = false;
     };
-  }, [currentUserId, loading]);
+  }, [currentUserId, loading, retryKey]);
   const selected = cards.find((card) => card.id === selectedId) || cards[0] || null;
   const selectedCertificate =
     selected?.certificate || (selected?.unlocked ? buildPreviewCertificate(selected, currentUser) : null);
@@ -150,7 +151,7 @@ function StudentCertificatesPage() {
       link.download = `${courseTitle.replace(/[^a-zA-Z0-9-_ ]/g, "")}_Certificate.pdf`;
       link.click();
       URL.revokeObjectURL(link.href);
-    } catch (err) {
+    } catch {
       setError("Failed to download PDF. Please try again later.");
     } finally {
       setDownloadingId("");
@@ -172,7 +173,12 @@ function StudentCertificatesPage() {
           ) : !currentUserId ? (
             <div className={styles.emptyState}>Sign in to view your certificates.</div>
           ) : error ? (
-            <div className={styles.emptyState}>{error}</div>
+            <div className={styles.emptyState}>
+              <p>{error}</p>
+              <button type="button" onClick={() => setRetryKey((value) => value + 1)}>
+                Try again
+              </button>
+            </div>
           ) : cards.length === 0 ? (
             <div className={styles.emptyState}>Unlock certificates by enrolling in courses and passing their final assessments.</div>
           ) : (

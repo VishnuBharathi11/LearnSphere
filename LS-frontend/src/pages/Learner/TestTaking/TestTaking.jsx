@@ -85,7 +85,7 @@ function TestTaking() {
     }
     navigate("/student-layout/result", {
       state: {
-        courseId: Number(courseId),
+        courseId: String(courseId),
         correct: score,
         total,
         passed,

@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getCertificateForRender } from "../../../services/certificateApi";
+import {
+  getCertificateForRender,
+  isValidCertificateRouteId,
+} from "../../../services/certificateApi";
 import { CertificateTemplateRenderer } from "../../../components/CertificatePreview/CertificateTemplateRegistry";
 import styles from "./CertificateRender.module.scss";
 function CertificateRenderPage() {
   const { certificateId } = useParams();
   const [certificate, setCertificate] = useState(null);
   const [error, setError] = useState("");
+  const invalidId = !isValidCertificateRouteId(certificateId);
   useEffect(() => {
     let active = true;
+    if (invalidId) return;
     getCertificateForRender(certificateId)
       .then((data) => {
         if (!active) return;
@@ -26,7 +31,8 @@ function CertificateRenderPage() {
     return () => {
       active = false;
     };
-  }, [certificateId]);
+  }, [certificateId, invalidId]);
+  if (invalidId) return <div className={styles.renderPage}>This certificate link is invalid.</div>;
   if (error) return <div className={styles.renderPage}>{error}</div>;
   if (!certificate) return <div className={styles.renderPage}>Loading certificate...</div>;
   return (

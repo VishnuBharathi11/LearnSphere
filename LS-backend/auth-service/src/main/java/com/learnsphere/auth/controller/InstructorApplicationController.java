@@ -6,6 +6,7 @@ import com.learnsphere.auth.entity.User;
 import com.learnsphere.auth.repository.InstructorApplicationRepository;
 import com.learnsphere.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +29,7 @@ import java.util.Set;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@Slf4j
 public class InstructorApplicationController {
     private static final Set<String> ALLOWED_RESUME_TYPES = Set.of(
             "application/pdf",
@@ -121,6 +123,11 @@ public class InstructorApplicationController {
         String adminEmail = requireAdmin(principal);
         InstructorApplication application = repository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Application not found"));
+        if ("APPROVED".equalsIgnoreCase(application.getStatus())) {
+            return ResponseEntity.ok(Map.of(
+                    "message", "Application approved and instructor account created."
+            ));
+        }
         if (!"PENDING".equalsIgnoreCase(application.getStatus())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Application is already reviewed");
         }
@@ -149,9 +156,11 @@ public class InstructorApplicationController {
         application.setReviewedAt(Instant.now());
         application.setReviewedBy(adminEmail);
         repository.save(application);
-        sendApprovalEmail(email, request.getPassword());
+        boolean emailSent = sendApprovalEmail(email, request.getPassword());
         return ResponseEntity.ok(Map.of(
-                "message", "Application approved and instructor account created."
+                "message", emailSent
+                        ? "Application approved and instructor account created."
+                        : "Application approved, but the approval email could not be delivered."
         ));
     }
     @PostMapping("/instructor-applications/{id}/reject")
@@ -210,7 +219,7 @@ public class InstructorApplicationController {
         }
         return user.getEmail();
     }
-    private void sendApprovalEmail(String email, String password) {
+    private boolean sendApprovalEmail(String email, String password) {
         SimpleMailMessage message = new SimpleMailMessage();
         if (StringUtils.hasText(fromMail)) {
             message.setFrom(fromMail);
@@ -223,9 +232,10 @@ public class InstructorApplicationController {
                 "Please log in and update your password after first login.");
         try {
             mailSender.send(message);
+            return true;
         } catch (Exception ex) {
-            throw new ResponseStatusException(HttpStatus.BAD_GATEWAY,
-                    "Failed to send approval email. Check SMTP credentials.");
+            log.error("Instructor {} was approved, but the approval email could not be sent", email, ex);
+            return false;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FileText, Search, Eye } from "lucide-react";
 import {
   approveInstructorApplication,
@@ -18,6 +18,7 @@ function InstructorApplications() {
   const [approveEmail, setApproveEmail] = useState("");
   const [approvePassword, setApprovePassword] = useState("");
   const [processing, setProcessing] = useState(false);
+  const approvalInFlight = useRef(false);
   const loadApplications = async () => {
     try {
       const list = await getInstructorApplications();
@@ -89,23 +90,31 @@ function InstructorApplications() {
     }
   };
   const handleApprove = async () => {
-    if (!selected?.id) return;
+    if (!selected?.id || approvalInFlight.current) return;
     if (!approveEmail || !approvePassword) {
       setError("Email and password are required to approve.");
       return;
     }
     try {
+      approvalInFlight.current = true;
       setProcessing(true);
-      await approveInstructorApplication(selected.id, {
+      const result = await approveInstructorApplication(selected.id, {
         email: approveEmail,
         password: approvePassword,
       });
-      await loadApplications();
+      setApplications((current) =>
+        current.map((application) =>
+          application.id === selected.id ? { ...application, status: "APPROVED" } : application
+        )
+      );
       setShowApprove(false);
       closeReview();
+      setError(String(result?.message || "").includes("could not be delivered") ? result.message : "");
+      loadApplications();
     } catch (apiError) {
       setError(getFriendlyErrorMessage(apiError, "Failed to approve application"));
     } finally {
+      approvalInFlight.current = false;
       setProcessing(false);
     }
   };
@@ -231,7 +240,7 @@ function InstructorApplications() {
               <button
                 className="approve"
                 onClick={() => setShowApprove(true)}
-                disabled={processing}
+                disabled={processing || String(selected.status).toUpperCase() !== "PENDING"}
               >
                 Approve
               </button>

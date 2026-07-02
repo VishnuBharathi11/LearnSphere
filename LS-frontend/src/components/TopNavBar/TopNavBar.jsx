@@ -275,12 +275,17 @@ function TopNavBar({ role }) {
       }
     };
 
-    load();
-    const intervalTime = role === "learner" ? 12000 : 15000;
-    const timer = setInterval(load, intervalTime);
+    let timer;
+    const poll = async () => {
+      if (!document.hidden) {
+        await load();
+      }
+      if (active) timer = window.setTimeout(poll, 60000);
+    };
+    poll();
     return () => {
       active = false;
-      clearInterval(timer);
+      window.clearTimeout(timer);
     };
   }, [userId, isAdminPreview, role]);
 
@@ -344,11 +349,17 @@ function TopNavBar({ role }) {
       } catch {
       }
     };
-    syncCourseCompletionNotifications();
-    const timer = setInterval(syncCourseCompletionNotifications, 60000);
+    let timer;
+    const poll = async () => {
+      if (!document.hidden) {
+        await syncCourseCompletionNotifications();
+      }
+      if (active) timer = window.setTimeout(poll, 180000);
+    };
+    poll();
     return () => {
       active = false;
-      clearInterval(timer);
+      window.clearTimeout(timer);
     };
   }, [userId, isAdminPreview, role]);
 
@@ -441,11 +452,17 @@ function TopNavBar({ role }) {
       } catch {
       }
     };
-    syncEnrollmentNotifications();
-    const timer = setInterval(syncEnrollmentNotifications, 45000);
+    let timer;
+    const poll = async () => {
+      if (!document.hidden) {
+        await syncEnrollmentNotifications();
+      }
+      if (active) timer = window.setTimeout(poll, 180000);
+    };
+    poll();
     return () => {
       active = false;
-      clearInterval(timer);
+      window.clearTimeout(timer);
     };
   }, [userId, isAdminPreview, role]);
 

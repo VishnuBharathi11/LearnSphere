@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import CertificatePreview from "../../../components/CertificatePreview/CertificatePreview";
-import { generateCertificate, getCertificate } from "../../../services/certificateApi";
+import {
+  generateCertificate,
+  getCertificate,
+  isValidCertificateRouteId,
+} from "../../../services/certificateApi";
 import { getCourseById, getCourseLessons } from "../../../services/courseApi";
 import { getCourseProgress } from "../../../services/progressApi";
 import { buildCourseLearningStateFromApi } from "../../../services/learnerProgressStore";
@@ -13,8 +17,15 @@ function CertificateDownloadPage() {
   const [certificate, setCertificate] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [retryKey, setRetryKey] = useState(0);
+  const userId = String(currentUser?.id || currentUser?.userId || "");
+  const studentName =
+    currentUser?.name || currentUser?.username || currentUser?.email || "Learner";
+  const hasCurrentUser = Boolean(currentUser);
+  const invalidId = !isValidCertificateRouteId(id);
   useEffect(() => {
-    if (!id || userLoading) return;
+    if (userLoading) return;
+    if (invalidId) return;
     let active = true;
     async function loadCertificate() {
       setLoading(true);
@@ -24,11 +35,10 @@ function CertificateDownloadPage() {
         if (active) setCertificate(existingCertificate);
         return;
       } catch (requestError) {
-        if (isUuid(id) || !currentUser) {
+        if (isUuid(id) || !hasCurrentUser) {
           throw requestError;
         }
       }
-      const userId = String(currentUser?.id || currentUser?.userId || "");
       const courseId = String(id);
       const [course, lessons, progress] = await Promise.all([
         getCourseById(courseId),
@@ -41,7 +51,7 @@ function CertificateDownloadPage() {
       }
       const generatedCertificate = await generateCertificate({
         studentUserId: userId,
-        studentName: currentUser?.name || currentUser?.username || currentUser?.email || "Learner",
+        studentName,
         courseId,
         courseTitle: course?.courseName || course?.title || `Course ${courseId}`,
         instructorName: course?.instructor || course?.instructorName || "LearnSphere Faculty",
@@ -66,7 +76,14 @@ function CertificateDownloadPage() {
     return () => {
       active = false;
     };
-  }, [id, currentUser, userLoading]);
+  }, [hasCurrentUser, id, invalidId, retryKey, studentName, userId, userLoading]);
+  if (invalidId) {
+    return (
+      <main className={styles.certificateWorkspace}>
+        <div className={styles.emptyState}>This certificate link is invalid.</div>
+      </main>
+    );
+  }
   if (loading || userLoading) {
     return (
       <main className={styles.certificateWorkspace}>
@@ -77,7 +94,12 @@ function CertificateDownloadPage() {
   if (error) {
     return (
       <main className={styles.certificateWorkspace}>
-        <div className={styles.emptyState}>{error}</div>
+        <div className={styles.emptyState}>
+          <p>{error}</p>
+          <button type="button" onClick={() => setRetryKey((value) => value + 1)}>
+            Try again
+          </button>
+        </div>
       </main>
     );
   }

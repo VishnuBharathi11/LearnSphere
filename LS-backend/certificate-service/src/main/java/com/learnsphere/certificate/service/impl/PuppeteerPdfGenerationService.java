@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
@@ -44,8 +45,9 @@ public class PuppeteerPdfGenerationService implements PdfGenerationService {
     }
     @Override
     public byte[] renderCertificate(Certificate certificate) {
+        Path tempFile = null;
         try {
-            Path tempFile = Files.createTempFile("learnsphere-certificate-", ".pdf");
+            tempFile = Files.createTempFile("learnsphere-certificate-", ".pdf");
             String url = properties.getPublicBaseUrl()
                     + "/certificate-render/" + certificate.getId()
                     + "?token=" + certificate.getVerificationToken();
@@ -63,17 +65,25 @@ public class PuppeteerPdfGenerationService implements PdfGenerationService {
                     certificate.getTemplate().getFormat() == TemplateFormat.A4_PORTRAIT ? "portrait" : "landscape"
             ).directory(workingDir.toFile()).redirectErrorStream(true).start();
             ByteArrayOutputStream logs = new ByteArrayOutputStream();
-            process.getInputStream().transferTo(logs);
+            CompletableFuture<Void> logReader = CompletableFuture.runAsync(() -> {
+                try {
+                    process.getInputStream().transferTo(logs);
+                } catch (Exception ignored) {
+                    // The process timeout path closes the stream while terminating Chrome.
+                }
+            });
             boolean completed = process.waitFor(properties.getPdf().getTimeoutSeconds(), TimeUnit.SECONDS);
             if (!completed) {
                 process.destroyForcibly();
+                process.waitFor(5, TimeUnit.SECONDS);
+                logReader.completeOnTimeout(null, 5, TimeUnit.SECONDS).join();
                 throw new CertificateGenerationException("PDF generation timed out");
             }
+            logReader.join();
             if (process.exitValue() != 0) {
                 throw new CertificateGenerationException("Puppeteer PDF generation failed:\n" + logs);
             }
             byte[] pdf = Files.readAllBytes(tempFile);
-            Files.deleteIfExists(tempFile);
             return pdf;
         } catch (Exception ex) {
             if (ex instanceof CertificateGenerationException certificateException) {
@@ -81,6 +91,14 @@ public class PuppeteerPdfGenerationService implements PdfGenerationService {
             }
             throw new CertificateGenerationException("Unable to render certificate PDF within "
                     + Duration.ofSeconds(properties.getPdf().getTimeoutSeconds()).toSeconds() + " seconds", ex);
+        } finally {
+            if (tempFile != null) {
+                try {
+                    Files.deleteIfExists(tempFile);
+                } catch (Exception ignored) {
+                    // Temporary file cleanup must not mask the rendering result.
+                }
+            }
         }
     }
 }
