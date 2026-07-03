@@ -19,7 +19,7 @@ jobs:
     env:
       AUTH_SERVICE_URL: ${{ vars.AUTH_SERVICE_URL }}
       COURSE_SERVICE_URL: ${{ vars.COURSE_SERVICE_URL }}
-      GATEWAY_URL: https://api-gateway-hgh1.onrender.com
+      GATEWAY_URL: ${{ vars.GATEWAY_URL }}
     steps:
       - name: Warm Auth, Course, then Gateway
         continue-on-error: true
