@@ -2,7 +2,7 @@ name: Keep core services warm
 
 on:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: "*/12 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -15,15 +15,17 @@ concurrency:
 jobs:
   warmup:
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    timeout-minutes: 10
+
     env:
       AUTH_SERVICE_URL: ${{ vars.AUTH_SERVICE_URL }}
       COURSE_SERVICE_URL: ${{ vars.COURSE_SERVICE_URL }}
       GATEWAY_URL: ${{ vars.GATEWAY_URL }}
+
     steps:
       - name: Warm Auth, Course, then Gateway
         continue-on-error: true
-        timeout-minutes: 2
+        timeout-minutes: 8
         shell: bash
         run: |
           set +e
@@ -41,67 +43,97 @@ jobs:
 
             response_file=$(mktemp)
             request_started=$(date +%s)
+
             http_status=$(curl \
               --silent \
               --show-error \
               --location \
-              --connect-timeout 3 \
-              --max-time 5 \
-              --retry 2 \
-              --retry-delay 1 \
-              --retry-max-time 8 \
+              --connect-timeout 10 \
+              --max-time 120 \
+              --retry 3 \
+              --retry-delay 5 \
+              --retry-max-time 120 \
               --retry-all-errors \
               --output "${response_file}" \
               --write-out "%{http_code}" \
               "${endpoint}")
+
             curl_exit=$?
             request_finished=$(date +%s)
 
             echo "${service_name} response (curl_exit=${curl_exit}, http_status=${http_status:-unavailable}, duration=$((request_finished - request_started))s):"
+
             if [ -s "${response_file}" ]; then
               cat "${response_file}"
             else
               echo "<empty response>"
             fi
+
             echo
             rm -f "${response_file}"
 
-            if [ "${curl_exit}" -eq 0 ] && [ "${http_status}" -ge 200 ] 2>/dev/null && [ "${http_status}" -lt 300 ] 2>/dev/null; then
+            if [ "${curl_exit}" -eq 0 ] &&
+               [ "${http_status}" -ge 200 ] 2>/dev/null &&
+               [ "${http_status}" -lt 300 ] 2>/dev/null; then
               return 0
             fi
+
             return 1
           }
 
-          if [ -z "${AUTH_SERVICE_URL}" ] || [ -z "${COURSE_SERVICE_URL}" ]; then
-            echo "::warning::Set the AUTH_SERVICE_URL and COURSE_SERVICE_URL GitHub repository variables to the public Render service origins."
+          if [ -z "${AUTH_SERVICE_URL}" ] ||
+             [ -z "${COURSE_SERVICE_URL}" ] ||
+             [ -z "${GATEWAY_URL}" ]; then
+            echo "::warning::Missing repository variables."
             exit 0
           fi
 
-          echo "Warming Auth Service..."
-          request_health "Auth Service initial ping" "${AUTH_SERVICE_URL%/}/api/auth/actuator/health" || \
-            echo "Auth Service WAKING_UP..."
+          echo "Starting Auth and Course warmup..."
 
-          sleep 45
+          request_health \
+            "Auth Service initial ping" \
+            "${AUTH_SERVICE_URL%/}/api/auth/actuator/health" &
 
-          if request_health "Auth Service verification ping" "${AUTH_SERVICE_URL%/}/api/auth/actuator/health"; then
+          AUTH_PID=$!
+
+          request_health \
+            "Course Service initial ping" \
+            "${COURSE_SERVICE_URL%/}/api/courses/actuator/health" &
+
+          COURSE_PID=$!
+
+          wait $AUTH_PID || true
+          wait $COURSE_PID || true
+
+          echo "Waiting for services to boot..."
+          sleep 60
+
+          echo "Verifying Auth Service..."
+
+          if request_health \
+            "Auth Service verification ping" \
+            "${AUTH_SERVICE_URL%/}/api/auth/actuator/health"
+          then
             echo "Auth Service UP."
           else
             echo "Auth Service WAKING_UP..."
           fi
 
-          echo "Warming Course Service..."
-          request_health "Course Service initial ping" "${COURSE_SERVICE_URL%/}/api/courses/actuator/health" || \
-            echo "Course Service WAKING_UP..."
+          echo "Verifying Course Service..."
 
-          sleep 45
-
-          if request_health "Course Service verification ping" "${COURSE_SERVICE_URL%/}/api/courses/actuator/health"; then
+          if request_health \
+            "Course Service verification ping" \
+            "${COURSE_SERVICE_URL%/}/api/courses/actuator/health"
+          then
             echo "Course Service UP."
           else
             echo "Course Service WAKING_UP..."
           fi
 
-          if request_health "API Gateway" "${GATEWAY_URL%/}/actuator/health"; then
+          if request_health \
+            "API Gateway" \
+            "${GATEWAY_URL%/}/actuator/health"
+          then
             echo "Gateway warmed successfully."
           else
             echo "::warning::Gateway is still waking up."
@@ -109,4 +141,5 @@ jobs:
 
           finished_at=$(date +%s)
           echo "Startup duration: $((finished_at - started_at)) seconds."
+
           exit 0
