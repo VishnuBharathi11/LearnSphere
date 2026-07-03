@@ -57,6 +57,9 @@ public class JwtAuthFilter implements GlobalFilter {
         return chain.filter(exchange);
     }
     private boolean isPublicPath(String path, HttpMethod method) {
+        if ("/warmup".equals(path)) {
+            return true;
+        }
         if (path.contains("/actuator/")) {
             return true;
         }

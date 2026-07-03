@@ -5,6 +5,30 @@ import {
 } from "./networkActivityStore";
 
 let initialized = false;
+const RETRYABLE_STATUS_CODES = new Set([502, 503, 504]);
+const RETRY_DELAYS_MS = [3000, 6000, 12000];
+const activeColdStarts = new Set();
+
+function notifyColdStart(config, active) {
+  const requestId = config.metadata?.coldStartRequestId;
+  if (!requestId) return;
+
+  if (active) {
+    activeColdStarts.add(requestId);
+  } else {
+    activeColdStarts.delete(requestId);
+  }
+
+  window.dispatchEvent(
+    new CustomEvent("learnsphere:cold-start", {
+      detail: { active: activeColdStarts.size > 0 },
+    })
+  );
+}
+
+function delay(milliseconds) {
+  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+}
 
 export function setupAxiosNetworkLoader() {
   if (initialized) return;
@@ -22,8 +46,16 @@ export function setupAxiosNetworkLoader() {
         url.includes("/api/enrollments/courses") ||
         url.includes("/api/courses/instructor");
 
-      if (!isBackground) {
+      if (!config.metadata?.coldStartRequestId) {
+        config.metadata = {
+          ...config.metadata,
+          coldStartRequestId: crypto.randomUUID(),
+        };
+      }
+
+      if (!isBackground && !config.metadata.networkActivityStarted) {
         incrementNetworkActivity();
+        config.metadata.networkActivityStarted = true;
       }
       config.metadata = { ...config.metadata, isBackground: Boolean(isBackground) };
       return config;
@@ -35,14 +67,42 @@ export function setupAxiosNetworkLoader() {
 
   axios.interceptors.response.use(
     (response) => {
-      if (!response.config?.metadata?.isBackground) {
+      notifyColdStart(response.config, false);
+      if (
+        !response.config?.metadata?.isBackground &&
+        !response.config?.metadata?.networkActivityCompleted
+      ) {
         decrementNetworkActivity();
+        response.config.metadata.networkActivityCompleted = true;
       }
       return response;
     },
-    (error) => {
-      if (error.config && !error.config.metadata?.isBackground) {
+    async (error) => {
+      const config = error.config;
+      const retryCount = config?.metadata?.coldStartRetryCount || 0;
+      const canRetry =
+        config &&
+        !config.skipColdStartRetry &&
+        RETRYABLE_STATUS_CODES.has(error.response?.status) &&
+        retryCount < RETRY_DELAYS_MS.length;
+
+      if (canRetry) {
+        config.metadata.coldStartRetryCount = retryCount + 1;
+        notifyColdStart(config, true);
+        await delay(RETRY_DELAYS_MS[retryCount]);
+        return axios.request(config);
+      }
+
+      if (config) {
+        notifyColdStart(config, false);
+      }
+      if (
+        config &&
+        !config.metadata?.isBackground &&
+        !config.metadata?.networkActivityCompleted
+      ) {
         decrementNetworkActivity();
+        config.metadata.networkActivityCompleted = true;
       }
       return Promise.reject(error);
     }

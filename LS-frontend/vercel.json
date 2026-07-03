@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/warmup",
+      "destination": "https://api-gateway-hgh1.onrender.com/warmup"
+    },
+    {
       "source": "/api/:path*",
       "destination": "https://api-gateway-hgh1.onrender.com/api/:path*"
     },

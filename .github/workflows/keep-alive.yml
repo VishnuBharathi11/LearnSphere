@@ -1,64 +1,49 @@
-name: LearnSphere Keep-Alive
+name: Keep core services warm
 
 on:
   schedule:
-    # Render Free web services spin down after 15 minutes without inbound traffic.
     - cron: "*/10 * * * *"
   workflow_dispatch:
 
-jobs:
-  ping-services:
-    name: Ping Render services through the gateway
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    concurrency:
-      group: learnsphere-render-keep-alive
-      cancel-in-progress: false
+permissions:
+  contents: read
 
+jobs:
+  warmup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
     steps:
-      - name: Ping each downstream health endpoint
+      - name: Warm API Gateway, Auth Service, and Course Service
+        continue-on-error: true
         shell: bash
         run: |
-          set -u
+          endpoint="https://api-gateway-hgh1.onrender.com/warmup"
 
-          BASE_URL="https://api-gateway-80go.onrender.com"
-          HEALTH_PATHS=(
-            "/api/auth/actuator/health"
-            "/api/courses/actuator/health"
-            "/api/enrollments/actuator/health"
-            "/api/progress/actuator/health"
-            "/notifications/actuator/health"
-            "/api/admin/actuator/health"
-            "/api/certificates/actuator/health"
-          )
-
-          failures=0
-
-          for path in "${HEALTH_PATHS[@]}"; do
-            status=$(curl \
-              --silent \
-              --show-error \
-              --output /dev/null \
+          for attempt in 1 2 3; do
+            echo "Warmup attempt ${attempt}/3"
+            response_file="$(mktemp)"
+            status="$(curl --silent --show-error \
+              --connect-timeout 10 \
+              --max-time 45 \
+              --output "${response_file}" \
               --write-out "%{http_code}" \
-              --connect-timeout 60 \
-              --max-time 150 \
-              --user-agent "LearnSphere-GitHub-Keep-Alive/1.0" \
-              "${BASE_URL}${path}") || status="000"
+              "${endpoint}")" && curl_exit=0 || curl_exit=$?
 
-            if [[ "$status" == "200" ]]; then
-              echo "OK   ${path}"
-            elif [[ "$status" == "429" ]]; then
-              echo "RATE LIMITED ${path}; not retrying"
-              failures=$((failures + 1))
-            else
-              echo "FAIL [${status}] ${path}"
-              failures=$((failures + 1))
+            echo "HTTP status: ${status:-unavailable}"
+            echo "Response:"
+            cat "${response_file}"
+            echo
+            rm -f "${response_file}"
+
+            if [ "${curl_exit}" -eq 0 ] && [ "${status}" -ge 200 ] && [ "${status}" -lt 300 ]; then
+              echo "Warmup completed."
+              exit 0
             fi
 
-            # Serialize requests to keep traffic gentle on the gateway.
-            sleep 2
+            if [ "${attempt}" -lt 3 ]; then
+              sleep $((attempt * 5))
+            fi
           done
 
-          if (( failures > 0 )); then
-            echo "::warning::${failures} service health ping(s) failed."
-          fi
+          echo "::warning::Warmup did not succeed after 3 attempts; the workflow is completing gracefully."
+          exit 0

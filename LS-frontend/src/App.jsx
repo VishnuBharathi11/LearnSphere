@@ -1,4 +1,5 @@
-import { useMemo } from "react";
+import axios from "axios";
+import { useEffect, useMemo } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.scss";
 import Home from "./pages/Public/Home/Home.jsx";
@@ -51,7 +52,16 @@ import Settings from "./pages/admin/Settings/Settings.jsx";
 import InstructorApplications from "./pages/admin/InstructorApplications/InstructorApplications.jsx";
 import ContactSubmissions from "./pages/admin/ContactSubmissions/ContactSubmissions.jsx";
 import { LoadingProvider } from "./components/LoadingSystem/LoadingProvider.jsx";
+import { ColdStartNotice } from "./components/ColdStartNotice/ColdStartNotice.jsx";
 function App() {
+  useEffect(() => {
+    axios.get("/warmup", {
+      headers: { "X-Skip-Global-Loader": "true" },
+      skipColdStartRetry: true,
+      timeout: 12000,
+    }).catch(() => {});
+  }, []);
+
   const routes = useMemo(
     () => (
       <Routes>
@@ -118,6 +128,11 @@ function App() {
     ),
     []
   );
-  return <LoadingProvider>{routes}</LoadingProvider>;
+  return (
+    <LoadingProvider>
+      <ColdStartNotice />
+      {routes}
+    </LoadingProvider>
+  );
 }
 export default App;

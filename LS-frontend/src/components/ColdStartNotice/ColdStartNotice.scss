@@ -1,0 +1,16 @@
+.cold-start-notice {
+  position: fixed;
+  top: 1rem;
+  left: 50%;
+  z-index: 10000;
+  transform: translateX(-50%);
+  max-width: calc(100vw - 2rem);
+  padding: 0.75rem 1rem;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--ui-radius-md);
+  background: #eff6ff;
+  box-shadow: var(--ui-shadow);
+  color: #1e3a8a;
+  font-weight: 600;
+  text-align: center;
+}
