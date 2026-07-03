@@ -58,7 +58,7 @@ function App() {
     axios.get("/warmup", {
       headers: { "X-Skip-Global-Loader": "true" },
       skipColdStartRetry: true,
-      timeout: 12000,
+      timeout: 95000,
     }).catch(() => {});
   }, []);
 

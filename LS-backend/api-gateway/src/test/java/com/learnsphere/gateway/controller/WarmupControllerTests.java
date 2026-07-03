@@ -41,7 +41,7 @@ class WarmupControllerTests {
             exchange.close();
         });
         server.createContext("/course/health", exchange -> {
-            exchange.sendResponseHeaders(503, -1);
+            exchange.sendResponseHeaders(502, -1);
             exchange.close();
         });
 
@@ -52,10 +52,10 @@ class WarmupControllerTests {
 
         StepVerifier.create(controller.warmup())
                 .assertNext(response -> {
-                    assertThat(response.get("status")).isEqualTo("UP");
+                    assertThat(response.get("status")).isEqualTo("WAKING_UP");
                     assertThat(response.get("services")).asList().containsExactly(
                             Map.of("name", "Auth Service", "status", "UP"),
-                            Map.of("name", "Course Service", "status", "DOWN"));
+                            Map.of("name", "Course Service", "status", "WAKING_UP"));
                 })
                 .verifyComplete();
     }
